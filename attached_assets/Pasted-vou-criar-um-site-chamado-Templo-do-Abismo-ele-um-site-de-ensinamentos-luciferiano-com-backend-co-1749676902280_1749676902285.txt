@@ -1,0 +1,61 @@
+vou criar um site chamado Templo do Abismo, ele é um site de ensinamentos luciferiano com backend completo usando supabase, ele terá deploy no versel, farei push daqui para o github e do github para o versel
+Imagem de logo: https://i.postimg.cc/g20gqmdX/IMG-20250527-182235-1.png
+Selo central fixado no centro da pagina: https://i.postimg.cc/g20gqmdX/IMG-20250527-182235-1.png
+Favicon: https://i.postimg.cc/g20gqmdX/IMG-20250527-182235-1.png
+Logo: https://i.postimg.cc/g20gqmdX/IMG-20250527-182235-1.png
+background: https://i.postimg.cc/qqX1Q7zn/Textura-envelhecida-e-marcada-pelo-tempo.png
+Site será totalmente transparente com efeito de estar flutuando sob o background
+ele terá backend e frontend
+TÍTULOS (já definido)
+Fonte: Cinzel Decorative
+
+Cor: #FFBF00 (âmbar dourado intenso)
+
+Uso: Títulos principais, nomes de seções, selos e invocações.
+
+📜 CORPO DE TEXTO PRINCIPAL
+Fonte: EB Garamond
+
+Cor: #E5DBC9 (bege ritualístico suave)
+
+Uso: Textos longos, doutrinas, explicações teóricas, textos corridos.
+
+Por quê: É clássico, legível, e combina com a vibração esotérica.
+
+🩸 CITAÇÕES MAGO-OCULTISTAS E TEXTOS RITUALÍSTICOS
+Fonte: IM Fell DW Pica
+
+Cor: #8B0000 (vermelho sangue profundo)
+
+Uso: Frases rituais, passagens sagradas, trechos de grimórios, versos infernais.
+
+Por quê: Parece manuscrito antigo, solene, vibracionalmente denso.
+
+🖋️ SEÇÕES POÉTICAS OU REFLEXIVAS
+Fonte: Cormorant Garamond Italic
+
+Cor: #D4AF37 (âmbar suave, mais pálido que os títulos)
+
+Uso: Trechos poéticos, visões, passagens meditativas ou inspiradas.
+
+Por quê: É elegante, fluida, evoca profundidade emocional com leveza.
+
+✨ TEXTOS MÁGICOS, ENCANTAMENTOS E INSTRUÇÕES RITUALÍSTICAS
+Fonte: Cardo
+
+Cor: #B8860B (dourado antigo, vibrando entre ouro e âmbar)
+
+Uso: Enns, mantras, palavras de poder, instruções de rituais.
+
+Por quê: Arcaica, sagrada, tem aspecto de papiro ou manuscrito ancestral.
+
+🖤 FUNDO E ATMOSFERA VISUAL
+Fundo: #0D0D0D (quase negro abissal com transparência — use rgba(13,13,13,0.8) para flutuar)
+
+Destaques adicionais:
+
+Linhas ou selos: #FFBF00 (âmbar puro)
+
+Bordas ou ícones: #A9742A (âmbar antigo queimada)
+
+crie apenas a pagina home de inicio, ja configure tudo que precisa ser configurado para o que eu pedi
