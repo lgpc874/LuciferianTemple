@@ -1,0 +1,204 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=IM+Fell+DW+Pica:ital,wght@0,400;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Cardo:ital,wght@0,400;1,400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Mystical Color Palette */
+  --golden-amber: hsl(45, 100%, 50%);
+  --ritualistic-beige: hsl(40, 25%, 85%);
+  --blood-red: hsl(0, 100%, 27%);
+  --soft-amber: hsl(45, 69%, 52%);
+  --ancient-golden: hsl(43, 84%, 38%);
+  --burned-amber: hsl(32, 51%, 41%);
+  --abyssal-dark: hsl(0, 0%, 5%);
+  
+  /* Base theme colors */
+  --background: hsl(0, 0%, 5%);
+  --foreground: hsl(40, 25%, 85%);
+  --muted: hsl(0, 0%, 10%);
+  --muted-foreground: hsl(0, 0%, 50%);
+  --popover: hsl(0, 0%, 8%);
+  --popover-foreground: hsl(40, 25%, 85%);
+  --card: hsl(0, 0%, 8%);
+  --card-foreground: hsl(40, 25%, 85%);
+  --border: hsl(32, 51%, 41%);
+  --input: hsl(0, 0%, 10%);
+  --primary: hsl(45, 100%, 50%);
+  --primary-foreground: hsl(0, 0%, 5%);
+  --secondary: hsl(0, 0%, 10%);
+  --secondary-foreground: hsl(40, 25%, 85%);
+  --accent: hsl(45, 69%, 52%);
+  --accent-foreground: hsl(0, 0%, 5%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(45, 100%, 50%);
+  --radius: 0.5rem;
+}
+
+.dark {
+  --background: hsl(0, 0%, 5%);
+  --foreground: hsl(40, 25%, 85%);
+  --muted: hsl(0, 0%, 10%);
+  --muted-foreground: hsl(0, 0%, 50%);
+  --popover: hsl(0, 0%, 8%);
+  --popover-foreground: hsl(40, 25%, 85%);
+  --card: hsl(0, 0%, 8%);
+  --card-foreground: hsl(40, 25%, 85%);
+  --border: hsl(32, 51%, 41%);
+  --input: hsl(0, 0%, 10%);
+  --primary: hsl(45, 100%, 50%);
+  --primary-foreground: hsl(0, 0%, 5%);
+  --secondary: hsl(0, 0%, 10%);
+  --secondary-foreground: hsl(40, 25%, 85%);
+  --accent: hsl(45, 69%, 52%);
+  --accent-foreground: hsl(0, 0%, 5%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(45, 100%, 50%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    background: url('https://i.postimg.cc/qqX1Q7zn/Textura-envelhecida-e-marcada-pelo-tempo.png') center/cover fixed;
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+
+  html {
+    overflow-x: hidden;
+  }
+}
+
+/* Typography Classes */
+.font-cinzel {
+  font-family: 'Cinzel Decorative', serif;
+}
+
+.font-garamond {
+  font-family: 'EB Garamond', serif;
+}
+
+.font-fell {
+  font-family: 'IM Fell DW Pica', serif;
+}
+
+.font-cormorant {
+  font-family: 'Cormorant Garamond', serif;
+}
+
+.font-cardo {
+  font-family: 'Cardo', serif;
+}
+
+/* Color Classes */
+.text-golden-amber {
+  color: var(--golden-amber);
+}
+
+.text-ritualistic-beige {
+  color: var(--ritualistic-beige);
+}
+
+.text-blood-red {
+  color: var(--blood-red);
+}
+
+.text-soft-amber {
+  color: var(--soft-amber);
+}
+
+.text-ancient-golden {
+  color: var(--ancient-golden);
+}
+
+.text-burned-amber {
+  color: var(--burned-amber);
+}
+
+.border-golden-amber {
+  border-color: var(--golden-amber);
+}
+
+.border-burned-amber {
+  border-color: var(--burned-amber);
+}
+
+/* Mystical Effects */
+.floating-container {
+  backdrop-filter: blur(1px);
+  background: rgba(13, 13, 13, 0.6);
+}
+
+.content-section {
+  backdrop-filter: blur(1px);
+  background: rgba(13, 13, 13, 0.4);
+}
+
+.warning-overlay {
+  backdrop-filter: blur(2px);
+  background: rgba(0, 0, 0, 0.95);
+}
+
+.sacred-seal {
+  animation: subtle-pulse 4s ease-in-out infinite;
+}
+
+@keyframes subtle-pulse {
+  0%, 100% { opacity: 0.9; }
+  50% { opacity: 1; }
+}
+
+.veil-button {
+  transition: all 0.3s ease;
+  border: 2px solid var(--golden-amber);
+  background: transparent;
+}
+
+.veil-button:hover {
+  background: rgba(255, 191, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Animation Classes */
+.fade-in {
+  animation: fadeIn 1.5s ease-in;
+}
+
+.fade-out {
+  animation: fadeOut 1s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .font-cinzel {
+    letter-spacing: 0.05em;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .sacred-seal {
+    animation: none;
+  }
+  
+  .veil-button {
+    transition: none;
+  }
+}
