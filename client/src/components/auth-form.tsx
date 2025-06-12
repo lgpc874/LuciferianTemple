@@ -113,7 +113,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
             <div className="text-red-400 text-2xl font-serif">⚡</div>
           </div>
           <CardTitle className="text-2xl font-serif text-red-200">
-            {isLogin ? "Portal de Acesso" : "Iniciação no Templo"}
+            {isLogin ? "Portal de Acesso" : "Marque seu nome nos registros do Templo"}
           </CardTitle>
           <CardDescription className="text-gray-400 font-serif text-sm">
             {isLogin 
