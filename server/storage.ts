@@ -1,5 +1,6 @@
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
+import { createClient } from '@supabase/supabase-js';
 import { users, type User, type InsertUser } from "@shared/schema";
 import { eq } from "drizzle-orm";
 
@@ -11,51 +12,39 @@ export interface IStorage {
 }
 
 export class SupabaseStorage implements IStorage {
-  private client: postgres.Sql | null = null;
-  private db: any = null;
+  private supabaseClient: any = null;
 
-  private async getConnection() {
-    if (!this.client && process.env.DATABASE_URL) {
-      this.client = postgres(process.env.DATABASE_URL, {
-        connect_timeout: 30,
-        idle_timeout: 60,
-        max_lifetime: 60 * 30,
-        ssl: { rejectUnauthorized: false },
-        connection: {
-          application_name: 'templo_abismo'
-        }
-      });
-      this.db = drizzle(this.client);
+  private getSupabaseClient() {
+    if (!this.supabaseClient && process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY) {
+      this.supabaseClient = createClient(
+        process.env.SUPABASE_URL,
+        process.env.SUPABASE_ANON_KEY
+      );
     }
-    return { client: this.client, db: this.db };
+    return this.supabaseClient;
   }
 
   async initializeDatabase(): Promise<void> {
     try {
       const { client } = await this.getConnection();
       if (client) {
-        // Test connection with timeout
-        const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('Connection timeout')), 8000)
-        );
+        // Simple connection test
+        await client`SELECT 1`;
         
-        await Promise.race([
-          client`SELECT 1`,
-          timeoutPromise
-        ]);
-
+        // Create users table
         await client`
           CREATE TABLE IF NOT EXISTS users (
             id SERIAL PRIMARY KEY,
             username TEXT NOT NULL UNIQUE,
-            password TEXT NOT NULL
+            password TEXT NOT NULL,
+            created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
           )
         `;
-        console.log("✓ Supabase database initialized successfully");
+        console.log("Supabase database initialized successfully");
       }
     } catch (error) {
-      console.warn("⚠️  Supabase connection failed:", error instanceof Error ? error.message : String(error));
-      console.log("📝 Falling back to memory storage");
+      console.error("Supabase connection error:", error instanceof Error ? error.message : String(error));
+      throw error;
     }
   }
 
