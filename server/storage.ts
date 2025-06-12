@@ -3,10 +3,6 @@ import postgres from "postgres";
 import { users, type User, type InsertUser } from "@shared/schema";
 import { eq } from "drizzle-orm";
 
-// Database connection
-const client = postgres(process.env.DATABASE_URL!);
-const db = drizzle(client);
-
 export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
@@ -15,17 +11,30 @@ export interface IStorage {
 }
 
 export class SupabaseStorage implements IStorage {
+  private client: postgres.Sql | null = null;
+  private db: any = null;
+
+  private async getConnection() {
+    if (!this.client && process.env.DATABASE_URL) {
+      this.client = postgres(process.env.DATABASE_URL);
+      this.db = drizzle(this.client);
+    }
+    return { client: this.client, db: this.db };
+  }
+
   async initializeDatabase(): Promise<void> {
     try {
-      // Create users table if it doesn't exist
-      await client`
-        CREATE TABLE IF NOT EXISTS users (
-          id SERIAL PRIMARY KEY,
-          username TEXT NOT NULL UNIQUE,
-          password TEXT NOT NULL
-        )
-      `;
-      console.log("Database initialized successfully");
+      const { client } = await this.getConnection();
+      if (client) {
+        await client`
+          CREATE TABLE IF NOT EXISTS users (
+            id SERIAL PRIMARY KEY,
+            username TEXT NOT NULL UNIQUE,
+            password TEXT NOT NULL
+          )
+        `;
+        console.log("Database initialized successfully");
+      }
     } catch (error) {
       console.error("Error initializing database:", error);
     }
@@ -33,8 +42,12 @@ export class SupabaseStorage implements IStorage {
 
   async getUser(id: number): Promise<User | undefined> {
     try {
-      const result = await db.select().from(users).where(eq(users.id, id));
-      return result[0];
+      const { db } = await this.getConnection();
+      if (db) {
+        const result = await db.select().from(users).where(eq(users.id, id));
+        return result[0];
+      }
+      return undefined;
     } catch (error) {
       console.error("Error getting user:", error);
       return undefined;
@@ -43,8 +56,12 @@ export class SupabaseStorage implements IStorage {
 
   async getUserByUsername(username: string): Promise<User | undefined> {
     try {
-      const result = await db.select().from(users).where(eq(users.username, username));
-      return result[0];
+      const { db } = await this.getConnection();
+      if (db) {
+        const result = await db.select().from(users).where(eq(users.username, username));
+        return result[0];
+      }
+      return undefined;
     } catch (error) {
       console.error("Error getting user by username:", error);
       return undefined;
@@ -53,8 +70,12 @@ export class SupabaseStorage implements IStorage {
 
   async createUser(insertUser: InsertUser): Promise<User> {
     try {
-      const result = await db.insert(users).values(insertUser).returning();
-      return result[0];
+      const { db } = await this.getConnection();
+      if (db) {
+        const result = await db.insert(users).values(insertUser).returning();
+        return result[0];
+      }
+      throw new Error("Database not available");
     } catch (error) {
       console.error("Error creating user:", error);
       throw error;
