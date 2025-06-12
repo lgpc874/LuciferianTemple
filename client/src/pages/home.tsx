@@ -25,7 +25,9 @@ export default function Home() {
       )}
       
       {!showWarning && (
-        <MainContent />
+        <div className="pt-20">
+          <MainContent />
+        </div>
       )}
     </div>
   );
