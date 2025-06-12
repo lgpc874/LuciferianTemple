@@ -76,7 +76,7 @@ export default function Biblioteca() {
             </h1>
             <div className="w-32 h-1 bg-golden-amber mx-auto mb-6"></div>
             <p className="font-garamond text-xl text-ritualistic-beige max-w-3xl mx-auto leading-relaxed px-4 italic mb-8">
-              Os segredos da Bibliotheca Arcana são reservados apenas aos iniciados.
+              Os segredos da Bibliotheca Arcana são reservados apenas aos que já têm seu nome registrado no abismo.
               Identifique-se para adentrar os corredores do conhecimento proibido.
             </p>
           </div>
