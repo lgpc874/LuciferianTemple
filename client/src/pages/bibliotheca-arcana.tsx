@@ -1,6 +1,6 @@
 export default function BibliothecaArcana() {
   return (
-    <div className="min-h-screen mystical-bg pt-20">
+    <div className="min-h-screen mystical-bg pt-32">
       <div className="container mx-auto px-4 py-16">
         {/* Título Principal */}
         <div className="text-center mb-16">

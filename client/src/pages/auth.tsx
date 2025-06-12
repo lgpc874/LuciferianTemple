@@ -12,7 +12,7 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 mystical-bg pt-20">
+    <div className="min-h-screen flex items-center justify-center p-4 mystical-bg pt-32">
       <AuthForm onSuccess={handleAuthSuccess} />
     </div>
   );

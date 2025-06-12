@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/hooks/use-auth";
 import FixedHeader from "@/components/fixed-header";
+import NavigationMenu from "@/components/navigation-menu";
 import Home from "@/pages/home";
 import NotFound from "@/pages/not-found";
 import AuthPage from "@/pages/auth";
@@ -27,6 +28,7 @@ function App() {
       <AuthProvider>
         <TooltipProvider>
           <FixedHeader />
+          <NavigationMenu />
           <Toaster />
           <Router />
         </TooltipProvider>
