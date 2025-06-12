@@ -1,10 +1,11 @@
 import { Link, useLocation } from "wouter";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Menu, X } from "lucide-react";
 
 export default function NavigationMenu() {
   const [location] = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   const menuItems = [
     { href: "/", label: "Templo" },
@@ -19,6 +20,23 @@ export default function NavigationMenu() {
   const closeMenu = () => {
     setIsMenuOpen(false);
   };
+
+  // Fechar menu quando clicar fora
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    if (isMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isMenuOpen]);
 
   return (
     <nav className="fixed top-20 left-0 right-0 z-40 bg-black/95 backdrop-blur-sm border-b border-golden-amber/20">
@@ -62,7 +80,7 @@ export default function NavigationMenu() {
         </div>
 
         {/* Mobile Menu Button */}
-        <div className="md:hidden flex items-center justify-between py-3">
+        <div className="md:hidden flex items-center justify-between py-3" ref={menuRef}>
           <span className="font-cinzel text-golden-amber text-sm tracking-wide">
             NAVEGAÇÃO
           </span>
@@ -71,34 +89,34 @@ export default function NavigationMenu() {
             className="text-golden-amber hover:text-ritualistic-beige transition-colors duration-300"
             aria-label="Menu"
           >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
+          
+          {/* Mobile Menu Dropdown */}
+          {isMenuOpen && (
+            <div className="absolute top-full right-0 mt-2 w-56 bg-black/95 backdrop-blur-md border border-golden-amber/30 rounded-lg shadow-xl shadow-golden-amber/10">
+              <ul className="flex flex-col py-2">
+                {menuItems.map((item) => (
+                  <li key={item.href}>
+                    <Link 
+                      href={item.href} 
+                      onClick={closeMenu}
+                      className={`
+                        block px-4 py-2 font-cinzel text-sm tracking-wide transition-all duration-300 rounded-md mx-2
+                        ${location === item.href 
+                          ? 'text-golden-amber bg-golden-amber/15' 
+                          : 'text-ritualistic-beige hover:text-golden-amber hover:bg-golden-amber/10'
+                        }
+                      `}
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
-
-        {/* Mobile Menu Overlay */}
-        {isMenuOpen && (
-          <div className="md:hidden absolute top-full left-0 right-0 bg-black/98 backdrop-blur-md border-b border-golden-amber/20">
-            <ul className="flex flex-col py-4">
-              {menuItems.map((item) => (
-                <li key={item.href}>
-                  <Link 
-                    href={item.href} 
-                    onClick={closeMenu}
-                    className={`
-                      block px-4 py-3 font-cinzel text-base tracking-wide transition-all duration-300
-                      ${location === item.href 
-                        ? 'text-golden-amber bg-golden-amber/10 border-l-4 border-golden-amber' 
-                        : 'text-ritualistic-beige hover:text-golden-amber hover:bg-golden-amber/5 hover:border-l-4 hover:border-golden-amber/50'
-                      }
-                    `}
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
       </div>
     </nav>
   );
