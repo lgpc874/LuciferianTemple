@@ -12,7 +12,7 @@ export const grimoireCategories = [
     category: "introducao-ocultismo",
     difficultyLevel: 1,
     unlockOrder: 1,
-    prompt: "Ancient leather-bound grimoire with golden occult symbols, pentagram, mystic runes, dark aged leather cover, ornate metal clasps, candlelight atmosphere, gothic medieval style, deep burgundy and gold colors"
+    prompt: "Ancient leather-bound book with ornate golden decorative patterns, aged burgundy leather cover, brass corner reinforcements, mystical geometric designs embossed on cover, candlelit library setting, vintage scholarly aesthetic"
   },
   {
     id: 2,
@@ -21,7 +21,7 @@ export const grimoireCategories = [
     category: "lucifer-luz-negra",
     difficultyLevel: 2,
     unlockOrder: 2,
-    prompt: "Ornate black grimoire with silver Luciferian sigils, inverted pentagram, morning star symbol, obsidian cover with silver inlays, chains and dark metal bindings, ethereal black and silver design, philosophical darkness theme"
+    prompt: "Elegant black leather tome with silver decorative elements, ornate silver clasps and bindings, star and celestial motifs, sophisticated gothic design, philosophical manuscript aesthetic, black and silver color scheme"
   },
   {
     id: 3,
@@ -30,7 +30,7 @@ export const grimoireCategories = [
     category: "lilith-sombra-feminina",
     difficultyLevel: 2,
     unlockOrder: 3,
-    prompt: "Mysterious dark purple grimoire with feminine occult symbols, crescent moon, serpent imagery, Lilith sigils, velvet texture cover with silver moon phases, night goddess aesthetic, deep purple and silver tones"
+    prompt: "Beautiful purple velvet-bound grimoire with silver moon phase decorations, crescent moon emblems, flowing feminine curves in design, elegant silver clasps, night sky aesthetic, deep purple and silver tones"
   },
   {
     id: 4,
@@ -39,7 +39,7 @@ export const grimoireCategories = [
     category: "simbolismo-sigilos",
     difficultyLevel: 3,
     unlockOrder: 4,
-    prompt: "Intricate grimoire covered in elaborate sigils and sacred geometry, golden symbols on dark brown leather, alchemical emblems, hermetic seals, complex mystical diagrams, brass corners and bindings, scholarly occult design"
+    prompt: "Scholarly manuscript with intricate geometric patterns, golden mathematical symbols, sacred geometry designs, alchemical diagrams, brown leather with gold embossing, academic occult study aesthetic"
   },
   {
     id: 5,
@@ -48,7 +48,7 @@ export const grimoireCategories = [
     category: "textos-filosoficos",
     difficultyLevel: 4,
     unlockOrder: 5,
-    prompt: "Elegant philosophical tome with classical design, deep blue leather with gold philosophical symbols, quill and ink imagery, wisdom symbols, ancient Greek and Latin inscriptions, intellectual darkness theme, navy blue and gold"
+    prompt: "Classical philosophical tome with deep blue leather cover, gold lettering and decorative borders, quill and inkwell imagery, ancient wisdom symbols, scholarly library setting, navy blue and gold design"
   },
   {
     id: 6,
@@ -57,7 +57,7 @@ export const grimoireCategories = [
     category: "meditacoes-praticas",
     difficultyLevel: 1,
     unlockOrder: 6,
-    prompt: "Serene meditation grimoire with spiritual symbols, lotus patterns, chakra imagery, peaceful dark green leather with golden spiritual emblems, zen aesthetic with occult elements, meditation poses silhouettes, green and gold design"
+    prompt: "Peaceful meditation manual with forest green leather cover, golden lotus flower embossing, zen garden elements, tranquil spiritual symbols, nature-inspired decorative patterns, green and gold color palette"
   }
 ];
 
