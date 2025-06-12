@@ -1,8 +1,17 @@
 import MysticalFooter from "./mystical-footer";
+import UserMenu from "./user-menu";
+import { useAuth } from "@/hooks/use-auth";
 
 export default function MainContent() {
+  const { user } = useAuth();
+
   return (
     <div className="min-h-screen fade-in">
+      {/* User Menu */}
+      <div className="absolute top-4 right-4 z-50">
+        <UserMenu />
+      </div>
+      
       {/* Header with Central Seal */}
       <header className="relative py-8 sm:py-12 md:py-16 lg:py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
