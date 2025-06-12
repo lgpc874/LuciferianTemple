@@ -126,6 +126,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   };
 
+  // Middleware para verificar privilégios de admin
+  const requireAdmin = async (req: any, res: any, next: any) => {
+    if (!req.user) {
+      return res.status(401).json({ error: "Usuário não autenticado" });
+    }
+    
+    const isAdmin = req.user.email === "templo.admin@templodoabismo.com" || 
+                   req.user.isAdmin === true ||
+                   req.user.role === "admin";
+    
+    if (!isAdmin) {
+      return res.status(403).json({ error: "Acesso negado - privilégios administrativos necessários" });
+    }
+    
+    next();
+  };
+
   // Rotas dos grimórios
   app.get("/api/grimoires", async (req, res) => {
     try {
