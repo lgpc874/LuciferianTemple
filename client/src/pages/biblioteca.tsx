@@ -1,6 +1,9 @@
 import { grimoireCoverSvgs } from "../components/grimoire-covers";
+import { useAuth } from "../hooks/use-auth";
+import AuthForm from "../components/auth-form";
 
 export default function Biblioteca() {
+  const { isAuthenticated, user, login, logout } = useAuth();
   const grimoires = [
     {
       id: 1,
@@ -62,6 +65,54 @@ export default function Biblioteca() {
     }
   };
 
+  // Se não estiver autenticado, mostrar tela de login
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen mystical-bg pt-24 fade-in">
+        <div className="relative py-16 bg-gradient-to-b from-red-950/20 to-transparent">
+          <div className="relative text-center">
+            <h1 className="font-cinzel text-4xl sm:text-5xl md:text-6xl text-golden-amber mb-6 tracking-wider">
+              ⸸ ACESSO RESTRITO ⸸
+            </h1>
+            <div className="w-32 h-1 bg-golden-amber mx-auto mb-6"></div>
+            <p className="font-garamond text-xl text-ritualistic-beige max-w-3xl mx-auto leading-relaxed px-4 italic mb-8">
+              Os segredos da Bibliotheca Arcana são reservados apenas aos iniciados.
+              Identifique-se para adentrar os corredores do conhecimento proibido.
+            </p>
+          </div>
+        </div>
+
+        <div className="max-w-md mx-auto px-4">
+          <div className="content-section border border-golden-amber/50 rounded-xl p-8">
+            <div className="text-center mb-6">
+              <h2 className="font-cinzel text-2xl text-golden-amber mb-2">
+                Portal dos Iniciados
+              </h2>
+              <p className="font-garamond text-ritualistic-beige text-sm">
+                Faça login ou registre-se para acessar a biblioteca
+              </p>
+            </div>
+            
+            <AuthForm onSuccess={(token, userData) => {
+              login(token, userData);
+            }} />
+          </div>
+
+          <div className="text-center mt-8">
+            <a href="/bibliotheca-arcana">
+              <button className="veil-button bg-gradient-to-r from-ritualistic-beige/10 to-ritualistic-beige/5 hover:from-ritualistic-beige/20 hover:to-ritualistic-beige/10 text-ritualistic-beige font-cinzel py-3 px-6 rounded-lg transition-all duration-300 border border-ritualistic-beige/50 hover:border-golden-amber/50 hover:text-golden-amber tracking-wide">
+                <span className="flex items-center justify-center space-x-2">
+                  <span>←</span>
+                  <span>RETORNAR À ANTECÂMARA</span>
+                </span>
+              </button>
+            </a>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen mystical-bg pt-24 fade-in">
       {/* Header místico */}
@@ -72,6 +123,18 @@ export default function Biblioteca() {
             ⸸ BIBLIOTHECA ARCANA ⸸
           </h1>
           <div className="w-32 h-1 bg-golden-amber mx-auto mb-6"></div>
+          
+          {user && (
+            <div className="mb-6">
+              <p className="font-garamond text-lg text-golden-amber/80">
+                Bem-vindo de volta, <span className="text-golden-amber font-semibold">{user.username}</span>
+              </p>
+              <p className="font-garamond text-sm text-ritualistic-beige/70 italic">
+                Iniciado dos Mistérios Arcanos
+              </p>
+            </div>
+          )}
+          
           <p className="font-garamond text-xl text-ritualistic-beige max-w-4xl mx-auto leading-relaxed px-4 italic">
             Nos corredores sombrios desta biblioteca digital repousam os grimórios ancestrais,
             cada um guardando fragmentos da sabedoria proibida. Escolha seu caminho com prudência,
@@ -148,14 +211,31 @@ export default function Biblioteca() {
             </p>
           </div>
           
-          <a href="/bibliotheca-arcana">
-            <button className="veil-button bg-gradient-to-r from-ritualistic-beige/10 to-ritualistic-beige/5 hover:from-ritualistic-beige/20 hover:to-ritualistic-beige/10 text-ritualistic-beige font-cinzel py-4 px-8 rounded-lg transition-all duration-300 border border-ritualistic-beige/50 hover:border-golden-amber/50 hover:text-golden-amber hover:shadow-lg tracking-wide">
-              <span className="flex items-center justify-center space-x-2">
-                <span>←</span>
-                <span>RETORNAR À ANTECÂMARA</span>
-              </span>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <a href="/bibliotheca-arcana">
+              <button className="veil-button bg-gradient-to-r from-ritualistic-beige/10 to-ritualistic-beige/5 hover:from-ritualistic-beige/20 hover:to-ritualistic-beige/10 text-ritualistic-beige font-cinzel py-4 px-8 rounded-lg transition-all duration-300 border border-ritualistic-beige/50 hover:border-golden-amber/50 hover:text-golden-amber hover:shadow-lg tracking-wide">
+                <span className="flex items-center justify-center space-x-2">
+                  <span>←</span>
+                  <span>RETORNAR À ANTECÂMARA</span>
+                </span>
+              </button>
+            </a>
+            
+            <button 
+              onClick={logout}
+              className="veil-button bg-gradient-to-r from-red-900/10 to-red-900/5 hover:from-red-900/20 hover:to-red-900/10 text-red-400 font-cinzel py-3 px-6 rounded-lg transition-all duration-300 border border-red-400/50 hover:border-red-400 hover:shadow-lg tracking-wide text-sm"
+            >
+              ENCERRAR SESSÃO
             </button>
-          </a>
+          </div>
+          
+          {user && (
+            <div className="mt-6 pt-4 border-t border-burned-amber/20">
+              <p className="font-garamond text-burned-amber/60 text-xs">
+                Sessão ativa: {user.username} • {user.email}
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>
