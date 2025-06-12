@@ -1,12 +1,65 @@
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 import { users, type User, type InsertUser } from "@shared/schema";
+import { eq } from "drizzle-orm";
 
-// modify the interface with any CRUD methods
-// you might need
+// Database connection
+const client = postgres(process.env.DATABASE_URL!);
+const db = drizzle(client);
 
 export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  initializeDatabase(): Promise<void>;
+}
+
+export class SupabaseStorage implements IStorage {
+  async initializeDatabase(): Promise<void> {
+    try {
+      // Create users table if it doesn't exist
+      await client`
+        CREATE TABLE IF NOT EXISTS users (
+          id SERIAL PRIMARY KEY,
+          username TEXT NOT NULL UNIQUE,
+          password TEXT NOT NULL
+        )
+      `;
+      console.log("Database initialized successfully");
+    } catch (error) {
+      console.error("Error initializing database:", error);
+    }
+  }
+
+  async getUser(id: number): Promise<User | undefined> {
+    try {
+      const result = await db.select().from(users).where(eq(users.id, id));
+      return result[0];
+    } catch (error) {
+      console.error("Error getting user:", error);
+      return undefined;
+    }
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    try {
+      const result = await db.select().from(users).where(eq(users.username, username));
+      return result[0];
+    } catch (error) {
+      console.error("Error getting user by username:", error);
+      return undefined;
+    }
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    try {
+      const result = await db.insert(users).values(insertUser).returning();
+      return result[0];
+    } catch (error) {
+      console.error("Error creating user:", error);
+      throw error;
+    }
+  }
 }
 
 export class MemStorage implements IStorage {
@@ -16,6 +69,10 @@ export class MemStorage implements IStorage {
   constructor() {
     this.users = new Map();
     this.currentId = 1;
+  }
+
+  async initializeDatabase(): Promise<void> {
+    // No-op for memory storage
   }
 
   async getUser(id: number): Promise<User | undefined> {
@@ -36,4 +93,7 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// Use Supabase if DATABASE_URL is available, otherwise fallback to memory
+export const storage = process.env.DATABASE_URL 
+  ? new SupabaseStorage() 
+  : new MemStorage();
