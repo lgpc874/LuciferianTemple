@@ -186,9 +186,49 @@
 }
 
 /* Responsive Design */
+@media (max-width: 480px) {
+  .font-cinzel {
+    letter-spacing: 0.02em;
+    font-size: 0.9em;
+  }
+  
+  .floating-container,
+  .content-section {
+    margin: 8px;
+    padding: 16px;
+  }
+  
+  .sacred-seal {
+    width: 120px !important;
+    height: 120px !important;
+  }
+}
+
 @media (max-width: 768px) {
   .font-cinzel {
     letter-spacing: 0.05em;
+  }
+  
+  .floating-container,
+  .content-section {
+    margin: 12px;
+    padding: 20px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .floating-container,
+  .content-section {
+    margin: 16px;
+    padding: 24px;
+  }
+}
+
+@media (min-width: 1025px) {
+  .floating-container,
+  .content-section {
+    margin: 32px;
+    padding: 48px;
   }
 }
 
