@@ -17,9 +17,13 @@ export class SupabaseStorage implements IStorage {
   private async getConnection() {
     if (!this.client && process.env.DATABASE_URL) {
       this.client = postgres(process.env.DATABASE_URL, {
-        connect_timeout: 10,
-        idle_timeout: 20,
-        max_lifetime: 60 * 30
+        connect_timeout: 30,
+        idle_timeout: 60,
+        max_lifetime: 60 * 30,
+        ssl: { rejectUnauthorized: false },
+        connection: {
+          application_name: 'templo_abismo'
+        }
       });
       this.db = drizzle(this.client);
     }
@@ -30,6 +34,16 @@ export class SupabaseStorage implements IStorage {
     try {
       const { client } = await this.getConnection();
       if (client) {
+        // Test connection with timeout
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Connection timeout')), 8000)
+        );
+        
+        await Promise.race([
+          client`SELECT 1`,
+          timeoutPromise
+        ]);
+
         await client`
           CREATE TABLE IF NOT EXISTS users (
             id SERIAL PRIMARY KEY,
@@ -37,10 +51,11 @@ export class SupabaseStorage implements IStorage {
             password TEXT NOT NULL
           )
         `;
-        console.log("Database initialized successfully");
+        console.log("✓ Supabase database initialized successfully");
       }
     } catch (error) {
-      console.error("Error initializing database:", error);
+      console.warn("⚠️  Supabase connection failed:", error instanceof Error ? error.message : String(error));
+      console.log("📝 Falling back to memory storage");
     }
   }
 
@@ -119,6 +134,51 @@ export class MemStorage implements IStorage {
 }
 
 // Use Supabase if DATABASE_URL is available, otherwise fallback to memory
-export const storage = process.env.DATABASE_URL 
-  ? new SupabaseStorage() 
-  : new MemStorage();
+// Create storage instance with smart fallback
+class HybridStorage implements IStorage {
+  private supabaseStorage: SupabaseStorage;
+  private memStorage: MemStorage;
+  private useSupabase: boolean = false;
+
+  constructor() {
+    this.supabaseStorage = new SupabaseStorage();
+    this.memStorage = new MemStorage();
+  }
+
+  async initializeDatabase(): Promise<void> {
+    if (process.env.DATABASE_URL) {
+      try {
+        await this.supabaseStorage.initializeDatabase();
+        this.useSupabase = true;
+        console.log("✓ Using Supabase storage");
+      } catch (error) {
+        console.warn("⚠️  Supabase failed, using memory storage");
+        await this.memStorage.initializeDatabase();
+        this.useSupabase = false;
+      }
+    } else {
+      await this.memStorage.initializeDatabase();
+      this.useSupabase = false;
+    }
+  }
+
+  async getUser(id: number): Promise<User | undefined> {
+    return this.useSupabase 
+      ? this.supabaseStorage.getUser(id)
+      : this.memStorage.getUser(id);
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    return this.useSupabase 
+      ? this.supabaseStorage.getUserByUsername(username)
+      : this.memStorage.getUserByUsername(username);
+  }
+
+  async createUser(user: InsertUser): Promise<User> {
+    return this.useSupabase 
+      ? this.supabaseStorage.createUser(user)
+      : this.memStorage.createUser(user);
+  }
+}
+
+export const storage = new HybridStorage();
