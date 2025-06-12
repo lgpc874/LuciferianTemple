@@ -16,7 +16,11 @@ export class SupabaseStorage implements IStorage {
 
   private async getConnection() {
     if (!this.client && process.env.DATABASE_URL) {
-      this.client = postgres(process.env.DATABASE_URL);
+      this.client = postgres(process.env.DATABASE_URL, {
+        connect_timeout: 10,
+        idle_timeout: 20,
+        max_lifetime: 60 * 30
+      });
       this.db = drizzle(this.client);
     }
     return { client: this.client, db: this.db };
