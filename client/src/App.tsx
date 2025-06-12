@@ -8,12 +8,14 @@ import FixedHeader from "@/components/fixed-header";
 import Home from "@/pages/home";
 import NotFound from "@/pages/not-found";
 import AuthPage from "@/pages/auth";
+import BibliothecaArcana from "@/pages/bibliotheca-arcana";
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/auth" component={AuthPage} />
+      <Route path="/bibliotheca-arcana" component={BibliothecaArcana} />
       <Route component={NotFound} />
     </Switch>
   );
