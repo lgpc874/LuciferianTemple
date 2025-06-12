@@ -133,12 +133,12 @@
 /* Mystical Effects */
 .floating-container {
   backdrop-filter: blur(1px);
-  background: rgba(13, 13, 13, 0.6);
+  background: rgba(13, 13, 13, 0.3);
 }
 
 .content-section {
   backdrop-filter: blur(1px);
-  background: rgba(13, 13, 13, 0.4);
+  background: rgba(13, 13, 13, 0.2);
 }
 
 .warning-overlay {

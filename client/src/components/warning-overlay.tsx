@@ -21,25 +21,25 @@ export default function WarningOverlay({ onTearVeil, isTransitioning }: WarningO
           PORTAL DOS MISTÉRIOS ANCESTRAIS
         </h1>
         
-        {/* Ritualistic Warning */}
+        {/* Mysterious Warning */}
         <div className="font-fell text-blood-red text-lg md:text-xl mb-6 leading-relaxed">
           <p className="mb-4">
-            "Aquele que adentra os Véus do Abismo carrega consigo o peso das eras. 
-            Os ensinamentos aqui contidos não são meros símbolos, mas chaves 
-            que abrem portas que jamais poderão ser fechadas."
+            "Nas profundezas do Abismo, onde o tempo se curva sobre si mesmo,
+            jazem os segredos que precederam a primeira palavra.
+            O que aqui se oculta não deve ser tomado levianamente."
           </p>
         </div>
         
         {/* Solemn Declaration */}
         <div className="font-garamond text-ritualistic-beige text-base md:text-lg mb-8 leading-relaxed">
           <p className="mb-4">
-            Este é um santuário dedicado aos mistérios luciferianos ancestrais, 
-            às artes ocultas e aos caminhos da mão esquerda. O conhecimento aqui 
-            preservado é sagrado e exige reverência, discernimento e maturidade espiritual.
+            Este santuário guarda conhecimentos que ecoam desde antes da aurora dos tempos.
+            Escrituras seladas, rituais ancestrais e verdades que poucos ousaram contemplar
+            aguardam além deste limiar.
           </p>
           <p className="italic font-cormorant text-soft-amber">
-            Apenas aqueles que compreendem a magnitude destes ensinamentos 
-            devem prosseguir além do véu.
+            Somente aqueles cuja alma ressoa com as frequências do mistério
+            devem atravessar este portal sagrado.
           </p>
         </div>
         
