@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { registerSchema, loginSchema, type RegisterData, type LoginData, insertProgressSchema, type InsertProgress } from "@shared/schema";
-import { grimoireCategories } from "./grimoire-generator";
+import { grimoireStore } from "./grimoire-data";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
@@ -129,7 +129,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Rotas dos grimórios
   app.get("/api/grimoires", async (req, res) => {
     try {
-      const grimoires = await storage.getGrimoires();
+      const grimoires = grimoireStore.getGrimoires();
       res.json(grimoires);
     } catch (error) {
       console.error("Error fetching grimoires:", error);
@@ -140,7 +140,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/grimoires/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
-      const grimoire = await storage.getGrimoireById(id);
+      const grimoire = grimoireStore.getGrimoireById(id);
       
       if (!grimoire) {
         return res.status(404).json({ error: "Grimório não encontrado" });
@@ -156,7 +156,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/grimoires/:id/chapters", async (req, res) => {
     try {
       const grimoireId = parseInt(req.params.id);
-      const chapters = await storage.getChaptersByGrimoire(grimoireId);
+      const chapters = grimoireStore.getChaptersByGrimoire(grimoireId);
       res.json(chapters);
     } catch (error) {
       console.error("Error fetching chapters:", error);
@@ -167,7 +167,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Rotas de progresso (requerem autenticação)
   app.get("/api/progress", authenticateToken, async (req: any, res) => {
     try {
-      const progress = await storage.getUserProgress(req.user.id);
+      const progress = grimoireStore.getUserProgress(req.user.id);
       res.json(progress);
     } catch (error) {
       console.error("Error fetching progress:", error);
@@ -178,7 +178,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/progress/grimoire/:id", authenticateToken, async (req: any, res) => {
     try {
       const grimoireId = parseInt(req.params.id);
-      const progress = await storage.getUserProgressByGrimoire(req.user.id, grimoireId);
+      const progress = grimoireStore.getUserProgressByGrimoire(req.user.id, grimoireId);
       res.json(progress);
     } catch (error) {
       console.error("Error fetching grimoire progress:", error);
@@ -193,7 +193,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         userId: req.user.id
       });
       
-      const progress = await storage.saveReadingProgress(progressData);
+      const progress = grimoireStore.saveReadingProgress(progressData);
       res.json(progress);
     } catch (error) {
       console.error("Error saving progress:", error);
@@ -206,7 +206,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const chapterId = parseInt(req.params.id);
       const readingTime = parseInt(req.body.readingTime) || 0;
       
-      const progress = await storage.markChapterCompleted(req.user.id, chapterId, readingTime);
+      const progress = grimoireStore.markChapterCompleted(req.user.id, chapterId, readingTime);
       res.json(progress);
     } catch (error) {
       console.error("Error marking chapter complete:", error);
@@ -216,7 +216,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/unlocked/grimoires", authenticateToken, async (req: any, res) => {
     try {
-      const unlockedIds = await storage.getUnlockedGrimoires(req.user.id);
+      const unlockedIds = grimoireStore.getUnlockedGrimoires(req.user.id);
       res.json(unlockedIds);
     } catch (error) {
       console.error("Error fetching unlocked grimoires:", error);
@@ -227,7 +227,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/unlocked/chapters/:grimoireId", authenticateToken, async (req: any, res) => {
     try {
       const grimoireId = parseInt(req.params.grimoireId);
-      const unlockedIds = await storage.getUnlockedChapters(req.user.id, grimoireId);
+      const unlockedIds = grimoireStore.getUnlockedChapters(req.user.id, grimoireId);
       res.json(unlockedIds);
     } catch (error) {
       console.error("Error fetching unlocked chapters:", error);
