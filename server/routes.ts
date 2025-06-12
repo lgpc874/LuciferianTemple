@@ -252,6 +252,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin routes
+  app.get("/api/admin/users", authenticateToken, requireAdmin, async (req: any, res) => {
+    try {
+      // Return all users for admin (this would need implementation in storage)
+      res.json({ message: "Admin access granted", admin: req.user.email });
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      res.status(500).json({ error: "Erro ao buscar usuários" });
+    }
+  });
+
+  app.post("/api/admin/unlock-all", authenticateToken, requireAdmin, async (req: any, res) => {
+    try {
+      // Admin can unlock all content for any user
+      res.json({ message: "Admin pode desbloquear todo conteúdo" });
+    } catch (error) {
+      console.error("Error unlocking content:", error);
+      res.status(500).json({ error: "Erro ao desbloquear conteúdo" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

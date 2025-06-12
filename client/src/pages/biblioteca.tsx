@@ -130,7 +130,13 @@ export default function Biblioteca() {
                 Bem-vindo de volta, <span className="text-golden-amber font-semibold">{user.username}</span>
               </p>
               <p className="font-garamond text-sm text-ritualistic-beige/70 italic">
-                Iniciado dos Mistérios Arcanos
+                {user.email === "templo.admin@templodoabismo.com" ? (
+                  <span className="text-red-400 font-semibold">
+                    ⸸ SUPREMO GUARDIÃO DO TEMPLO ⸸
+                  </span>
+                ) : (
+                  "Iniciado dos Mistérios Arcanos"
+                )}
               </p>
             </div>
           )}
