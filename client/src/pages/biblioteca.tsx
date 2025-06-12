@@ -143,63 +143,100 @@ export default function Biblioteca() {
         </div>
       </div>
 
-      {/* Grid de grimórios */}
+      {/* Seções da biblioteca */}
       <div className="max-w-7xl mx-auto px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-          {grimoires.map((grimoire) => {
-            const coverSvg = grimoireCoverSvgs[grimoire.category as keyof typeof grimoireCoverSvgs];
-            
-            return (
-              <div
-                key={grimoire.id}
-                className="group relative content-section border border-burned-amber/50 rounded-xl overflow-hidden hover:border-golden-amber/70 transition-all duration-500 hover:shadow-2xl hover:shadow-golden-amber/10"
-              >
-                {/* Capa do grimório */}
-                <div className="aspect-[3/4] p-6 bg-gradient-to-br from-dark-brown to-very-dark-brown">
-                  <div className="w-full h-full rounded-lg overflow-hidden shadow-2xl transform group-hover:scale-105 transition-transform duration-300">
-                    {coverSvg}
-                  </div>
-                </div>
+        {/* Seção: Ensinamentos Públicos */}
+        <div className="mb-16">
+          <div className="text-center mb-12">
+            <h2 className="font-cinzel text-3xl md:text-4xl text-golden-amber mb-4 tracking-wider">
+              ⸸ ENSINAMENTOS PÚBLICOS ⸸
+            </h2>
+            <div className="w-24 h-0.5 bg-golden-amber mx-auto mb-4"></div>
+            <p className="font-garamond text-ritualistic-beige text-lg italic max-w-2xl mx-auto">
+              Conhecimentos fundamentais para todos os buscadores da verdade
+            </p>
+          </div>
 
-                {/* Informações do grimório */}
-                <div className="p-6 space-y-4">
-                  <div>
-                    <h3 className="font-cinzel text-xl text-golden-amber mb-2 group-hover:text-golden-amber/80 transition-colors tracking-wide">
-                      {grimoire.title}
-                    </h3>
-                    <p className="font-garamond text-ritualistic-beige text-sm leading-relaxed">
-                      {grimoire.description}
-                    </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
+            {grimoires.map((grimoire) => {
+              const coverSvg = grimoireCoverSvgs[grimoire.category as keyof typeof grimoireCoverSvgs];
+              
+              return (
+                <div
+                  key={grimoire.id}
+                  className="group relative content-section border border-burned-amber/50 rounded-lg overflow-hidden hover:border-golden-amber/70 transition-all duration-500 hover:shadow-lg hover:shadow-golden-amber/10"
+                >
+                  {/* Capa do grimório - menor */}
+                  <div className="aspect-[3/4] p-3 bg-gradient-to-br from-dark-brown to-very-dark-brown">
+                    <div className="w-full h-full rounded-md overflow-hidden shadow-lg transform group-hover:scale-105 transition-transform duration-300">
+                      {coverSvg}
+                    </div>
                   </div>
 
-                  {/* Metadados */}
-                  <div className="flex justify-between items-center text-xs text-burned-amber border-t border-burned-amber/30 pt-4">
-                    <div className="flex items-center space-x-1">
-                      <span>Nível:</span>
-                      <span className="font-semibold text-golden-amber">
+                  {/* Informações do grimório - compactas */}
+                  <div className="p-4 space-y-3">
+                    <div>
+                      <h3 className="font-cinzel text-sm text-golden-amber mb-1 group-hover:text-golden-amber/80 transition-colors tracking-wide leading-tight">
+                        {grimoire.title}
+                      </h3>
+                      <p className="font-garamond text-ritualistic-beige text-xs leading-relaxed line-clamp-2">
+                        {grimoire.description}
+                      </p>
+                    </div>
+
+                    {/* Metadados compactos */}
+                    <div className="flex justify-between items-center text-xs text-burned-amber border-t border-burned-amber/30 pt-2">
+                      <span className="text-golden-amber font-semibold">
                         {getDifficultyText(grimoire.difficultyLevel)}
                       </span>
+                      <span className="text-golden-amber">#{grimoire.unlockOrder}</span>
                     </div>
-                    <div className="flex items-center space-x-1">
-                      <span>Ordem:</span>
-                      <span className="text-golden-amber font-semibold">#{grimoire.unlockOrder}</span>
-                    </div>
+
+                    {/* Botão de acesso compacto */}
+                    <button className="w-full veil-button bg-gradient-to-r from-golden-amber/10 to-golden-amber/5 hover:from-golden-amber/20 hover:to-golden-amber/10 text-golden-amber font-cinzel py-2 px-3 rounded-md transition-all duration-300 border border-golden-amber/50 hover:border-golden-amber hover:shadow-md hover:shadow-golden-amber/25 tracking-wide text-xs">
+                      ABRIR
+                    </button>
                   </div>
 
-                  {/* Botão de acesso */}
-                  <button className="w-full veil-button bg-gradient-to-r from-golden-amber/10 to-golden-amber/5 hover:from-golden-amber/20 hover:to-golden-amber/10 text-golden-amber font-cinzel py-3 px-6 rounded-lg transition-all duration-300 border border-golden-amber/50 hover:border-golden-amber hover:shadow-lg hover:shadow-golden-amber/25 tracking-wide">
-                    <span className="flex items-center justify-center space-x-2">
-                      <span>ADENTRAR O GRIMÓRIO</span>
-                      <span className="text-golden-amber/70">→</span>
-                    </span>
-                  </button>
+                  {/* Efeito de hover */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-golden-amber/0 via-transparent to-golden-amber/0 group-hover:from-golden-amber/5 group-hover:to-golden-amber/5 transition-all duration-500 pointer-events-none"></div>
                 </div>
+              );
+            })}
+          </div>
+        </div>
 
-                {/* Efeito de hover */}
-                <div className="absolute inset-0 bg-gradient-to-br from-golden-amber/0 via-transparent to-golden-amber/0 group-hover:from-golden-amber/5 group-hover:to-golden-amber/5 transition-all duration-500 pointer-events-none"></div>
+        {/* Placeholder para futuras seções */}
+        <div className="mb-16">
+          <div className="text-center mb-12">
+            <h2 className="font-cinzel text-3xl md:text-4xl text-burned-amber/40 mb-4 tracking-wider">
+              ⸸ SEÇÕES FUTURAS ⸸
+            </h2>
+            <div className="w-24 h-0.5 bg-burned-amber/40 mx-auto mb-4"></div>
+            <p className="font-garamond text-burned-amber/60 text-lg italic max-w-2xl mx-auto">
+              Novos conhecimentos serão revelados em breve...
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div
+                key={`placeholder-${i}`}
+                className="content-section border border-burned-amber/20 rounded-lg overflow-hidden opacity-40"
+              >
+                <div className="aspect-[3/4] p-3 bg-gradient-to-br from-gray-800 to-gray-900">
+                  <div className="w-full h-full rounded-md bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center">
+                    <span className="text-gray-500 text-2xl">?</span>
+                  </div>
+                </div>
+                <div className="p-4">
+                  <div className="h-4 bg-gray-700 rounded mb-2"></div>
+                  <div className="h-3 bg-gray-800 rounded mb-3"></div>
+                  <div className="h-6 bg-gray-700 rounded"></div>
+                </div>
               </div>
-            );
-          })}
+            ))}
+          </div>
         </div>
 
         {/* Rodapé da biblioteca */}
