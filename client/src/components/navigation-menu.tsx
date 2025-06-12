@@ -82,7 +82,7 @@ export default function NavigationMenu() {
         {/* Mobile Menu Button */}
         <div className="md:hidden flex items-center justify-between py-3" ref={menuRef}>
           <span className="font-cinzel text-golden-amber text-sm tracking-wide">
-            NAVEGAÇÃO
+            ⟨ PORTAIS ⟩
           </span>
           <button
             onClick={toggleMenu}
