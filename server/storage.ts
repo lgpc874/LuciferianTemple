@@ -7,6 +7,7 @@ import { eq } from "drizzle-orm";
 export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   initializeDatabase(): Promise<void>;
 }
@@ -94,6 +95,30 @@ export class SupabaseStorage implements IStorage {
     }
   }
 
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    try {
+      const client = this.getSupabaseClient();
+      if (!client) return undefined;
+      
+      const { data, error } = await client
+        .from('users')
+        .select('*')
+        .eq('email', email)
+        .single();
+      
+      if (error) {
+        if (error.code === 'PGRST116') return undefined; // No rows found
+        console.error('Error fetching user by email:', error);
+        return undefined;
+      }
+      
+      return data;
+    } catch (error) {
+      console.error('Error fetching user by email:', error);
+      return undefined;
+    }
+  }
+
   async createUser(insertUser: InsertUser): Promise<User> {
     const client = this.getSupabaseClient();
     if (!client) throw new Error('Database connection failed');
@@ -135,9 +160,15 @@ export class MemStorage implements IStorage {
     );
   }
 
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    return Array.from(this.users.values()).find(
+      (user) => user.email === email,
+    );
+  }
+
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = this.currentId++;
-    const user: User = { ...insertUser, id };
+    const user: User = { ...insertUser, id, createdAt: new Date() };
     this.users.set(id, user);
     return user;
   }
@@ -182,6 +213,12 @@ class HybridStorage implements IStorage {
     return this.useSupabase 
       ? this.supabaseStorage.getUserByUsername(username)
       : this.memStorage.getUserByUsername(username);
+  }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    return this.useSupabase 
+      ? this.supabaseStorage.getUserByEmail(email)
+      : this.memStorage.getUserByEmail(email);
   }
 
   async createUser(user: InsertUser): Promise<User> {
