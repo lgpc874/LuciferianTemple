@@ -16,7 +16,7 @@ class GrimoireDataStore {
       {
         id: 1,
         title: "Introdução ao Ocultismo",
-        description: "Conceitos básicos para os buscadores do Despertar",
+        description: "Conceitos fundamentais para iniciantes",
         category: "introducao-ocultismo",
         difficultyLevel: 1,
         unlockOrder: 1
@@ -24,33 +24,33 @@ class GrimoireDataStore {
       {
         id: 2,
         title: "Lúcifer e o Caminho da Luz Negra",
-        description: "Uma introdução ao luciferianismo filosófico e espiritual",
+        description: "Primeiras lições sobre o luciferianismo",
         category: "lucifer-luz-negra",
-        difficultyLevel: 2,
+        difficultyLevel: 1,
         unlockOrder: 2
       },
       {
         id: 3,
         title: "Lilith e o Poder da Sombra Feminina",
-        description: "O despertar da força oculta da Mãe Noturna",
+        description: "Introdução aos mistérios da Mãe Noturna",
         category: "lilith-sombra-feminina",
-        difficultyLevel: 2,
+        difficultyLevel: 1,
         unlockOrder: 3
       },
       {
         id: 4,
-        title: "Simbolismo e Sigilos",
-        description: "O poder dos símbolos arcanos",
+        title: "Simbolismo e Sigilos Básicos",
+        description: "Primeiros passos com símbolos arcanos",
         category: "simbolismo-sigilos",
-        difficultyLevel: 3,
+        difficultyLevel: 1,
         unlockOrder: 4
       },
       {
         id: 5,
-        title: "Textos Filosóficos e Reflexões",
-        description: "Escritos para provocar a alma e questionar os dogmas",
+        title: "Reflexões Filosóficas Iniciais",
+        description: "Primeiras contemplações para novos buscadores",
         category: "textos-filosoficos",
-        difficultyLevel: 4,
+        difficultyLevel: 1,
         unlockOrder: 5
       },
       {
