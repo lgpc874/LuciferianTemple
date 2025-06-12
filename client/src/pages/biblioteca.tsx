@@ -172,34 +172,31 @@ export default function Biblioteca() {
                   key={grimoire.id}
                   className="group relative content-section border border-burned-amber/50 rounded-lg overflow-hidden hover:border-golden-amber/70 transition-all duration-500 hover:shadow-lg hover:shadow-golden-amber/10"
                 >
-                  {/* Capa do grimório - menor */}
-                  <div className="aspect-[3/4] p-3 bg-gradient-to-br from-dark-brown to-very-dark-brown">
+                  {/* Capa do grimório - mais compacta */}
+                  <div className="aspect-[4/5] p-2 sm:p-3 bg-gradient-to-br from-dark-brown to-very-dark-brown">
                     <div className="w-full h-full rounded-md overflow-hidden shadow-lg transform group-hover:scale-105 transition-transform duration-300">
                       {coverSvg}
                     </div>
                   </div>
 
-                  {/* Informações do grimório - compactas */}
-                  <div className="p-4 space-y-3">
+                  {/* Informações do grimório - otimizadas para mobile */}
+                  <div className="p-2 sm:p-4 space-y-2 sm:space-y-3 text-center">
                     <div>
-                      <h3 className="font-cinzel text-sm text-golden-amber mb-1 group-hover:text-golden-amber/80 transition-colors tracking-wide leading-tight">
+                      <h3 className="font-cinzel text-xs sm:text-sm text-golden-amber mb-1 group-hover:text-golden-amber/80 transition-colors tracking-wide leading-tight line-clamp-2">
                         {grimoire.title}
                       </h3>
-                      <p className="font-garamond text-ritualistic-beige text-xs leading-relaxed line-clamp-2">
+                      <p className="font-garamond text-ritualistic-beige text-xs leading-relaxed line-clamp-2 hidden sm:block">
                         {grimoire.description}
                       </p>
                     </div>
 
-                    {/* Metadados compactos */}
-                    <div className="flex justify-between items-center text-xs text-burned-amber border-t border-burned-amber/30 pt-2">
-                      <span className="text-golden-amber font-semibold">
-                        {getDifficultyText(grimoire.difficultyLevel)}
-                      </span>
-                      <span className="text-golden-amber">#{grimoire.unlockOrder}</span>
+                    {/* Metadados simplificados para mobile */}
+                    <div className="text-xs text-golden-amber font-semibold">
+                      {getDifficultyText(grimoire.difficultyLevel)}
                     </div>
 
                     {/* Botão de acesso compacto */}
-                    <button className="w-full veil-button bg-gradient-to-r from-golden-amber/10 to-golden-amber/5 hover:from-golden-amber/20 hover:to-golden-amber/10 text-golden-amber font-cinzel py-2 px-3 rounded-md transition-all duration-300 border border-golden-amber/50 hover:border-golden-amber hover:shadow-md hover:shadow-golden-amber/25 tracking-wide text-xs">
+                    <button className="w-full veil-button bg-gradient-to-r from-golden-amber/10 to-golden-amber/5 hover:from-golden-amber/20 hover:to-golden-amber/10 text-golden-amber font-cinzel py-1.5 sm:py-2 px-2 sm:px-3 rounded-md transition-all duration-300 border border-golden-amber/50 hover:border-golden-amber hover:shadow-md hover:shadow-golden-amber/25 tracking-wide text-xs">
                       ABRIR
                     </button>
                   </div>
@@ -230,15 +227,15 @@ export default function Biblioteca() {
                 key={`placeholder-${i}`}
                 className="content-section border border-burned-amber/20 rounded-lg overflow-hidden opacity-40"
               >
-                <div className="aspect-[3/4] p-3 bg-gradient-to-br from-gray-800 to-gray-900">
+                <div className="aspect-[4/5] p-2 sm:p-3 bg-gradient-to-br from-gray-800 to-gray-900">
                   <div className="w-full h-full rounded-md bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center">
-                    <span className="text-gray-500 text-2xl">?</span>
+                    <span className="text-gray-500 text-xl sm:text-2xl">?</span>
                   </div>
                 </div>
-                <div className="p-4">
-                  <div className="h-4 bg-gray-700 rounded mb-2"></div>
-                  <div className="h-3 bg-gray-800 rounded mb-3"></div>
-                  <div className="h-6 bg-gray-700 rounded"></div>
+                <div className="p-2 sm:p-4 text-center">
+                  <div className="h-3 sm:h-4 bg-gray-700 rounded mb-1 sm:mb-2"></div>
+                  <div className="h-2 sm:h-3 bg-gray-800 rounded mb-2 sm:mb-3 hidden sm:block"></div>
+                  <div className="h-5 sm:h-6 bg-gray-700 rounded"></div>
                 </div>
               </div>
             ))}
