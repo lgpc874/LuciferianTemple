@@ -26,21 +26,19 @@ export class SupabaseStorage implements IStorage {
 
   async initializeDatabase(): Promise<void> {
     try {
-      const { client } = await this.getConnection();
+      const client = this.getSupabaseClient();
       if (client) {
-        // Simple connection test
-        await client`SELECT 1`;
+        // Test connection by attempting a simple query
+        const { error } = await client.from('users').select('count', { count: 'exact', head: true });
         
-        // Create users table
-        await client`
-          CREATE TABLE IF NOT EXISTS users (
-            id SERIAL PRIMARY KEY,
-            username TEXT NOT NULL UNIQUE,
-            password TEXT NOT NULL,
-            created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-          )
-        `;
-        console.log("Supabase database initialized successfully");
+        if (error && error.code === 'PGRST116') {
+          console.log("Users table doesn't exist - please create it in Supabase dashboard");
+          console.log("SQL: CREATE TABLE users (id SERIAL PRIMARY KEY, username TEXT UNIQUE NOT NULL, password TEXT NOT NULL);");
+        } else if (error) {
+          throw new Error(`Supabase error: ${error.message}`);
+        }
+        
+        console.log("Supabase connection established successfully");
       }
     } catch (error) {
       console.error("Supabase connection error:", error instanceof Error ? error.message : String(error));
@@ -50,44 +48,67 @@ export class SupabaseStorage implements IStorage {
 
   async getUser(id: number): Promise<User | undefined> {
     try {
-      const { db } = await this.getConnection();
-      if (db) {
-        const result = await db.select().from(users).where(eq(users.id, id));
-        return result[0];
+      const client = this.getSupabaseClient();
+      if (!client) return undefined;
+      
+      const { data, error } = await client
+        .from('users')
+        .select('*')
+        .eq('id', id)
+        .single();
+      
+      if (error) {
+        if (error.code === 'PGRST116') return undefined; // No rows found
+        console.error('Error fetching user:', error);
+        return undefined;
       }
-      return undefined;
+      
+      return data;
     } catch (error) {
-      console.error("Error getting user:", error);
+      console.error('Error fetching user:', error);
       return undefined;
     }
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
     try {
-      const { db } = await this.getConnection();
-      if (db) {
-        const result = await db.select().from(users).where(eq(users.username, username));
-        return result[0];
+      const client = this.getSupabaseClient();
+      if (!client) return undefined;
+      
+      const { data, error } = await client
+        .from('users')
+        .select('*')
+        .eq('username', username)
+        .single();
+      
+      if (error) {
+        if (error.code === 'PGRST116') return undefined; // No rows found
+        console.error('Error fetching user by username:', error);
+        return undefined;
       }
-      return undefined;
+      
+      return data;
     } catch (error) {
-      console.error("Error getting user by username:", error);
+      console.error('Error fetching user by username:', error);
       return undefined;
     }
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    try {
-      const { db } = await this.getConnection();
-      if (db) {
-        const result = await db.insert(users).values(insertUser).returning();
-        return result[0];
-      }
-      throw new Error("Database not available");
-    } catch (error) {
-      console.error("Error creating user:", error);
-      throw error;
+    const client = this.getSupabaseClient();
+    if (!client) throw new Error('Database connection failed');
+    
+    const { data, error } = await client
+      .from('users')
+      .insert(insertUser)
+      .select()
+      .single();
+    
+    if (error) {
+      throw new Error(`Failed to create user: ${error.message}`);
     }
+    
+    return data;
   }
 }
 
