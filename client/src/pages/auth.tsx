@@ -11,5 +11,9 @@ export default function AuthPage() {
     setLocation("/");
   };
 
-  return <AuthForm onSuccess={handleAuthSuccess} />;
+  return (
+    <div className="min-h-screen flex items-center justify-center p-4 mystical-bg pt-20">
+      <AuthForm onSuccess={handleAuthSuccess} />
+    </div>
+  );
 }
