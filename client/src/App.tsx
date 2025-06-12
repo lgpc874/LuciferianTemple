@@ -10,6 +10,7 @@ import Home from "@/pages/home";
 import NotFound from "@/pages/not-found";
 import AuthPage from "@/pages/auth";
 import BibliothecaArcana from "@/pages/bibliotheca-arcana";
+import Biblioteca from "@/pages/biblioteca";
 
 function Router() {
   return (
@@ -17,6 +18,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/auth" component={AuthPage} />
       <Route path="/bibliotheca-arcana" component={BibliothecaArcana} />
+      <Route path="/biblioteca" component={Biblioteca} />
       <Route component={NotFound} />
     </Switch>
   );

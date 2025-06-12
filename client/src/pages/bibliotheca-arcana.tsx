@@ -74,9 +74,11 @@ export default function BibliothecaArcana() {
                 
                 {/* Botão Ritualístico */}
                 <div className="mt-12 text-center">
-                  <button className="veil-button px-8 py-4 text-golden-amber font-cinzel text-lg tracking-widest rounded border-2 border-golden-amber bg-transparent hover:bg-golden-amber/10 transition-all duration-500 hover:scale-105 hover:shadow-lg hover:shadow-golden-amber/20">
-                    ADENTRAR A BIBLIOTHECA
-                  </button>
+                  <a href="/biblioteca">
+                    <button className="veil-button px-8 py-4 text-golden-amber font-cinzel text-lg tracking-widest rounded border-2 border-golden-amber bg-transparent hover:bg-golden-amber/10 transition-all duration-500 hover:scale-105 hover:shadow-lg hover:shadow-golden-amber/20">
+                      ADENTRAR A BIBLIOTHECA
+                    </button>
+                  </a>
                 </div>
               </div>
             </div>
