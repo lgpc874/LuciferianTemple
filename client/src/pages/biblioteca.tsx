@@ -186,16 +186,39 @@ export default function Biblioteca() {
               const latestProgress = hasProgress ? 
                 grimoireProgress.sort((a: any, b: any) => new Date(b.completedAt || b.createdAt).getTime() - new Date(a.completedAt || a.createdAt).getTime())[0] : null;
               
-              // Determine button text and style
-              const buttonText = hasProgress ? "CONTINUAR" : "LER";
-              const buttonStyle = hasProgress ? 
-                "w-full veil-button bg-gradient-to-r from-blue-600/20 to-blue-500/10 hover:from-blue-600/30 hover:to-blue-500/15 text-blue-300 font-cinzel py-2 sm:py-3 px-2 sm:px-3 rounded-md transition-all duration-300 border border-blue-400/50 hover:border-blue-300 hover:shadow-md hover:shadow-blue-300/25 tracking-normal text-xs sm:text-sm" :
-                "w-full veil-button bg-gradient-to-r from-golden-amber/10 to-golden-amber/5 hover:from-golden-amber/20 hover:to-golden-amber/10 text-golden-amber font-cinzel py-2 sm:py-3 px-3 sm:px-4 rounded-md transition-all duration-300 border border-golden-amber/50 hover:border-golden-amber hover:shadow-md hover:shadow-golden-amber/25 tracking-wide text-sm";
+              // Determine reading status and card style
+              let statusText = "VER";
+              let statusColor = "text-golden-amber";
+              let cardBorderColor = "border-burned-amber/50 hover:border-golden-amber/70";
+              let statusBg = "bg-golden-amber/10";
+              
+              if (hasProgress) {
+                // Check if completed (this would need completion logic)
+                const isCompleted = false; // TODO: implement completion checking
+                
+                if (isCompleted) {
+                  statusText = "LIDO";
+                  statusColor = "text-green-300";
+                  cardBorderColor = "border-green-500/50 hover:border-green-400/70";
+                  statusBg = "bg-green-500/10";
+                } else {
+                  statusText = "CONTINUAR";
+                  statusColor = "text-blue-300";
+                  cardBorderColor = "border-blue-500/50 hover:border-blue-400/70";
+                  statusBg = "bg-blue-500/10";
+                }
+              }
               
               return (
-                <div
+                <motion.div
                   key={grimoire.id}
-                  className="group relative content-section border border-burned-amber/50 rounded-lg overflow-hidden hover:border-golden-amber/70 transition-all duration-500 hover:shadow-lg hover:shadow-golden-amber/10"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    setLocation(`/grimoire/${grimoire.id}`);
+                  }}
+                  className={`group relative content-section ${cardBorderColor} rounded-lg overflow-hidden transition-all duration-500 hover:shadow-lg hover:shadow-current/10 cursor-pointer`}
                 >
                   {/* Capa do grimório */}
                   <div className="aspect-[4/5] p-3 sm:p-4 bg-gradient-to-br from-dark-brown to-very-dark-brown">
@@ -204,31 +227,25 @@ export default function Biblioteca() {
                     </div>
                   </div>
 
-                  {/* Botão de acesso */}
-                  <div className="p-3 sm:p-4">
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => {
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                        setLocation(`/grimoire/${grimoire.id}`);
-                      }}
-                      className={buttonStyle}
-                    >
-                      {buttonText}
-                    </motion.button>
+                  {/* Status overlay */}
+                  <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4">
+                    <div className={`${statusBg} backdrop-blur-sm border ${statusColor.replace('text-', 'border-').replace('300', '400/50')} rounded-md py-2 px-3 text-center transition-all duration-300 group-hover:${statusBg.replace('/10', '/20')}`}>
+                      <span className={`${statusColor} font-cinzel text-xs sm:text-sm font-semibold tracking-wide`}>
+                        {statusText}
+                      </span>
+                    </div>
                   </div>
 
                   {/* Progress indicator */}
                   {hasProgress && (
                     <div className="absolute top-2 right-2">
-                      <div className="w-3 h-3 bg-blue-400 rounded-full shadow-lg animate-pulse"></div>
+                      <div className={`w-3 h-3 ${statusText === "LIDO" ? "bg-green-400" : "bg-blue-400"} rounded-full shadow-lg animate-pulse`}></div>
                     </div>
                   )}
 
                   {/* Efeito de hover */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-golden-amber/0 via-transparent to-golden-amber/0 group-hover:from-golden-amber/5 group-hover:to-golden-amber/5 transition-all duration-500 pointer-events-none"></div>
-                </div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-current/0 via-transparent to-current/0 group-hover:from-current/5 group-hover:to-current/5 transition-all duration-500 pointer-events-none"></div>
+                </motion.div>
               );
             })}
           </div>
