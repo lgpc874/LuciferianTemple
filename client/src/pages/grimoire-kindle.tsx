@@ -36,6 +36,8 @@ export default function GrimoireKindle() {
   const [selectedChapter, setSelectedChapter] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [startTime, setStartTime] = useState<number>(0);
+  const progressSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   // Content pagination
   const [currentPageContent, setCurrentPageContent] = useState('');
@@ -49,6 +51,12 @@ export default function GrimoireKindle() {
 
   const { data: chapters } = useQuery({
     queryKey: [`/api/grimoires/${grimoireId}/chapters`]
+  });
+
+  // Fetch user progress for this grimoire
+  const { data: userProgress = [] } = useQuery({
+    queryKey: [`/api/progress/grimoire/${grimoireId}`],
+    enabled: !!token && !!grimoireId
   });
 
   // Get current chapter
