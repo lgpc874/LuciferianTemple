@@ -36,7 +36,7 @@ export default function GrimoireReader() {
   });
 
   const { data: chapters = [], isLoading: chaptersLoading } = useQuery({
-    queryKey: ['/api/grimoires', id, 'chapters'],
+    queryKey: [`/api/grimoires/${id}/chapters`],
     enabled: !!id && !!token
   });
 

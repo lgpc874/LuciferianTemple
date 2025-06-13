@@ -25,7 +25,7 @@ function Router() {
         <Route path="/auth" component={AuthPage} />
         <Route path="/bibliotheca-arcana" component={BibliothecaArcana} />
         <Route path="/biblioteca" component={Biblioteca} />
-        <Route path="/grimoire/:id" component={GrimoireSimple} />
+        <Route path="/grimoire/:id" component={GrimoireReader} />
         <Route component={NotFound} />
       </Switch>
     </AnimatePresence>
