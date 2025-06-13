@@ -30,12 +30,12 @@ export default function GrimoireReader() {
   const { token } = useAuth();
   const [selectedChapter, setSelectedChapter] = useState<number>(1);
 
-  const { data: grimoire, isLoading: grimoireLoading } = useQuery({
+  const { data: grimoire, isLoading: grimoireLoading } = useQuery<Grimoire>({
     queryKey: ['/api/grimoires', id],
     enabled: !!id && !!token
   });
 
-  const { data: chapters = [], isLoading: chaptersLoading } = useQuery({
+  const { data: chapters = [], isLoading: chaptersLoading } = useQuery<Chapter[]>({
     queryKey: ['/api/grimoires', id, 'chapters'],
     enabled: !!id && !!token
   });
@@ -88,7 +88,7 @@ export default function GrimoireReader() {
           </motion.button>
 
           <div className="text-center">
-            <h1 className="font-cinzel text-lg text-golden-amber">{grimoire.title}</h1>
+            <h1 className="font-cinzel text-lg text-golden-amber">{grimoire?.title}</h1>
             <p className="text-xs text-burned-amber">{currentChapter?.title}</p>
           </div>
 
