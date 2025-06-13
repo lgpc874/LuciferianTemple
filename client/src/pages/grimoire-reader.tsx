@@ -35,12 +35,12 @@ export default function GrimoireReader() {
     enabled: !!id && !!token
   });
 
-  const { data: chapters, isLoading: chaptersLoading } = useQuery({
+  const { data: chapters = [], isLoading: chaptersLoading } = useQuery({
     queryKey: ['/api/grimoires', id, 'chapters'],
     enabled: !!id && !!token
   });
 
-  const currentChapter = chapters ? chapters.find((ch: Chapter) => ch.chapterOrder === selectedChapter) : null;
+  const currentChapter = (chapters as Chapter[]).find((ch: Chapter) => ch.chapterOrder === selectedChapter);
 
   if (grimoireLoading || chaptersLoading) {
     return (
@@ -88,7 +88,7 @@ export default function GrimoireReader() {
           </motion.button>
 
           <div className="text-center">
-            <h1 className="font-cinzel text-lg text-golden-amber">{grimoire?.title || 'Grimório'}</h1>
+            <h1 className="font-cinzel text-lg text-golden-amber">{(grimoire as Grimoire)?.title || 'Grimório'}</h1>
             <p className="text-xs text-burned-amber">{currentChapter?.title || ''}</p>
           </div>
 
@@ -110,7 +110,7 @@ export default function GrimoireReader() {
             className="mb-8"
           >
             <div className="flex flex-wrap gap-2 justify-center">
-              {chapters && chapters.map((chapter: Chapter) => (
+              {(chapters as Chapter[]).map((chapter: Chapter) => (
                 <motion.button
                   key={chapter.id}
                   whileHover={{ scale: 1.05 }}
@@ -186,10 +186,10 @@ export default function GrimoireReader() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => setSelectedChapter(Math.min(chapters?.length || 0, selectedChapter + 1))}
-              disabled={selectedChapter === (chapters?.length || 0)}
+              onClick={() => setSelectedChapter(Math.min((chapters as Chapter[]).length, selectedChapter + 1))}
+              disabled={selectedChapter === (chapters as Chapter[]).length}
               className={`flex items-center space-x-2 font-cinzel py-3 px-6 rounded-md transition-all duration-300 ${
-                selectedChapter === (chapters?.length || 0)
+                selectedChapter === (chapters as Chapter[]).length
                   ? 'bg-gray-700/30 text-gray-500 cursor-not-allowed'
                   : 'bg-golden-amber/10 text-golden-amber border border-golden-amber/30 hover:bg-golden-amber/20'
               }`}
