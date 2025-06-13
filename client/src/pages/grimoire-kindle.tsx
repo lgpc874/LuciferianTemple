@@ -69,57 +69,71 @@ export default function GrimoireKindle() {
     setIsFullscreen(false);
   };
 
-  // Smart pagination with heading control for A5 format
+  // Smart pagination for A5 format with text flow
   useEffect(() => {
     if (!currentChapter) return;
 
     const content = currentChapter.content;
-    const maxWordsPerPage = isMobile ? 120 : 150; // Reduced to prevent overflow
+    const maxCharsPerPage = isMobile ? 2800 : 3500; // Character-based pagination for better control
     
-    // Split content into HTML elements while preserving structure
-    const elements = content.split(/(<h[3-4][^>]*>.*?<\/h[3-4]>|<blockquote[^>]*>.*?<\/blockquote>|<ul[^>]*>.*?<\/ul>|<p[^>]*>.*?<\/p>)/g)
-      .filter(element => element.trim().length > 0);
+    // First, identify heading positions to prevent orphaning
+    const headingMatches = [...content.matchAll(/<h[3-4][^>]*>.*?<\/h[3-4]>/g)];
+    const headingPositions = headingMatches.map(match => ({
+      start: match.index,
+      end: match.index + match[0].length,
+      content: match[0]
+    }));
     
+    // Split content into pages
     let pages: string[] = [];
-    let currentPageHTML = '';
-    let currentWordCount = 0;
+    let currentPos = 0;
     
-    for (const element of elements) {
-      // Count words excluding HTML tags
-      const elementText = element.replace(/<[^>]*>/g, '');
-      const elementWords = elementText.split(/\s+/).filter(word => word.length > 0);
-      const elementWordCount = elementWords.length;
+    while (currentPos < content.length) {
+      let pageEndPos = Math.min(currentPos + maxCharsPerPage, content.length);
       
-      // Check if this is a heading
-      const isHeading = /<h[3-4]/.test(element);
-      
-      // If this element would exceed page capacity
-      if (currentWordCount + elementWordCount > maxWordsPerPage) {
-        // For headings, if we're past 70% of page capacity, move to next page
-        if (isHeading && currentWordCount > maxWordsPerPage * 0.7) {
-          if (currentPageHTML.trim()) {
-            pages.push(currentPageHTML);
+      // Adjust for heading placement - don't start headings near end of page
+      for (const heading of headingPositions) {
+        if (heading.start > currentPos && heading.start < pageEndPos) {
+          // If heading starts in last 20% of page, move it to next page
+          if (heading.start > currentPos + (maxCharsPerPage * 0.8)) {
+            pageEndPos = heading.start;
+            break;
           }
-          currentPageHTML = element;
-          currentWordCount = elementWordCount;
-        } else {
-          // Start new page with this element
-          if (currentPageHTML.trim()) {
-            pages.push(currentPageHTML);
-          }
-          currentPageHTML = element;
-          currentWordCount = elementWordCount;
         }
-      } else {
-        // Add element to current page
-        currentPageHTML += element;
-        currentWordCount += elementWordCount;
       }
-    }
-    
-    // Add the last page if it has content
-    if (currentPageHTML.trim()) {
-      pages.push(currentPageHTML);
+      
+      // If not at end of content, find a good break point
+      if (pageEndPos < content.length) {
+        // Look backward for natural break points
+        let breakPoint = pageEndPos;
+        
+        // Try to break at end of paragraph
+        let paragraphEnd = content.lastIndexOf('</p>', pageEndPos);
+        if (paragraphEnd > currentPos + (maxCharsPerPage * 0.7)) {
+          breakPoint = paragraphEnd + 4;
+        } else {
+          // Try to break at end of sentence
+          let sentenceEnd = content.lastIndexOf('.', pageEndPos);
+          if (sentenceEnd > currentPos + (maxCharsPerPage * 0.8)) {
+            breakPoint = sentenceEnd + 1;
+          } else {
+            // Break at word boundary
+            let spacePos = content.lastIndexOf(' ', pageEndPos);
+            if (spacePos > currentPos) {
+              breakPoint = spacePos;
+            }
+          }
+        }
+        
+        pageEndPos = breakPoint;
+      }
+      
+      const pageContent = content.slice(currentPos, pageEndPos).trim();
+      if (pageContent) {
+        pages.push(pageContent);
+      }
+      
+      currentPos = pageEndPos;
     }
     
     // Ensure we have at least one page
