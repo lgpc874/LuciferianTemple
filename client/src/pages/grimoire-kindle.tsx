@@ -289,14 +289,17 @@ export default function GrimoireKindle() {
 
       {/* Conteúdo principal - estilo Kindle */}
       <div className="w-full h-screen flex flex-col">
-        {/* Botão de menu fixo no topo */}
-        <div className="fixed top-4 left-4 z-30">
-          <button 
-            onClick={() => setShowMenu(true)}
-            className="p-3 bg-white/95 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all border border-gray-200"
-          >
-            <Menu size={18} className="text-gray-700" />
-          </button>
+        {/* Espaço reservado para o menu */}
+        <div className="h-20 flex-shrink-0 relative">
+          {/* Botão de menu fixo no topo */}
+          <div className="absolute top-4 left-4 z-30">
+            <button 
+              onClick={() => setShowMenu(true)}
+              className="p-3 bg-white/95 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all border border-gray-200"
+            >
+              <Menu size={18} className="text-gray-700" />
+            </button>
+          </div>
         </div>
 
         {/* Conteúdo da página */}
@@ -319,8 +322,8 @@ export default function GrimoireKindle() {
           {/* Conteúdo central - responsivo para desktop e mobile */}
           <div className={`flex-1 flex flex-col ${
             isMobile 
-              ? 'px-6 py-8 mt-20' 
-              : 'px-12 py-16 mt-24'
+              ? 'px-6 py-4' 
+              : 'px-12 py-8'
           }`}>
             <AnimatePresence mode="wait">
               <motion.div
