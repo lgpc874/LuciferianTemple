@@ -7,6 +7,7 @@ import AuthForm from "../components/auth-form";
 
 export default function Biblioteca() {
   const { isAuthenticated, user, login, logout } = useAuth();
+  const [, setLocation] = useLocation();
   const grimoires = [
     {
       id: 1,
