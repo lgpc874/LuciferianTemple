@@ -69,80 +69,29 @@ export default function GrimoireKindle() {
     setIsFullscreen(false);
   };
 
-  // Smart pagination for A5 format with text flow
+  // Simple word-based pagination that works reliably
   useEffect(() => {
-    if (!currentChapter) return;
+    if (!currentChapter?.content) return;
 
-    const content = currentChapter.content;
-    const maxCharsPerPage = isMobile ? 2800 : 3500; // Character-based pagination for better control
+    // Clean text for word counting
+    const cleanText = currentChapter.content.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+    const allWords = cleanText.split(' ').filter(word => word.length > 0);
     
-    // First, identify heading positions to prevent orphaning
-    const headingMatches = [...content.matchAll(/<h[3-4][^>]*>.*?<\/h[3-4]>/g)];
-    const headingPositions = headingMatches.map(match => ({
-      start: match.index,
-      end: match.index + match[0].length,
-      content: match[0]
-    }));
+    // Conservative word count for A5 format
+    const wordsPerPage = isMobile ? 90 : 120;
+    const calculatedPages = Math.ceil(allWords.length / wordsPerPage);
     
-    // Split content into pages
-    let pages: string[] = [];
-    let currentPos = 0;
+    setTotalPages(Math.max(1, calculatedPages));
     
-    while (currentPos < content.length) {
-      let pageEndPos = Math.min(currentPos + maxCharsPerPage, content.length);
-      
-      // Adjust for heading placement - don't start headings near end of page
-      for (const heading of headingPositions) {
-        if (heading.start > currentPos && heading.start < pageEndPos) {
-          // If heading starts in last 20% of page, move it to next page
-          if (heading.start > currentPos + (maxCharsPerPage * 0.8)) {
-            pageEndPos = heading.start;
-            break;
-          }
-        }
-      }
-      
-      // If not at end of content, find a good break point
-      if (pageEndPos < content.length) {
-        // Look backward for natural break points
-        let breakPoint = pageEndPos;
-        
-        // Try to break at end of paragraph
-        let paragraphEnd = content.lastIndexOf('</p>', pageEndPos);
-        if (paragraphEnd > currentPos + (maxCharsPerPage * 0.7)) {
-          breakPoint = paragraphEnd + 4;
-        } else {
-          // Try to break at end of sentence
-          let sentenceEnd = content.lastIndexOf('.', pageEndPos);
-          if (sentenceEnd > currentPos + (maxCharsPerPage * 0.8)) {
-            breakPoint = sentenceEnd + 1;
-          } else {
-            // Break at word boundary
-            let spacePos = content.lastIndexOf(' ', pageEndPos);
-            if (spacePos > currentPos) {
-              breakPoint = spacePos;
-            }
-          }
-        }
-        
-        pageEndPos = breakPoint;
-      }
-      
-      const pageContent = content.slice(currentPos, pageEndPos).trim();
-      if (pageContent) {
-        pages.push(pageContent);
-      }
-      
-      currentPos = pageEndPos;
-    }
+    // Simple word-based content extraction
+    const startWordIndex = (currentPage - 1) * wordsPerPage;
+    const endWordIndex = Math.min(startWordIndex + wordsPerPage, allWords.length);
     
-    // Ensure we have at least one page
-    if (pages.length === 0) {
-      pages = [content];
-    }
+    const pageWords = allWords.slice(startWordIndex, endWordIndex);
+    const pageText = pageWords.join(' ');
     
-    setTotalPages(pages.length);
-    setCurrentPageContent(pages[currentPage - 1] || '');
+    // For now, use plain text to ensure reliability
+    setCurrentPageContent(`<p>${pageText}</p>`);
   }, [currentChapter, currentPage, isMobile]);
 
   // Navigation handlers with continuous reading
