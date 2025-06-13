@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useLocation, useParams } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { PageTransition } from '../components/page-transition';
 import { useIsMobile } from '../hooks/use-mobile';
 
@@ -147,16 +147,33 @@ export default function GrimoireKindle() {
 
         {/* Container de texto - área central */}
         <div className="flex-1 h-full flex items-center justify-center">
-          {/* Página formato A5 responsiva */}
+          {/* Página formato A5 responsiva - ligeiramente menor */}
           <div 
-            className="bg-white shadow-lg rounded-lg border border-gray-200"
+            className="bg-white shadow-lg rounded-lg border border-gray-200 relative"
             style={{
-              width: isMobile ? '90vw' : 'min(70vw, 420px)', // A5 width: ~148mm = 420px at 72dpi
-              height: isMobile ? '85vh' : 'min(85vh, 595px)', // A5 height: ~210mm = 595px at 72dpi
-              maxWidth: '420px',
-              maxHeight: '595px'
+              width: isMobile ? '85vw' : 'min(65vw, 380px)', // A5 reduzido
+              height: isMobile ? '80vh' : 'min(80vh, 540px)', // A5 reduzido
+              maxWidth: '380px',
+              maxHeight: '540px'
             }}
           >
+            {/* Botões discretos de navegação */}
+            <button
+              onClick={handlePrevPage}
+              disabled={selectedChapter === 1 && currentPage === 1}
+              className="absolute top-1/2 left-2 transform -translate-y-1/2 w-8 h-8 bg-gray-100/80 hover:bg-gray-200/80 rounded-full flex items-center justify-center opacity-0 hover:opacity-100 transition-all duration-200 disabled:opacity-0"
+            >
+              <ChevronLeft size={16} className="text-gray-600" />
+            </button>
+
+            <button
+              onClick={handleNextPage}
+              disabled={selectedChapter === (chapters as Chapter[])?.length && currentPage === totalPages}
+              className="absolute top-1/2 right-2 transform -translate-y-1/2 w-8 h-8 bg-gray-100/80 hover:bg-gray-200/80 rounded-full flex items-center justify-center opacity-0 hover:opacity-100 transition-all duration-200 disabled:opacity-0"
+            >
+              <ChevronRight size={16} className="text-gray-600" />
+            </button>
+
             <div className="h-full p-6 sm:p-8 md:p-10 flex flex-col">
               <AnimatePresence mode="wait">
                 <motion.div
