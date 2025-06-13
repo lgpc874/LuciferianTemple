@@ -182,13 +182,9 @@ export default function Biblioteca() {
               const grimoireProgress = Array.isArray(allProgress) ? 
                 allProgress.filter((p: any) => p.grimoireId === grimoire.id && p.progressType === 'reading') : [];
               
-              console.log(`Grimoire ${grimoire.id} progress:`, grimoireProgress);
-              
               const hasProgress = grimoireProgress.length > 0;
               const latestProgress = hasProgress ? 
                 grimoireProgress.sort((a: any, b: any) => new Date(b.completedAt || b.createdAt).getTime() - new Date(a.completedAt || a.createdAt).getTime())[0] : null;
-              
-              console.log(`Grimoire ${grimoire.id} hasProgress:`, hasProgress, 'latestProgress:', latestProgress);
               
               // Determine reading status and card style
               let statusText = "VER";

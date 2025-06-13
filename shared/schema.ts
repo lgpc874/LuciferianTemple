@@ -41,6 +41,7 @@ export const userProgress = pgTable("user_progress", {
   grimoireId: integer("grimoire_id").references(() => grimoires.id).notNull(),
   chapterId: integer("chapter_id").references(() => chapters.id),
   progressType: text("progress_type").notNull(),
+  currentPage: integer("current_page").default(1),
   readingTime: integer("reading_time").default(0),
   completedAt: timestamp("completed_at").defaultNow(),
 });
@@ -91,6 +92,7 @@ export const insertProgressSchema = createInsertSchema(userProgress).pick({
   grimoireId: true,
   chapterId: true,
   progressType: true,
+  currentPage: true,
   readingTime: true,
 });
 

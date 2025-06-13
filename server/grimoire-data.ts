@@ -1093,6 +1093,7 @@ class GrimoireDataStore {
       grimoireId: progress.grimoireId,
       chapterId: progress.chapterId || null,
       progressType: progress.progressType,
+      currentPage: progress.currentPage || 1,
       readingTime: progress.readingTime || null,
       completedAt: new Date()
     };
