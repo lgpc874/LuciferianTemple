@@ -7,6 +7,7 @@ import AuthForm from "../components/auth-form";
 
 export default function Biblioteca() {
   const { isAuthenticated, user, login, logout } = useAuth();
+  const [, setLocation] = useLocation();
   const grimoires = [
     {
       id: 1,
@@ -117,7 +118,7 @@ export default function Biblioteca() {
   }
 
   return (
-    <div className="min-h-screen mystical-bg pt-24 fade-in">
+    <PageTransition className="min-h-screen mystical-bg pt-24 fade-in">
       {/* Header místico */}
       <div className="relative py-16 bg-gradient-to-b from-red-950/20 to-transparent">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-golden-amber/5 via-transparent to-transparent"></div>
@@ -184,9 +185,14 @@ export default function Biblioteca() {
 
                   {/* Botão de acesso */}
                   <div className="p-3 sm:p-4">
-                    <button className="w-full veil-button bg-gradient-to-r from-golden-amber/10 to-golden-amber/5 hover:from-golden-amber/20 hover:to-golden-amber/10 text-golden-amber font-cinzel py-2 sm:py-3 px-3 sm:px-4 rounded-md transition-all duration-300 border border-golden-amber/50 hover:border-golden-amber hover:shadow-md hover:shadow-golden-amber/25 tracking-wide text-sm">
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => setLocation(`/grimoire/${grimoire.id}`)}
+                      className="w-full veil-button bg-gradient-to-r from-golden-amber/10 to-golden-amber/5 hover:from-golden-amber/20 hover:to-golden-amber/10 text-golden-amber font-cinzel py-2 sm:py-3 px-3 sm:px-4 rounded-md transition-all duration-300 border border-golden-amber/50 hover:border-golden-amber hover:shadow-md hover:shadow-golden-amber/25 tracking-wide text-sm"
+                    >
                       LER
-                    </button>
+                    </motion.button>
                   </div>
 
                   {/* Efeito de hover */}
@@ -266,6 +272,6 @@ export default function Biblioteca() {
           )}
         </div>
       </div>
-    </div>
+    </PageTransition>
   );
 }
