@@ -258,6 +258,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Create admin user endpoint (public for initial setup)
+  app.post("/api/setup/admin", async (req, res) => {
+    try {
+      const adminEmail = "admin@templodoabismo.com";
+      
+      // Check if admin already exists
+      const existingAdmin = await storage.getUserByEmail(adminEmail);
+      if (existingAdmin) {
+        return res.json({ 
+          success: true, 
+          message: "Usuário admin já existe",
+          user: { id: existingAdmin.id, email: existingAdmin.email, isAdmin: existingAdmin.isAdmin }
+        });
+      }
+
+      // Create admin user
+      const hashedPassword = await bcrypt.hash("admin123", 10);
+      const adminUser = await storage.createUser({
+        username: "admin",
+        email: adminEmail,
+        password: hashedPassword,
+        role: "admin",
+        isAdmin: true
+      });
+
+      res.json({ 
+        success: true, 
+        message: "Usuário administrativo criado com sucesso",
+        user: { id: adminUser.id, email: adminUser.email, isAdmin: adminUser.isAdmin },
+        credentials: { email: adminEmail, password: "admin123" }
+      });
+    } catch (error: any) {
+      res.status(500).json({ 
+        success: false, 
+        error: error.message 
+      });
+    }
+  });
+
   // Admin routes
   app.get("/api/admin/users", authenticateToken, requireAdmin, async (req: any, res) => {
     try {
