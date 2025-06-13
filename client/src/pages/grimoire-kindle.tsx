@@ -149,18 +149,12 @@ export default function GrimoireKindle() {
         <div className="flex-1 h-full flex items-center justify-center">
           {/* Página formato A5 responsiva - ligeiramente menor */}
           <div 
-            className="shadow-lg rounded-lg border border-amber-200 relative"
+            className="bg-card shadow-lg rounded-lg border border-border relative"
             style={{
               width: isMobile ? '85vw' : 'min(65vw, 380px)', // A5 reduzido
               height: isMobile ? '80vh' : 'min(80vh, 540px)', // A5 reduzido
               maxWidth: '380px',
-              maxHeight: '540px',
-              background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a  50%, #f3e8ab 100%)',
-              backgroundImage: `
-                radial-gradient(circle at 20% 30%, rgba(160, 82, 45, 0.1) 0%, transparent 40%),
-                radial-gradient(circle at 80% 70%, rgba(139, 69, 19, 0.08) 0%, transparent 40%),
-                radial-gradient(circle at 60% 10%, rgba(101, 67, 33, 0.05) 0%, transparent 30%)
-              `
+              maxHeight: '540px'
             }}
           >
             {/* Botões discretos de navegação */}
@@ -192,14 +186,8 @@ export default function GrimoireKindle() {
                 >
                   {/* Título do capítulo (apenas na primeira página) */}
                   {currentPage === 1 && (
-                    <div className="text-center mb-12">
-                      <h1 className="text-amber-900 font-bold tracking-widest uppercase" 
-                          style={{
-                            fontSize: isMobile ? '14px' : '16px',
-                            fontFamily: 'Cinzel, serif',
-                            letterSpacing: '2px',
-                            lineHeight: '1.4'
-                          }}>
+                    <div className="text-center mb-8">
+                      <h1 className="font-cinzel text-foreground font-bold tracking-widest uppercase text-lg md:text-xl">
                         {currentChapter?.title}
                       </h1>
                     </div>
@@ -208,23 +196,13 @@ export default function GrimoireKindle() {
                   {/* Conteúdo da página */}
                   <div 
                     ref={contentRef}
-                    className="text-amber-900 flex-1 overflow-hidden"
+                    className="font-garamond text-foreground flex-1 overflow-hidden text-justify leading-relaxed"
                     style={{
-                      fontSize: isMobile ? '12px' : '13px',
-                      lineHeight: '1.7',
-                      fontFamily: 'Cinzel, serif',
-                      textAlign: 'justify',
-                      textIndent: '0',
-                      letterSpacing: '0.5px'
+                      fontSize: isMobile ? '14px' : '16px',
+                      lineHeight: '1.6'
                     }}
-                  >
-                    <div dangerouslySetInnerHTML={{ 
-                      __html: currentPageContent
-                        .split('\n\n')
-                        .map(paragraph => `<p style="margin-bottom: 16px; text-indent: 0; line-height: 1.7;">${paragraph}</p>`)
-                        .join('')
-                    }} />
-                  </div>
+                    dangerouslySetInnerHTML={{ __html: currentPageContent }}
+                  />
                 </motion.div>
               </AnimatePresence>
             </div>
