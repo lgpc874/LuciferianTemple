@@ -57,11 +57,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Find user by email
       const user = await storage.getUserByEmail(data.email);
       if (!user) {
+        console.log(`User not found for email: ${data.email}`);
         return res.status(401).json({ error: "Email ou senha inválidos" });
       }
       
+      console.log(`User found: ${user.email}, isAdmin: ${user.isAdmin}, password hash length: ${user.password?.length}`);
+      
       // Verify password
       const isValidPassword = await bcrypt.compare(data.password, user.password);
+      console.log(`Password validation result: ${isValidPassword}`);
+      
       if (!isValidPassword) {
         return res.status(401).json({ error: "Email ou senha inválidos" });
       }
@@ -259,49 +264,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Update admin permissions directly
+  // Create/update admin user for access
   app.post("/api/setup/admin", async (req, res) => {
     try {
       const adminEmail = "admin@templodoabismo.com";
       const adminPassword = "admin123";
+      const hashedPassword = await bcrypt.hash(adminPassword, 10);
       
-      // Check if admin exists and ensure proper permissions
-      const existingAdmin = await storage.getUserByEmail(adminEmail);
-      if (!existingAdmin) {
-        // Create admin user if doesn't exist
-        const hashedPassword = await bcrypt.hash(adminPassword, 10);
-        const adminUser = await storage.createUser({
-          username: "admin",
-          email: adminEmail,
-          password: hashedPassword,
-          role: "admin",
-          isAdmin: true
-        });
-
-        return res.json({ 
-          success: true, 
-          message: "Usuário administrativo criado com sucesso",
-          user: { id: adminUser.id, email: adminUser.email, isAdmin: adminUser.isAdmin },
-          credentials: { email: adminEmail, password: adminPassword }
-        });
-      }
-
-      // For existing user, manually update in memory store to ensure admin access
-      // This is a direct approach to resolve immediate access issues
-      if (existingAdmin) {
-        // Update password hash for the existing user
-        const hashedPassword = await bcrypt.hash(adminPassword, 10);
-        existingAdmin.password = hashedPassword;
-        existingAdmin.isAdmin = true;
-        existingAdmin.role = "admin";
+      // Delete existing admin user if any issues
+      if (process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY) {
+        const client = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
+        
+        // Delete existing admin
+        await client.from('users').delete().eq('email', adminEmail);
+        
+        // Create new admin user directly in Supabase
+        const { data: adminUser, error } = await client
+          .from('users')
+          .insert({
+            username: 'admin',
+            email: adminEmail,
+            password: hashedPassword,
+            role: 'admin',
+            is_admin: true
+          })
+          .select()
+          .single();
+          
+        if (error) {
+          console.error('Erro ao criar admin no Supabase:', error);
+          return res.status(500).json({ 
+            success: false, 
+            error: 'Erro ao criar usuário admin: ' + error.message 
+          });
+        }
         
         return res.json({ 
           success: true, 
-          message: "Usuário admin configurado com permissões administrativas",
-          user: { id: existingAdmin.id, email: existingAdmin.email, isAdmin: true },
+          message: "Usuário admin criado com sucesso no Supabase",
+          user: { id: adminUser.id, email: adminUser.email, isAdmin: adminUser.is_admin },
           credentials: { email: adminEmail, password: adminPassword }
         });
       }
+      
+      return res.status(500).json({ 
+        success: false, 
+        error: "Configuração do Supabase não encontrada" 
+      });
 
     } catch (error: any) {
       res.status(500).json({ 
