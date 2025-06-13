@@ -206,10 +206,7 @@ class GrimoireDataStore {
         <p class="chapter-closing">O primeiro véu foi erguido. A trilha se revela...</p>`,
 
         // Capítulo II - As Três Chaves da Abertura
-        `<div class="chapter-header">
-          <h2>✦ Capítulo II – As Três Chaves da Abertura</h2>
-          <p class="chapter-quote">"A Vontade molda. A Imaginação sopra. A Fé sustenta."</p>
-        </div>
+        `<p class="chapter-quote italic text-center mb-6">"A Vontade molda. A Imaginação sopra. A Fé sustenta."</p>
 
         <p>Toda manifestação no universo — desde a formação de galáxias até o florescer de um pensamento em realidade — opera através de três forças primordiais. Os antigos as conheciam por muitos nomes, mas sua essência permanece imutável através dos éons.</p>
 
@@ -296,10 +293,7 @@ class GrimoireDataStore {
         <p class="chapter-closing">As chaves foram entregues. Agora aprenda a usar cada uma...</p>`,
 
         // Capítulo III - As Trilhas da Sombra e da Luz
-        `<div class="chapter-header">
-          <h2>✦ Capítulo III – As Trilhas da Sombra e da Luz</h2>
-          <p class="chapter-quote">"Toda magia tem cor, todo caminho tem custo."</p>
-        </div>
+        `<p class="chapter-quote italic text-center mb-6">"Toda magia tem cor, todo caminho tem custo."</p>
 
         <p>O universo oculto se estende como uma vasta rede de trilhas entrecruzadas. Cada caminho oferece poder, mas exige preço. Cada tradição revela verdades, mas oculta outras. O sábio estuda todos os caminhos para compreender o mapa completo, mas escolhe sua rota com discernimento.</p>
 
@@ -416,10 +410,7 @@ class GrimoireDataStore {
         <p class="chapter-closing">As trilhas foram mapeadas. Agora escolha sua rota...</p>`,
 
         // Capítulo IV - O Grimório Vivo
-        `<div class="chapter-header">
-          <h2>✦ Capítulo IV – O Grimório Vivo</h2>
-          <p class="chapter-quote">"Um grimório não é um livro. É um espelho que sangra."</p>
-        </div>
+        `<p class="chapter-quote italic text-center mb-6">"Um grimório não é um livro. É um espelho que sangra."</p>
 
         <p>Nas prateleiras de colecionadores ricos, dormem grimórios antigos — o <em>Lemegeton</em>, a <em>Chave de Salomão</em>, o <em>Livro de Abramelin</em>. Belos, históricos, valiosos. E completamente mortos.</p>
 

@@ -89,7 +89,7 @@ export default function GrimoireKindle() {
     setCurrentPageContent(pageContent);
   }, [currentChapter, currentPage, isMobile]);
 
-  // Navigation handlers
+  // Navigation handlers with continuous reading
   const handleNextPage = () => {
     if (currentPage < totalPages) {
       setCurrentPage(prev => prev + 1);
@@ -103,8 +103,16 @@ export default function GrimoireKindle() {
     if (currentPage > 1) {
       setCurrentPage(prev => prev - 1);
     } else if (selectedChapter > 1) {
-      setSelectedChapter(prev => prev - 1);
-      setCurrentPage(1);
+      // Go to previous chapter and set to its last page
+      const prevChapter = (chapters as Chapter[])?.find((ch: Chapter) => ch.chapterOrder === selectedChapter - 1);
+      if (prevChapter) {
+        setSelectedChapter(prev => prev - 1);
+        // Calculate total pages for previous chapter to set to last page
+        const words = prevChapter.content.split(' ');
+        const wordsPerPage = isMobile ? 150 : 200;
+        const prevChapterTotalPages = Math.ceil(words.length / wordsPerPage);
+        setCurrentPage(Math.max(1, prevChapterTotalPages));
+      }
     }
   };
 
