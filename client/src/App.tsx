@@ -13,6 +13,7 @@ import AuthPage from "@/pages/auth";
 import BibliothecaArcana from "@/pages/bibliotheca-arcana";
 import Biblioteca from "@/pages/biblioteca";
 import GrimoireReader from "@/pages/grimoire-reader";
+import GrimoireSimple from "@/pages/grimoire-simple";
 
 function Router() {
   const [location] = useLocation();
@@ -24,7 +25,7 @@ function Router() {
         <Route path="/auth" component={AuthPage} />
         <Route path="/bibliotheca-arcana" component={BibliothecaArcana} />
         <Route path="/biblioteca" component={Biblioteca} />
-        <Route path="/grimoire/:id" component={GrimoireReader} />
+        <Route path="/grimoire/:id" component={GrimoireSimple} />
         <Route component={NotFound} />
       </Switch>
     </AnimatePresence>
