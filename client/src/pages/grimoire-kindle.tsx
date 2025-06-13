@@ -32,6 +32,19 @@ export default function GrimoireKindle() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
+  const [isMobile, setIsMobile] = useState<boolean>(false);
+
+  // Detectar tamanho da tela
+  useEffect(() => {
+    const checkIsMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkIsMobile();
+    window.addEventListener('resize', checkIsMobile);
+    
+    return () => window.removeEventListener('resize', checkIsMobile);
+  }, []);
 
   // Função para entrar em tela cheia
   const enterFullscreen = async () => {
@@ -92,8 +105,8 @@ export default function GrimoireKindle() {
     
     const pages: string[] = [];
     let currentPageContent = '';
-    // Muito menos palavras para garantir que cabe na tela sem scroll
-    const maxWordsPerPage = 120; 
+    // Palavras por página diferentes para mobile e desktop
+    const maxWordsPerPage = isMobile ? 80 : 250; 
     
     paragraphs.forEach((paragraph) => {
       const fullParagraph = paragraph + (paragraph.includes('<h') ? '>' : '</p>');
@@ -191,61 +204,67 @@ export default function GrimoireKindle() {
             onClick={() => setShowMenu(false)}
           >
             <motion.div
-              initial={{ y: -100 }}
-              animate={{ y: 0 }}
-              exit={{ y: -100 }}
-              className="bg-white border-b shadow-lg"
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              className="fixed left-0 top-0 h-full w-80 bg-white shadow-xl overflow-y-auto"
               onClick={e => e.stopPropagation()}
             >
-              <div className="max-w-2xl mx-auto p-4">
-                <div className="flex items-center justify-between mb-4">
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h1 className="text-lg font-bold text-gray-900">
+                    {(grimoire as Grimoire)?.title}
+                  </h1>
+                  
+                  <button 
+                    onClick={() => setShowMenu(false)}
+                    className="text-gray-600 hover:text-gray-900"
+                  >
+                    <X size={20} />
+                  </button>
+                </div>
+
+                {/* Controles */}
+                <div className="space-y-3 mb-6 pb-6 border-b">
+                  <button 
+                    onClick={isFullscreen ? exitFullscreen : enterFullscreen}
+                    className="w-full px-4 py-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors font-medium"
+                  >
+                    {isFullscreen ? '🪟 Sair Tela Cheia' : '⛶ Entrar Tela Cheia'}
+                  </button>
+                  
                   <button 
                     onClick={() => {
                       exitFullscreen();
                       setLocation('/biblioteca');
                     }}
-                    className="flex items-center space-x-2 text-gray-600 hover:text-gray-900"
+                    className="w-full px-4 py-3 bg-red-50 hover:bg-red-100 text-red-700 rounded-lg transition-colors font-medium"
                   >
-                    <ChevronLeft size={20} />
-                    <span>Biblioteca</span>
+                    ← Voltar à Biblioteca
                   </button>
-                  
-                  <h1 className="font-sans text-lg font-medium text-center flex-1">
-                    {(grimoire as Grimoire)?.title}
-                  </h1>
-                  
-                  <div className="flex items-center space-x-3">
-                    <button 
-                      onClick={isFullscreen ? exitFullscreen : enterFullscreen}
-                      className="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded transition-colors"
-                    >
-                      {isFullscreen ? 'Sair Tela Cheia' : 'Tela Cheia'}
-                    </button>
-                    
-                    <button 
-                      onClick={() => setShowMenu(false)}
-                      className="text-gray-600 hover:text-gray-900"
-                    >
-                      <X size={20} />
-                    </button>
-                  </div>
                 </div>
 
                 {/* Índice de capítulos */}
                 <div className="space-y-2">
-                  <h3 className="font-sans text-sm font-medium text-gray-600 mb-3">Capítulos</h3>
+                  <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-4">
+                    Capítulos
+                  </h2>
                   {(chapters as Chapter[]).map((chapter: Chapter) => (
                     <button
                       key={chapter.id}
                       onClick={() => handleChapterChange(chapter.chapterOrder)}
-                      className={`block w-full text-left p-3 rounded-lg transition-colors ${
+                      className={`w-full text-left p-4 rounded-lg transition-colors ${
                         selectedChapter === chapter.chapterOrder
-                          ? 'bg-gray-100 text-gray-900'
-                          : 'text-gray-700 hover:bg-gray-50'
+                          ? 'bg-gray-900 text-white'
+                          : 'text-gray-600 hover:bg-gray-50'
                       }`}
                     >
-                      <div className="font-medium text-sm">{chapter.title}</div>
-                      <div className="text-xs text-gray-500 mt-1">Capítulo {chapter.chapterOrder}</div>
+                      <div className="font-medium">{chapter.title}</div>
+                      <div className={`text-sm mt-1 ${
+                        selectedChapter === chapter.chapterOrder ? 'text-gray-300' : 'text-gray-500'
+                      }`}>
+                        Capítulo {chapter.chapterOrder} • {chapter.estimatedReadingTime} min
+                      </div>
                     </button>
                   ))}
                 </div>
@@ -257,13 +276,13 @@ export default function GrimoireKindle() {
 
       {/* Conteúdo principal - estilo Kindle */}
       <div className="w-full h-screen flex flex-col">
-        {/* Área de toque para menu */}
-        <div className="absolute top-0 left-0 right-0 h-12 z-10">
+        {/* Botão de menu fixo e visível */}
+        <div className="absolute top-4 left-4 z-20">
           <button 
             onClick={() => setShowMenu(true)}
-            className="w-full h-full flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity"
+            className="p-3 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all"
           >
-            <Menu size={16} className="text-gray-400" />
+            <Menu size={20} className="text-gray-700" />
           </button>
         </div>
 
@@ -280,8 +299,8 @@ export default function GrimoireKindle() {
             )}
           </button>
 
-          {/* Conteúdo central - largura máxima */}
-          <div className="flex-1 max-w-5xl mx-auto px-8 md:px-16 py-8 flex flex-col">
+          {/* Conteúdo central - responsivo para desktop e mobile */}
+          <div className="flex-1 px-4 md:px-16 lg:px-24 py-6 md:py-12 flex flex-col">
             <AnimatePresence mode="wait">
               <motion.div
                 key={`${selectedChapter}-${currentPage}`}
@@ -289,25 +308,27 @@ export default function GrimoireKindle() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.2 }}
-                className="flex-1 flex flex-col"
+                className="flex-1 flex flex-col max-w-none"
                 style={{ minHeight: 0 }}
               >
                 {/* Título do capítulo (apenas na primeira página) */}
                 {currentPage === 1 && (
-                  <div className="mb-6 pb-4 border-b border-gray-200 flex-shrink-0">
-                    <h1 className="text-xl md:text-2xl font-bold text-gray-900 leading-tight">
+                  <div className="mb-4 md:mb-8 pb-3 md:pb-6 border-b border-gray-200 flex-shrink-0">
+                    <h1 className="text-lg md:text-2xl lg:text-4xl font-bold text-gray-900 leading-tight">
                       {currentChapter?.title}
                     </h1>
                   </div>
                 )}
 
-                {/* Conteúdo da página - altura controlada */}
+                {/* Conteúdo da página - layout diferente para desktop/mobile */}
                 <div 
-                  className="flex-1 text-gray-800 overflow-hidden"
+                  className="flex-1 text-gray-800 overflow-hidden text-justify 
+                           md:columns-2 md:gap-12 lg:columns-2 lg:gap-16"
                   style={{
-                    fontSize: '17px',
-                    lineHeight: '1.7',
-                    fontFamily: 'Georgia, serif'
+                    fontSize: window.innerWidth >= 768 ? '19px' : '16px',
+                    lineHeight: window.innerWidth >= 768 ? '1.8' : '1.6',
+                    fontFamily: 'Georgia, serif',
+                    columnFill: 'auto'
                   }}
                   dangerouslySetInnerHTML={{ __html: currentPageContent }}
                 />
