@@ -69,7 +69,7 @@ export default function GrimoireKindle() {
     setIsFullscreen(false);
   };
 
-  // Robust pagination with content validation
+  // Simple paragraph-based pagination
   useEffect(() => {
     if (!currentChapter?.content) {
       setCurrentPageContent('');
@@ -79,52 +79,50 @@ export default function GrimoireKindle() {
 
     const content = currentChapter.content;
     
-    // Very conservative limits to prevent overflow
-    const charsPerPage = isMobile ? 1500 : 2000;
+    // Split by complete HTML blocks (paragraphs, headings, etc.)
+    const blocks = content.split(/(?=<(?:p|h[3-4]|blockquote|ul)[^>]*>)/g)
+                         .filter(block => block.trim().length > 0);
     
-    // Pre-split content into manageable chunks
-    const chunks: string[] = [];
-    let currentChunk = '';
-    let charCount = 0;
+    // Conservative character limits
+    const maxCharsPerPage = isMobile ? 1000 : 1400;
     
-    // Split by paragraphs first to maintain structure
-    const paragraphs = content.split('</p>');
+    const pages: string[] = [];
+    let currentPageContent = '';
+    let currentLength = 0;
     
-    for (let i = 0; i < paragraphs.length; i++) {
-      const paragraph = paragraphs[i] + (i < paragraphs.length - 1 ? '</p>' : '');
-      const paragraphLength = paragraph.length;
+    for (const block of blocks) {
+      const blockLength = block.length;
       
-      // If adding this paragraph would exceed limit, save current chunk
-      if (charCount + paragraphLength > charsPerPage && currentChunk.length > 0) {
-        chunks.push(currentChunk.trim());
-        currentChunk = paragraph;
-        charCount = paragraphLength;
+      // If this block would make the page too long
+      if (currentLength + blockLength > maxCharsPerPage && currentPageContent.length > 0) {
+        // Save current page
+        pages.push(currentPageContent);
+        
+        // Start new page with this block
+        currentPageContent = block;
+        currentLength = blockLength;
       } else {
-        currentChunk += paragraph;
-        charCount += paragraphLength;
+        // Add block to current page
+        currentPageContent += block;
+        currentLength += blockLength;
       }
     }
     
-    // Add the last chunk
-    if (currentChunk.trim()) {
-      chunks.push(currentChunk.trim());
+    // Add the final page
+    if (currentPageContent.length > 0) {
+      pages.push(currentPageContent);
     }
     
     // Ensure we have at least one page
-    if (chunks.length === 0) {
-      chunks.push('<p>Erro ao carregar conteúdo</p>');
+    if (pages.length === 0) {
+      pages.push('<p>Erro ao carregar conteúdo</p>');
     }
     
-    setTotalPages(chunks.length);
+    setTotalPages(pages.length);
     
-    // Get content for current page
-    const pageIndex = currentPage - 1;
-    if (pageIndex >= 0 && pageIndex < chunks.length) {
-      setCurrentPageContent(chunks[pageIndex]);
-    } else {
-      // Fallback for invalid page numbers
-      setCurrentPageContent(chunks[0] || '<p>Erro ao carregar conteúdo</p>');
-    }
+    // Get current page with bounds checking
+    const pageIndex = Math.max(0, Math.min(currentPage - 1, pages.length - 1));
+    setCurrentPageContent(pages[pageIndex] || pages[0] || '');
   }, [currentChapter, currentPage, isMobile]);
 
   // Navigation handlers with continuous reading
@@ -146,10 +144,25 @@ export default function GrimoireKindle() {
       if (prevChapter) {
         setSelectedChapter(prev => prev - 1);
         // Calculate total pages for previous chapter to set to last page
-        const words = prevChapter.content.split(' ');
-        const wordsPerPage = isMobile ? 150 : 200;
-        const prevChapterTotalPages = Math.ceil(words.length / wordsPerPage);
-        setCurrentPage(Math.max(1, prevChapterTotalPages));
+        const prevContent = prevChapter.content;
+        const blocks = prevContent.split(/(?=<(?:p|h[3-4]|blockquote|ul)[^>]*>)/g)
+                                  .filter(block => block.trim().length > 0);
+        const maxCharsPerPage = isMobile ? 1000 : 1400;
+        
+        let pages = 0;
+        let currentLength = 0;
+        
+        for (const block of blocks) {
+          if (currentLength + block.length > maxCharsPerPage && currentLength > 0) {
+            pages++;
+            currentLength = block.length;
+          } else {
+            currentLength += block.length;
+          }
+        }
+        if (currentLength > 0) pages++;
+        
+        setCurrentPage(Math.max(1, pages));
       }
     }
   };
