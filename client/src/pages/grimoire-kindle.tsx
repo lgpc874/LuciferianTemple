@@ -69,7 +69,7 @@ export default function GrimoireKindle() {
     setIsFullscreen(false);
   };
 
-  // Simple paragraph-based pagination
+  // Paragraph-preserving pagination
   useEffect(() => {
     if (!currentChapter?.content) {
       setCurrentPageContent('');
@@ -79,43 +79,43 @@ export default function GrimoireKindle() {
 
     const content = currentChapter.content;
     
-    // Split by complete HTML blocks (paragraphs, headings, etc.)
-    const blocks = content.split(/(?=<(?:p|h[3-4]|blockquote|ul)[^>]*>)/g)
-                         .filter(block => block.trim().length > 0);
+    // Extract complete paragraphs and other block elements
+    const tempContent = content.replace(/\n/g, ' ');
+    const paragraphs = tempContent.match(/<p[^>]*>.*?<\/p>|<h[3-4][^>]*>.*?<\/h[3-4]>|<blockquote[^>]*>.*?<\/blockquote>|<ul[^>]*>.*?<\/ul>/g) || [];
     
-    // Conservative character limits
-    const maxCharsPerPage = isMobile ? 1000 : 1400;
+    // Very conservative character limit to ensure content fits
+    const maxCharsPerPage = isMobile ? 800 : 1200;
     
     const pages: string[] = [];
     let currentPageContent = '';
     let currentLength = 0;
     
-    for (const block of blocks) {
-      const blockLength = block.length;
+    for (const paragraph of paragraphs) {
+      const paragraphLength = paragraph.length;
       
-      // If this block would make the page too long
-      if (currentLength + blockLength > maxCharsPerPage && currentPageContent.length > 0) {
+      // If adding this paragraph would exceed the limit
+      if (currentLength + paragraphLength > maxCharsPerPage && currentPageContent.length > 0) {
         // Save current page
-        pages.push(currentPageContent);
+        pages.push(currentPageContent.trim());
         
-        // Start new page with this block
-        currentPageContent = block;
-        currentLength = blockLength;
+        // Start new page with this paragraph
+        currentPageContent = paragraph;
+        currentLength = paragraphLength;
       } else {
-        // Add block to current page
-        currentPageContent += block;
-        currentLength += blockLength;
+        // Add paragraph to current page
+        currentPageContent += paragraph;
+        currentLength += paragraphLength;
       }
     }
     
-    // Add the final page
-    if (currentPageContent.length > 0) {
-      pages.push(currentPageContent);
+    // Add the final page if it has content
+    if (currentPageContent.trim().length > 0) {
+      pages.push(currentPageContent.trim());
     }
     
     // Ensure we have at least one page
     if (pages.length === 0) {
-      pages.push('<p>Erro ao carregar conteúdo</p>');
+      pages.push('<p>Conteúdo não disponível</p>');
     }
     
     setTotalPages(pages.length);
@@ -143,21 +143,21 @@ export default function GrimoireKindle() {
       const prevChapter = (chapters as Chapter[])?.find((ch: Chapter) => ch.chapterOrder === selectedChapter - 1);
       if (prevChapter) {
         setSelectedChapter(prev => prev - 1);
-        // Calculate total pages for previous chapter to set to last page
+        // Calculate total pages for previous chapter using same logic
         const prevContent = prevChapter.content;
-        const blocks = prevContent.split(/(?=<(?:p|h[3-4]|blockquote|ul)[^>]*>)/g)
-                                  .filter(block => block.trim().length > 0);
-        const maxCharsPerPage = isMobile ? 1000 : 1400;
+        const tempPrevContent = prevContent.replace(/\n/g, ' ');
+        const paragraphs = tempPrevContent.match(/<p[^>]*>.*?<\/p>|<h[3-4][^>]*>.*?<\/h[3-4]>|<blockquote[^>]*>.*?<\/blockquote>|<ul[^>]*>.*?<\/ul>/g) || [];
+        const maxCharsPerPage = isMobile ? 800 : 1200;
         
         let pages = 0;
         let currentLength = 0;
         
-        for (const block of blocks) {
-          if (currentLength + block.length > maxCharsPerPage && currentLength > 0) {
+        for (const paragraph of paragraphs) {
+          if (currentLength + paragraph.length > maxCharsPerPage && currentLength > 0) {
             pages++;
-            currentLength = block.length;
+            currentLength = paragraph.length;
           } else {
-            currentLength += block.length;
+            currentLength += paragraph.length;
           }
         }
         if (currentLength > 0) pages++;
