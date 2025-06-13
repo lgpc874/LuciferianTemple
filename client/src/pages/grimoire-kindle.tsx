@@ -169,10 +169,10 @@ export default function GrimoireKindle() {
                   ref={contentRef}
                   className="text-gray-800 text-justify leading-relaxed"
                   style={{
-                    fontSize: isMobile ? '17px' : '19px',
-                    lineHeight: '1.8',
+                    fontSize: isMobile ? '16px' : '18px',
+                    lineHeight: '1.7',
                     fontFamily: 'Georgia, serif',
-                    height: 'calc(100vh - 120px)',
+                    height: 'calc(100vh - 180px)', // Ajustado para a barra de progresso
                     overflow: 'hidden'
                   }}
                   dangerouslySetInnerHTML={{ __html: currentPageContent }}
@@ -187,6 +187,23 @@ export default function GrimoireKindle() {
           onClick={handleNextPage}
           className="w-1/4 h-full cursor-pointer"
         />
+      </div>
+
+      {/* Barra de progresso estilo Kindle - parte inferior */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-gray-200 px-6 py-3">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
+            <span>Página {currentPage} de {totalPages}</span>
+            <span>Cap. {selectedChapter} de {(chapters as Chapter[])?.length}</span>
+            <span>{Math.round(progressPercentage)}%</span>
+          </div>
+          <div className="w-full bg-gray-200 rounded-full h-1">
+            <div 
+              className="bg-gray-800 h-1 rounded-full transition-all duration-300"
+              style={{ width: `${progressPercentage}%` }}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
