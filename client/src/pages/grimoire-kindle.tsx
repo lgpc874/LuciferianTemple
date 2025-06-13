@@ -275,7 +275,7 @@ export default function GrimoireKindle() {
       </AnimatePresence>
 
       {/* Conteúdo principal - estilo Kindle */}
-      <div className="w-full h-screen flex flex-col pt-20">
+      <div className="w-full h-screen flex flex-col">
         {/* Botão de menu fixo e visível */}
         <div className="absolute top-4 left-4 z-20">
           <button 
@@ -306,8 +306,8 @@ export default function GrimoireKindle() {
           {/* Conteúdo central - responsivo para desktop e mobile */}
           <div className={`flex-1 flex flex-col ${
             isMobile 
-              ? 'px-6 py-8' 
-              : 'px-12 py-16'
+              ? 'px-6 py-8 pt-16' 
+              : 'px-12 py-16 pt-20'
           }`}>
             <AnimatePresence mode="wait">
               <motion.div
