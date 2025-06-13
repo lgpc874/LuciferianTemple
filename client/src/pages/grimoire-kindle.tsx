@@ -69,13 +69,14 @@ export default function GrimoireKindle() {
     setIsFullscreen(false);
   };
 
-  // Pagination logic based on container height
+  // Pagination logic optimized for A5 format
   useEffect(() => {
     if (!currentChapter) return;
 
-    // Simple word-based pagination for now
+    // A5 format pagination - optimized for readability
     const words = currentChapter.content.split(' ');
-    const wordsPerPage = isMobile ? 200 : 300; // Ajustado para mostrar mais conteúdo
+    // A5 page can comfortably fit 150-250 words depending on font size
+    const wordsPerPage = isMobile ? 150 : 200;
     const calculatedPages = Math.ceil(words.length / wordsPerPage);
     
     setTotalPages(Math.max(1, calculatedPages));
@@ -146,37 +147,47 @@ export default function GrimoireKindle() {
 
         {/* Container de texto - área central */}
         <div className="flex-1 h-full flex items-center justify-center">
-          <div className="w-full h-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={`${selectedChapter}-${currentPage}`}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                {/* Título do capítulo (apenas na primeira página) */}
-                {currentPage === 1 && (
-                  <h1 className="font-bold text-gray-900 leading-tight mb-6 pb-4 border-b border-gray-200 text-lg sm:text-xl md:text-2xl lg:text-3xl">
-                    {currentChapter?.title}
-                  </h1>
-                )}
+          {/* Página formato A5 responsiva */}
+          <div 
+            className="bg-white shadow-lg rounded-lg border border-gray-200"
+            style={{
+              width: isMobile ? '90vw' : 'min(70vw, 420px)', // A5 width: ~148mm = 420px at 72dpi
+              height: isMobile ? '85vh' : 'min(85vh, 595px)', // A5 height: ~210mm = 595px at 72dpi
+              maxWidth: '420px',
+              maxHeight: '595px'
+            }}
+          >
+            <div className="h-full p-6 sm:p-8 md:p-10 flex flex-col">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={`${selectedChapter}-${currentPage}`}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="flex-1 flex flex-col"
+                >
+                  {/* Título do capítulo (apenas na primeira página) */}
+                  {currentPage === 1 && (
+                    <h1 className="font-bold text-gray-900 leading-tight mb-6 pb-4 border-b border-gray-200 text-base sm:text-lg md:text-xl">
+                      {currentChapter?.title}
+                    </h1>
+                  )}
 
-                {/* Conteúdo da página */}
-                <div 
-                  ref={contentRef}
-                  className="text-gray-800 text-justify leading-relaxed w-full"
-                  style={{
-                    fontSize: isMobile ? '16px' : 'clamp(16px, 2.5vw, 20px)',
-                    lineHeight: '1.7',
-                    fontFamily: 'Georgia, serif',
-                    height: 'calc(100vh - 180px)',
-                    overflow: 'hidden'
-                  }}
-                  dangerouslySetInnerHTML={{ __html: currentPageContent }}
-                />
-              </motion.div>
-            </AnimatePresence>
+                  {/* Conteúdo da página */}
+                  <div 
+                    ref={contentRef}
+                    className="text-gray-800 text-justify leading-relaxed flex-1 overflow-hidden"
+                    style={{
+                      fontSize: isMobile ? '14px' : '16px',
+                      lineHeight: '1.6',
+                      fontFamily: 'Georgia, serif'
+                    }}
+                    dangerouslySetInnerHTML={{ __html: currentPageContent }}
+                  />
+                </motion.div>
+              </AnimatePresence>
+            </div>
           </div>
         </div>
 
