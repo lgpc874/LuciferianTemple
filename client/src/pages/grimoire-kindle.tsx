@@ -69,29 +69,52 @@ export default function GrimoireKindle() {
     setIsFullscreen(false);
   };
 
-  // Simple word-based pagination that works reliably
+  // Character-based pagination preserving HTML formatting
   useEffect(() => {
     if (!currentChapter?.content) return;
 
-    // Clean text for word counting
-    const cleanText = currentChapter.content.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
-    const allWords = cleanText.split(' ').filter(word => word.length > 0);
-    
-    // Conservative word count for A5 format
-    const wordsPerPage = isMobile ? 90 : 120;
-    const calculatedPages = Math.ceil(allWords.length / wordsPerPage);
+    const content = currentChapter.content;
+    // Conservative character limit for A5 format
+    const charsPerPage = isMobile ? 2000 : 2500;
+    const totalChars = content.length;
+    const calculatedPages = Math.ceil(totalChars / charsPerPage);
     
     setTotalPages(Math.max(1, calculatedPages));
     
-    // Simple word-based content extraction
-    const startWordIndex = (currentPage - 1) * wordsPerPage;
-    const endWordIndex = Math.min(startWordIndex + wordsPerPage, allWords.length);
+    // Calculate start and end positions
+    const startPos = (currentPage - 1) * charsPerPage;
+    let endPos = Math.min(startPos + charsPerPage, totalChars);
     
-    const pageWords = allWords.slice(startWordIndex, endWordIndex);
-    const pageText = pageWords.join(' ');
+    // If not at the end, find a good breaking point
+    if (endPos < totalChars) {
+      // Look for end of paragraph
+      const paragraphEnd = content.lastIndexOf('</p>', endPos);
+      if (paragraphEnd > startPos && paragraphEnd > startPos + (charsPerPage * 0.6)) {
+        endPos = paragraphEnd + 4;
+      } else {
+        // Look for end of sentence
+        const sentenceEnd = content.lastIndexOf('. ', endPos);
+        if (sentenceEnd > startPos && sentenceEnd > startPos + (charsPerPage * 0.7)) {
+          endPos = sentenceEnd + 2;
+        } else {
+          // Look for word boundary
+          const spacePos = content.lastIndexOf(' ', endPos);
+          if (spacePos > startPos) {
+            endPos = spacePos;
+          }
+        }
+      }
+    }
     
-    // For now, use plain text to ensure reliability
-    setCurrentPageContent(`<p>${pageText}</p>`);
+    let pageContent = content.slice(startPos, endPos);
+    
+    // Clean up broken HTML tags at the beginning
+    pageContent = pageContent.replace(/^[^<]*?>/, '');
+    
+    // Clean up broken HTML tags at the end
+    pageContent = pageContent.replace(/<[^>]*$/, '');
+    
+    setCurrentPageContent(pageContent || '<p>Conteúdo não encontrado</p>');
   }, [currentChapter, currentPage, isMobile]);
 
   // Navigation handlers with continuous reading
