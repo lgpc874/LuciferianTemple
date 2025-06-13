@@ -292,15 +292,23 @@ export default function GrimoireKindle() {
           <button 
             onClick={handlePrevPage}
             disabled={selectedChapter === 1 && currentPage === 1}
-            className="w-16 md:w-20 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity"
+            className={`flex items-center justify-center transition-opacity ${
+              isMobile 
+                ? 'w-12 opacity-20 active:opacity-60' 
+                : 'w-20 opacity-0 hover:opacity-100'
+            }`}
           >
             {!(selectedChapter === 1 && currentPage === 1) && (
-              <ChevronLeft size={20} className="text-gray-400" />
+              <ChevronLeft size={isMobile ? 16 : 24} className="text-gray-400" />
             )}
           </button>
 
           {/* Conteúdo central - responsivo para desktop e mobile */}
-          <div className="flex-1 px-4 md:px-16 lg:px-24 py-6 md:py-12 flex flex-col">
+          <div className={`flex-1 flex flex-col ${
+            isMobile 
+              ? 'px-6 py-8' 
+              : 'px-20 py-16'
+          }`}>
             <AnimatePresence mode="wait">
               <motion.div
                 key={`${selectedChapter}-${currentPage}`}
@@ -313,22 +321,27 @@ export default function GrimoireKindle() {
               >
                 {/* Título do capítulo (apenas na primeira página) */}
                 {currentPage === 1 && (
-                  <div className="mb-4 md:mb-8 pb-3 md:pb-6 border-b border-gray-200 flex-shrink-0">
-                    <h1 className="text-lg md:text-2xl lg:text-4xl font-bold text-gray-900 leading-tight">
+                  <div className={`pb-4 border-b border-gray-200 flex-shrink-0 ${
+                    isMobile ? 'mb-6' : 'mb-10'
+                  }`}>
+                    <h1 className={`font-bold text-gray-900 leading-tight ${
+                      isMobile ? 'text-xl' : 'text-3xl'
+                    }`}>
                       {currentChapter?.title}
                     </h1>
                   </div>
                 )}
 
-                {/* Conteúdo da página - layout diferente para desktop/mobile */}
+                {/* Conteúdo da página - layout otimizado para leitura confortável */}
                 <div 
-                  className="flex-1 text-gray-800 overflow-hidden text-justify 
-                           md:columns-2 md:gap-12 lg:columns-2 lg:gap-16"
+                  className={`flex-1 text-gray-800 overflow-hidden text-justify 
+                           ${isMobile ? '' : 'columns-2 gap-16'}`}
                   style={{
-                    fontSize: window.innerWidth >= 768 ? '19px' : '16px',
-                    lineHeight: window.innerWidth >= 768 ? '1.8' : '1.6',
+                    fontSize: isMobile ? '17px' : '18px',
+                    lineHeight: isMobile ? '1.6' : '1.7',
                     fontFamily: 'Georgia, serif',
-                    columnFill: 'auto'
+                    columnFill: 'auto',
+                    maxHeight: '100%'
                   }}
                   dangerouslySetInnerHTML={{ __html: currentPageContent }}
                 />
@@ -340,25 +353,38 @@ export default function GrimoireKindle() {
           <button 
             onClick={handleNextPage}
             disabled={selectedChapter === (chapters as Chapter[]).length && currentPage === totalPages}
-            className="w-16 md:w-20 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity"
+            className={`flex items-center justify-center transition-opacity ${
+              isMobile 
+                ? 'w-12 opacity-20 active:opacity-60' 
+                : 'w-20 opacity-0 hover:opacity-100'
+            }`}
           >
             {!(selectedChapter === (chapters as Chapter[]).length && currentPage === totalPages) && (
-              <ChevronRight size={20} className="text-gray-400" />
+              <ChevronRight size={isMobile ? 16 : 24} className="text-gray-400" />
             )}
           </button>
         </div>
 
         {/* Barra de progresso - fixa no bottom */}
-        <div className="flex-shrink-0 px-8 md:px-16 py-3 border-t border-gray-100 bg-white">
-          <div className="max-w-5xl mx-auto">
-            <div className="flex items-center justify-between text-xs text-gray-500 mb-2">
+        <div className={`flex-shrink-0 border-t border-gray-100 bg-white ${
+          isMobile ? 'px-6 py-4' : 'px-16 py-6'
+        }`}>
+          <div className="max-w-full">
+            <div className={`flex items-center justify-between text-gray-500 mb-3 ${
+              isMobile ? 'text-sm' : 'text-base'
+            }`}>
               <span>Página {currentPage} de {totalPages}</span>
-              <span>{Math.round(progressPercentage)}% do livro</span>
+              <span>{Math.round(progressPercentage)}% completo</span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-1">
+            <div className={`w-full bg-gray-200 rounded-full ${
+              isMobile ? 'h-2' : 'h-3'
+            }`}>
               <div 
-                className="bg-gray-800 h-1 rounded-full transition-all duration-300"
-                style={{ width: `${progressPercentage}%` }}
+                className="bg-gray-800 rounded-full transition-all duration-500"
+                style={{ 
+                  width: `${progressPercentage}%`,
+                  height: '100%'
+                }}
               ></div>
             </div>
           </div>
