@@ -15,13 +15,19 @@ export default function GrimoireSimple() {
   });
 
   const { data: chapters } = useQuery({
-    queryKey: ['/api/grimoires', id, 'chapters'],
+    queryKey: [`/api/grimoires/${id}/chapters`],
     enabled: !!id && !!token
   });
 
   const currentChapter = Array.isArray(chapters) ? 
     chapters.find((ch: any) => ch.chapterOrder === selectedChapter) : 
     null;
+
+  // Debug logs
+  console.log('Grimoire ID:', id);
+  console.log('Chapters:', chapters);
+  console.log('Selected Chapter:', selectedChapter);
+  console.log('Current Chapter:', currentChapter);
 
   if (!grimoire || !chapters) {
     return (
@@ -73,11 +79,16 @@ export default function GrimoireSimple() {
         <div className="mb-8">
           {currentChapter?.content ? (
             <div 
-              className="prose prose-invert max-w-none"
+              className="prose prose-invert max-w-none text-white"
               dangerouslySetInnerHTML={{ __html: currentChapter.content }}
             />
           ) : (
-            <div>Conteúdo não encontrado</div>
+            <div>
+              <div>Conteúdo não encontrado</div>
+              <div className="text-sm text-gray-400 mt-2">
+                Debug: Chapter ID {currentChapter?.id}, Content length: {currentChapter?.content?.length || 0}
+              </div>
+            </div>
           )}
         </div>
 
