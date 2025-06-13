@@ -195,7 +195,7 @@ export default function GrimoireKindle() {
                     <div className="text-center mb-12">
                       <h1 className="text-amber-900 font-bold tracking-widest uppercase" 
                           style={{
-                            fontSize: isMobile ? '16px' : '18px',
+                            fontSize: isMobile ? '14px' : '16px',
                             fontFamily: 'Cinzel, serif',
                             letterSpacing: '2px',
                             lineHeight: '1.4'
@@ -210,7 +210,7 @@ export default function GrimoireKindle() {
                     ref={contentRef}
                     className="text-amber-900 flex-1 overflow-hidden"
                     style={{
-                      fontSize: isMobile ? '14px' : '15px',
+                      fontSize: isMobile ? '12px' : '13px',
                       lineHeight: '1.7',
                       fontFamily: 'Cinzel, serif',
                       textAlign: 'justify',
