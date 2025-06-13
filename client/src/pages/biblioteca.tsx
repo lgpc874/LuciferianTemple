@@ -185,9 +185,14 @@ export default function Biblioteca() {
 
                   {/* Botão de acesso */}
                   <div className="p-3 sm:p-4">
-                    <button className="w-full veil-button bg-gradient-to-r from-golden-amber/10 to-golden-amber/5 hover:from-golden-amber/20 hover:to-golden-amber/10 text-golden-amber font-cinzel py-2 sm:py-3 px-3 sm:px-4 rounded-md transition-all duration-300 border border-golden-amber/50 hover:border-golden-amber hover:shadow-md hover:shadow-golden-amber/25 tracking-wide text-sm">
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => setLocation(`/grimoire/${grimoire.id}`)}
+                      className="w-full veil-button bg-gradient-to-r from-golden-amber/10 to-golden-amber/5 hover:from-golden-amber/20 hover:to-golden-amber/10 text-golden-amber font-cinzel py-2 sm:py-3 px-3 sm:px-4 rounded-md transition-all duration-300 border border-golden-amber/50 hover:border-golden-amber hover:shadow-md hover:shadow-golden-amber/25 tracking-wide text-sm"
+                    >
                       LER
-                    </button>
+                    </motion.button>
                   </div>
 
                   {/* Efeito de hover */}
