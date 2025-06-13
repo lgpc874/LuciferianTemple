@@ -187,7 +187,7 @@ export default function GrimoireKindle() {
                   {/* Título do capítulo (apenas na primeira página) */}
                   {currentPage === 1 && (
                     <div className="text-center mb-8">
-                      <h1 className="font-cinzel text-foreground font-bold tracking-widest uppercase text-lg md:text-xl">
+                      <h1 className="font-cinzel text-golden-amber font-bold tracking-widest uppercase text-lg md:text-xl">
                         {currentChapter?.title}
                       </h1>
                     </div>
@@ -196,7 +196,7 @@ export default function GrimoireKindle() {
                   {/* Conteúdo da página */}
                   <div 
                     ref={contentRef}
-                    className="font-garamond text-foreground flex-1 overflow-hidden text-justify leading-relaxed"
+                    className="font-garamond text-ritualistic-beige flex-1 overflow-hidden text-justify leading-relaxed"
                     style={{
                       fontSize: isMobile ? '14px' : '16px',
                       lineHeight: '1.6'
