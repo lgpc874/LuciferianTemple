@@ -71,41 +71,21 @@ export default function GrimoireKindle() {
 
   // Pagination logic based on container height
   useEffect(() => {
-    if (!currentChapter || !contentRef.current) return;
+    if (!currentChapter) return;
 
-    const container = contentRef.current;
-    const containerHeight = container.clientHeight;
-    
-    // Create temporary div to measure content
-    const tempDiv = document.createElement('div');
-    tempDiv.style.cssText = `
-      position: absolute;
-      visibility: hidden;
-      width: ${container.clientWidth}px;
-      font-size: ${isMobile ? '17px' : '19px'};
-      line-height: 1.8;
-      font-family: Georgia, serif;
-      padding: 0;
-      margin: 0;
-    `;
-    
-    tempDiv.innerHTML = currentChapter.content;
-    document.body.appendChild(tempDiv);
-    
-    const totalHeight = tempDiv.scrollHeight;
-    const calculatedPages = Math.ceil(totalHeight / containerHeight);
+    // Simple word-based pagination for now
+    const words = currentChapter.content.split(' ');
+    const wordsPerPage = isMobile ? 200 : 300; // Ajustado para mostrar mais conteúdo
+    const calculatedPages = Math.ceil(words.length / wordsPerPage);
     
     setTotalPages(Math.max(1, calculatedPages));
     
     // Calculate content for current page
-    const wordsPerPage = Math.floor((containerHeight * container.clientWidth) / 20000);
-    const words = currentChapter.content.split(' ');
     const startIndex = (currentPage - 1) * wordsPerPage;
     const endIndex = currentPage * wordsPerPage;
     
-    setCurrentPageContent(words.slice(startIndex, endIndex).join(' '));
-    
-    document.body.removeChild(tempDiv);
+    const pageContent = words.slice(startIndex, endIndex).join(' ');
+    setCurrentPageContent(pageContent);
   }, [currentChapter, currentPage, isMobile]);
 
   // Navigation handlers
