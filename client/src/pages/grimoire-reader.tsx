@@ -153,9 +153,9 @@ export default function GrimoireReader() {
               </div>
             </div>
 
-            <div className="prose prose-invert max-w-none">
+            <div className="prose prose-invert prose-lg max-w-none">
               <div 
-                className="font-garamond text-ritualistic-beige leading-relaxed text-base"
+                className="font-garamond text-ritualistic-beige leading-relaxed grimoire-content"
                 dangerouslySetInnerHTML={{ __html: currentChapter?.content || '' }}
               />
             </div>

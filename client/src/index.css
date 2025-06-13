@@ -259,6 +259,114 @@
   }
 }
 
+/* Grimoire Content Styles */
+.grimoire-content {
+  line-height: 1.8;
+}
+
+.grimoire-content .chapter-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(218, 165, 32, 0.3);
+}
+
+.grimoire-content .chapter-header h2 {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 1.5rem;
+  color: hsl(43, 74%, 49%);
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.grimoire-content .chapter-quote {
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  color: hsl(24, 33%, 64%);
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.grimoire-content h3 {
+  font-family: 'Cinzel', serif;
+  color: hsl(43, 74%, 49%);
+  font-size: 1.2rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+.grimoire-content h4 {
+  font-family: 'Cinzel', serif;
+  color: hsl(43, 74%, 49%);
+  font-size: 1.1rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  font-weight: 500;
+}
+
+.grimoire-content p {
+  margin-bottom: 1rem;
+  text-align: justify;
+}
+
+.grimoire-content em {
+  color: hsl(43, 74%, 49%);
+  font-style: italic;
+}
+
+.grimoire-content strong {
+  color: hsl(43, 74%, 49%);
+  font-weight: 600;
+}
+
+.grimoire-content blockquote {
+  background: rgba(139, 69, 19, 0.1);
+  border-left: 4px solid hsl(43, 74%, 49%);
+  margin: 1.5rem 0;
+  padding: 1rem 1.5rem;
+  font-style: italic;
+  color: hsl(24, 33%, 64%);
+  border-radius: 0 8px 8px 0;
+}
+
+.grimoire-content ul, .grimoire-content ol {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+}
+
+.grimoire-content li {
+  margin-bottom: 0.5rem;
+}
+
+.grimoire-content .chapter-closing {
+  text-align: center;
+  font-style: italic;
+  color: hsl(43, 74%, 49%);
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(218, 165, 32, 0.3);
+  font-size: 1.1rem;
+}
+
+.grimoire-content .final-blessing {
+  text-align: center;
+  font-size: 1.1rem;
+  color: hsl(43, 74%, 49%);
+  background: rgba(139, 69, 19, 0.1);
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid rgba(218, 165, 32, 0.3);
+  margin: 2rem 0;
+}
+
+.grimoire-content .signature {
+  text-align: right;
+  font-style: italic;
+  color: hsl(24, 33%, 64%);
+  margin-top: 1rem;
+}
+
 /* Accessibility */
 @media (prefers-reduced-motion: reduce) {
   .sacred-seal {
