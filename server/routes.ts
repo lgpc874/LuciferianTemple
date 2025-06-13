@@ -262,19 +262,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/setup/admin", async (req, res) => {
     try {
       const adminEmail = "admin@templodoabismo.com";
+      const adminPassword = "admin123";
       
       // Check if admin already exists
       const existingAdmin = await storage.getUserByEmail(adminEmail);
       if (existingAdmin) {
+        // Update password and admin status for existing user
+        const hashedPassword = await bcrypt.hash(adminPassword, 10);
+        
+        // Update via Supabase directly
+        if (process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY) {
+          const { createClient } = require('@supabase/supabase-js');
+          const client = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
+          
+          await client
+            .from('users')
+            .update({ 
+              password: hashedPassword, 
+              is_admin: true, 
+              role: 'admin' 
+            })
+            .eq('email', adminEmail);
+        }
+        
         return res.json({ 
           success: true, 
-          message: "Usuário admin já existe",
-          user: { id: existingAdmin.id, email: existingAdmin.email, isAdmin: existingAdmin.isAdmin }
+          message: "Usuário admin atualizado com permissões de administrador",
+          user: { id: existingAdmin.id, email: existingAdmin.email, isAdmin: true },
+          credentials: { email: adminEmail, password: adminPassword }
         });
       }
 
       // Create admin user
-      const hashedPassword = await bcrypt.hash("admin123", 10);
+      const hashedPassword = await bcrypt.hash(adminPassword, 10);
       const adminUser = await storage.createUser({
         username: "admin",
         email: adminEmail,
@@ -287,7 +307,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         success: true, 
         message: "Usuário administrativo criado com sucesso",
         user: { id: adminUser.id, email: adminUser.email, isAdmin: adminUser.isAdmin },
-        credentials: { email: adminEmail, password: "admin123" }
+        credentials: { email: adminEmail, password: adminPassword }
       });
     } catch (error: any) {
       res.status(500).json({ 

@@ -25,6 +25,10 @@ export class SupabaseStorage implements IStorage {
     return this.supabaseClient;
   }
 
+  public getClient() {
+    return this.getSupabaseClient();
+  }
+
   async initializeDatabase(): Promise<void> {
     try {
       const client = this.getSupabaseClient();
