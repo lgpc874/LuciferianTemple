@@ -133,16 +133,20 @@ export default function GrimoireKindle() {
   }
 
   return (
-    <div className="fixed inset-0 bg-white">
+    <div className="fixed inset-0 bg-background min-h-screen" 
+         style={{
+           background: 'url("https://i.postimg.cc/qqX1Q7zn/Textura-envelhecida-e-marcada-pelo-tempo.png") center/cover fixed',
+           backgroundAttachment: 'fixed'
+         }}>
       {/* Botão de voltar - único elemento da interface */}
       <button 
         onClick={() => {
           exitFullscreen();
           setLocation('/biblioteca');
         }}
-        className="fixed top-4 left-4 z-50 p-3 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all border border-gray-200"
+        className="fixed top-4 left-4 z-50 p-3 bg-card/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-card transition-all border border-burned-amber"
       >
-        <ChevronLeft size={18} className="text-gray-700" />
+        <ChevronLeft size={18} className="text-golden-amber" />
       </button>
 
       {/* Container de leitura - ocupa toda a tela */}
@@ -155,12 +159,12 @@ export default function GrimoireKindle() {
 
         {/* Container de texto - área central */}
         <div className="flex-1 h-full flex items-center justify-center">
-          {/* Página formato A5 responsiva - ligeiramente menor */}
+          {/* Página formato A5 responsiva - com estilo do site */}
           <div 
-            className="bg-card shadow-lg rounded-lg border border-border relative"
+            className="bg-card/95 backdrop-blur-sm shadow-2xl rounded-lg border border-burned-amber relative content-section"
             style={{
-              width: isMobile ? '85vw' : 'min(65vw, 380px)', // A5 reduzido
-              height: isMobile ? '80vh' : 'min(80vh, 540px)', // A5 reduzido
+              width: isMobile ? '85vw' : 'min(65vw, 380px)',
+              height: isMobile ? '80vh' : 'min(80vh, 540px)',
               maxWidth: '380px',
               maxHeight: '540px'
             }}
@@ -169,17 +173,17 @@ export default function GrimoireKindle() {
             <button
               onClick={handlePrevPage}
               disabled={selectedChapter === 1 && currentPage === 1}
-              className="absolute top-1/2 left-2 transform -translate-y-1/2 w-8 h-8 bg-gray-100/80 hover:bg-gray-200/80 rounded-full flex items-center justify-center opacity-0 hover:opacity-100 transition-all duration-200 disabled:opacity-0"
+              className="absolute top-1/2 left-2 transform -translate-y-1/2 w-8 h-8 bg-card/80 hover:bg-card rounded-full flex items-center justify-center opacity-0 hover:opacity-100 transition-all duration-200 disabled:opacity-0 border border-burned-amber"
             >
-              <ChevronLeft size={16} className="text-gray-600" />
+              <ChevronLeft size={16} className="text-golden-amber" />
             </button>
 
             <button
               onClick={handleNextPage}
               disabled={selectedChapter === (chapters as Chapter[])?.length && currentPage === totalPages}
-              className="absolute top-1/2 right-2 transform -translate-y-1/2 w-8 h-8 bg-gray-100/80 hover:bg-gray-200/80 rounded-full flex items-center justify-center opacity-0 hover:opacity-100 transition-all duration-200 disabled:opacity-0"
+              className="absolute top-1/2 right-2 transform -translate-y-1/2 w-8 h-8 bg-card/80 hover:bg-card rounded-full flex items-center justify-center opacity-0 hover:opacity-100 transition-all duration-200 disabled:opacity-0 border border-burned-amber"
             >
-              <ChevronRight size={16} className="text-gray-600" />
+              <ChevronRight size={16} className="text-golden-amber" />
             </button>
 
             <div className="h-full p-6 sm:p-8 md:p-10 flex flex-col">
@@ -204,10 +208,10 @@ export default function GrimoireKindle() {
                   {/* Conteúdo da página */}
                   <div 
                     ref={contentRef}
-                    className="font-garamond text-ritualistic-beige flex-1 overflow-hidden text-justify leading-relaxed"
+                    className="font-garamond text-ritualistic-beige flex-1 overflow-hidden grimoire-content"
                     style={{
                       fontSize: isMobile ? '14px' : '16px',
-                      lineHeight: '1.6'
+                      lineHeight: '1.8'
                     }}
                     dangerouslySetInnerHTML={{ __html: currentPageContent }}
                   />
@@ -225,16 +229,16 @@ export default function GrimoireKindle() {
       </div>
 
       {/* Barra de progresso estilo Kindle - parte inferior */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-gray-200 px-6 py-3">
+      <div className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-sm border-t border-burned-amber px-6 py-3">
         <div className="max-w-4xl mx-auto">
-          <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
+          <div className="flex items-center justify-between text-sm text-muted-foreground mb-2">
             <span>Página {currentPage} de {totalPages}</span>
             <span>Cap. {selectedChapter} de {(chapters as Chapter[])?.length}</span>
             <span>{Math.round(progressPercentage)}%</span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-1">
+          <div className="w-full bg-muted rounded-full h-1">
             <div 
-              className="bg-gray-800 h-1 rounded-full transition-all duration-300"
+              className="bg-golden-amber h-1 rounded-full transition-all duration-300"
               style={{ width: `${progressPercentage}%` }}
             />
           </div>
