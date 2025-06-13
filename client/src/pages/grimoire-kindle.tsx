@@ -4,6 +4,7 @@ import { useLocation, useParams } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { PageTransition } from '../components/page-transition';
+import ContentProtection from '../components/content-protection';
 import { useIsMobile } from '../hooks/use-mobile';
 import { useAuth } from '../hooks/use-auth';
 import { apiRequest } from '../lib/queryClient';
@@ -309,11 +310,12 @@ export default function GrimoireKindle() {
   }
 
   return (
-    <div className="fixed inset-0 bg-background min-h-screen" 
-         style={{
-           background: 'url("https://i.postimg.cc/qqX1Q7zn/Textura-envelhecida-e-marcada-pelo-tempo.png") center/cover fixed',
-           backgroundAttachment: 'fixed'
-         }}>
+    <ContentProtection enableScreenshotProtection={true}>
+      <div className="fixed inset-0 bg-background min-h-screen" 
+           style={{
+             background: 'url("https://i.postimg.cc/qqX1Q7zn/Textura-envelhecida-e-marcada-pelo-tempo.png") center/cover fixed',
+             backgroundAttachment: 'fixed'
+           }}>
       {/* Botão de voltar - único elemento da interface */}
       <button 
         onClick={() => {
@@ -425,5 +427,6 @@ export default function GrimoireKindle() {
         </div>
       </div>
     </div>
+    </ContentProtection>
   );
 }

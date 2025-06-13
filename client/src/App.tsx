@@ -7,6 +7,7 @@ import { AuthProvider, useAuth } from "@/hooks/use-auth";
 import { AnimatePresence } from "framer-motion";
 import FixedHeader from "@/components/fixed-header";
 import NavigationMenu from "@/components/navigation-menu";
+import ContentProtection from "@/components/content-protection";
 import Home from "@/pages/home";
 import NotFound from "@/pages/not-found";
 import AuthPage from "@/pages/auth";
@@ -48,8 +49,10 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <TooltipProvider>
-          <Toaster />
-          <Router />
+          <ContentProtection>
+            <Toaster />
+            <Router />
+          </ContentProtection>
         </TooltipProvider>
       </AuthProvider>
     </QueryClientProvider>
