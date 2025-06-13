@@ -124,6 +124,9 @@ Templo do Abismo é uma aplicação web dedicada aos ensinamentos luciferianos c
 ```
 Changelog:
 - June 13, 2025. Initial setup
+- June 13, 2025. Admin dashboard implementation completed
+- June 13, 2025. AI-powered grimoire generation system implemented
+- June 13, 2025. Admin user configuration resolved - admin@templodoabismo.com login active
 ```
 
 ## User Preferences
