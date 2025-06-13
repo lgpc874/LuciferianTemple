@@ -35,12 +35,12 @@ export default function GrimoireReader() {
     enabled: !!id && !!token
   });
 
-  const { data: chapters, isLoading: chaptersLoading } = useQuery({
+  const { data: chapters = [], isLoading: chaptersLoading } = useQuery({
     queryKey: ['/api/grimoires', id, 'chapters'],
     enabled: !!id && !!token
   });
 
-  const currentChapter = chapters?.find((ch: Chapter) => ch.chapterOrder === selectedChapter);
+  const currentChapter = chapters.find((ch: Chapter) => ch.chapterOrder === selectedChapter);
 
   if (grimoireLoading || chaptersLoading) {
     return (
