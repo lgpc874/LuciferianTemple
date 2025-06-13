@@ -192,8 +192,14 @@ export default function GrimoireKindle() {
                 >
                   {/* Título do capítulo (apenas na primeira página) */}
                   {currentPage === 1 && (
-                    <div className="text-center mb-8">
-                      <h1 className="font-serif text-amber-900 leading-tight text-lg sm:text-xl md:text-2xl font-bold tracking-wide uppercase">
+                    <div className="text-center mb-12">
+                      <h1 className="text-amber-900 font-bold tracking-widest uppercase" 
+                          style={{
+                            fontSize: isMobile ? '16px' : '18px',
+                            fontFamily: 'Cinzel, serif',
+                            letterSpacing: '2px',
+                            lineHeight: '1.4'
+                          }}>
                         {currentChapter?.title}
                       </h1>
                     </div>
@@ -202,24 +208,22 @@ export default function GrimoireKindle() {
                   {/* Conteúdo da página */}
                   <div 
                     ref={contentRef}
-                    className="text-amber-900 text-justify leading-relaxed flex-1 overflow-hidden"
+                    className="text-amber-900 flex-1 overflow-hidden"
                     style={{
-                      fontSize: isMobile ? '15px' : '16px',
-                      lineHeight: '1.8',
-                      fontFamily: '"Times New Roman", "Garamond", "Book Antiqua", Georgia, serif',
-                      textIndent: '1.5em',
-                      letterSpacing: '0.3px'
+                      fontSize: isMobile ? '14px' : '15px',
+                      lineHeight: '1.7',
+                      fontFamily: 'Cinzel, serif',
+                      textAlign: 'justify',
+                      textIndent: '0',
+                      letterSpacing: '0.5px'
                     }}
                   >
-                    <div 
-                      className="prose prose-amber max-w-none"
-                      style={{
-                        fontSize: 'inherit',
-                        lineHeight: 'inherit',
-                        fontFamily: 'inherit'
-                      }}
-                      dangerouslySetInnerHTML={{ __html: currentPageContent.replace(/\n\n/g, '</p><p class="mb-4 first-letter:text-2xl first-letter:font-bold first-letter:mr-1 first-letter:float-left">').replace(/^/, '<p class="mb-4 first-letter:text-2xl first-letter:font-bold first-letter:mr-1 first-letter:float-left">') + '</p>' }}
-                    />
+                    <div dangerouslySetInnerHTML={{ 
+                      __html: currentPageContent
+                        .split('\n\n')
+                        .map(paragraph => `<p style="margin-bottom: 16px; text-indent: 0; line-height: 1.7;">${paragraph}</p>`)
+                        .join('')
+                    }} />
                   </div>
                 </motion.div>
               </AnimatePresence>
