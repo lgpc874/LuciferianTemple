@@ -105,8 +105,8 @@ export default function GrimoireKindle() {
     
     const pages: string[] = [];
     let currentPageContent = '';
-    // Mais texto por página para melhor aproveitamento do espaço
-    const maxWordsPerPage = isMobile ? 150 : 280; 
+    // 100 palavras por página para teste
+    const maxWordsPerPage = 100; 
     
     paragraphs.forEach((paragraph) => {
       const fullParagraph = paragraph + (paragraph.includes('<h') ? '>' : '</p>');
@@ -286,8 +286,8 @@ export default function GrimoireKindle() {
           </button>
         </div>
 
-        {/* Conteúdo da página - centralizado */}
-        <div className="flex-1 flex items-center justify-center">
+        {/* Conteúdo da página */}
+        <div className="flex-1 flex items-stretch">
           {/* Área de toque para página anterior */}
           <button 
             onClick={handlePrevPage}
@@ -303,12 +303,12 @@ export default function GrimoireKindle() {
             )}
           </button>
 
-          {/* Conteúdo central - centralizado na tela */}
-          <div className={`flex-1 max-w-4xl mx-auto flex flex-col justify-center ${
+          {/* Conteúdo central - responsivo para desktop e mobile */}
+          <div className={`flex-1 flex flex-col ${
             isMobile 
-              ? 'px-4 py-6' 
-              : 'px-8 py-8'
-          }`} style={{ minHeight: '70vh', maxHeight: '75vh' }}>
+              ? 'px-6 py-8 pt-16' 
+              : 'px-12 py-16 pt-20'
+          }`}>
             <AnimatePresence mode="wait">
               <motion.div
                 key={`${selectedChapter}-${currentPage}`}
@@ -332,14 +332,17 @@ export default function GrimoireKindle() {
                   </div>
                 )}
 
-                {/* Conteúdo da página - centralizado e otimizado */}
+                {/* Conteúdo da página - layout otimizado para leitura confortável */}
                 <div 
-                  className="flex-1 text-gray-800 overflow-auto text-justify"
+                  className={`flex-1 text-gray-800 overflow-hidden text-justify 
+                           ${isMobile ? '' : 'columns-1'}`}
                   style={{
-                    fontSize: isMobile ? '16px' : '18px',
-                    lineHeight: isMobile ? '1.7' : '1.8',
+                    fontSize: isMobile ? '17px' : '18px',
+                    lineHeight: isMobile ? '1.6' : '1.7',
                     fontFamily: 'Georgia, serif',
-                    padding: isMobile ? '0' : '0 2rem'
+                    maxWidth: isMobile ? '100%' : '85%',
+                    margin: isMobile ? '0' : '0 auto',
+                    maxHeight: '100%'
                   }}
                   dangerouslySetInnerHTML={{ __html: currentPageContent }}
                 />
