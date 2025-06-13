@@ -12,7 +12,7 @@ import NotFound from "@/pages/not-found";
 import AuthPage from "@/pages/auth";
 import BibliothecaArcana from "@/pages/bibliotheca-arcana";
 import Biblioteca from "@/pages/biblioteca";
-import GrimoireReader from "@/pages/grimoire-reader-v2";
+import GrimoireReader from "@/pages/grimoire-kindle";
 import GrimoireSimple from "@/pages/grimoire-simple";
 
 function Router() {
