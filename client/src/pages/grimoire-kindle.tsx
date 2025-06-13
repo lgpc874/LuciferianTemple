@@ -206,6 +206,7 @@ export default function GrimoireKindle() {
 
   return (
     <PageTransition className="min-h-screen bg-white text-gray-900 font-serif">
+      <div className="w-full h-screen">
       {/* Header minimalista - apenas visível no menu */}
       <AnimatePresence>
         {showMenu && (
@@ -287,127 +288,117 @@ export default function GrimoireKindle() {
         )}
       </AnimatePresence>
 
-      {/* Conteúdo principal - estilo Kindle */}
-      <div className="w-full h-screen flex flex-col">
-        {/* Espaço reservado para o menu */}
-        <div className="h-20 flex-shrink-0 relative">
-          {/* Botão de menu fixo no topo */}
-          <div className="absolute top-4 left-4 z-30">
-            <button 
-              onClick={() => setShowMenu(true)}
-              className="p-3 bg-white/95 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all border border-gray-200"
-            >
-              <Menu size={18} className="text-gray-700" />
-            </button>
-          </div>
+      {/* Container fixo ocupando tela inteira */}
+      <div className="fixed inset-0 w-full h-full flex">
+        {/* Botão de menu flutuante */}
+        <div className="absolute top-4 left-4 z-50">
+          <button 
+            onClick={() => setShowMenu(true)}
+            className="p-3 bg-white/95 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all border border-gray-200"
+          >
+            <Menu size={18} className="text-gray-700" />
+          </button>
         </div>
 
-        {/* Conteúdo da página */}
-        <div className="flex-1 flex items-stretch">
-          {/* Área de toque para página anterior */}
-          <button 
-            onClick={handlePrevPage}
-            disabled={selectedChapter === 1 && currentPage === 1}
-            className={`flex items-center justify-center transition-opacity ${
-              isMobile 
-                ? 'w-12 opacity-20 active:opacity-60' 
-                : 'w-20 opacity-0 hover:opacity-100'
-            }`}
-          >
-            {!(selectedChapter === 1 && currentPage === 1) && (
-              <ChevronLeft size={isMobile ? 16 : 24} className="text-gray-400" />
-            )}
-          </button>
-
-          {/* Conteúdo central - responsivo para desktop e mobile */}
-          <div className={`flex-1 flex flex-col ${
+        {/* Área de toque para página anterior */}
+        <button 
+          onClick={handlePrevPage}
+          disabled={selectedChapter === 1 && currentPage === 1}
+          className={`flex items-center justify-center transition-opacity ${
             isMobile 
-              ? 'px-6 py-4' 
-              : 'px-12 py-8'
-          }`}>
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={`${selectedChapter}-${currentPage}`}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.2 }}
-                className="flex-1 flex flex-col max-w-none"
-                style={{ minHeight: 0 }}
-              >
-                {/* Título do capítulo (apenas na primeira página) */}
-                {currentPage === 1 && (
-                  <div className={`pb-4 border-b border-gray-200 flex-shrink-0 ${
-                    isMobile ? 'mb-6' : 'mb-10'
+              ? 'w-12 opacity-20 active:opacity-60' 
+              : 'w-16 opacity-0 hover:opacity-100'
+          }`}
+        >
+          {!(selectedChapter === 1 && currentPage === 1) && (
+            <ChevronLeft size={isMobile ? 16 : 20} className="text-gray-400" />
+          )}
+        </button>
+
+        {/* Container de conteúdo - ocupa toda área central */}
+        <div className="flex-1 flex flex-col justify-center min-h-0 max-w-4xl mx-auto w-full">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={`${selectedChapter}-${currentPage}`}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.2 }}
+              className="flex-1 flex flex-col justify-center"
+            >
+              {/* Título do capítulo (apenas na primeira página) */}
+              {currentPage === 1 && (
+                <div className={`pb-4 border-b border-gray-200 mb-6 ${
+                  isMobile ? 'px-4' : 'px-8'
+                }`}>
+                  <h1 className={`font-bold text-gray-900 leading-tight ${
+                    isMobile ? 'text-xl' : 'text-3xl'
                   }`}>
-                    <h1 className={`font-bold text-gray-900 leading-tight ${
-                      isMobile ? 'text-xl' : 'text-3xl'
-                    }`}>
-                      {currentChapter?.title}
-                    </h1>
-                  </div>
-                )}
+                    {currentChapter?.title}
+                  </h1>
+                </div>
+              )}
 
-                {/* Container de conteúdo com altura fixa */}
-                <div 
-                  ref={contentRef}
-                  className="text-gray-800 overflow-hidden text-justify"
-                  style={{
-                    fontSize: isMobile ? '17px' : '18px',
-                    lineHeight: isMobile ? '1.6' : '1.7',
-                    fontFamily: 'Georgia, serif',
-                    maxWidth: isMobile ? '100%' : '85%',
-                    margin: isMobile ? '0' : '0 auto',
-                    height: isMobile ? '70vh' : '75vh', // Altura maior para mais texto
-                    width: '100%'
-                  }}
-                  dangerouslySetInnerHTML={{ __html: currentPageContent }}
-                />
-              </motion.div>
-            </AnimatePresence>
-          </div>
-
-          {/* Área de toque para próxima página */}
-          <button 
-            onClick={handleNextPage}
-            disabled={selectedChapter === (chapters as Chapter[]).length && currentPage === totalPages}
-            className={`flex items-center justify-center transition-opacity ${
-              isMobile 
-                ? 'w-12 opacity-20 active:opacity-60' 
-                : 'w-20 opacity-0 hover:opacity-100'
-            }`}
-          >
-            {!(selectedChapter === (chapters as Chapter[]).length && currentPage === totalPages) && (
-              <ChevronRight size={isMobile ? 16 : 24} className="text-gray-400" />
-            )}
-          </button>
+              {/* Container de conteúdo responsivo */}
+              <div 
+                ref={contentRef}
+                className={`text-gray-800 overflow-hidden text-justify ${
+                  isMobile ? 'px-4' : 'px-8'
+                }`}
+                style={{
+                  fontSize: isMobile ? '17px' : '18px',
+                  lineHeight: isMobile ? '1.6' : '1.7',
+                  fontFamily: 'Georgia, serif',
+                  height: 'calc(100vh - 200px)', // Altura responsiva
+                  maxHeight: '80vh'
+                }}
+                dangerouslySetInnerHTML={{ __html: currentPageContent }}
+              />
+            </motion.div>
+          </AnimatePresence>
         </div>
 
-        {/* Barra de progresso - fixa no bottom */}
-        <div className={`flex-shrink-0 border-t border-gray-100 bg-white ${
-          isMobile ? 'px-6 py-4' : 'px-16 py-6'
-        }`}>
-          <div className="max-w-full">
-            <div className={`flex items-center justify-between text-gray-500 mb-3 ${
-              isMobile ? 'text-sm' : 'text-base'
-            }`}>
-              <span>Página {currentPage} de {totalPages}</span>
-              <span>{Math.round(progressPercentage)}% completo</span>
-            </div>
-            <div className={`w-full bg-gray-200 rounded-full ${
-              isMobile ? 'h-2' : 'h-3'
-            }`}>
-              <div 
-                className="bg-gray-800 rounded-full transition-all duration-500"
-                style={{ 
-                  width: `${progressPercentage}%`,
-                  height: '100%'
-                }}
-              ></div>
-            </div>
+        {/* Área de toque para próxima página */}
+        <button 
+          onClick={handleNextPage}
+          disabled={selectedChapter === (chapters as Chapter[]).length && currentPage === totalPages}
+          className={`flex items-center justify-center transition-opacity ${
+            isMobile 
+              ? 'w-12 opacity-20 active:opacity-60' 
+              : 'w-16 opacity-0 hover:opacity-100'
+          }`}
+        >
+          {!(selectedChapter === (chapters as Chapter[]).length && currentPage === totalPages) && (
+            <ChevronRight size={isMobile ? 16 : 20} className="text-gray-400" />
+          )}
+        </button>
+      </div>
+
+      {/* Barra de progresso - posição fixa na parte inferior */}
+      <div className={`fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 z-40 ${
+        isMobile ? 'px-4 py-3' : 'px-8 py-4'
+      }`}>
+        <div className="max-w-4xl mx-auto">
+          <div className={`flex items-center justify-between text-gray-500 mb-2 ${
+            isMobile ? 'text-sm' : 'text-base'
+          }`}>
+            <span>Página {currentPage} de {totalPages}</span>
+            <span>{Math.round(progressPercentage)}% completo</span>
+          </div>
+          <div className={`w-full bg-gray-200 rounded-full ${
+            isMobile ? 'h-2' : 'h-3'
+          }`}>
+            <div 
+              className="bg-gray-800 rounded-full transition-all duration-500"
+              style={{ 
+                width: `${progressPercentage}%`,
+                height: '100%'
+              }}
+            ></div>
           </div>
         </div>
       </div>
+      </div>{/* End main container */}
     </PageTransition>
   );
 }
