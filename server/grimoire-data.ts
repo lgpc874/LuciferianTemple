@@ -151,10 +151,7 @@ class GrimoireDataStore {
     const content: { [key: string]: string[] } = {
       'introducao-ocultismo': [
         // Capítulo I - A Trilha Oculta
-        `<div class="chapter-header">
-          <h2>✦ Capítulo I – A Trilha Oculta</h2>
-          <p class="chapter-quote">"Nem todos que buscam a verdade suportam vê-la sem véus."</p>
-        </div>
+        `<p class="chapter-quote italic text-center mb-6">"Nem todos que buscam a verdade suportam vê-la sem véus."</p>
 
         <p>O ocultismo não é religião. Não é superstição. Não é fantasia escapista para mentes fracas que buscam consolo em ilusões. O ocultismo é <em>despertar</em>.</p>
 
