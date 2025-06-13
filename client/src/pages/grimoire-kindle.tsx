@@ -145,8 +145,8 @@ export default function GrimoireKindle() {
         />
 
         {/* Container de texto - área central */}
-        <div className="flex-1 h-full flex items-center justify-center px-8">
-          <div className="max-w-4xl w-full">
+        <div className="flex-1 h-full flex items-center justify-center px-4">
+          <div className="max-w-6xl w-full">
             <AnimatePresence mode="wait">
               <motion.div
                 key={`${selectedChapter}-${currentPage}`}
