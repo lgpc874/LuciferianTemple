@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, X, Menu } from "lucide-react";
 import { PageTransition } from "@/components/page-transition";
 import { useAuth } from "@/hooks/use-auth";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 
 interface Chapter {
   id: number;
@@ -95,55 +95,72 @@ export default function GrimoireKindle() {
 
   const currentChapter = (chapters as Chapter[]).find((ch: Chapter) => ch.chapterOrder === selectedChapter);
 
-  // Função para dividir conteúdo em páginas estilo Kindle
-  const splitContentIntoPages = (content: string): string[] => {
-    if (!content) return [];
+  // Ref para o container de conteúdo
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [pages, setPages] = useState<string[]>([]);
+  
+  // Função para dividir conteúdo baseado na altura real do container
+  const splitContentByHeight = useCallback((content: string) => {
+    if (!content || !contentRef.current) return [content];
     
-    // Remover o header e dividir em parágrafos
     const cleanContent = content.replace(/<div class="chapter-header">.*?<\/div>/g, '');
     const paragraphs = cleanContent.split(/<\/p>|<\/h[1-6]>/).filter(p => p.trim());
     
+    const container = contentRef.current;
+    const maxHeight = container.clientHeight;
     const pages: string[] = [];
-    let currentPageContent = '';
-    // 90 palavras por página para teste
-    const maxWordsPerPage = 90; 
+    let currentPage = '';
     
-    paragraphs.forEach((paragraph) => {
-      const fullParagraph = paragraph + (paragraph.includes('<h') ? '>' : '</p>');
-      const wordCount = fullParagraph.replace(/<[^>]*>/g, '').split(/\s+/).filter(word => word.length > 0).length;
-      const currentWordCount = currentPageContent.replace(/<[^>]*>/g, '').split(/\s+/).filter(word => word.length > 0).length;
-      
-      if (currentWordCount + wordCount > maxWordsPerPage && currentPageContent.trim()) {
-        pages.push(currentPageContent);
-        currentPageContent = fullParagraph;
-      } else {
-        currentPageContent += fullParagraph;
+    // Criar um elemento temporário para medir altura
+    const tempDiv = document.createElement('div');
+    tempDiv.style.position = 'absolute';
+    tempDiv.style.visibility = 'hidden';
+    tempDiv.style.width = container.offsetWidth + 'px';
+    tempDiv.style.fontSize = getComputedStyle(container).fontSize;
+    tempDiv.style.lineHeight = getComputedStyle(container).lineHeight;
+    tempDiv.style.fontFamily = getComputedStyle(container).fontFamily;
+    document.body.appendChild(tempDiv);
+    
+    try {
+      for (const paragraph of paragraphs) {
+        const fullParagraph = paragraph + (paragraph.includes('<h') ? '>' : '</p>');
+        const testContent = currentPage + fullParagraph;
+        
+        tempDiv.innerHTML = testContent;
+        
+        if (tempDiv.offsetHeight > maxHeight && currentPage.trim()) {
+          pages.push(currentPage);
+          currentPage = fullParagraph;
+        } else {
+          currentPage += fullParagraph;
+        }
       }
-    });
-    
-    if (currentPageContent.trim()) {
-      pages.push(currentPageContent);
+      
+      if (currentPage.trim()) {
+        pages.push(currentPage);
+      }
+    } finally {
+      document.body.removeChild(tempDiv);
     }
     
-    return pages.length > 0 ? pages : [content];
-  };
-
-  const currentPages = splitContentIntoPages(currentChapter?.content || '');
-  const totalPages = currentPages.length;
-  const currentPageContent = currentPages[currentPage - 1] || '';
-
-  // Calcular posição total no livro
-  const totalChapterPages = (chapters as Chapter[]).reduce((acc, chapter, index) => {
-    if (index < selectedChapter - 1) {
-      return acc + splitContentIntoPages(chapter.content || '').length;
-    }
-    return acc;
-  }, 0);
+    return pages.length > 0 ? pages : [cleanContent];
+  }, []);
   
-  const currentPositionInBook = totalChapterPages + currentPage;
-  const totalPagesInBook = (chapters as Chapter[]).reduce((acc, chapter) => {
-    return acc + splitContentIntoPages(chapter.content || '').length;
-  }, 0);
+  // Atualizar páginas quando o conteúdo ou tamanho mudar
+  useEffect(() => {
+    if (currentChapter?.content) {
+      const newPages = splitContentByHeight(currentChapter.content);
+      setPages(newPages);
+      setCurrentPage(1);
+    }
+  }, [currentChapter?.content, splitContentByHeight, isMobile]);
+
+  const totalPages = pages.length;
+  const currentPageContent = pages[currentPage - 1] || '';
+
+  // Calcular progresso simples baseado no capítulo atual
+  const progressPercentage = (chapters as Chapter[]).length > 0 ? 
+    ((selectedChapter - 1) / (chapters as Chapter[]).length + (currentPage / totalPages) / (chapters as Chapter[]).length) * 100 : 0;
 
   // Reset page when chapter changes
   const handleChapterChange = (chapterOrder: number) => {
@@ -169,14 +186,10 @@ export default function GrimoireKindle() {
       setCurrentPage(currentPage - 1);
     } else if (selectedChapter > 1) {
       setSelectedChapter(selectedChapter - 1);
-      const prevChapter = (chapters as Chapter[]).find(ch => ch.chapterOrder === selectedChapter - 1);
-      const prevPages = splitContentIntoPages(prevChapter?.content || '');
-      setCurrentPage(prevPages.length);
+      setCurrentPage(1); // Simplificado - vai para página 1 do capítulo anterior
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
-
-  const progressPercentage = totalPagesInBook > 0 ? (currentPositionInBook / totalPagesInBook) * 100 : 0;
 
   if (grimoireLoading || chaptersLoading) {
     return (
