@@ -5,6 +5,7 @@ import { registerSchema, loginSchema, type RegisterData, type LoginData, insertP
 import { grimoireStore } from "./grimoire-data";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { createClient } from "@supabase/supabase-js";
 
 const JWT_SECRET = process.env.JWT_SECRET || "templo_abismo_secret_key";
 
@@ -258,57 +259,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Create admin user endpoint (public for initial setup)
+  // Update admin permissions directly
   app.post("/api/setup/admin", async (req, res) => {
     try {
       const adminEmail = "admin@templodoabismo.com";
       const adminPassword = "admin123";
       
-      // Check if admin already exists
+      // Check if admin exists and ensure proper permissions
       const existingAdmin = await storage.getUserByEmail(adminEmail);
-      if (existingAdmin) {
-        // Update password and admin status for existing user
+      if (!existingAdmin) {
+        // Create admin user if doesn't exist
         const hashedPassword = await bcrypt.hash(adminPassword, 10);
-        
-        // Update via Supabase directly
-        if (process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY) {
-          const { createClient } = require('@supabase/supabase-js');
-          const client = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
-          
-          await client
-            .from('users')
-            .update({ 
-              password: hashedPassword, 
-              is_admin: true, 
-              role: 'admin' 
-            })
-            .eq('email', adminEmail);
-        }
+        const adminUser = await storage.createUser({
+          username: "admin",
+          email: adminEmail,
+          password: hashedPassword,
+          role: "admin",
+          isAdmin: true
+        });
+
+        return res.json({ 
+          success: true, 
+          message: "Usuário administrativo criado com sucesso",
+          user: { id: adminUser.id, email: adminUser.email, isAdmin: adminUser.isAdmin },
+          credentials: { email: adminEmail, password: adminPassword }
+        });
+      }
+
+      // For existing user, manually update in memory store to ensure admin access
+      // This is a direct approach to resolve immediate access issues
+      if (existingAdmin) {
+        // Update password hash for the existing user
+        const hashedPassword = await bcrypt.hash(adminPassword, 10);
+        existingAdmin.password = hashedPassword;
+        existingAdmin.isAdmin = true;
+        existingAdmin.role = "admin";
         
         return res.json({ 
           success: true, 
-          message: "Usuário admin atualizado com permissões de administrador",
+          message: "Usuário admin configurado com permissões administrativas",
           user: { id: existingAdmin.id, email: existingAdmin.email, isAdmin: true },
           credentials: { email: adminEmail, password: adminPassword }
         });
       }
 
-      // Create admin user
-      const hashedPassword = await bcrypt.hash(adminPassword, 10);
-      const adminUser = await storage.createUser({
-        username: "admin",
-        email: adminEmail,
-        password: hashedPassword,
-        role: "admin",
-        isAdmin: true
-      });
-
-      res.json({ 
-        success: true, 
-        message: "Usuário administrativo criado com sucesso",
-        user: { id: adminUser.id, email: adminUser.email, isAdmin: adminUser.isAdmin },
-        credentials: { email: adminEmail, password: adminPassword }
-      });
     } catch (error: any) {
       res.status(500).json({ 
         success: false, 
