@@ -345,17 +345,18 @@ export default function GrimoireKindle() {
                   </div>
                 )}
 
-                {/* Conteúdo da página - layout otimizado para leitura confortável */}
+                {/* Container de conteúdo com altura fixa */}
                 <div 
-                  className={`flex-1 text-gray-800 overflow-hidden text-justify 
-                           ${isMobile ? '' : 'columns-1'}`}
+                  ref={contentRef}
+                  className="text-gray-800 overflow-hidden text-justify"
                   style={{
                     fontSize: isMobile ? '17px' : '18px',
                     lineHeight: isMobile ? '1.6' : '1.7',
                     fontFamily: 'Georgia, serif',
                     maxWidth: isMobile ? '100%' : '85%',
                     margin: isMobile ? '0' : '0 auto',
-                    maxHeight: '100%'
+                    height: isMobile ? '60vh' : '65vh', // Altura fixa
+                    width: '100%'
                   }}
                   dangerouslySetInnerHTML={{ __html: currentPageContent }}
                 />
