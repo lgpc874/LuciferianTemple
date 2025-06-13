@@ -54,7 +54,8 @@ export default function GrimoireKindle() {
     
     const pages: string[] = [];
     let currentPageContent = '';
-    const maxWordsPerPage = 400; // Mais palavras por página como no Kindle
+    // Ajustado para caber exatamente em uma tela - menos palavras por página
+    const maxWordsPerPage = 200; 
     
     paragraphs.forEach((paragraph) => {
       const fullParagraph = paragraph + (paragraph.includes('<h') ? '>' : '</p>');
@@ -205,57 +206,58 @@ export default function GrimoireKindle() {
       </AnimatePresence>
 
       {/* Conteúdo principal - estilo Kindle */}
-      <div className="max-w-2xl mx-auto min-h-screen flex flex-col">
+      <div className="max-w-4xl mx-auto h-screen flex flex-col">
         {/* Área de toque para menu */}
-        <div className="absolute top-0 left-0 right-0 h-16 z-10">
+        <div className="absolute top-0 left-0 right-0 h-12 z-10">
           <button 
             onClick={() => setShowMenu(true)}
             className="w-full h-full flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity"
           >
-            <Menu size={20} className="text-gray-400" />
+            <Menu size={16} className="text-gray-400" />
           </button>
         </div>
 
-        {/* Conteúdo da página */}
-        <div className="flex-1 flex">
+        {/* Conteúdo da página - altura fixa para caber na tela */}
+        <div className="flex-1 flex pt-6 pb-16">
           {/* Área de toque para página anterior */}
           <button 
             onClick={handlePrevPage}
             disabled={selectedChapter === 1 && currentPage === 1}
-            className="w-1/4 flex items-center justify-start pl-4 opacity-0 hover:opacity-100 transition-opacity"
+            className="w-20 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity"
           >
             {!(selectedChapter === 1 && currentPage === 1) && (
-              <ChevronLeft size={20} className="text-gray-400" />
+              <ChevronLeft size={24} className="text-gray-400" />
             )}
           </button>
 
-          {/* Conteúdo central */}
-          <div className="flex-1 px-8 py-16">
+          {/* Conteúdo central - largura maior */}
+          <div className="flex-1 px-12 py-8 max-h-full overflow-hidden">
             <AnimatePresence mode="wait">
               <motion.div
                 key={`${selectedChapter}-${currentPage}`}
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.3 }}
-                className="max-w-none"
+                transition={{ duration: 0.2 }}
+                className="h-full flex flex-col"
               >
                 {/* Título do capítulo (apenas na primeira página) */}
                 {currentPage === 1 && (
-                  <div className="mb-8 pb-6 border-b border-gray-200">
-                    <h1 className="text-2xl font-bold text-gray-900 leading-tight">
+                  <div className="mb-6 pb-4 border-b border-gray-200">
+                    <h1 className="text-xl font-bold text-gray-900 leading-tight">
                       {currentChapter?.title}
                     </h1>
                   </div>
                 )}
 
-                {/* Conteúdo da página */}
+                {/* Conteúdo da página - altura limitada */}
                 <div 
-                  className="prose prose-lg max-w-none leading-relaxed text-gray-800"
+                  className="flex-1 text-gray-800 overflow-hidden"
                   style={{
-                    fontSize: '18px',
-                    lineHeight: '1.6',
-                    fontFamily: 'Georgia, serif'
+                    fontSize: '16px',
+                    lineHeight: '1.8',
+                    fontFamily: 'Georgia, serif',
+                    maxHeight: '100%'
                   }}
                   dangerouslySetInnerHTML={{ __html: currentPageContent }}
                 />
@@ -267,16 +269,16 @@ export default function GrimoireKindle() {
           <button 
             onClick={handleNextPage}
             disabled={selectedChapter === (chapters as Chapter[]).length && currentPage === totalPages}
-            className="w-1/4 flex items-center justify-end pr-4 opacity-0 hover:opacity-100 transition-opacity"
+            className="w-20 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity"
           >
             {!(selectedChapter === (chapters as Chapter[]).length && currentPage === totalPages) && (
-              <ChevronRight size={20} className="text-gray-400" />
+              <ChevronRight size={24} className="text-gray-400" />
             )}
           </button>
         </div>
 
-        {/* Barra de progresso e info da página */}
-        <div className="p-4 border-t border-gray-100">
+        {/* Barra de progresso e info da página - fixa no bottom */}
+        <div className="px-12 pb-4 border-t border-gray-100 bg-white">
           <div className="flex items-center justify-between text-xs text-gray-500 mb-2">
             <span>Página {currentPage} de {totalPages}</span>
             <span>{Math.round(progressPercentage)}% do livro</span>
