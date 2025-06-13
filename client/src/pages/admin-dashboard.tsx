@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
+import AdminNavigation from '@/components/admin-navigation';
 import { 
   Users, 
   BookOpen, 
@@ -73,25 +74,14 @@ export default function AdminDashboard() {
   }
 
   return (
-    <PageTransition className="min-h-screen bg-background p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="font-cinzel text-3xl font-bold text-golden-amber tracking-wider">
-              Painel Administrativo
-            </h1>
-            <p className="text-muted-foreground mt-2">
-              Gerencie todo o conteúdo e configurações do Templo do Abismo
-            </p>
-          </div>
-          <Badge variant="outline" className="text-golden-amber border-golden-amber">
-            Administrador: {user?.username || 'Admin'}
-          </Badge>
-        </div>
-
-        {/* Navigation Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+    <div className="min-h-screen bg-background">
+      {/* Admin Navigation */}
+      <AdminNavigation />
+      
+      <PageTransition className="p-6">
+        <div className="max-w-7xl mx-auto space-y-6">
+          {/* Navigation Tabs */}
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8 bg-card">
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <BarChart3 size={16} />
@@ -256,7 +246,8 @@ export default function AdminDashboard() {
             <AdminSettings />
           </TabsContent>
         </Tabs>
-      </div>
-    </PageTransition>
+        </div>
+      </PageTransition>
+    </div>
   );
 }
