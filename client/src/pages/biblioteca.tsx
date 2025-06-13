@@ -1,5 +1,8 @@
 import { grimoireCoverSvgs } from "../components/grimoire-covers";
 import { useAuth } from "../hooks/use-auth";
+import { useLocation } from "wouter";
+import { PageTransition } from "@/components/page-transition";
+import { motion } from "framer-motion";
 import AuthForm from "../components/auth-form";
 
 export default function Biblioteca() {
