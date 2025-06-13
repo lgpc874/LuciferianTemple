@@ -1,56 +1,105 @@
-import { useState } from 'react';
+import { useMemo } from 'react';
 import { useAuth } from '@/hooks/use-auth';
+import { useLocation } from 'wouter';
 import { PageTransition } from '@/components/page-transition';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
 import AdminNavigation from '@/components/admin-navigation';
+import AdminUsers from '@/components/admin/admin-users';
+import AdminGrimoires from '@/components/admin/admin-grimoires';
+import AdminContent from '@/components/admin/admin-content';
+import AdminThemes from '@/components/admin/admin-themes';
+import AdminAIComplete from '@/components/admin/admin-ai-complete';
+import AdminAnalytics from '@/components/admin/admin-analytics';
+import AdminSettings from '@/components/admin/admin-settings';
 import { 
-  Users, 
-  BookOpen, 
-  Settings, 
-  Palette, 
-  Bot, 
-  FileText, 
   BarChart3,
   Shield,
   Database,
-  Plus
+  TrendingUp,
+  Globe
 } from 'lucide-react';
 
-// Simple admin components for now
-function AdminUsers() {
-  return <div className="p-4 text-center text-muted-foreground">Módulo de usuários em desenvolvimento</div>;
-}
+// Overview Dashboard component
+function AdminOverview() {
+  return (
+    <div className="space-y-6">
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total de Usuários</CardTitle>
+            <Shield className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-golden-amber">1,234</div>
+            <p className="text-xs text-muted-foreground">+180 desde o último mês</p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Grimórios Ativos</CardTitle>
+            <Database className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-golden-amber">42</div>
+            <p className="text-xs text-muted-foreground">+3 novos esta semana</p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Sessões Hoje</CardTitle>
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-golden-amber">573</div>
+            <p className="text-xs text-muted-foreground">+12% desde ontem</p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Taxa de Engajamento</CardTitle>
+            <Globe className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-golden-amber">94.5%</div>
+            <p className="text-xs text-muted-foreground">+2.3% desde a semana passada</p>
+          </CardContent>
+        </Card>
+      </div>
 
-function AdminGrimoires() {
-  return <div className="p-4 text-center text-muted-foreground">Módulo de grimórios em desenvolvimento</div>;
-}
-
-function AdminContent() {
-  return <div className="p-4 text-center text-muted-foreground">Módulo de conteúdo em desenvolvimento</div>;
-}
-
-function AdminThemes() {
-  return <div className="p-4 text-center text-muted-foreground">Módulo de temas em desenvolvimento</div>;
-}
-
-function AdminAI() {
-  return <div className="p-4 text-center text-muted-foreground">Módulo de IA em desenvolvimento</div>;
-}
-
-function AdminAnalytics() {
-  return <div className="p-4 text-center text-muted-foreground">Módulo de analytics em desenvolvimento</div>;
-}
-
-function AdminSettings() {
-  return <div className="p-4 text-center text-muted-foreground">Módulo de configurações em desenvolvimento</div>;
+      {/* Quick Actions */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-golden-amber">Ações Rápidas</CardTitle>
+          <CardDescription>
+            Acesso direto às funcionalidades mais utilizadas
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="p-4 border rounded-lg hover:bg-muted/50 cursor-pointer transition-colors">
+            <h3 className="font-semibold text-golden-amber mb-2">Gerar Grimório com IA</h3>
+            <p className="text-sm text-muted-foreground">Criar novo conteúdo automaticamente</p>
+          </div>
+          <div className="p-4 border rounded-lg hover:bg-muted/50 cursor-pointer transition-colors">
+            <h3 className="font-semibold text-golden-amber mb-2">Gerenciar Usuários</h3>
+            <p className="text-sm text-muted-foreground">Administrar contas e permissões</p>
+          </div>
+          <div className="p-4 border rounded-lg hover:bg-muted/50 cursor-pointer transition-colors">
+            <h3 className="font-semibold text-golden-amber mb-2">Ver Analytics</h3>
+            <p className="text-sm text-muted-foreground">Relatórios e métricas detalhadas</p>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
 }
 
 export default function AdminDashboard() {
   const { user, isAuthenticated } = useAuth();
-  const [activeTab, setActiveTab] = useState('overview');
+  const [location] = useLocation();
 
   // Verificar se é admin - usando email ou propriedade isAdmin
   const isAdmin = user?.email === "admin@templodoabismo.com" || 
@@ -73,179 +122,41 @@ export default function AdminDashboard() {
     );
   }
 
+  // Determinar qual componente renderizar baseado na URL
+  const currentTab = useMemo(() => {
+    const urlParams = new URLSearchParams(location.split('?')[1] || '');
+    return urlParams.get('tab') || 'overview';
+  }, [location]);
+
+  const renderContent = () => {
+    switch (currentTab) {
+      case 'users':
+        return <AdminUsers />;
+      case 'grimoires':
+        return <AdminGrimoires />;
+      case 'content':
+        return <AdminContent />;
+      case 'themes':
+        return <AdminThemes />;
+      case 'ai':
+        return <AdminAIComplete />;
+      case 'analytics':
+        return <AdminAnalytics />;
+      case 'settings':
+        return <AdminSettings />;
+      default:
+        return <AdminOverview />;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Admin Navigation */}
       <AdminNavigation />
       
       <PageTransition className="p-6">
-        <div className="max-w-7xl mx-auto space-y-6">
-          {/* Navigation Tabs */}
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8 bg-card">
-            <TabsTrigger value="overview" className="flex items-center gap-2">
-              <BarChart3 size={16} />
-              <span className="hidden sm:inline">Visão Geral</span>
-            </TabsTrigger>
-            <TabsTrigger value="grimoires" className="flex items-center gap-2">
-              <BookOpen size={16} />
-              <span className="hidden sm:inline">Grimórios</span>
-            </TabsTrigger>
-            <TabsTrigger value="users" className="flex items-center gap-2">
-              <Users size={16} />
-              <span className="hidden sm:inline">Usuários</span>
-            </TabsTrigger>
-            <TabsTrigger value="content" className="flex items-center gap-2">
-              <FileText size={16} />
-              <span className="hidden sm:inline">Conteúdo</span>
-            </TabsTrigger>
-            <TabsTrigger value="ai" className="flex items-center gap-2">
-              <Bot size={16} />
-              <span className="hidden sm:inline">IA</span>
-            </TabsTrigger>
-            <TabsTrigger value="themes" className="flex items-center gap-2">
-              <Palette size={16} />
-              <span className="hidden sm:inline">Temas</span>
-            </TabsTrigger>
-            <TabsTrigger value="analytics" className="flex items-center gap-2">
-              <Database size={16} />
-              <span className="hidden sm:inline">Analytics</span>
-            </TabsTrigger>
-            <TabsTrigger value="settings" className="flex items-center gap-2">
-              <Settings size={16} />
-              <span className="hidden sm:inline">Config</span>
-            </TabsTrigger>
-          </TabsList>
-
-          {/* Overview Tab */}
-          <TabsContent value="overview" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <Card className="border-golden-amber/20">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total de Grimórios</CardTitle>
-                  <BookOpen className="h-4 w-4 text-golden-amber" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-golden-amber">6</div>
-                  <p className="text-xs text-muted-foreground">
-                    +2 novos este mês
-                  </p>
-                </CardContent>
-              </Card>
-              
-              <Card className="border-golden-amber/20">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Usuários Ativos</CardTitle>
-                  <Users className="h-4 w-4 text-golden-amber" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-golden-amber">1</div>
-                  <p className="text-xs text-muted-foreground">
-                    +0 novos usuários
-                  </p>
-                </CardContent>
-              </Card>
-              
-              <Card className="border-golden-amber/20">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Páginas de Conteúdo</CardTitle>
-                  <FileText className="h-4 w-4 text-golden-amber" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-golden-amber">8</div>
-                  <p className="text-xs text-muted-foreground">
-                    Home, Auth, Biblioteca, etc.
-                  </p>
-                </CardContent>
-              </Card>
-              
-              <Card className="border-golden-amber/20">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Proteção Ativa</CardTitle>
-                  <Shield className="h-4 w-4 text-golden-amber" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-green-500">100%</div>
-                  <p className="text-xs text-muted-foreground">
-                    Anti-cópia e screenshot
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Quick Actions */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-golden-amber">Ações Rápidas</CardTitle>
-                <CardDescription>
-                  Acesso rápido às funcionalidades mais utilizadas
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="flex flex-wrap gap-4">
-                <Button 
-                  onClick={() => setActiveTab('grimoires')}
-                  className="bg-golden-amber hover:bg-golden-amber/90 text-background"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Criar Grimório
-                </Button>
-                <Button 
-                  onClick={() => setActiveTab('ai')}
-                  variant="outline" 
-                  className="border-golden-amber text-golden-amber hover:bg-golden-amber hover:text-background"
-                >
-                  <Bot className="w-4 h-4 mr-2" />
-                  Gerar com IA
-                </Button>
-                <Button 
-                  onClick={() => setActiveTab('users')}
-                  variant="outline"
-                  className="border-golden-amber text-golden-amber hover:bg-golden-amber hover:text-background"
-                >
-                  <Users className="w-4 h-4 mr-2" />
-                  Gerenciar Usuários
-                </Button>
-                <Button 
-                  onClick={() => setActiveTab('themes')}
-                  variant="outline"
-                  className="border-golden-amber text-golden-amber hover:bg-golden-amber hover:text-background"
-                >
-                  <Palette className="w-4 h-4 mr-2" />
-                  Personalizar Tema
-                </Button>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Other Tabs */}
-          <TabsContent value="grimoires">
-            <AdminGrimoires />
-          </TabsContent>
-          
-          <TabsContent value="users">
-            <AdminUsers />
-          </TabsContent>
-          
-          <TabsContent value="content">
-            <AdminContent />
-          </TabsContent>
-          
-          <TabsContent value="ai">
-            <AdminAI />
-          </TabsContent>
-          
-          <TabsContent value="themes">
-            <AdminThemes />
-          </TabsContent>
-          
-          <TabsContent value="analytics">
-            <AdminAnalytics />
-          </TabsContent>
-          
-          <TabsContent value="settings">
-            <AdminSettings />
-          </TabsContent>
-        </Tabs>
+        <div className="max-w-7xl mx-auto">
+          {renderContent()}
         </div>
       </PageTransition>
     </div>
