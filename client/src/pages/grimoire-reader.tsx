@@ -47,32 +47,45 @@ export default function GrimoireReader() {
   const splitContentIntoPages = (content: string): string[] => {
     if (!content) return [];
     
-    // Dividir por parágrafos principais
-    const sections = content.split('</div>');
+    // Dividir por elementos principais (h2, h3, p)
+    const elements = content.split(/(<\/(?:h[2-6]|p|div)>)/);
     const pages: string[] = [];
     let currentPageContent = '';
-    const maxWordsPerPage = 300; // Ajuste conforme necessário
+    const maxWordsPerPage = 250; // Páginas menores para leitura mais confortável
     
-    sections.forEach((section, index) => {
-      if (index === 0) {
-        // Primeiro elemento é o header
-        currentPageContent = section + '</div>';
-        return;
+    let headerSection = '';
+    let inHeader = true;
+    
+    for (let i = 0; i < elements.length; i += 2) {
+      const element = elements[i] + (elements[i + 1] || '');
+      
+      // Capturar o cabeçalho inicial
+      if (inHeader && element.includes('chapter-header')) {
+        headerSection = element;
+        continue;
+      }
+      if (inHeader && element.includes('</div>')) {
+        headerSection += element;
+        inHeader = false;
+        currentPageContent = headerSection;
+        continue;
       }
       
-      const sectionWithDiv = section + (index < sections.length - 1 ? '</div>' : '');
-      const wordCount = sectionWithDiv.replace(/<[^>]*>/g, '').split(' ').length;
-      const currentWordCount = currentPageContent.replace(/<[^>]*>/g, '').split(' ').length;
+      const elementText = element.replace(/<[^>]*>/g, '').trim();
+      const wordCount = elementText.split(/\s+/).filter(word => word.length > 0).length;
+      const currentWordCount = currentPageContent.replace(/<[^>]*>/g, '').split(/\s+/).filter(word => word.length > 0).length;
       
-      if (currentWordCount + wordCount > maxWordsPerPage && currentPageContent.trim()) {
+      // Se adicionar este elemento ultrapassar o limite e já temos conteúdo, criar nova página
+      if (currentWordCount + wordCount > maxWordsPerPage && currentPageContent.replace(headerSection, '').trim()) {
         pages.push(currentPageContent);
-        currentPageContent = sectionWithDiv;
+        currentPageContent = headerSection + element;
       } else {
-        currentPageContent += sectionWithDiv;
+        currentPageContent += element;
       }
-    });
+    }
     
-    if (currentPageContent.trim()) {
+    // Adicionar a última página se houver conteúdo
+    if (currentPageContent.replace(headerSection, '').trim()) {
       pages.push(currentPageContent);
     }
     
