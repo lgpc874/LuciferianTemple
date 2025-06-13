@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useLocation, useParams } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { PageTransition } from '../components/page-transition';
 import { useIsMobile } from '../hooks/use-mobile';
+import { useAuth } from '../hooks/use-auth';
+import { apiRequest } from '../lib/queryClient';
 
 interface Chapter {
   id: number;
@@ -27,6 +29,8 @@ interface Grimoire {
 export default function GrimoireKindle() {
   const [, setLocation] = useLocation();
   const params = useParams();
+  const { token } = useAuth();
+  const queryClient = useQueryClient();
   const isMobile = useIsMobile();
   
   // Get grimoire ID from URL
@@ -59,6 +63,25 @@ export default function GrimoireKindle() {
     enabled: !!token && !!grimoireId
   });
 
+  // Mutation for saving reading progress
+  const saveProgressMutation = useMutation({
+    mutationFn: async (progressData: any) => {
+      const response = await fetch('/api/progress', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(progressData)
+      });
+      if (!response.ok) throw new Error('Failed to save progress');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/progress/grimoire/${grimoireId}`] });
+    }
+  });
+
   // Get current chapter
   const currentChapter = (chapters as Chapter[])?.find((ch: Chapter) => ch.chapterOrder === selectedChapter);
 
@@ -75,6 +98,29 @@ export default function GrimoireKindle() {
       document.exitFullscreen();
     }
     setIsFullscreen(false);
+  };
+
+  // Auto-save reading progress with debouncing
+  const saveReadingProgress = (chapterId: number, pageNum: number) => {
+    if (!token) return;
+    
+    // Clear existing timeout
+    if (progressSaveTimeoutRef.current) {
+      clearTimeout(progressSaveTimeoutRef.current);
+    }
+    
+    // Set new timeout to save after 2 seconds of inactivity
+    progressSaveTimeoutRef.current = setTimeout(() => {
+      const readingTime = Math.floor((Date.now() - startTime) / 1000);
+      
+      saveProgressMutation.mutate({
+        grimoireId: grimoireId,
+        chapterId: chapterId,
+        progressType: 'reading',
+        currentPage: pageNum,
+        readingTime: readingTime
+      });
+    }, 2000);
   };
 
   // Paragraph-preserving pagination
