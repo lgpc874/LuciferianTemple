@@ -21,6 +21,11 @@ export default function NavigationMenu() {
     setIsMenuOpen(false);
   };
 
+  const handleNavClick = (href: string) => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    closeMenu();
+  };
+
   // Fechar menu quando clicar fora
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -46,13 +51,16 @@ export default function NavigationMenu() {
           <ul className="flex space-x-8">
             {menuItems.map((item) => (
               <li key={item.href}>
-                <Link href={item.href} className={`
-                  font-cinzel text-sm xl:text-base tracking-wide transition-all duration-300
-                  ${location === item.href 
-                    ? 'text-golden-amber border-b border-golden-amber pb-1' 
-                    : 'text-ritualistic-beige hover:text-golden-amber hover:border-b hover:border-golden-amber/50 hover:pb-1'
-                  }
-                `}>
+                <Link 
+                  href={item.href} 
+                  onClick={() => handleNavClick(item.href)}
+                  className={`
+                    font-cinzel text-sm xl:text-base tracking-wide transition-all duration-300
+                    ${location === item.href 
+                      ? 'text-golden-amber border-b border-golden-amber pb-1' 
+                      : 'text-ritualistic-beige hover:text-golden-amber hover:border-b hover:border-golden-amber/50 hover:pb-1'
+                    }
+                  `}>
                   {item.label}
                 </Link>
               </li>
@@ -65,13 +73,16 @@ export default function NavigationMenu() {
           <ul className="flex space-x-4">
             {menuItems.map((item) => (
               <li key={item.href}>
-                <Link href={item.href} className={`
-                  font-cinzel text-xs tracking-wide transition-all duration-300
-                  ${location === item.href 
-                    ? 'text-golden-amber border-b border-golden-amber pb-1' 
-                    : 'text-ritualistic-beige hover:text-golden-amber hover:border-b hover:border-golden-amber/50 hover:pb-1'
-                  }
-                `}>
+                <Link 
+                  href={item.href}
+                  onClick={() => handleNavClick(item.href)}
+                  className={`
+                    font-cinzel text-xs tracking-wide transition-all duration-300
+                    ${location === item.href 
+                      ? 'text-golden-amber border-b border-golden-amber pb-1' 
+                      : 'text-ritualistic-beige hover:text-golden-amber hover:border-b hover:border-golden-amber/50 hover:pb-1'
+                    }
+                  `}>
                   {item.label}
                 </Link>
               </li>
@@ -100,7 +111,7 @@ export default function NavigationMenu() {
                   <li key={item.href}>
                     <Link 
                       href={item.href} 
-                      onClick={closeMenu}
+                      onClick={() => handleNavClick(item.href)}
                       className={`
                         block px-4 py-2 font-cinzel text-sm tracking-wide transition-all duration-300 rounded-md mx-2
                         ${location === item.href 
