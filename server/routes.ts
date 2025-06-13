@@ -279,6 +279,123 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // AI Grimoire Generation
+  app.post("/api/admin/ai/generate-grimoire", authenticateToken, requireAdmin, async (req: any, res) => {
+    try {
+      const { title, summary, category, difficultyLevel, chapterCount, style } = req.body;
+
+      // Generate grimoire with OpenAI
+      const openaiKey = process.env.OPENAI_API_KEY;
+      if (!openaiKey) {
+        return res.status(500).json({ error: "Chave da API OpenAI não configurada" });
+      }
+
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${openaiKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+          messages: [
+            {
+              role: "system",
+              content: `Você é um especialista em ocultismo e filosofia luciferiana. Crie um grimório completo em português brasileiro com base nas especificações fornecidas. 
+
+              Estruture o grimório com:
+              1. Título e descrição detalhada
+              2. ${chapterCount} capítulos com conteúdo substancial
+              3. Cada capítulo deve ter pelo menos 1500 palavras
+              4. Conteúdo formatado em HTML com <p>, <h3>, <h4>, <blockquote> e <ul>
+              5. Estilo de escrita: ${style}
+              6. Nível de dificuldade: ${difficultyLevel}
+              
+              Responda APENAS com um JSON válido no formato:
+              {
+                "title": "título do grimório",
+                "description": "descrição detalhada",
+                "category": "${category}",
+                "difficultyLevel": ${difficultyLevel},
+                "chapters": [
+                  {
+                    "title": "título do capítulo",
+                    "content": "conteúdo HTML completo",
+                    "chapterOrder": número,
+                    "estimatedReadingTime": minutos
+                  }
+                ]
+              }`
+            },
+            {
+              role: "user",
+              content: `Crie um grimório sobre: "${title}"
+              
+              Resumo do que deve conter: ${summary}
+              
+              Categoria: ${category}
+              Nível de dificuldade: ${difficultyLevel}
+              Número de capítulos: ${chapterCount}
+              Estilo de escrita: ${style}
+              
+              O grimório deve ser educativo, profundo e apropriado para estudantes de ocultismo.`
+            }
+          ],
+          response_format: { type: "json_object" },
+          max_tokens: 4000,
+          temperature: 0.8
+        })
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Erro da API OpenAI: ${response.status} ${errorText}`);
+      }
+
+      const aiResult = await response.json();
+      const grimoireData = JSON.parse(aiResult.choices[0].message.content);
+
+      // Add generated grimoire to the system
+      const newGrimoireId = Date.now();
+      const newGrimoire = {
+        id: newGrimoireId,
+        title: grimoireData.title,
+        description: grimoireData.description,
+        category: grimoireData.category,
+        difficultyLevel: grimoireData.difficultyLevel,
+        coverImageUrl: `https://via.placeholder.com/300x400?text=${encodeURIComponent(grimoireData.title)}`,
+        createdAt: new Date()
+      };
+
+      // Add chapters
+      grimoireData.chapters.forEach((chapter: any, index: number) => {
+        const chapterId = newGrimoireId * 100 + index + 1;
+        grimoireStore.addChapter({
+          id: chapterId,
+          grimoireId: newGrimoireId,
+          title: chapter.title,
+          content: chapter.content,
+          chapterOrder: chapter.chapterOrder || index + 1,
+          estimatedReadingTime: chapter.estimatedReadingTime || 15,
+          unlockCriteria: index === 0 ? "always" : "previous_chapter"
+        });
+      });
+
+      res.json({
+        success: true,
+        grimoire: newGrimoire,
+        chapterCount: grimoireData.chapters.length,
+        message: "Grimório gerado com sucesso pela IA"
+      });
+    } catch (error) {
+      console.error("Erro ao gerar grimório:", error);
+      res.status(500).json({ 
+        error: "Falha ao gerar grimório",
+        details: error instanceof Error ? error.message : "Erro desconhecido"
+      });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

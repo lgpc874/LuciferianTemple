@@ -18,21 +18,41 @@ import {
   Plus
 } from 'lucide-react';
 
-// Admin components
-import AdminUsers from '@/components/admin/admin-users';
-import AdminGrimoires from '@/components/admin/admin-grimoires';
-import AdminContent from '@/components/admin/admin-content';
-import AdminThemes from '@/components/admin/admin-themes';
-import AdminAI from '@/components/admin/admin-ai';
-import AdminAnalytics from '@/components/admin/admin-analytics';
-import AdminSettings from '@/components/admin/admin-settings';
+// Simple admin components for now
+function AdminUsers() {
+  return <div className="p-4 text-center text-muted-foreground">Módulo de usuários em desenvolvimento</div>;
+}
+
+function AdminGrimoires() {
+  return <div className="p-4 text-center text-muted-foreground">Módulo de grimórios em desenvolvimento</div>;
+}
+
+function AdminContent() {
+  return <div className="p-4 text-center text-muted-foreground">Módulo de conteúdo em desenvolvimento</div>;
+}
+
+function AdminThemes() {
+  return <div className="p-4 text-center text-muted-foreground">Módulo de temas em desenvolvimento</div>;
+}
+
+function AdminAI() {
+  return <div className="p-4 text-center text-muted-foreground">Módulo de IA em desenvolvimento</div>;
+}
+
+function AdminAnalytics() {
+  return <div className="p-4 text-center text-muted-foreground">Módulo de analytics em desenvolvimento</div>;
+}
+
+function AdminSettings() {
+  return <div className="p-4 text-center text-muted-foreground">Módulo de configurações em desenvolvimento</div>;
+}
 
 export default function AdminDashboard() {
   const { user, isAuthenticated } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
 
-  // Verificar se é admin
-  if (!isAuthenticated || !user?.isAdmin) {
+  // Verificar se é admin  
+  if (!isAuthenticated || !(user as any)?.isAdmin) {
     return (
       <PageTransition className="min-h-screen bg-background flex items-center justify-center">
         <Card className="w-full max-w-md">
