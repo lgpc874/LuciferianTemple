@@ -69,9 +69,9 @@ export default function GrimoireKindle() {
       const response = await fetch('/api/progress', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Content-Type': 'application/json'
         },
+        credentials: 'include',
         body: JSON.stringify(progressData)
       });
       if (!response.ok) throw new Error('Failed to save progress');
@@ -179,24 +179,72 @@ export default function GrimoireKindle() {
     setCurrentPageContent(pages[pageIndex] || pages[0] || '');
   }, [currentChapter, currentPage, isMobile]);
 
-  // Navigation handlers with continuous reading
+  // Initialize component and load saved progress (only once)
+  useEffect(() => {
+    setIsFullscreen(true);
+    setStartTime(Date.now());
+    
+    return () => {
+      setIsFullscreen(false);
+      if (progressSaveTimeoutRef.current) {
+        clearTimeout(progressSaveTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  // Load saved progress when data becomes available
+  useEffect(() => {
+    if (Array.isArray(userProgress) && userProgress.length > 0 && Array.isArray(chapters) && chapters.length > 0) {
+      const latestProgress = userProgress
+        .filter((p: any) => p.progressType === 'reading')
+        .sort((a: any, b: any) => new Date(b.completedAt || b.createdAt).getTime() - new Date(a.completedAt || a.createdAt).getTime())[0];
+      
+      if (latestProgress) {
+        const foundChapter = (chapters as Chapter[])?.find(ch => ch.id === latestProgress.chapterId);
+        if (foundChapter && foundChapter.chapterOrder !== selectedChapter) {
+          setSelectedChapter(foundChapter.chapterOrder);
+          setCurrentPage(latestProgress.currentPage || 1);
+        }
+      }
+    }
+  }, [userProgress, chapters]);
+
+  // Navigation handlers with automatic progress saving
   const handleNextPage = () => {
+    let newPage = currentPage;
+    let newChapter = selectedChapter;
+    
     if (currentPage < totalPages) {
-      setCurrentPage(prev => prev + 1);
+      newPage = currentPage + 1;
+      setCurrentPage(newPage);
     } else if (selectedChapter < (chapters as Chapter[])?.length) {
-      setSelectedChapter(prev => prev + 1);
-      setCurrentPage(1);
+      newChapter = selectedChapter + 1;
+      newPage = 1;
+      setSelectedChapter(newChapter);
+      setCurrentPage(newPage);
+    }
+    
+    // Auto-save progress
+    const chapterData = (chapters as Chapter[])?.find(ch => ch.chapterOrder === newChapter);
+    if (chapterData) {
+      saveReadingProgress(chapterData.id, newPage);
     }
   };
 
   const handlePrevPage = () => {
+    let newPage = currentPage;
+    let newChapter = selectedChapter;
+    
     if (currentPage > 1) {
-      setCurrentPage(prev => prev - 1);
+      newPage = currentPage - 1;
+      setCurrentPage(newPage);
     } else if (selectedChapter > 1) {
       // Go to previous chapter and set to its last page
       const prevChapter = (chapters as Chapter[])?.find((ch: Chapter) => ch.chapterOrder === selectedChapter - 1);
       if (prevChapter) {
-        setSelectedChapter(prev => prev - 1);
+        newChapter = selectedChapter - 1;
+        setSelectedChapter(newChapter);
+        
         // Calculate total pages for previous chapter using same logic
         const prevContent = prevChapter.content;
         const tempPrevContent = prevContent.replace(/\n/g, ' ');
@@ -216,8 +264,15 @@ export default function GrimoireKindle() {
         }
         if (currentLength > 0) pages++;
         
-        setCurrentPage(Math.max(1, pages));
+        newPage = Math.max(1, pages);
+        setCurrentPage(newPage);
       }
+    }
+    
+    // Auto-save progress
+    const chapterData = (chapters as Chapter[])?.find(ch => ch.chapterOrder === newChapter);
+    if (chapterData) {
+      saveReadingProgress(chapterData.id, newPage);
     }
   };
 

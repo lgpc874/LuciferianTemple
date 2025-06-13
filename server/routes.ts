@@ -103,20 +103,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Middleware para autenticação
+  // Middleware para autenticação (suporta tanto Bearer token quanto sessão)
   const authenticateToken = async (req: any, res: any, next: any) => {
     try {
+      let user = null;
+      
+      // Primeiro, tenta autenticação por Bearer token
       const authHeader = req.headers.authorization;
-      if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        return res.status(401).json({ error: "Token não fornecido" });
+      if (authHeader && authHeader.startsWith("Bearer ")) {
+        const token = authHeader.substring(7);
+        const decoded = jwt.verify(token, JWT_SECRET) as { userId: number; email: string };
+        user = await storage.getUser(decoded.userId);
       }
       
-      const token = authHeader.substring(7);
-      const decoded = jwt.verify(token, JWT_SECRET) as { userId: number; email: string };
+      // Se não tem Bearer token, tenta autenticação por sessão
+      if (!user && req.session?.userId) {
+        user = await storage.getUser(req.session.userId);
+      }
       
-      const user = await storage.getUser(decoded.userId);
       if (!user) {
-        return res.status(401).json({ error: "Usuário não encontrado" });
+        return res.status(401).json({ error: "Token não fornecido ou usuário não encontrado" });
       }
       
       req.user = user;
