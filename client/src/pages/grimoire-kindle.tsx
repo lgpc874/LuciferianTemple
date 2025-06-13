@@ -69,52 +69,62 @@ export default function GrimoireKindle() {
     setIsFullscreen(false);
   };
 
-  // Character-based pagination preserving HTML formatting
+  // Robust pagination with content validation
   useEffect(() => {
-    if (!currentChapter?.content) return;
+    if (!currentChapter?.content) {
+      setCurrentPageContent('');
+      setTotalPages(1);
+      return;
+    }
 
     const content = currentChapter.content;
-    // Conservative character limit for A5 format
-    const charsPerPage = isMobile ? 2000 : 2500;
-    const totalChars = content.length;
-    const calculatedPages = Math.ceil(totalChars / charsPerPage);
     
-    setTotalPages(Math.max(1, calculatedPages));
+    // Very conservative limits to prevent overflow
+    const charsPerPage = isMobile ? 1500 : 2000;
     
-    // Calculate start and end positions
-    const startPos = (currentPage - 1) * charsPerPage;
-    let endPos = Math.min(startPos + charsPerPage, totalChars);
+    // Pre-split content into manageable chunks
+    const chunks: string[] = [];
+    let currentChunk = '';
+    let charCount = 0;
     
-    // If not at the end, find a good breaking point
-    if (endPos < totalChars) {
-      // Look for end of paragraph
-      const paragraphEnd = content.lastIndexOf('</p>', endPos);
-      if (paragraphEnd > startPos && paragraphEnd > startPos + (charsPerPage * 0.6)) {
-        endPos = paragraphEnd + 4;
+    // Split by paragraphs first to maintain structure
+    const paragraphs = content.split('</p>');
+    
+    for (let i = 0; i < paragraphs.length; i++) {
+      const paragraph = paragraphs[i] + (i < paragraphs.length - 1 ? '</p>' : '');
+      const paragraphLength = paragraph.length;
+      
+      // If adding this paragraph would exceed limit, save current chunk
+      if (charCount + paragraphLength > charsPerPage && currentChunk.length > 0) {
+        chunks.push(currentChunk.trim());
+        currentChunk = paragraph;
+        charCount = paragraphLength;
       } else {
-        // Look for end of sentence
-        const sentenceEnd = content.lastIndexOf('. ', endPos);
-        if (sentenceEnd > startPos && sentenceEnd > startPos + (charsPerPage * 0.7)) {
-          endPos = sentenceEnd + 2;
-        } else {
-          // Look for word boundary
-          const spacePos = content.lastIndexOf(' ', endPos);
-          if (spacePos > startPos) {
-            endPos = spacePos;
-          }
-        }
+        currentChunk += paragraph;
+        charCount += paragraphLength;
       }
     }
     
-    let pageContent = content.slice(startPos, endPos);
+    // Add the last chunk
+    if (currentChunk.trim()) {
+      chunks.push(currentChunk.trim());
+    }
     
-    // Clean up broken HTML tags at the beginning
-    pageContent = pageContent.replace(/^[^<]*?>/, '');
+    // Ensure we have at least one page
+    if (chunks.length === 0) {
+      chunks.push('<p>Erro ao carregar conteúdo</p>');
+    }
     
-    // Clean up broken HTML tags at the end
-    pageContent = pageContent.replace(/<[^>]*$/, '');
+    setTotalPages(chunks.length);
     
-    setCurrentPageContent(pageContent || '<p>Conteúdo não encontrado</p>');
+    // Get content for current page
+    const pageIndex = currentPage - 1;
+    if (pageIndex >= 0 && pageIndex < chunks.length) {
+      setCurrentPageContent(chunks[pageIndex]);
+    } else {
+      // Fallback for invalid page numbers
+      setCurrentPageContent(chunks[0] || '<p>Erro ao carregar conteúdo</p>');
+    }
   }, [currentChapter, currentPage, isMobile]);
 
   // Navigation handlers with continuous reading
@@ -236,12 +246,14 @@ export default function GrimoireKindle() {
                   {/* Conteúdo da página */}
                   <div 
                     ref={contentRef}
-                    className="font-garamond text-ritualistic-beige flex-1 overflow-hidden grimoire-content"
+                    className="font-garamond text-ritualistic-beige grimoire-content"
                     style={{
-                      fontSize: isMobile ? '14px' : '16px',
-                      lineHeight: '1.8',
-                      maxHeight: isMobile ? 'calc(80vh - 120px)' : 'calc(540px - 120px)',
-                      overflowY: 'hidden'
+                      fontSize: isMobile ? '13px' : '15px',
+                      lineHeight: '1.6',
+                      height: isMobile ? 'calc(80vh - 140px)' : 'calc(540px - 140px)',
+                      maxHeight: isMobile ? 'calc(80vh - 140px)' : 'calc(540px - 140px)',
+                      overflow: 'hidden',
+                      wordWrap: 'break-word'
                     }}
                     dangerouslySetInnerHTML={{ __html: currentPageContent }}
                   />
