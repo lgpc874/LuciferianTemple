@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { PageTransition } from "@/components/page-transition";
 import WarningOverlay from "@/components/warning-overlay";
 import MainContent from "@/components/main-content";
 
@@ -27,7 +28,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen relative overflow-x-hidden">
+    <PageTransition className="min-h-screen relative overflow-x-hidden">
       {showWarning && (
         <WarningOverlay 
           onTearVeil={handleTearVeil}
@@ -40,6 +41,6 @@ export default function Home() {
           <MainContent />
         </div>
       )}
-    </div>
+    </PageTransition>
   );
 }

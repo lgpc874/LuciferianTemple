@@ -144,7 +144,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   };
 
   // Rotas dos grimórios
-  app.get("/api/grimoires", async (req, res) => {
+  app.get("/api/grimoires", authenticateToken, async (req, res) => {
     try {
       const grimoires = grimoireStore.getGrimoires();
       res.json(grimoires);
@@ -154,7 +154,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/grimoires/:id", async (req, res) => {
+  app.get("/api/grimoires/:id", authenticateToken, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const grimoire = grimoireStore.getGrimoireById(id);
@@ -170,7 +170,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/grimoires/:id/chapters", async (req, res) => {
+  app.get("/api/grimoires/:id/chapters", authenticateToken, async (req, res) => {
     try {
       const grimoireId = parseInt(req.params.id);
       const chapters = grimoireStore.getChaptersByGrimoire(grimoireId);
