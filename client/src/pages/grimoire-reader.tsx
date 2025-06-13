@@ -29,6 +29,7 @@ export default function GrimoireReader() {
   const [, setLocation] = useLocation();
   const { token } = useAuth();
   const [selectedChapter, setSelectedChapter] = useState<number>(1);
+  const [currentPage, setCurrentPage] = useState<number>(1);
 
   const { data: grimoire, isLoading: grimoireLoading } = useQuery({
     queryKey: ['/api/grimoires', id],
@@ -41,6 +42,52 @@ export default function GrimoireReader() {
   });
 
   const currentChapter = (chapters as Chapter[]).find((ch: Chapter) => ch.chapterOrder === selectedChapter);
+
+  // Função para dividir conteúdo em páginas
+  const splitContentIntoPages = (content: string): string[] => {
+    if (!content) return [];
+    
+    // Dividir por parágrafos principais
+    const sections = content.split('</div>');
+    const pages: string[] = [];
+    let currentPageContent = '';
+    const maxWordsPerPage = 300; // Ajuste conforme necessário
+    
+    sections.forEach((section, index) => {
+      if (index === 0) {
+        // Primeiro elemento é o header
+        currentPageContent = section + '</div>';
+        return;
+      }
+      
+      const sectionWithDiv = section + (index < sections.length - 1 ? '</div>' : '');
+      const wordCount = sectionWithDiv.replace(/<[^>]*>/g, '').split(' ').length;
+      const currentWordCount = currentPageContent.replace(/<[^>]*>/g, '').split(' ').length;
+      
+      if (currentWordCount + wordCount > maxWordsPerPage && currentPageContent.trim()) {
+        pages.push(currentPageContent);
+        currentPageContent = sectionWithDiv;
+      } else {
+        currentPageContent += sectionWithDiv;
+      }
+    });
+    
+    if (currentPageContent.trim()) {
+      pages.push(currentPageContent);
+    }
+    
+    return pages.length > 0 ? pages : [content];
+  };
+
+  const currentPages = splitContentIntoPages(currentChapter?.content || '');
+  const totalPages = currentPages.length;
+  const currentPageContent = currentPages[currentPage - 1] || '';
+
+  // Reset page when chapter changes
+  const handleChapterChange = (chapterOrder: number) => {
+    setSelectedChapter(chapterOrder);
+    setCurrentPage(1);
+  };
 
   if (grimoireLoading || chaptersLoading) {
     return (
@@ -115,7 +162,7 @@ export default function GrimoireReader() {
                   key={chapter.id}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => setSelectedChapter(chapter.chapterOrder)}
+                  onClick={() => handleChapterChange(chapter.chapterOrder)}
                   className={`px-4 py-2 rounded-md font-cinzel text-sm transition-all duration-300 ${
                     selectedChapter === chapter.chapterOrder
                       ? 'bg-golden-amber text-abyss-black shadow-lg'
@@ -148,7 +195,7 @@ export default function GrimoireReader() {
                 </div>
                 <div className="flex items-center space-x-1">
                   <Clock size={16} />
-                  <span>{currentChapter?.estimatedReadingTime} min de leitura</span>
+                  <span>Página {currentPage} de {totalPages}</span>
                 </div>
               </div>
             </div>
@@ -156,9 +203,48 @@ export default function GrimoireReader() {
             <div className="prose prose-invert prose-lg max-w-none">
               <div 
                 className="font-garamond text-ritualistic-beige leading-relaxed grimoire-content"
-                dangerouslySetInnerHTML={{ __html: currentChapter?.content || '' }}
+                dangerouslySetInnerHTML={{ __html: currentPageContent }}
               />
             </div>
+
+            {/* Navegação de páginas */}
+            {totalPages > 1 && (
+              <div className="mt-8 flex items-center justify-between">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                  disabled={currentPage === 1}
+                  className={`flex items-center space-x-2 font-cinzel py-2 px-4 rounded-md transition-all duration-300 ${
+                    currentPage === 1
+                      ? 'bg-gray-700/30 text-gray-500 cursor-not-allowed'
+                      : 'bg-golden-amber/10 text-golden-amber border border-golden-amber/30 hover:bg-golden-amber/20'
+                  }`}
+                >
+                  <ChevronLeft size={16} />
+                  <span>Página Anterior</span>
+                </motion.button>
+
+                <div className="flex items-center space-x-2 text-burned-amber text-sm">
+                  <span>Página {currentPage} de {totalPages}</span>
+                </div>
+
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                  disabled={currentPage === totalPages}
+                  className={`flex items-center space-x-2 font-cinzel py-2 px-4 rounded-md transition-all duration-300 ${
+                    currentPage === totalPages
+                      ? 'bg-gray-700/30 text-gray-500 cursor-not-allowed'
+                      : 'bg-golden-amber/10 text-golden-amber border border-golden-amber/30 hover:bg-golden-amber/20'
+                  }`}
+                >
+                  <span>Próxima Página</span>
+                  <ChevronRight size={16} />
+                </motion.button>
+              </div>
+            )}
           </motion.div>
 
           {/* Navegação entre capítulos */}
@@ -171,7 +257,7 @@ export default function GrimoireReader() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => setSelectedChapter(Math.max(1, selectedChapter - 1))}
+              onClick={() => handleChapterChange(Math.max(1, selectedChapter - 1))}
               disabled={selectedChapter === 1}
               className={`flex items-center space-x-2 font-cinzel py-3 px-6 rounded-md transition-all duration-300 ${
                 selectedChapter === 1
@@ -186,7 +272,7 @@ export default function GrimoireReader() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => setSelectedChapter(Math.min((chapters as Chapter[]).length, selectedChapter + 1))}
+              onClick={() => handleChapterChange(Math.min((chapters as Chapter[]).length, selectedChapter + 1))}
               disabled={selectedChapter === (chapters as Chapter[]).length}
               className={`flex items-center space-x-2 font-cinzel py-3 px-6 rounded-md transition-all duration-300 ${
                 selectedChapter === (chapters as Chapter[]).length
