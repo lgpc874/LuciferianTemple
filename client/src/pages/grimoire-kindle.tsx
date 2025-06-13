@@ -66,6 +66,7 @@ export default function GrimoireKindle() {
   // Mutation for saving reading progress
   const saveProgressMutation = useMutation({
     mutationFn: async (progressData: any) => {
+      console.log('Mutation function called with:', progressData);
       const headers: Record<string, string> = {
         'Content-Type': 'application/json'
       };
@@ -80,11 +81,20 @@ export default function GrimoireKindle() {
         credentials: 'include',
         body: JSON.stringify(progressData)
       });
-      if (!response.ok) throw new Error('Failed to save progress');
-      return response.json();
+      
+      console.log('Response status:', response.status);
+      const responseData = await response.json();
+      console.log('Response data:', responseData);
+      
+      if (!response.ok) throw new Error(`Failed to save progress: ${responseData.error || response.statusText}`);
+      return responseData;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log('Progress saved successfully:', data);
       queryClient.invalidateQueries({ queryKey: [`/api/progress/grimoire/${grimoireId}`] });
+    },
+    onError: (error) => {
+      console.error('Failed to save progress:', error);
     }
   });
 
@@ -108,7 +118,12 @@ export default function GrimoireKindle() {
 
   // Auto-save reading progress with debouncing
   const saveReadingProgress = (chapterId: number, pageNum: number) => {
-    if (!token) return;
+    if (!token) {
+      console.log('No token available for saving progress');
+      return;
+    }
+    
+    console.log('Saving progress:', { chapterId, pageNum, grimoireId });
     
     // Clear existing timeout
     if (progressSaveTimeoutRef.current) {
@@ -118,6 +133,14 @@ export default function GrimoireKindle() {
     // Set new timeout to save after 2 seconds of inactivity
     progressSaveTimeoutRef.current = setTimeout(() => {
       const readingTime = Math.floor((Date.now() - startTime) / 1000);
+      
+      console.log('Triggering save mutation with data:', {
+        grimoireId: grimoireId,
+        chapterId: chapterId,
+        progressType: 'reading',
+        currentPage: pageNum,
+        readingTime: readingTime
+      });
       
       saveProgressMutation.mutate({
         grimoireId: grimoireId,
@@ -214,6 +237,15 @@ export default function GrimoireKindle() {
       }
     }
   }, [userProgress, chapters]);
+
+  // Test auto-save when page changes
+  useEffect(() => {
+    console.log('Page changed to:', currentPage, 'Chapter:', selectedChapter);
+    if (currentChapter && currentPage > 1) {
+      console.log('Triggering auto-save for page change');
+      saveReadingProgress(currentChapter.id, currentPage);
+    }
+  }, [currentPage, selectedChapter, currentChapter]);
 
   // Navigation handlers with automatic progress saving
   const handleNextPage = () => {
