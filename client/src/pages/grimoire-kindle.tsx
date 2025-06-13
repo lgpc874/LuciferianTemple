@@ -106,7 +106,7 @@ export default function GrimoireKindle() {
     const pages: string[] = [];
     let currentPageContent = '';
     // Palavras por página diferentes para mobile e desktop
-    const maxWordsPerPage = isMobile ? 80 : 250; 
+    const maxWordsPerPage = isMobile ? 80 : 180; 
     
     paragraphs.forEach((paragraph) => {
       const fullParagraph = paragraph + (paragraph.includes('<h') ? '>' : '</p>');
@@ -306,8 +306,8 @@ export default function GrimoireKindle() {
           {/* Conteúdo central - responsivo para desktop e mobile */}
           <div className={`flex-1 flex flex-col ${
             isMobile 
-              ? 'px-6 py-8' 
-              : 'px-20 py-16'
+              ? 'px-6 py-8 pt-20' 
+              : 'px-12 py-16 pt-24'
           }`}>
             <AnimatePresence mode="wait">
               <motion.div
@@ -335,12 +335,13 @@ export default function GrimoireKindle() {
                 {/* Conteúdo da página - layout otimizado para leitura confortável */}
                 <div 
                   className={`flex-1 text-gray-800 overflow-hidden text-justify 
-                           ${isMobile ? '' : 'columns-2 gap-16'}`}
+                           ${isMobile ? '' : 'columns-1'}`}
                   style={{
-                    fontSize: isMobile ? '17px' : '18px',
-                    lineHeight: isMobile ? '1.6' : '1.7',
+                    fontSize: isMobile ? '17px' : '20px',
+                    lineHeight: isMobile ? '1.6' : '1.8',
                     fontFamily: 'Georgia, serif',
-                    columnFill: 'auto',
+                    maxWidth: isMobile ? '100%' : '85%',
+                    margin: isMobile ? '0' : '0 auto',
                     maxHeight: '100%'
                   }}
                   dangerouslySetInnerHTML={{ __html: currentPageContent }}
