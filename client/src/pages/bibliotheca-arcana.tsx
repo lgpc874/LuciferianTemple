@@ -1,8 +1,6 @@
-import { PageTransition } from "@/components/page-transition";
-
 export default function BibliothecaArcana() {
   return (
-    <PageTransition className="min-h-screen mystical-bg pt-32 fade-in">
+    <div className="min-h-screen mystical-bg pt-32 fade-in">
       {/* Header with Central Content */}
       <header className="relative py-8 sm:py-12 md:py-16 lg:py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -87,6 +85,6 @@ export default function BibliothecaArcana() {
           </div>
         </div>
       </section>
-    </PageTransition>
+    </div>
   );
 }
