@@ -141,12 +141,12 @@ export default function GrimoireKindle() {
         {/* Navegação invisível - área esquerda */}
         <div 
           onClick={handlePrevPage}
-          className="w-1/4 h-full cursor-pointer"
+          className="w-16 sm:w-20 md:w-24 lg:w-32 h-full cursor-pointer"
         />
 
         {/* Container de texto - área central */}
-        <div className="flex-1 h-full flex items-center justify-center px-4">
-          <div className="max-w-6xl w-full">
+        <div className="flex-1 h-full flex items-center justify-center">
+          <div className="w-full h-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20">
             <AnimatePresence mode="wait">
               <motion.div
                 key={`${selectedChapter}-${currentPage}`}
@@ -157,9 +157,7 @@ export default function GrimoireKindle() {
               >
                 {/* Título do capítulo (apenas na primeira página) */}
                 {currentPage === 1 && (
-                  <h1 className={`font-bold text-gray-900 leading-tight mb-8 pb-4 border-b border-gray-200 ${
-                    isMobile ? 'text-xl' : 'text-2xl'
-                  }`}>
+                  <h1 className="font-bold text-gray-900 leading-tight mb-6 pb-4 border-b border-gray-200 text-lg sm:text-xl md:text-2xl lg:text-3xl">
                     {currentChapter?.title}
                   </h1>
                 )}
@@ -167,12 +165,12 @@ export default function GrimoireKindle() {
                 {/* Conteúdo da página */}
                 <div 
                   ref={contentRef}
-                  className="text-gray-800 text-justify leading-relaxed"
+                  className="text-gray-800 text-justify leading-relaxed w-full"
                   style={{
-                    fontSize: isMobile ? '16px' : '18px',
+                    fontSize: isMobile ? '16px' : 'clamp(16px, 2.5vw, 20px)',
                     lineHeight: '1.7',
                     fontFamily: 'Georgia, serif',
-                    height: 'calc(100vh - 180px)', // Ajustado para a barra de progresso
+                    height: 'calc(100vh - 180px)',
                     overflow: 'hidden'
                   }}
                   dangerouslySetInnerHTML={{ __html: currentPageContent }}
@@ -185,7 +183,7 @@ export default function GrimoireKindle() {
         {/* Navegação invisível - área direita */}
         <div 
           onClick={handleNextPage}
-          className="w-1/4 h-full cursor-pointer"
+          className="w-16 sm:w-20 md:w-24 lg:w-32 h-full cursor-pointer"
         />
       </div>
 
