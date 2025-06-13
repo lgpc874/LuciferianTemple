@@ -264,52 +264,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Create/update admin user for access
+  // Setup admin access - simplified approach
   app.post("/api/setup/admin", async (req, res) => {
     try {
       const adminEmail = "admin@templodoabismo.com";
       const adminPassword = "admin123";
       const hashedPassword = await bcrypt.hash(adminPassword, 10);
       
-      // Delete existing admin user if any issues
+      // Special admin handling using role field only
       if (process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY) {
         const client = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
         
-        // Delete existing admin
+        // Delete any existing admin user first
         await client.from('users').delete().eq('email', adminEmail);
         
-        // Create new admin user directly in Supabase
+        // Create admin user with role 'admin' (use role field for admin privileges)
         const { data: adminUser, error } = await client
           .from('users')
           .insert({
             username: 'admin',
             email: adminEmail,
             password: hashedPassword,
-            role: 'admin',
-            is_admin: true
+            role: 'admin'
           })
           .select()
           .single();
           
         if (error) {
-          console.error('Erro ao criar admin no Supabase:', error);
+          console.error('Erro Supabase:', error);
           return res.status(500).json({ 
             success: false, 
-            error: 'Erro ao criar usuário admin: ' + error.message 
+            error: 'Erro: ' + error.message 
           });
         }
         
         return res.json({ 
           success: true, 
-          message: "Usuário admin criado com sucesso no Supabase",
-          user: { id: adminUser.id, email: adminUser.email, isAdmin: adminUser.is_admin },
+          message: "Admin configurado com sucesso",
+          user: { id: adminUser.id, email: adminUser.email, role: adminUser.role },
           credentials: { email: adminEmail, password: adminPassword }
         });
       }
       
       return res.status(500).json({ 
         success: false, 
-        error: "Configuração do Supabase não encontrada" 
+        error: "Configuração Supabase ausente" 
       });
 
     } catch (error: any) {
