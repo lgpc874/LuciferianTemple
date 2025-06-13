@@ -3,11 +3,18 @@ import { useAuth } from "../hooks/use-auth";
 import { useLocation } from "wouter";
 import { PageTransition } from "@/components/page-transition";
 import { motion } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
 import AuthForm from "../components/auth-form";
 
 export default function Biblioteca() {
-  const { isAuthenticated, user, login, logout } = useAuth();
+  const { isAuthenticated, user, login, logout, token } = useAuth();
   const [, setLocation] = useLocation();
+  
+  // Fetch user progress for all grimoires
+  const { data: allProgress = [] } = useQuery({
+    queryKey: ['/api/progress'],
+    enabled: !!token && isAuthenticated
+  });
   const grimoires = [
     {
       id: 1,
@@ -171,6 +178,20 @@ export default function Biblioteca() {
             {grimoires.map((grimoire) => {
               const coverSvg = grimoireCoverSvgs[grimoire.category as keyof typeof grimoireCoverSvgs];
               
+              // Check if user has progress in this grimoire
+              const grimoireProgress = Array.isArray(allProgress) ? 
+                allProgress.filter((p: any) => p.grimoireId === grimoire.id && p.progressType === 'reading') : [];
+              
+              const hasProgress = grimoireProgress.length > 0;
+              const latestProgress = hasProgress ? 
+                grimoireProgress.sort((a: any, b: any) => new Date(b.completedAt || b.createdAt).getTime() - new Date(a.completedAt || a.createdAt).getTime())[0] : null;
+              
+              // Determine button text and style
+              const buttonText = hasProgress ? "CONTINUAR" : "LER";
+              const buttonStyle = hasProgress ? 
+                "w-full veil-button bg-gradient-to-r from-blue-600/20 to-blue-500/10 hover:from-blue-600/30 hover:to-blue-500/15 text-blue-300 font-cinzel py-2 sm:py-3 px-3 sm:px-4 rounded-md transition-all duration-300 border border-blue-400/50 hover:border-blue-300 hover:shadow-md hover:shadow-blue-300/25 tracking-wide text-sm" :
+                "w-full veil-button bg-gradient-to-r from-golden-amber/10 to-golden-amber/5 hover:from-golden-amber/20 hover:to-golden-amber/10 text-golden-amber font-cinzel py-2 sm:py-3 px-3 sm:px-4 rounded-md transition-all duration-300 border border-golden-amber/50 hover:border-golden-amber hover:shadow-md hover:shadow-golden-amber/25 tracking-wide text-sm";
+              
               return (
                 <div
                   key={grimoire.id}
@@ -192,11 +213,18 @@ export default function Biblioteca() {
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                         setLocation(`/grimoire/${grimoire.id}`);
                       }}
-                      className="w-full veil-button bg-gradient-to-r from-golden-amber/10 to-golden-amber/5 hover:from-golden-amber/20 hover:to-golden-amber/10 text-golden-amber font-cinzel py-2 sm:py-3 px-3 sm:px-4 rounded-md transition-all duration-300 border border-golden-amber/50 hover:border-golden-amber hover:shadow-md hover:shadow-golden-amber/25 tracking-wide text-sm"
+                      className={buttonStyle}
                     >
-                      LER
+                      {buttonText}
                     </motion.button>
                   </div>
+
+                  {/* Progress indicator */}
+                  {hasProgress && (
+                    <div className="absolute top-2 right-2">
+                      <div className="w-3 h-3 bg-blue-400 rounded-full shadow-lg animate-pulse"></div>
+                    </div>
+                  )}
 
                   {/* Efeito de hover */}
                   <div className="absolute inset-0 bg-gradient-to-br from-golden-amber/0 via-transparent to-golden-amber/0 group-hover:from-golden-amber/5 group-hover:to-golden-amber/5 transition-all duration-500 pointer-events-none"></div>
