@@ -100,6 +100,13 @@ export default function GrimoireReader() {
   const handleChapterChange = (chapterOrder: number) => {
     setSelectedChapter(chapterOrder);
     setCurrentPage(1);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Scroll to top when page changes
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   if (grimoireLoading || chaptersLoading) {
@@ -226,7 +233,7 @@ export default function GrimoireReader() {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                  onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
                   disabled={currentPage === 1}
                   className={`flex items-center space-x-2 font-cinzel py-2 px-4 rounded-md transition-all duration-300 ${
                     currentPage === 1
@@ -245,7 +252,7 @@ export default function GrimoireReader() {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                  onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
                   disabled={currentPage === totalPages}
                   className={`flex items-center space-x-2 font-cinzel py-2 px-4 rounded-md transition-all duration-300 ${
                     currentPage === totalPages

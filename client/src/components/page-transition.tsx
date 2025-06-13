@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 
 interface PageTransitionProps {
   children: ReactNode;
@@ -31,6 +31,10 @@ const pageTransition = {
 };
 
 export function PageTransition({ children, className = "" }: PageTransitionProps) {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
   return (
     <motion.div
       initial="initial"
@@ -46,6 +50,10 @@ export function PageTransition({ children, className = "" }: PageTransitionProps
 }
 
 export function FadeTransition({ children, className = "" }: PageTransitionProps) {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -60,6 +68,10 @@ export function FadeTransition({ children, className = "" }: PageTransitionProps
 }
 
 export function SlideTransition({ children, className = "", direction = "right" }: PageTransitionProps & { direction?: "left" | "right" }) {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
   const slideVariants = {
     initial: {
       x: direction === "right" ? 300 : -300,
