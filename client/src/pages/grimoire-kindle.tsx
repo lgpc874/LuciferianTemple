@@ -105,8 +105,8 @@ export default function GrimoireKindle() {
     
     const pages: string[] = [];
     let currentPageContent = '';
-    // 100 palavras por página para teste
-    const maxWordsPerPage = 100; 
+    // 90 palavras por página para teste
+    const maxWordsPerPage = 90; 
     
     paragraphs.forEach((paragraph) => {
       const fullParagraph = paragraph + (paragraph.includes('<h') ? '>' : '</p>');
