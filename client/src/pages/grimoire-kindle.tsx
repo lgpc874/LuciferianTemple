@@ -435,6 +435,17 @@ export default function GrimoireKindle() {
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-between text-sm text-muted-foreground mb-2">
             <span>Página {currentPage} de {totalPages}</span>
+            <button
+              onClick={() => {
+                if (currentChapter) {
+                  alert('Testando salvamento...');
+                  saveReadingProgress(currentChapter.id, currentPage);
+                }
+              }}
+              className="px-2 py-1 text-xs bg-blue-600/20 text-blue-300 rounded border border-blue-400/50"
+            >
+              Salvar
+            </button>
             <span>Cap. {selectedChapter} de {(chapters as Chapter[])?.length}</span>
             <span>{Math.round(progressPercentage)}%</span>
           </div>

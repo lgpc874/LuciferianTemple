@@ -211,12 +211,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/progress", authenticateToken, async (req: any, res) => {
     try {
+      console.log("Progress save request received:", req.body);
+      console.log("User ID:", req.user.id);
+      
       const progressData = insertProgressSchema.parse({
         ...req.body,
         userId: req.user.id
       });
       
+      console.log("Parsed progress data:", progressData);
+      
       const progress = grimoireStore.saveReadingProgress(progressData);
+      console.log("Progress saved successfully:", progress);
       res.json(progress);
     } catch (error) {
       console.error("Error saving progress:", error);
