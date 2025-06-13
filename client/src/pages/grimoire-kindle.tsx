@@ -207,97 +207,28 @@ export default function GrimoireKindle() {
   return (
     <PageTransition className="min-h-screen bg-white text-gray-900 font-serif">
       <div className="w-full h-screen">
-      {/* Header minimalista - apenas visível no menu */}
-      <AnimatePresence>
-        {showMenu && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 z-50"
-            onClick={() => setShowMenu(false)}
-          >
-            <motion.div
-              initial={{ x: '-100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '-100%' }}
-              className="fixed left-0 top-0 h-full w-80 bg-white shadow-xl overflow-y-auto"
-              onClick={e => e.stopPropagation()}
-            >
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h1 className="text-lg font-bold text-gray-900">
-                    {(grimoire as Grimoire)?.title}
-                  </h1>
-                  
-                  <button 
-                    onClick={() => setShowMenu(false)}
-                    className="text-gray-600 hover:text-gray-900"
-                  >
-                    <X size={20} />
-                  </button>
-                </div>
-
-                {/* Controles */}
-                <div className="space-y-3 mb-6 pb-6 border-b">
-                  <button 
-                    onClick={isFullscreen ? exitFullscreen : enterFullscreen}
-                    className="w-full px-4 py-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors font-medium"
-                  >
-                    {isFullscreen ? '🪟 Sair Tela Cheia' : '⛶ Entrar Tela Cheia'}
-                  </button>
-                  
-                  <button 
-                    onClick={() => {
-                      exitFullscreen();
-                      setLocation('/biblioteca');
-                    }}
-                    className="w-full px-4 py-3 bg-red-50 hover:bg-red-100 text-red-700 rounded-lg transition-colors font-medium"
-                  >
-                    ← Voltar à Biblioteca
-                  </button>
-                </div>
-
-                {/* Índice de capítulos */}
-                <div className="space-y-2">
-                  <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-4">
-                    Capítulos
-                  </h2>
-                  {(chapters as Chapter[]).map((chapter: Chapter) => (
-                    <button
-                      key={chapter.id}
-                      onClick={() => handleChapterChange(chapter.chapterOrder)}
-                      className={`w-full text-left p-4 rounded-lg transition-colors ${
-                        selectedChapter === chapter.chapterOrder
-                          ? 'bg-gray-900 text-white'
-                          : 'text-gray-600 hover:bg-gray-50'
-                      }`}
-                    >
-                      <div className="font-medium">{chapter.title}</div>
-                      <div className={`text-sm mt-1 ${
-                        selectedChapter === chapter.chapterOrder ? 'text-gray-300' : 'text-gray-500'
-                      }`}>
-                        Capítulo {chapter.chapterOrder} • {chapter.estimatedReadingTime} min
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* Container fixo ocupando tela inteira */}
       <div className="fixed inset-0 w-full h-full flex">
-        {/* Botão de menu flutuante */}
+        {/* Botão de voltar simples */}
         <div className="absolute top-4 left-4 z-50">
           <button 
-            onClick={() => setShowMenu(true)}
-            className="p-3 bg-white/95 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all border border-gray-200"
+            onClick={() => {
+              exitFullscreen();
+              setLocation('/biblioteca');
+            }}
+            className="p-2 bg-white/95 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all border border-gray-200"
           >
-            <Menu size={18} className="text-gray-700" />
+            <ChevronLeft size={20} className="text-gray-700" />
           </button>
+        </div>
+
+        {/* Informações do capítulo - aparece no topo */}
+        <div className="absolute top-4 right-4 z-50">
+          <div className="px-3 py-1 bg-white/95 backdrop-blur-sm rounded-full shadow-lg border border-gray-200">
+            <span className="text-sm text-gray-700">
+              Cap. {selectedChapter} de {(chapters as Chapter[]).length}
+            </span>
+          </div>
         </div>
 
         {/* Área de toque para página anterior */}
