@@ -111,7 +111,12 @@ export default function GrimoireKindle() {
 
   // Auto-save reading progress with debouncing
   const saveReadingProgress = (chapterId: number, pageNum: number) => {
-    if (!token) return;
+    if (!token) {
+      console.log('No token for saving');
+      return;
+    }
+    
+    console.log('Setting up save for:', { chapterId, pageNum });
     
     // Clear existing timeout
     if (progressSaveTimeoutRef.current) {
@@ -122,6 +127,14 @@ export default function GrimoireKindle() {
     progressSaveTimeoutRef.current = setTimeout(() => {
       const readingTime = Math.floor((Date.now() - startTime) / 1000);
       
+      console.log('Executing save mutation:', {
+        grimoireId: grimoireId,
+        chapterId: chapterId,
+        progressType: 'reading',
+        currentPage: pageNum,
+        readingTime: readingTime
+      });
+      
       saveProgressMutation.mutate({
         grimoireId: grimoireId,
         chapterId: chapterId,
@@ -129,7 +142,7 @@ export default function GrimoireKindle() {
         currentPage: pageNum,
         readingTime: readingTime
       });
-    }, 2000);
+    }, 1000); // Reduced to 1 second for testing
   };
 
   // Paragraph-preserving pagination
@@ -220,7 +233,9 @@ export default function GrimoireKindle() {
 
   // Auto-save when page changes (excluding first page to avoid unnecessary saves)
   useEffect(() => {
-    if (currentChapter && currentPage > 1) {
+    console.log('Page change effect:', { currentChapter: currentChapter?.id, currentPage, token: !!token });
+    if (currentChapter && currentPage > 1 && token) {
+      console.log('Triggering auto-save');
       saveReadingProgress(currentChapter.id, currentPage);
     }
   }, [currentPage, selectedChapter, currentChapter]);
@@ -413,6 +428,17 @@ export default function GrimoireKindle() {
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-between text-sm text-muted-foreground mb-2">
             <span>Página {currentPage} de {totalPages}</span>
+            <button
+              onClick={() => {
+                if (currentChapter && token) {
+                  console.log('Manual save clicked');
+                  saveReadingProgress(currentChapter.id, currentPage);
+                }
+              }}
+              className="px-2 py-1 text-xs bg-blue-600/20 text-blue-300 rounded border border-blue-400/50"
+            >
+              Salvar
+            </button>
             <span>Cap. {selectedChapter} de {(chapters as Chapter[])?.length}</span>
             <span>{Math.round(progressPercentage)}%</span>
           </div>
