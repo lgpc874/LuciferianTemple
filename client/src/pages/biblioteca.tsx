@@ -8,6 +8,8 @@ import AuthForm from "../components/auth-form";
 export default function Biblioteca() {
   const { isAuthenticated, user, login, logout } = useAuth();
   const [, setLocation] = useLocation();
+  
+  // Evita renderização dupla removendo dados estáticos daqui
   const grimoires = [
     {
       id: 1,
