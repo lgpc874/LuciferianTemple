@@ -426,7 +426,7 @@ export default function GrimoireKindle() {
           </div>
         </div>
       </div>
-    </div>
+      </div>
     </ContentProtection>
   );
 }
