@@ -1,10 +1,11 @@
 import { useParams, useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, BookOpen, Clock } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { PageTransition } from "@/components/page-transition";
 import { useAuth } from "@/hooks/use-auth";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface Chapter {
   id: number;
@@ -30,8 +31,11 @@ export default function GrimoireReader() {
   const { token } = useAuth();
   const [selectedChapter, setSelectedChapter] = useState<number>(1);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [isFlipping, setIsFlipping] = useState<boolean>(false);
-  const [flipDirection, setFlipDirection] = useState<'next' | 'prev'>('next');
+  const [totalPages, setTotalPages] = useState<number>(1);
+  const [currentPageContent, setCurrentPageContent] = useState<string>('');
+  const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
+  const isMobile = useIsMobile();
+  const contentRef = useRef<HTMLDivElement>(null);
 
   const { data: grimoire, isLoading: grimoireLoading } = useQuery({
     queryKey: ['/api/grimoires', id],
@@ -45,317 +49,271 @@ export default function GrimoireReader() {
 
   const currentChapter = (chapters as Chapter[]).find((ch: Chapter) => ch.chapterOrder === selectedChapter);
 
-  // Função para dividir conteúdo em páginas
-  const splitContentIntoPages = (content: string): string[] => {
-    if (!content) return [];
+  // Enable fullscreen on component mount
+  useEffect(() => {
+    setIsFullscreen(true);
     
-    // Dividir por elementos principais (h2, h3, p)
-    const elements = content.split(/(<\/(?:h[2-6]|p|div)>)/);
+    return () => {
+      setIsFullscreen(false);
+    };
+  }, []);
+
+  const exitFullscreen = () => {
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+    }
+    setIsFullscreen(false);
+  };
+
+  // Paragraph-preserving pagination
+  useEffect(() => {
+    if (!currentChapter?.content) {
+      setCurrentPageContent('');
+      setTotalPages(1);
+      return;
+    }
+
+    const content = currentChapter.content;
+    
+    // Extract complete paragraphs and other block elements
+    const tempContent = content.replace(/\n/g, ' ');
+    const paragraphs = tempContent.match(/<p[^>]*>.*?<\/p>|<h[3-4][^>]*>.*?<\/h[3-4]>|<blockquote[^>]*>.*?<\/blockquote>|<ul[^>]*>.*?<\/ul>/g) || [];
+    
+    // Very conservative character limit to ensure content fits
+    const maxCharsPerPage = isMobile ? 800 : 1200;
+    
     const pages: string[] = [];
     let currentPageContent = '';
-    const maxWordsPerPage = 250; // Páginas menores para leitura mais confortável
+    let currentLength = 0;
     
-    let headerSection = '';
-    let inHeader = true;
-    
-    for (let i = 0; i < elements.length; i += 2) {
-      const element = elements[i] + (elements[i + 1] || '');
+    for (const paragraph of paragraphs) {
+      const paragraphLength = paragraph.length;
       
-      // Capturar o cabeçalho inicial
-      if (inHeader && element.includes('chapter-header')) {
-        headerSection = element;
-        continue;
-      }
-      if (inHeader && element.includes('</div>')) {
-        headerSection += element;
-        inHeader = false;
-        currentPageContent = headerSection;
-        continue;
-      }
-      
-      const elementText = element.replace(/<[^>]*>/g, '').trim();
-      const wordCount = elementText.split(/\s+/).filter(word => word.length > 0).length;
-      const currentWordCount = currentPageContent.replace(/<[^>]*>/g, '').split(/\s+/).filter(word => word.length > 0).length;
-      
-      // Se adicionar este elemento ultrapassar o limite e já temos conteúdo, criar nova página
-      if (currentWordCount + wordCount > maxWordsPerPage && currentPageContent.replace(headerSection, '').trim()) {
-        pages.push(currentPageContent);
-        currentPageContent = headerSection + element;
+      // If adding this paragraph would exceed the limit
+      if (currentLength + paragraphLength > maxCharsPerPage && currentPageContent.length > 0) {
+        // Save current page
+        pages.push(currentPageContent.trim());
+        
+        // Start new page with this paragraph
+        currentPageContent = paragraph;
+        currentLength = paragraphLength;
       } else {
-        currentPageContent += element;
+        // Add paragraph to current page
+        currentPageContent += paragraph;
+        currentLength += paragraphLength;
       }
     }
     
-    // Adicionar a última página se houver conteúdo
-    if (currentPageContent.replace(headerSection, '').trim()) {
-      pages.push(currentPageContent);
+    // Add the final page if it has content
+    if (currentPageContent.trim().length > 0) {
+      pages.push(currentPageContent.trim());
     }
     
-    return pages.length > 0 ? pages : [content];
-  };
-
-  const currentPages = splitContentIntoPages(currentChapter?.content || '');
-  const totalPages = currentPages.length;
-  const currentPageContent = currentPages[currentPage - 1] || '';
-
-  // Reset page when chapter changes
-  const handleChapterChange = (chapterOrder: number) => {
-    setSelectedChapter(chapterOrder);
-    setCurrentPage(1);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  // Scroll to top when page changes with flip animation
-  const handlePageChange = (newPage: number, direction: 'next' | 'prev' = 'next') => {
-    setIsFlipping(true);
-    setFlipDirection(direction);
+    // Ensure we have at least one page
+    if (pages.length === 0) {
+      pages.push('<p>Conteúdo não disponível</p>');
+    }
     
-    setTimeout(() => {
-      setCurrentPage(newPage);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, 300);
+    setTotalPages(pages.length);
     
-    setTimeout(() => {
-      setIsFlipping(false);
-    }, 600);
+    // Get current page with bounds checking
+    const pageIndex = Math.max(0, Math.min(currentPage - 1, pages.length - 1));
+    setCurrentPageContent(pages[pageIndex] || pages[0] || '');
+  }, [currentChapter, currentPage, isMobile]);
+
+  // Navigation handlers with continuous reading
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(prev => prev + 1);
+    } else if (selectedChapter < (chapters as Chapter[])?.length) {
+      setSelectedChapter(prev => prev + 1);
+      setCurrentPage(1);
+    }
   };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(prev => prev - 1);
+    } else if (selectedChapter > 1) {
+      // Go to previous chapter and set to its last page
+      const prevChapter = (chapters as Chapter[])?.find((ch: Chapter) => ch.chapterOrder === selectedChapter - 1);
+      if (prevChapter) {
+        setSelectedChapter(prev => prev - 1);
+        // Calculate total pages for previous chapter using same logic
+        const prevContent = prevChapter.content;
+        const tempPrevContent = prevContent.replace(/\n/g, ' ');
+        const paragraphs = tempPrevContent.match(/<p[^>]*>.*?<\/p>|<h[3-4][^>]*>.*?<\/h[3-4]>|<blockquote[^>]*>.*?<\/blockquote>|<ul[^>]*>.*?<\/ul>/g) || [];
+        const maxCharsPerPage = isMobile ? 800 : 1200;
+        
+        let pages = 0;
+        let currentLength = 0;
+        
+        for (const paragraph of paragraphs) {
+          if (currentLength + paragraph.length > maxCharsPerPage && currentLength > 0) {
+            pages++;
+            currentLength = paragraph.length;
+          } else {
+            currentLength += paragraph.length;
+          }
+        }
+        if (currentLength > 0) pages++;
+        
+        setCurrentPage(Math.max(1, pages));
+      }
+    }
+  };
+
+  // Calculate reading progress
+  const totalChapters = (chapters as Chapter[])?.length || 1;
+  const progressPercentage = ((selectedChapter - 1) / totalChapters + (currentPage / totalPages) / totalChapters) * 100;
 
   if (grimoireLoading || chaptersLoading) {
     return (
-      <PageTransition className="min-h-screen bg-abyss-black">
-        <div className="flex items-center justify-center min-h-screen">
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-            className="w-8 h-8 border-2 border-golden-amber border-t-transparent rounded-full"
-          />
+      <PageTransition>
+        <div className="min-h-screen bg-background flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin w-8 h-8 border-2 border-golden-amber border-t-transparent rounded-full mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Carregando grimório...</p>
+          </div>
         </div>
       </PageTransition>
     );
   }
 
-  if (!grimoire || !chapters) {
+  if (!grimoire || !chapters.length) {
     return (
-      <PageTransition className="min-h-screen bg-abyss-black flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="font-cinzel text-xl text-golden-amber mb-4">Grimório não encontrado</h2>
-          <button
-            onClick={() => setLocation('/biblioteca')}
-            className="veil-button bg-gradient-to-r from-golden-amber/10 to-golden-amber/5 hover:from-golden-amber/20 hover:to-golden-amber/10 text-golden-amber font-cinzel py-2 px-6 rounded-md transition-all duration-300 border border-golden-amber/50"
-          >
-            Retornar à Biblioteca
-          </button>
+      <PageTransition>
+        <div className="min-h-screen bg-background flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-muted-foreground">Grimório não encontrado</p>
+            <button 
+              onClick={() => setLocation('/biblioteca')}
+              className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+            >
+              Voltar à Biblioteca
+            </button>
+          </div>
         </div>
       </PageTransition>
     );
   }
 
   return (
-    <PageTransition className="min-h-screen bg-gradient-to-b from-stone-900 via-stone-800 to-stone-900">
-      {/* Efeito de textura de papel antigo */}
-      <div className="fixed inset-0 opacity-10 bg-gradient-to-br from-amber-100/5 via-transparent to-amber-100/5"></div>
-      
-      {/* Header com aparência de grimório */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-b from-stone-900/95 to-stone-800/95 backdrop-blur-sm border-b-2 border-golden-amber/30 shadow-lg">
-        <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setLocation('/biblioteca')}
-            className="flex items-center space-x-2 text-golden-amber hover:text-golden-amber/80 transition-colors font-cinzel text-sm"
+    <div className="fixed inset-0 bg-background min-h-screen" 
+         style={{
+           background: 'url("https://i.postimg.cc/qqX1Q7zn/Textura-envelhecida-e-marcada-pelo-tempo.png") center/cover fixed',
+           backgroundAttachment: 'fixed'
+         }}>
+      {/* Botão de voltar - único elemento da interface */}
+      <button 
+        onClick={() => {
+          exitFullscreen();
+          setLocation('/biblioteca');
+        }}
+        className="fixed top-4 left-4 z-50 p-3 bg-card/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-card transition-all border border-burned-amber"
+      >
+        <ChevronLeft size={18} className="text-golden-amber" />
+      </button>
+
+      {/* Container de leitura - ocupa toda a tela */}
+      <div className="h-full flex">
+        {/* Navegação invisível - área esquerda */}
+        <div 
+          onClick={handlePrevPage}
+          className="w-16 sm:w-20 md:w-24 lg:w-32 h-full cursor-pointer"
+        />
+
+        {/* Container de texto - área central */}
+        <div className="flex-1 h-full flex items-center justify-center">
+          {/* Página formato A5 responsiva - com estilo do site */}
+          <div 
+            className="bg-card/95 backdrop-blur-sm shadow-2xl rounded-lg border border-burned-amber relative content-section"
+            style={{
+              width: isMobile ? '85vw' : 'min(65vw, 380px)',
+              height: isMobile ? '80vh' : 'min(80vh, 540px)',
+              maxWidth: '380px',
+              maxHeight: '540px'
+            }}
           >
-            <ChevronLeft size={18} />
-            <span>BIBLIOTECA</span>
-          </motion.button>
+            {/* Botões discretos de navegação */}
+            <button
+              onClick={handlePrevPage}
+              disabled={selectedChapter === 1 && currentPage === 1}
+              className="absolute top-1/2 left-2 transform -translate-y-1/2 w-8 h-8 bg-card/80 hover:bg-card rounded-full flex items-center justify-center opacity-0 hover:opacity-100 transition-all duration-200 disabled:opacity-0 border border-burned-amber"
+            >
+              <ChevronLeft size={16} className="text-golden-amber" />
+            </button>
 
-          <div className="text-center flex-1">
-            <h1 className="font-cinzel text-lg text-golden-amber drop-shadow-lg">{(grimoire as Grimoire)?.title || 'Grimório'}</h1>
-            <p className="text-xs text-burned-amber/80">{currentChapter?.title || ''}</p>
-          </div>
+            <button
+              onClick={handleNextPage}
+              disabled={selectedChapter === (chapters as Chapter[])?.length && currentPage === totalPages}
+              className="absolute top-1/2 right-2 transform -translate-y-1/2 w-8 h-8 bg-card/80 hover:bg-card rounded-full flex items-center justify-center opacity-0 hover:opacity-100 transition-all duration-200 disabled:opacity-0 border border-burned-amber"
+            >
+              <ChevronRight size={16} className="text-golden-amber" />
+            </button>
 
-          <div className="text-burned-amber/80 text-xs font-cinzel">
-            Página {currentPage} de {totalPages}
-          </div>
-        </div>
-      </div>
-
-      {/* Livro principal */}
-      <div className="pt-16 pb-8 min-h-screen flex items-center justify-center">
-        <div className="relative max-w-5xl mx-auto px-4">
-          
-          {/* Navegação de capítulos - estilo índice de livro */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="mb-6"
-          >
-            <div className="bg-gradient-to-r from-stone-800/40 to-stone-700/40 backdrop-blur-sm border border-golden-amber/20 rounded-lg p-4">
-              <h3 className="text-center font-cinzel text-golden-amber text-sm mb-3 tracking-wider">ÍNDICE</h3>
-              <div className="flex flex-wrap gap-2 justify-center">
-                {(chapters as Chapter[]).map((chapter: Chapter) => (
-                  <motion.button
-                    key={chapter.id}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => handleChapterChange(chapter.chapterOrder)}
-                    className={`px-3 py-1.5 rounded font-cinzel text-xs transition-all duration-300 ${
-                      selectedChapter === chapter.chapterOrder
-                        ? 'bg-golden-amber text-stone-900 shadow-lg font-bold'
-                        : 'bg-stone-700/50 text-golden-amber/80 border border-golden-amber/20 hover:bg-golden-amber/10'
-                    }`}
-                  >
-                    {chapter.chapterOrder}
-                  </motion.button>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Livro aberto - design de grimório */}
-          <div className="relative">
-            {/* Sombra do livro */}
-            <div className="absolute inset-0 bg-black/30 blur-xl transform translate-y-8 scale-105"></div>
-            
-            {/* Livro principal */}
-            <div className="relative bg-gradient-to-br from-amber-50/95 to-amber-100/90 border-2 border-amber-800/60 rounded-lg shadow-2xl overflow-hidden">
-              {/* Lombada do livro */}
-              <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-b from-amber-900 to-amber-800 border-r border-amber-700"></div>
-              
-              {/* Conteúdo da página com flip animation */}
-              <motion.div
-                key={`${selectedChapter}-${currentPage}`}
-                initial={isFlipping ? 
-                  { rotateY: flipDirection === 'next' ? -90 : 90, opacity: 0 } : 
-                  { opacity: 1, rotateY: 0 }
-                }
-                animate={{ rotateY: 0, opacity: 1 }}
-                exit={isFlipping ? 
-                  { rotateY: flipDirection === 'next' ? 90 : -90, opacity: 0 } : 
-                  {}
-                }
-                transition={{ 
-                  duration: isFlipping ? 0.6 : 0.4,
-                  ease: "easeInOut",
-                  type: "spring",
-                  stiffness: 100
-                }}
-                style={{ 
-                  perspective: "1000px",
-                  transformStyle: "preserve-3d" 
-                }}
-                className="min-h-[600px] p-12 pl-20"
-              >
-                {/* Cabeçalho da página */}
-                <div className="text-center mb-8 border-b border-amber-800/30 pb-6">
-                  <h2 className="font-cinzel text-2xl text-amber-900 mb-2 drop-shadow-sm">
-                    {currentChapter?.title}
-                  </h2>
-                  <div className="flex items-center justify-center space-x-6 text-amber-700 text-sm">
-                    <div className="flex items-center space-x-1">
-                      <BookOpen size={14} />
-                      <span>Capítulo {selectedChapter}</span>
+            <div className="h-full p-6 sm:p-8 md:p-10 flex flex-col">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={`${selectedChapter}-${currentPage}`}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="flex-1 flex flex-col"
+                >
+                  {/* Título do capítulo (apenas na primeira página) */}
+                  {currentPage === 1 && (
+                    <div className="text-center mb-8">
+                      <h1 className="font-cinzel text-golden-amber font-bold tracking-widest uppercase text-lg md:text-xl">
+                        {currentChapter?.title}
+                      </h1>
                     </div>
-                    <div className="w-1 h-1 bg-amber-700 rounded-full"></div>
-                    <div className="flex items-center space-x-1">
-                      <span>Página {currentPage} de {totalPages}</span>
-                    </div>
-                  </div>
-                </div>
+                  )}
 
-                {/* Conteúdo da página */}
-                <div className="prose prose-amber max-w-none">
+                  {/* Conteúdo da página */}
                   <div 
-                    className="font-serif text-amber-900 leading-relaxed text-justify"
+                    ref={contentRef}
+                    className="font-garamond text-ritualistic-beige grimoire-content"
                     style={{
-                      textShadow: '0 1px 1px rgba(0,0,0,0.1)'
+                      fontSize: isMobile ? '13px' : '15px',
+                      lineHeight: '1.6',
+                      height: isMobile ? 'calc(80vh - 140px)' : 'calc(540px - 140px)',
+                      maxHeight: isMobile ? 'calc(80vh - 140px)' : 'calc(540px - 140px)',
+                      overflow: 'hidden',
+                      wordWrap: 'break-word'
                     }}
                     dangerouslySetInnerHTML={{ __html: currentPageContent }}
                   />
-                </div>
-
-                {/* Número da página no canto */}
-                <div className="absolute bottom-6 right-8 text-amber-700 text-sm font-cinzel">
-                  {currentPage}
-                </div>
-              </motion.div>
+                </motion.div>
+              </AnimatePresence>
             </div>
           </div>
+        </div>
 
-          {/* Navegação de páginas - estilo antigo */}
-          {totalPages > 1 && (
-            <div className="mt-8 flex items-center justify-center space-x-8">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => handlePageChange(Math.max(1, currentPage - 1), 'prev')}
-                disabled={currentPage === 1}
-                className={`flex items-center space-x-2 font-cinzel py-3 px-6 rounded-md transition-all duration-300 ${
-                  currentPage === 1
-                    ? 'bg-stone-700/30 text-stone-500 cursor-not-allowed'
-                    : 'bg-gradient-to-r from-amber-800/20 to-amber-700/20 text-golden-amber border border-amber-600/50 hover:from-amber-700/30 hover:to-amber-600/30 shadow-lg'
-                }`}
-              >
-                <ChevronLeft size={16} />
-                <span>Página Anterior</span>
-              </motion.button>
+        {/* Navegação invisível - área direita */}
+        <div 
+          onClick={handleNextPage}
+          className="w-16 sm:w-20 md:w-24 lg:w-32 h-full cursor-pointer"
+        />
+      </div>
 
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1), 'next')}
-                disabled={currentPage === totalPages}
-                className={`flex items-center space-x-2 font-cinzel py-3 px-6 rounded-md transition-all duration-300 ${
-                  currentPage === totalPages
-                    ? 'bg-stone-700/30 text-stone-500 cursor-not-allowed'
-                    : 'bg-gradient-to-r from-amber-800/20 to-amber-700/20 text-golden-amber border border-amber-600/50 hover:from-amber-700/30 hover:to-amber-600/30 shadow-lg'
-                }`}
-              >
-                <span>Próxima Página</span>
-                <ChevronRight size={16} />
-              </motion.button>
-            </div>
-          )}
-
-          {/* Navegação entre capítulos */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="flex justify-between items-center mt-8"
-          >
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => handleChapterChange(Math.max(1, selectedChapter - 1))}
-              disabled={selectedChapter === 1}
-              className={`flex items-center space-x-2 font-cinzel py-3 px-6 rounded-md transition-all duration-300 ${
-                selectedChapter === 1
-                  ? 'bg-gray-700/30 text-gray-500 cursor-not-allowed'
-                  : 'bg-golden-amber/10 text-golden-amber border border-golden-amber/30 hover:bg-golden-amber/20'
-              }`}
-            >
-              <ChevronLeft size={16} />
-              <span>Anterior</span>
-            </motion.button>
-
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => handleChapterChange(Math.min((chapters as Chapter[]).length, selectedChapter + 1))}
-              disabled={selectedChapter === (chapters as Chapter[]).length}
-              className={`flex items-center space-x-2 font-cinzel py-3 px-6 rounded-md transition-all duration-300 ${
-                selectedChapter === (chapters as Chapter[]).length
-                  ? 'bg-gray-700/30 text-gray-500 cursor-not-allowed'
-                  : 'bg-golden-amber/10 text-golden-amber border border-golden-amber/30 hover:bg-golden-amber/20'
-              }`}
-            >
-              <span>Próximo</span>
-              <ChevronRight size={16} />
-            </motion.button>
-          </motion.div>
+      {/* Barra de progresso estilo Kindle - parte inferior */}
+      <div className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-sm border-t border-burned-amber px-6 py-3">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex items-center justify-between text-sm text-muted-foreground mb-2">
+            <span>Página {currentPage} de {totalPages}</span>
+            <span>Cap. {selectedChapter} de {(chapters as Chapter[])?.length}</span>
+            <span>{Math.round(progressPercentage)}%</span>
+          </div>
+          <div className="w-full bg-muted rounded-full h-1">
+            <div 
+              className="bg-golden-amber h-1 rounded-full transition-all duration-300"
+              style={{ width: `${progressPercentage}%` }}
+            />
+          </div>
         </div>
       </div>
-    </PageTransition>
+    </div>
   );
 }
