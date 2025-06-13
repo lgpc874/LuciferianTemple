@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useLocation } from 'wouter';
+import { useLocation, useParams } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft } from 'lucide-react';
 import { PageTransition } from '../components/page-transition';
@@ -26,10 +26,11 @@ interface Grimoire {
 
 export default function GrimoireKindle() {
   const [, setLocation] = useLocation();
+  const params = useParams();
   const isMobile = useIsMobile();
   
   // Get grimoire ID from URL
-  const grimoireId = 1; // For now, hardcoded to first grimoire
+  const grimoireId = params.id ? parseInt(params.id) : 1;
   
   // Reading state
   const [selectedChapter, setSelectedChapter] = useState(1);

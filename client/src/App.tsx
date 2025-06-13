@@ -17,18 +17,29 @@ import GrimoireSimple from "@/pages/grimoire-simple";
 
 function Router() {
   const [location] = useLocation();
+  const isGrimoireReader = location.startsWith('/grimoire/');
   
   return (
-    <AnimatePresence mode="wait" initial={false}>
-      <Switch location={location}>
-        <Route path="/" component={Home} />
-        <Route path="/auth" component={AuthPage} />
-        <Route path="/bibliotheca-arcana" component={BibliothecaArcana} />
-        <Route path="/biblioteca" component={Biblioteca} />
-        <Route path="/grimoire/:id" component={GrimoireReader} />
-        <Route component={NotFound} />
-      </Switch>
-    </AnimatePresence>
+    <div>
+      {/* Header e menu apenas para páginas que não são de leitura */}
+      {!isGrimoireReader && (
+        <>
+          <FixedHeader />
+          <NavigationMenu />
+        </>
+      )}
+      
+      <AnimatePresence mode="wait" initial={false}>
+        <Switch location={location}>
+          <Route path="/" component={Home} />
+          <Route path="/auth" component={AuthPage} />
+          <Route path="/bibliotheca-arcana" component={BibliothecaArcana} />
+          <Route path="/biblioteca" component={Biblioteca} />
+          <Route path="/grimoire/:id" component={GrimoireReader} />
+          <Route component={NotFound} />
+        </Switch>
+      </AnimatePresence>
+    </div>
   );
 }
 
@@ -37,8 +48,6 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <TooltipProvider>
-          <FixedHeader />
-          <NavigationMenu />
           <Toaster />
           <Router />
         </TooltipProvider>
