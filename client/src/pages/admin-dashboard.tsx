@@ -51,8 +51,12 @@ export default function AdminDashboard() {
   const { user, isAuthenticated } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
 
-  // Verificar se é admin  
-  if (!isAuthenticated || !(user as any)?.isAdmin) {
+  // Verificar se é admin - usando email ou propriedade isAdmin
+  const isAdmin = user?.email === "admin@templodoabismo.com" || 
+                  user?.email === "templo.admin@templodoabismo.com" ||
+                  (user as any)?.isAdmin === true;
+  
+  if (!isAuthenticated || !isAdmin) {
     return (
       <PageTransition className="min-h-screen bg-background flex items-center justify-center">
         <Card className="w-full max-w-md">
