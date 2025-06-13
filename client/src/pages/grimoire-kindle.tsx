@@ -69,24 +69,66 @@ export default function GrimoireKindle() {
     setIsFullscreen(false);
   };
 
-  // Pagination logic optimized for A5 format
+  // Smart pagination with heading control for A5 format
   useEffect(() => {
     if (!currentChapter) return;
 
-    // A5 format pagination - optimized for readability
-    const words = currentChapter.content.split(' ');
-    // A5 page can comfortably fit 150-250 words depending on font size
-    const wordsPerPage = isMobile ? 150 : 200;
-    const calculatedPages = Math.ceil(words.length / wordsPerPage);
+    const content = currentChapter.content;
+    const maxWordsPerPage = isMobile ? 120 : 150; // Reduced to prevent overflow
     
-    setTotalPages(Math.max(1, calculatedPages));
+    // Split content into HTML elements while preserving structure
+    const elements = content.split(/(<h[3-4][^>]*>.*?<\/h[3-4]>|<blockquote[^>]*>.*?<\/blockquote>|<ul[^>]*>.*?<\/ul>|<p[^>]*>.*?<\/p>)/g)
+      .filter(element => element.trim().length > 0);
     
-    // Calculate content for current page
-    const startIndex = (currentPage - 1) * wordsPerPage;
-    const endIndex = currentPage * wordsPerPage;
+    let pages: string[] = [];
+    let currentPageHTML = '';
+    let currentWordCount = 0;
     
-    const pageContent = words.slice(startIndex, endIndex).join(' ');
-    setCurrentPageContent(pageContent);
+    for (const element of elements) {
+      // Count words excluding HTML tags
+      const elementText = element.replace(/<[^>]*>/g, '');
+      const elementWords = elementText.split(/\s+/).filter(word => word.length > 0);
+      const elementWordCount = elementWords.length;
+      
+      // Check if this is a heading
+      const isHeading = /<h[3-4]/.test(element);
+      
+      // If this element would exceed page capacity
+      if (currentWordCount + elementWordCount > maxWordsPerPage) {
+        // For headings, if we're past 70% of page capacity, move to next page
+        if (isHeading && currentWordCount > maxWordsPerPage * 0.7) {
+          if (currentPageHTML.trim()) {
+            pages.push(currentPageHTML);
+          }
+          currentPageHTML = element;
+          currentWordCount = elementWordCount;
+        } else {
+          // Start new page with this element
+          if (currentPageHTML.trim()) {
+            pages.push(currentPageHTML);
+          }
+          currentPageHTML = element;
+          currentWordCount = elementWordCount;
+        }
+      } else {
+        // Add element to current page
+        currentPageHTML += element;
+        currentWordCount += elementWordCount;
+      }
+    }
+    
+    // Add the last page if it has content
+    if (currentPageHTML.trim()) {
+      pages.push(currentPageHTML);
+    }
+    
+    // Ensure we have at least one page
+    if (pages.length === 0) {
+      pages = [content];
+    }
+    
+    setTotalPages(pages.length);
+    setCurrentPageContent(pages[currentPage - 1] || '');
   }, [currentChapter, currentPage, isMobile]);
 
   // Navigation handlers with continuous reading
@@ -211,7 +253,9 @@ export default function GrimoireKindle() {
                     className="font-garamond text-ritualistic-beige flex-1 overflow-hidden grimoire-content"
                     style={{
                       fontSize: isMobile ? '14px' : '16px',
-                      lineHeight: '1.8'
+                      lineHeight: '1.8',
+                      maxHeight: isMobile ? 'calc(80vh - 120px)' : 'calc(540px - 120px)',
+                      overflowY: 'hidden'
                     }}
                     dangerouslySetInnerHTML={{ __html: currentPageContent }}
                   />
