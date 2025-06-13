@@ -1157,6 +1157,15 @@ class GrimoireDataStore {
     
     return unlockedIds;
   }
+  addChapter(chapter: Chapter): Chapter {
+    this.chapters.set(chapter.id, chapter);
+    return chapter;
+  }
+
+  addGrimoire(grimoire: Grimoire): Grimoire {
+    this.grimoires.set(grimoire.id, grimoire);
+    return grimoire;
+  }
 }
 
 // Singleton para manter os dados durante a sessão

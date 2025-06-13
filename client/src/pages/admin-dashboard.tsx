@@ -82,7 +82,7 @@ export default function AdminDashboard() {
             </p>
           </div>
           <Badge variant="outline" className="text-golden-amber border-golden-amber">
-            Administrador: {user.username}
+            Administrador: {user?.username || 'Admin'}
           </Badge>
         </div>
 

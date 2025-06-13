@@ -377,7 +377,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           content: chapter.content,
           chapterOrder: chapter.chapterOrder || index + 1,
           estimatedReadingTime: chapter.estimatedReadingTime || 15,
-          unlockCriteria: index === 0 ? "always" : "previous_chapter"
+          unlockCriteria: index === 0 ? "always" : "previous_chapter",
+          createdAt: new Date()
         });
       });
 
