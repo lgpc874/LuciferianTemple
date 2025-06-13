@@ -189,7 +189,7 @@ export default function Biblioteca() {
               // Determine button text and style
               const buttonText = hasProgress ? "CONTINUAR" : "LER";
               const buttonStyle = hasProgress ? 
-                "w-full veil-button bg-gradient-to-r from-blue-600/20 to-blue-500/10 hover:from-blue-600/30 hover:to-blue-500/15 text-blue-300 font-cinzel py-2 sm:py-3 px-3 sm:px-4 rounded-md transition-all duration-300 border border-blue-400/50 hover:border-blue-300 hover:shadow-md hover:shadow-blue-300/25 tracking-wide text-sm" :
+                "w-full veil-button bg-gradient-to-r from-blue-600/20 to-blue-500/10 hover:from-blue-600/30 hover:to-blue-500/15 text-blue-300 font-cinzel py-2 sm:py-3 px-2 sm:px-3 rounded-md transition-all duration-300 border border-blue-400/50 hover:border-blue-300 hover:shadow-md hover:shadow-blue-300/25 tracking-normal text-xs sm:text-sm" :
                 "w-full veil-button bg-gradient-to-r from-golden-amber/10 to-golden-amber/5 hover:from-golden-amber/20 hover:to-golden-amber/10 text-golden-amber font-cinzel py-2 sm:py-3 px-3 sm:px-4 rounded-md transition-all duration-300 border border-golden-amber/50 hover:border-golden-amber hover:shadow-md hover:shadow-golden-amber/25 tracking-wide text-sm";
               
               return (
