@@ -1048,6 +1048,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         isActive: true,
         price: null,
         isPaid: false,
+        sectionId: 1, // Por padrão na primeira seção (Porta das Sombras)
         coverImageUrl: `https://via.placeholder.com/300x400?text=${encodeURIComponent(grimoireData.title)}`
       });
 

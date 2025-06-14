@@ -87,8 +87,12 @@ export const insertGrimoireSchema = createInsertSchema(grimoires).pick({
   description: true,
   coverImageUrl: true,
   category: true,
+  sectionId: true,
   difficultyLevel: true,
   unlockOrder: true,
+  isActive: true,
+  price: true,
+  isPaid: true,
 });
 
 export const insertChapterSchema = createInsertSchema(chapters).pick({
