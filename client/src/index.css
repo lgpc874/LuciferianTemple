@@ -27,6 +27,39 @@ body {
   -moz-user-drag: none;
   -o-user-drag: none;
   user-drag: none;
+  /* Background místico com gradiente avermelhado */
+  background: radial-gradient(ellipse at center, 
+    hsl(0, 20%, 12%) 0%, 
+    hsl(0, 15%, 8%) 50%, 
+    hsl(0, 10%, 5%) 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Selo luciferiano rotativo no background */
+body::before {
+  content: '';
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 80vw;
+  height: 80vw;
+  max-width: 600px;
+  max-height: 600px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cdefs%3E%3Cstyle%3E.pentagram %7B fill: none; stroke: %23cc2936; stroke-width: 1.5; opacity: 0.08; %7D%3C/style%3E%3C/defs%3E%3Cg class='pentagram'%3E%3Cpath d='M100 20 L76.4 76.4 L20 76.4 L64.7 111.8 L47.2 168.2 L100 132.8 L152.8 168.2 L135.3 111.8 L180 76.4 L123.6 76.4 Z'/%3E%3Ccircle cx='100' cy='100' r='85' stroke='%23cc2936' stroke-width='1' opacity='0.06'/%3E%3Ccircle cx='100' cy='100' r='70' stroke='%23cc2936' stroke-width='0.8' opacity='0.04'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  transform: translate(-50%, -50%);
+  animation: rotate-seal 180s linear infinite;
+  z-index: -1;
+  pointer-events: none;
+}
+
+@keyframes rotate-seal {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
 /* Permitir seleção apenas em inputs e textareas */
@@ -72,18 +105,21 @@ input, textarea {
 }
 
 :root {
-  /* Mystical Color Palette */
-  --golden-amber: hsl(45, 100%, 50%);
-  --ritualistic-beige: hsl(40, 25%, 85%);
-  --blood-red: hsl(0, 100%, 27%);
-  --soft-amber: hsl(45, 69%, 52%);
-  --ancient-golden: hsl(43, 84%, 38%);
-  --burned-amber: hsl(32, 51%, 41%);
-  --abyssal-dark: hsl(0, 0%, 5%);
+  /* Paleta de cores luciferiana e mística */
+  --golden-amber: hsl(43, 85%, 55%); /* Dourado mais vibrante */
+  --ritualistic-beige: hsl(30, 30%, 75%); /* Bege ritualístico */
+  --blood-red: hsl(0, 80%, 45%); /* Vermelho sangue intenso */
+  --soft-amber: hsl(39, 100%, 60%); /* Âmbar suave */
+  --ancient-golden: hsl(36, 90%, 55%); /* Dourado antigo */
+  --burned-amber: hsl(25, 100%, 35%); /* Âmbar queimado */
+  --crimson-shadow: hsl(0, 60%, 20%); /* Sombra carmesim */
+  --infernal-glow: hsl(15, 90%, 40%); /* Brilho infernal sutil */
+  --dark-ruby: hsl(350, 70%, 25%); /* Rubi escuro */
+  --abyssal-dark: hsl(0, 15%, 8%); /* Preto com tom avermelhado */
   
   /* Base theme colors */
-  --background: hsl(0, 0%, 5%);
-  --foreground: hsl(40, 25%, 85%);
+  --background: hsl(0, 15%, 8%); /* Preto com tom avermelhado */
+  --foreground: hsl(40, 30%, 85%);
   --muted: hsl(0, 0%, 10%);
   --muted-foreground: hsl(0, 0%, 50%);
   --popover: hsl(0, 0%, 8%);
@@ -378,13 +414,21 @@ input, textarea {
 
 /* Mystical Effects */
 .floating-container {
-  backdrop-filter: blur(1px);
-  background: rgba(13, 13, 13, 0.3);
+  backdrop-filter: blur(2px);
+  background: linear-gradient(135deg, 
+    rgba(20, 10, 10, 0.4) 0%, 
+    rgba(30, 15, 15, 0.3) 50%, 
+    rgba(15, 8, 8, 0.4) 100%);
+  border: 1px solid hsl(0, 40%, 20%);
 }
 
 .content-section {
-  backdrop-filter: blur(1px);
-  background: rgba(13, 13, 13, 0.2);
+  backdrop-filter: blur(2px);
+  background: linear-gradient(135deg, 
+    rgba(25, 12, 12, 0.3) 0%, 
+    rgba(20, 10, 10, 0.2) 50%, 
+    rgba(15, 8, 8, 0.3) 100%);
+  border: 1px solid hsl(15, 30%, 25%);
 }
 
 .warning-overlay {
