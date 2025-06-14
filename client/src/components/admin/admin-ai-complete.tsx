@@ -102,13 +102,22 @@ export default function AdminAIComplete() {
     }
   });
 
-  const categories = [
+  const [customCategory, setCustomCategory] = useState('');
+  const [useCustomCategory, setUseCustomCategory] = useState(false);
+  const [coverOption, setCoverOption] = useState<'ai' | 'url' | 'none'>('ai');
+  const [coverUrl, setCoverUrl] = useState('');
+  
+  const predefinedCategories = [
     'Introdução ao Ocultismo',
     'Magia Cerimonial',
     'Demonologia',
     'Alquimia Espiritual',
     'Rituais Avançados',
-    'Filosofia Luciferiana'
+    'Filosofia Luciferiana',
+    'Magia do Caos',
+    'Tradições Ancestrais',
+    'Mitologia Sombria',
+    'Práticas Iniciáticas'
   ];
 
   const styles = [

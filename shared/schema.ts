@@ -21,6 +21,8 @@ export const grimoires = pgTable("grimoires", {
   difficultyLevel: integer("difficulty_level").notNull(),
   unlockOrder: integer("unlock_order").notNull(),
   isActive: boolean("is_active").default(true).notNull(),
+  price: text("price"), // null = gratuito, valor = preço em R$
+  isPaid: boolean("is_paid").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
