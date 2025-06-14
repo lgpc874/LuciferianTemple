@@ -108,7 +108,7 @@ export default function BibliotecaSections() {
           {/* Header Responsivo */}
           <div className="text-center mb-4 sm:mb-6">
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-cinzel text-golden-amber tracking-wider mb-2">
-              BIBLIOTHECA ARCANA
+              <span className="text-blood-red">🜚</span> BIBLIOTHECA ARCANA <span className="text-blood-red">🜚</span>
             </h1>
             <p className="text-xs sm:text-sm text-ritualistic-beige/70 max-w-xl mx-auto px-4">
               Adentre os halls sagrados do conhecimento esotérico

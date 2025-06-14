@@ -47,7 +47,7 @@ export default function Home() {
           {/* Header */}
           <div className="text-center mb-4 sm:mb-6">
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-cinzel text-golden-amber tracking-wider mb-2">
-              ⸸ TEMPLO DO ABISMO ⸸
+              <span className="text-blood-red">⧭</span> TEMPLO DO ABISMO <span className="text-blood-red">⧭</span>
             </h1>
             <p className="text-xs sm:text-sm text-ritualistic-beige/70 max-w-xl mx-auto px-4">
               Onde as sombras revelam seus segredos milenares
@@ -59,7 +59,7 @@ export default function Home() {
             <div className="max-w-4xl mx-auto">
               
               <h2 className="font-cinzel text-2xl sm:text-3xl md:text-4xl text-golden-amber mb-6 sm:mb-8 text-center tracking-wide">
-                O DESPERTAR DAS SOMBRAS
+                <span className="text-blood-red">⧨</span> O DESPERTAR DAS SOMBRAS <span className="text-blood-red">⧨</span>
               </h2>
               
               <div className="text-center mb-6 sm:mb-8">
