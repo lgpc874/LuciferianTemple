@@ -198,6 +198,16 @@ export default function Perfil() {
   return (
     <PageTransition>
       <div className="container mx-auto px-4 py-8 max-w-6xl">
+        {/* Page Title */}
+        <div className="text-center mb-8">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-cinzel text-golden-amber tracking-wider mb-2">
+            <span className="text-blood-red">⚱</span> SANCTUM PESSOAL <span className="text-blood-red">⚱</span>
+          </h1>
+          <p className="text-xs sm:text-sm text-ritualistic-beige/70 max-w-xl mx-auto px-4">
+            Domínio do iniciado, registro de sua jornada através das sombras
+          </p>
+        </div>
+
         {/* Header do Perfil */}
         <Card className="bg-black/40 backdrop-blur-sm border-golden-amber/30 mb-8">
           <CardContent className="p-6">

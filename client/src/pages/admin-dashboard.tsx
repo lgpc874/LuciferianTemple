@@ -290,7 +290,7 @@ export default function AdminDashboard() {
               <Shield className={`text-golden-amber ${isMobile ? 'w-8 h-8' : 'w-6 h-6 lg:w-8 lg:h-8'}`} />
               <div className={`${isMobile ? 'block' : 'hidden lg:block'}`}>
                 <h1 className="font-cinzel text-xl font-bold text-golden-amber">
-                  Admin Panel
+                  <span className="text-blood-red">⚔</span> Admin Panel <span className="text-blood-red">⚔</span>
                 </h1>
                 <p className="text-xs text-muted-foreground">
                   Templo do Abismo

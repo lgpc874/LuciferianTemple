@@ -140,7 +140,7 @@ export default function Checkout() {
       {/* Header */}
       <div className="text-center mb-8">
         <h1 className="text-3xl font-cinzel text-golden-amber mb-2">
-          Aquisição de Grimório
+          <span className="text-blood-red">🜔</span> Aquisição de Grimório <span className="text-blood-red">🜔</span>
         </h1>
         <p className="text-muted-foreground">
           Complete a aquisição para acessar o conhecimento arcano
