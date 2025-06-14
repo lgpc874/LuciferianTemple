@@ -49,7 +49,7 @@ export default function NavigationMenu() {
       <div className="container mx-auto px-2 sm:px-4 lg:px-8 xl:px-12">
         
         {/* Desktop Menu - Large screens */}
-        <div className="hidden lg:flex items-center justify-center py-3">
+        <div className="hidden lg:flex items-center justify-center py-1">
           <ul className="flex items-center space-x-8">
             {menuItems.map((item, index) => {
               const IconComponent = item.icon;
@@ -89,7 +89,7 @@ export default function NavigationMenu() {
         </div>
 
         {/* Tablet Menu - Medium screens */}
-        <div className="hidden md:flex lg:hidden items-center justify-center py-2">
+        <div className="hidden md:flex lg:hidden items-center justify-center py-1">
           <ul className="flex items-center space-x-6">
             {menuItems.map((item) => {
               const IconComponent = item.icon;
@@ -119,7 +119,7 @@ export default function NavigationMenu() {
         </div>
 
         {/* Small Tablet Menu */}
-        <div className="hidden sm:flex md:hidden items-center justify-center py-2">
+        <div className="hidden sm:flex md:hidden items-center justify-center py-1">
           <ul className="flex items-center space-x-4">
             {menuItems.map((item) => {
               const IconComponent = item.icon;
@@ -149,7 +149,7 @@ export default function NavigationMenu() {
         </div>
 
         {/* Mobile Menu */}
-        <div className="sm:hidden flex items-center justify-between py-2" ref={menuRef}>
+        <div className="sm:hidden flex items-center justify-between py-1" ref={menuRef}>
           <div className="flex items-center space-x-1">
             <span className="text-blood-red text-sm">†</span>
             <span className="font-cinzel text-golden-amber text-xs tracking-wider uppercase">
