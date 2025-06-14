@@ -71,20 +71,12 @@ export default function GrimoireManagement() {
 
   // Fetch grimórios
   const { data: grimoires = [], isLoading: loadingGrimoires } = useQuery({
-    queryKey: ['/api/grimoires'],
-    queryFn: async () => {
-      const response = await apiRequest('/api/grimoires');
-      return response.json();
-    }
+    queryKey: ['/api/admin/grimoires']
   });
 
   // Fetch categorias
   const { data: categories = [] } = useQuery({
-    queryKey: ['/api/admin/categories'],
-    queryFn: async () => {
-      const response = await apiRequest('/api/admin/categories');
-      return response.json();
-    }
+    queryKey: ['/api/admin/categories']
   });
 
   // Níveis de dificuldade predefinidos

@@ -295,6 +295,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get grimoires for admin panel
+  app.get("/api/admin/grimoires", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const grimoires = grimoireStore.getGrimoires();
+      res.json(grimoires);
+    } catch (error) {
+      console.error("Error fetching admin grimoires:", error);
+      res.status(500).json({ error: "Erro ao buscar grimórios" });
+    }
+  });
+
+  // Get specific grimoire for admin editing
+  app.get("/api/admin/grimoires/:id", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const grimoire = grimoireStore.getGrimoireById(id);
+      
+      if (!grimoire) {
+        return res.status(404).json({ error: "Grimório não encontrado" });
+      }
+      
+      const chapters = grimoireStore.getChaptersByGrimoire(id);
+      
+      res.json({
+        ...grimoire,
+        chapters
+      });
+    } catch (error) {
+      console.error("Error fetching admin grimoire:", error);
+      res.status(500).json({ error: "Erro ao buscar grimório" });
+    }
+  });
+
   // Toggle grimoire status (publish/unpublish)
   app.patch("/api/admin/grimoires/:id/status", authenticateToken, requireAdmin, async (req, res) => {
     try {
