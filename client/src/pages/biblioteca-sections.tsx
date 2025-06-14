@@ -119,7 +119,7 @@ export default function BibliotecaSections() {
           {/* Sistema de Abas Místicas */}
           <Tabs defaultValue={sections[0]?.slug || 'porta-das-sombras'} className="w-full">
             {/* Navegação Arcana */}
-            <div className="relative mb-12">
+            <div className="relative mb-12 z-20">
               {/* Ornamento Central Superior */}
               <div className="flex items-center justify-center mb-6">
                 <div className="h-px bg-gradient-to-r from-transparent via-golden-amber/60 to-transparent w-32"></div>
@@ -132,7 +132,7 @@ export default function BibliotecaSections() {
               {/* Abas Místicas */}
               <TabsList className={`
                 relative grid ${isMobile ? 'grid-cols-2 gap-2' : 'grid-cols-4 gap-4'} 
-                w-full ${isMobile ? 'max-w-sm' : 'max-w-6xl'} mx-auto p-0 bg-transparent
+                w-full ${isMobile ? 'max-w-sm' : 'max-w-6xl'} mx-auto p-0 bg-transparent z-30
               `}>
                 {sections.map((section, index) => {
                   const IconComponent = getSectionIcon(section.slug);
@@ -184,7 +184,7 @@ export default function BibliotecaSections() {
               </TabsList>
 
               {/* Ornamento Inferior */}
-              <div className="flex items-center justify-center mt-6">
+              <div className={`flex items-center justify-center ${isMobile ? 'mt-4' : 'mt-6'}`}>
                 <div className="h-px bg-gradient-to-r from-transparent via-golden-amber/40 to-transparent w-24"></div>
                 <div className="mx-3 w-1 h-1 bg-golden-amber/60 rounded-full"></div>
                 <div className="mx-1 w-1 h-1 bg-golden-amber/40 rounded-full"></div>
@@ -192,13 +192,16 @@ export default function BibliotecaSections() {
                 <div className="h-px bg-gradient-to-r from-transparent via-golden-amber/40 to-transparent w-24"></div>
               </div>
             </div>
+            
+            {/* Espaçador para Mobile */}
+            {isMobile && <div className="h-8"></div>}
 
             {/* Conteúdo das Abas */}
             {sections.map((section) => {
               const sectionGrimoires = getGrimoiresBySection(section.id);
               
               return (
-                <TabsContent key={section.slug} value={section.slug} className="mt-0">
+                <TabsContent key={section.slug} value={section.slug} className="mt-0 relative z-10">
                   {/* Portal da Seção */}
                   <div className="relative mb-12">
                     {/* Ornamento de Entrada */}
