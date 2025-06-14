@@ -131,7 +131,9 @@ class GrimoireDataStore {
         description: "Conceitos fundamentais para iniciantes",
         category: "introducao-ocultismo",
         difficultyLevel: 1,
-        unlockOrder: 1
+        unlockOrder: 1,
+        price: null,
+        isPaid: false
       },
       {
         id: 2,
@@ -139,7 +141,9 @@ class GrimoireDataStore {
         description: "Primeiras lições sobre o luciferianismo",
         category: "lucifer-luz-negra",
         difficultyLevel: 1,
-        unlockOrder: 2
+        unlockOrder: 2,
+        price: null,
+        isPaid: false
       },
       {
         id: 3,
@@ -147,7 +151,9 @@ class GrimoireDataStore {
         description: "Introdução aos mistérios da Mãe Noturna",
         category: "lilith-sombra-feminina",
         difficultyLevel: 1,
-        unlockOrder: 3
+        unlockOrder: 3,
+        price: "R$ 29,90",
+        isPaid: true
       },
       {
         id: 4,
@@ -155,7 +161,9 @@ class GrimoireDataStore {
         description: "Primeiros passos com símbolos arcanos",
         category: "simbolismo-sigilos",
         difficultyLevel: 1,
-        unlockOrder: 4
+        unlockOrder: 4,
+        price: null,
+        isPaid: false
       },
       {
         id: 5,
@@ -163,7 +171,9 @@ class GrimoireDataStore {
         description: "Primeiras contemplações para novos buscadores",
         category: "textos-filosoficos",
         difficultyLevel: 1,
-        unlockOrder: 5
+        unlockOrder: 5,
+        price: "R$ 49,90",
+        isPaid: true
       },
       {
         id: 6,
@@ -171,7 +181,9 @@ class GrimoireDataStore {
         description: "Exercícios seguros para quem está começando",
         category: "meditacoes-praticas",
         difficultyLevel: 1,
-        unlockOrder: 6
+        unlockOrder: 6,
+        price: null,
+        isPaid: false
       }
     ];
 
@@ -186,6 +198,8 @@ class GrimoireDataStore {
         difficultyLevel: cat.difficultyLevel,
         unlockOrder: cat.unlockOrder,
         isActive: true,
+        price: cat.price,
+        isPaid: cat.isPaid,
         createdAt: new Date()
       };
       this.grimoires.set(grimoire.id, grimoire);

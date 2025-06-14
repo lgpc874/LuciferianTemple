@@ -187,10 +187,17 @@ export default function Biblioteca() {
                 grimoireProgress.sort((a: any, b: any) => new Date(b.completedAt || b.createdAt).getTime() - new Date(a.completedAt || a.createdAt).getTime())[0] : null;
               
               // Determine reading status and card style
-              let statusText = "VER";
+              let statusText = grimoire.isPaid && grimoire.price ? grimoire.price : "LER";
               let statusColor = "text-golden-amber";
               let cardBorderColor = "border-burned-amber/50 hover:border-golden-amber/70";
               let statusBg = "bg-golden-amber/10";
+              
+              // If it's a paid grimoire, show price and change styling
+              if (grimoire.isPaid && grimoire.price) {
+                statusColor = "text-emerald-300";
+                cardBorderColor = "border-emerald-500/50 hover:border-emerald-400/70";
+                statusBg = "bg-emerald-500/10";
+              }
               
               if (hasProgress) {
                 // Check if completed (this would need completion logic)

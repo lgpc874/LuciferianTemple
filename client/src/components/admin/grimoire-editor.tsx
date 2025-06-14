@@ -59,6 +59,8 @@ export default function GrimoireEditor({ grimoireId, onSave, onCancel }: Grimoir
     category: '',
     difficultyLevel: 1,
     coverImageUrl: '',
+    price: null,
+    isPaid: false,
     chapters: []
   });
   
