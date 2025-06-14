@@ -133,9 +133,29 @@ export default function Biblioteca() {
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-6">
             {Array.isArray(grimoires) && grimoires.map((grimoire: any) => {
-              // Get cover based on category or use default
-              const categoryKey = grimoire.category?.toLowerCase().replace(/\s+/g, '-') || 'introducao-ocultismo';
-              const coverSvg = grimoireCoverSvgs[categoryKey as keyof typeof grimoireCoverSvgs] || grimoireCoverSvgs['introducao-ocultismo'];
+              // Map grimoire categories to available SVG covers
+              const getCoverSvgKey = (category: string, title: string) => {
+                const categoryLower = category?.toLowerCase() || '';
+                const titleLower = title?.toLowerCase() || '';
+                
+                // Map based on category or title keywords
+                if (categoryLower.includes('introducao') || titleLower.includes('introdução')) {
+                  return 'introducao-ocultismo';
+                } else if (categoryLower.includes('lucifer') || titleLower.includes('lúcifer')) {
+                  return 'lucifer-luz-negra';
+                } else if (categoryLower.includes('lilith') || titleLower.includes('lilith')) {
+                  return 'lilith-sombra-feminina';
+                } else if (categoryLower.includes('simbolismo') || titleLower.includes('símbolo')) {
+                  return 'simbolismo-sigilos';
+                } else if (categoryLower.includes('magia') || titleLower.includes('magia')) {
+                  return 'magia-luciferiana';
+                } else {
+                  return 'introducao-ocultismo'; // fallback
+                }
+              };
+              
+              const coverKey = getCoverSvgKey(grimoire.category, grimoire.title);
+              const coverSvg = grimoireCoverSvgs[coverKey as keyof typeof grimoireCoverSvgs];
               
               // Check if user has progress in this grimoire
               const grimoireProgress = Array.isArray(allProgress) ? 
