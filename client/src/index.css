@@ -55,7 +55,6 @@ body::before {
   pointer-events: none;
   filter: sepia(100%) saturate(250%) hue-rotate(345deg) brightness(0.8) contrast(1.4);
   opacity: 0.35;
-  border: 1px solid red; /* Debug temporário */
 }
 
 @keyframes rotate-seal {
