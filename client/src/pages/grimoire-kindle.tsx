@@ -2,12 +2,14 @@ import { useState, useEffect, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useLocation, useParams } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ArrowLeft, Menu, Clock } from 'lucide-react';
 import { PageTransition } from '../components/page-transition';
 import ContentProtection from '../components/content-protection';
 import { useIsMobile } from '../hooks/use-mobile';
 import { useAuth } from '../hooks/use-auth';
 import { apiRequest } from '../lib/queryClient';
+import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
 
 interface Chapter {
   id: number;

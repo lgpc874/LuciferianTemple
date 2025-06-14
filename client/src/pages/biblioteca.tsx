@@ -15,56 +15,12 @@ export default function Biblioteca() {
     queryKey: ['/api/progress'],
     enabled: !!token && isAuthenticated
   });
-  const grimoires = [
-    {
-      id: 1,
-      title: "Introdução ao Ocultismo",
-      description: "Conceitos básicos para os buscadores do Despertar",
-      category: "introducao-ocultismo",
-      difficultyLevel: 1,
-      unlockOrder: 1
-    },
-    {
-      id: 2,
-      title: "Lúcifer e o Caminho da Luz Negra",
-      description: "Uma introdução ao luciferianismo filosófico e espiritual",
-      category: "lucifer-luz-negra",
-      difficultyLevel: 2,
-      unlockOrder: 2
-    },
-    {
-      id: 3,
-      title: "Lilith e o Poder da Sombra Feminina",
-      description: "O despertar da força oculta da Mãe Noturna",
-      category: "lilith-sombra-feminina",
-      difficultyLevel: 2,
-      unlockOrder: 3
-    },
-    {
-      id: 4,
-      title: "Simbolismo e Sigilos",
-      description: "O poder dos símbolos arcanos",
-      category: "simbolismo-sigilos",
-      difficultyLevel: 3,
-      unlockOrder: 4
-    },
-    {
-      id: 5,
-      title: "Textos Filosóficos e Reflexões",
-      description: "Escritos para provocar a alma e questionar os dogmas",
-      category: "textos-filosoficos",
-      difficultyLevel: 4,
-      unlockOrder: 5
-    },
-    {
-      id: 6,
-      title: "Meditações e Práticas Simples",
-      description: "Exercícios seguros para quem está começando",
-      category: "meditacoes-praticas",
-      difficultyLevel: 1,
-      unlockOrder: 6
-    }
-  ];
+
+  // Fetch grimoires from database
+  const { data: grimoires = [], isLoading: loadingGrimoires } = useQuery({
+    queryKey: ['/api/grimoires'],
+    enabled: !!token && isAuthenticated
+  });
 
   const getDifficultyText = (level: number) => {
     switch (level) {

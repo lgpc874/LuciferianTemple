@@ -148,6 +148,100 @@ input, textarea {
   font-family: 'Cinzel Decorative', serif;
 }
 
+/* Ajustes específicos para desktop - reduzir tamanhos de fonte */
+@media (min-width: 768px) {
+  /* Títulos principais */
+  h1 {
+    font-size: 1.75rem !important; /* 28px ao invés de muito maior */
+    line-height: 1.2 !important;
+  }
+  
+  h2 {
+    font-size: 1.375rem !important; /* 22px */
+    line-height: 1.3 !important;
+  }
+  
+  h3 {
+    font-size: 1.125rem !important; /* 18px */
+    line-height: 1.4 !important;
+  }
+  
+  /* Classes de tamanho Tailwind - reduzidas para desktop */
+  .text-4xl {
+    font-size: 1.875rem !important; /* 30px ao invés de 36px */
+  }
+  
+  .text-3xl {
+    font-size: 1.5rem !important; /* 24px ao invés de 30px */
+  }
+  
+  .text-2xl {
+    font-size: 1.25rem !important; /* 20px ao invés de 24px */
+  }
+  
+  .text-xl {
+    font-size: 1.125rem !important; /* 18px ao invés de 20px */
+  }
+  
+  .text-lg {
+    font-size: 1rem !important; /* 16px ao invés de 18px */
+  }
+  
+  .text-base {
+    font-size: 0.875rem !important; /* 14px ao invés de 16px */
+  }
+  
+  .text-sm {
+    font-size: 0.75rem !important; /* 12px ao invés de 14px */
+  }
+  
+  /* Navegação e header */
+  nav, header {
+    font-size: 0.875rem !important;
+  }
+  
+  nav a, nav button, header a, header button {
+    font-size: 0.875rem !important;
+  }
+  
+  /* Título do site */
+  .site-title, [class*="cinzel"] {
+    font-size: 1.5rem !important;
+  }
+  
+  /* Cards e conteúdo */
+  .card h3, .card-title {
+    font-size: 1rem !important;
+  }
+  
+  .card p, .card-description {
+    font-size: 0.875rem !important;
+  }
+  
+  /* Botões */
+  button {
+    font-size: 0.875rem !important;
+  }
+  
+  /* Específico para biblioteca */
+  .biblioteca-title {
+    font-size: 2rem !important; /* Título principal menor */
+  }
+  
+  .biblioteca-subtitle {
+    font-size: 1rem !important;
+  }
+  
+  /* Grimório cards */
+  .grimoire-card h3 {
+    font-size: 1rem !important;
+  }
+  
+  .grimoire-card p {
+    font-size: 0.875rem !important;
+  }
+}
+
 .font-garamond {
   font-family: 'EB Garamond', serif;
 }
