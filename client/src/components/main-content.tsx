@@ -30,9 +30,10 @@ export default function MainContent() {
       </header>
 
       {/* Main Content Section - The Awakening */}
-      <section className="content-section rounded-lg border border-burned-amber mb-8 sm:mb-12">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="font-cinzel text-3xl sm:text-4xl md:text-5xl text-golden-amber mb-8 sm:mb-12 text-center px-4 tracking-wide">
+      <section className="container mx-auto px-3 sm:px-4 max-w-7xl">
+        <div className="bg-card/20 backdrop-blur-sm rounded-lg border border-burned-amber p-6 sm:p-8 mb-8 sm:mb-12">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="font-cinzel text-3xl sm:text-4xl md:text-5xl text-golden-amber mb-8 sm:mb-12 text-center px-4 tracking-wide">
             O DESPERTAR DAS SOMBRAS
           </h2>
           
@@ -74,6 +75,7 @@ export default function MainContent() {
             <p className="font-garamond text-ritualistic-beige text-sm sm:text-base mt-2 opacity-80 italic">
               As trevas criam a luz
             </p>
+          </div>
           </div>
         </div>
       </section>
