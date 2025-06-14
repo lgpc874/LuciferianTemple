@@ -108,7 +108,7 @@ export default function BibliotecaSections() {
   return (
     <ContentProtection enableScreenshotProtection={true}>
       <PageTransition className="min-h-screen bg-background">
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 py-4">
           {/* Header */}
           <div className="text-center mb-8">
             <h1 className="text-4xl md:text-5xl font-cinzel font-bold text-golden-amber mb-4">

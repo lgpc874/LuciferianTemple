@@ -13,7 +13,7 @@ export default function MainContent() {
       </div>
       
       {/* Header with Inverted Cross Title */}
-      <header className="relative py-16 sm:py-20 md:py-24 lg:py-32">
+      <header className="relative py-8 sm:py-12 md:py-16 lg:py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           {/* Main Title with Inverted Crosses */}
           <h1 className="font-cinzel text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl text-golden-amber mb-8 sm:mb-12 tracking-wider px-2 relative">

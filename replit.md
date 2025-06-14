@@ -135,6 +135,7 @@ Changelog:
 - June 14, 2025. Sistema de formatação automática implementado - identifica títulos, citações, termos latinos, listas e aplica formatação HTML automaticamente
 - June 14, 2025. Aba "Configurar IA" adicionada - personalidade, comportamento, filosofia e diretrizes de conteúdo configuráveis
 - June 14, 2025. Sistema de pagamento Stripe integrado - página de checkout, configuração admin, bypass completo para administradores
+- June 14, 2025. Menu de navegação redesenhado - design místico elegante, totalmente responsivo, posicionamento normal (não fixo), colado ao header
 ```
 
 ## User Preferences
