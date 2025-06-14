@@ -18,7 +18,8 @@ import {
   Flame,
   Moon,
   Crown,
-  Skull
+  Skull,
+  CreditCard
 } from 'lucide-react';
 import { type Grimoire, type LibrarySection } from '@shared/schema';
 
@@ -85,11 +86,15 @@ export default function BibliotecaSections() {
   const isGrimoireUnlocked = (grimoire: Grimoire) => {
     if (!isAuthenticated) return false;
     
-    // Sempre desbloqueado se for gratuito
+    // Admin tem acesso completo a tudo (bypass total)
+    if (user?.email === 'admin@templodoabismo.com') return true;
+    
+    // Grimórios gratuitos sempre desbloqueados
     if (!grimoire.isPaid) return true;
     
-    // Lógica de desbloqueio baseada em progresso pode ser implementada aqui
-    return true;
+    // TODO: Verificar se usuário pagou pelo grimório
+    // Por enquanto, grimórios pagos ficam bloqueados para usuários normais
+    return false;
   };
 
   if (loadingSections || loadingGrimoires) {
@@ -237,32 +242,45 @@ export default function BibliotecaSections() {
                             </Badge>
                           </div>
 
-                          <Button
-                            className="w-full bg-golden-amber text-black hover:bg-golden-amber/90"
-                            disabled={!isUnlocked}
-                            onClick={() => {
-                              if (isUnlocked) {
-                                window.location.href = `/grimoire/${grimoire.id}`;
-                              }
-                            }}
-                          >
-                            {!isUnlocked ? (
-                              <>
-                                <Lock className="w-4 h-4 mr-2" />
-                                Desbloqueie para Ler
-                              </>
-                            ) : progress ? (
-                              <>
-                                <BookOpen className="w-4 h-4 mr-2" />
-                                Continuar Leitura
-                              </>
-                            ) : (
-                              <>
-                                <Eye className="w-4 h-4 mr-2" />
-                                Iniciar Leitura
-                              </>
-                            )}
-                          </Button>
+                          {/* Botão condicional baseado no status do grimório */}
+                          {grimoire.isPaid && !isUnlocked ? (
+                            <Button
+                              className="w-full bg-gradient-to-r from-golden-amber to-amber-500 text-black hover:from-golden-amber/90 hover:to-amber-500/90"
+                              onClick={() => {
+                                window.location.href = `/checkout?grimoire=${grimoire.id}`;
+                              }}
+                            >
+                              <CreditCard className="w-4 h-4 mr-2" />
+                              Comprar - {grimoire.price}
+                            </Button>
+                          ) : (
+                            <Button
+                              className="w-full bg-golden-amber text-black hover:bg-golden-amber/90"
+                              disabled={!isUnlocked}
+                              onClick={() => {
+                                if (isUnlocked) {
+                                  window.location.href = `/grimoire/${grimoire.id}`;
+                                }
+                              }}
+                            >
+                              {!isUnlocked ? (
+                                <>
+                                  <Lock className="w-4 h-4 mr-2" />
+                                  Desbloqueie para Ler
+                                </>
+                              ) : progress ? (
+                                <>
+                                  <BookOpen className="w-4 h-4 mr-2" />
+                                  Continuar Leitura
+                                </>
+                              ) : (
+                                <>
+                                  <Eye className="w-4 h-4 mr-2" />
+                                  Iniciar Leitura
+                                </>
+                              )}
+                            </Button>
+                          )}
                         </CardContent>
                       </Card>
                     );

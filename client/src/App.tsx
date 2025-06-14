@@ -15,6 +15,7 @@ import BibliothecaArcana from "@/pages/bibliotheca-arcana";
 import BibliotecaSections from "@/pages/biblioteca-sections";
 import GrimoireReader from "@/pages/grimoire-kindle";
 import GrimoireSimple from "@/pages/grimoire-simple";
+import Checkout from "@/pages/checkout";
 import AdminDashboard from "@/pages/admin-dashboard";
 
 function Router() {
@@ -38,6 +39,7 @@ function Router() {
           <Route path="/auth" component={AuthPage} />
           <Route path="/bibliotheca-arcana" component={BibliothecaArcana} />
           <Route path="/biblioteca" component={BibliotecaSections} />
+          <Route path="/checkout" component={Checkout} />
           <Route path="/grimoire/:id" component={GrimoireReader} />
           <Route path="/admin" component={AdminDashboard} />
           <Route component={NotFound} />
