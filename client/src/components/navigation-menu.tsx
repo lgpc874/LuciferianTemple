@@ -44,10 +44,10 @@ export default function NavigationMenu() {
   }, [isMenuOpen]);
 
   return (
-    <nav className="fixed top-20 left-0 right-0 z-40 bg-black/95 backdrop-blur-sm border-b border-golden-amber/20">
+    <nav className="navigation-menu fixed top-20 left-0 right-0 z-40 bg-black/95 backdrop-blur-sm border-b border-golden-amber/20">
       <div className="container mx-auto px-4">
         {/* Desktop Menu */}
-        <div className="hidden lg:flex items-center justify-center py-3">
+        <div className="hidden lg:flex items-center justify-center py-2">
           <ul className="flex space-x-8">
             {menuItems.map((item) => (
               <li key={item.href}>
