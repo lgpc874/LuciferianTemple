@@ -14,6 +14,7 @@ import AIConfig from '@/components/admin/ai-config';
 import GrimoireManagement from '@/components/admin/grimoire-management';
 import AdminAnalytics from '@/components/admin/admin-analytics';
 import AdminSettings from '@/components/admin/admin-settings';
+import StripeConfig from '@/components/admin/stripe-config';
 import { 
   BarChart3,
   Shield,
@@ -30,7 +31,8 @@ import {
   Home,
   Menu,
   X,
-  ChevronLeft
+  ChevronLeft,
+  CreditCard
 } from 'lucide-react';
 
 // Types for admin analytics
@@ -187,6 +189,7 @@ export default function AdminDashboard() {
     { id: 'users', label: 'Usuários', icon: Users, shortLabel: 'Users' },
     { id: 'grimoires', label: 'Grimórios', icon: BookOpen, shortLabel: 'Books' },
     { id: 'grimoire-management', label: 'Gerenciar Grimórios', icon: Settings, shortLabel: 'Manage' },
+    { id: 'stripe', label: 'Pagamentos Stripe', icon: CreditCard, shortLabel: 'Stripe' },
     { id: 'ai', label: 'IA Generator', icon: Bot, shortLabel: 'IA' },
     { id: 'ai-config', label: 'Configurar IA', icon: Settings, shortLabel: 'IA Config' },
     { id: 'content', label: 'Conteúdo', icon: FileText, shortLabel: 'Content' },
@@ -203,6 +206,8 @@ export default function AdminDashboard() {
         return <AdminGrimoires />;
       case 'grimoire-management':
         return <GrimoireManagement />;
+      case 'stripe':
+        return <StripeConfig />;
       case 'content':
         return <AdminContent />;
       case 'themes':

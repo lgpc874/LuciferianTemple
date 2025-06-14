@@ -32,7 +32,7 @@ interface Grimoire {
 export default function GrimoireKindle() {
   const [, setLocation] = useLocation();
   const params = useParams();
-  const { token } = useAuth();
+  const { token, user, isAuthenticated } = useAuth();
   const queryClient = useQueryClient();
   const isMobile = useIsMobile();
   
@@ -51,6 +51,9 @@ export default function GrimoireKindle() {
   const [totalPages, setTotalPages] = useState(1);
   const contentRef = useRef<HTMLDivElement>(null);
 
+  // Admin bypass check
+  const isAdmin = user?.email === 'admin@templodoabismo.com';
+
   // Fetch grimoire and chapters data
   const { data: grimoire, isLoading: grimoireLoading } = useQuery({
     queryKey: [`/api/grimoires/${grimoireId}`],
@@ -61,6 +64,18 @@ export default function GrimoireKindle() {
     queryKey: [`/api/grimoires/${grimoireId}/chapters`],
     enabled: !!grimoireId
   });
+
+  // Verificação de acesso ao grimório
+  const canAccessGrimoire = () => {
+    if (!isAuthenticated) return false;
+    if (isAdmin) return true; // Admin tem acesso total
+    if (!grimoire) return false;
+    if (!grimoire.isPaid) return true; // Grimórios gratuitos
+    
+    // TODO: Verificar se usuário pagou pelo grimório
+    // Por enquanto, bloqueia grimórios pagos para usuários normais
+    return false;
+  };
 
   // Fetch user progress for this grimoire
   const { data: userProgress = [] } = useQuery({
