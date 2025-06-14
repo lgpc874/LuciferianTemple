@@ -174,57 +174,133 @@ export default function NavigationMenu() {
           
           <button
             onClick={toggleMenu}
-            className={`
-              p-1 rounded transition-all duration-300
-              ${isMenuOpen 
-                ? 'text-golden-amber' 
-                : 'text-golden-amber/70 hover:text-golden-amber'
-              }
-            `}
-            aria-label="Menu"
+            className="relative p-3 text-golden-amber/70 hover:text-golden-amber transition-all duration-300 bg-black/30 rounded-full border border-golden-amber/40 shadow-lg"
+            aria-label="Menu Arcano"
           >
-            {isMenuOpen ? <X size={16} /> : <Menu size={16} />}
-          </button>
-          
-          {/* Mobile Menu Dropdown */}
-          {isMenuOpen && (
-            <div className="absolute top-full left-0 right-0 mt-2 mx-2 bg-black/90 backdrop-blur border border-golden-amber/30 rounded-lg shadow-xl">
-              <ul className="flex flex-col py-2">
-                {menuItems.map((item) => {
-                  const IconComponent = item.icon;
-                  const isActive = location === item.href;
-                  
-                  return (
-                    <li key={item.href}>
-                      <Link 
-                        href={item.href} 
-                        onClick={() => handleNavClick(item.href)}
-                        className={`
-                          flex items-center space-x-3 px-4 py-2 mx-1 rounded transition-all duration-300
-                          ${isActive 
-                            ? 'text-golden-amber bg-golden-amber/10' 
-                            : 'text-ritualistic-beige hover:text-golden-amber hover:bg-golden-amber/5'
-                          }
-                        `}
-                      >
-                        <IconComponent 
-                          size={14} 
-                          className={`${isActive ? 'text-golden-amber' : 'text-golden-amber/60'}`} 
-                        />
-                        <div>
-                          <div className="font-cinzel text-xs tracking-wide uppercase">
-                            {item.label}
-                          </div>
-                          <div className="font-garamond text-xs opacity-60 italic">
-                            {item.subtitle}
-                          </div>
-                        </div>
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
+            <div className="relative">
+              {isMenuOpen ? (
+                <X size={18} className="transform rotate-90 transition-transform duration-300" />
+              ) : (
+                <Menu size={18} className="transition-transform duration-300" />
+              )}
             </div>
+            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-golden-amber/20 to-transparent animate-pulse"></div>
+          </button>
+
+          {/* Mobile Menu Overlay - Slide from right */}
+          <div className={`
+            fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-black/95 backdrop-blur-xl border-l border-golden-amber/30 z-50
+            transform transition-transform duration-500 ease-out shadow-2xl
+            ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}
+          `}>
+            {/* Header do Menu Místico */}
+            <div className="flex items-center justify-between p-6 border-b border-golden-amber/30 bg-gradient-to-r from-black/60 to-golden-amber/10">
+              <div className="text-center flex-1">
+                <h2 className="font-cinzel text-lg text-golden-amber tracking-wider mb-1">
+                  ☩ Menu Arcano ☩
+                </h2>
+                <div className="text-xs text-golden-amber/60">
+                  Portal dos Mistérios
+                </div>
+              </div>
+              <button
+                onClick={closeMenu}
+                className="p-2 text-golden-amber/70 hover:text-golden-amber transition-colors duration-300 rounded-full hover:bg-golden-amber/10"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Decoração mística */}
+            <div className="absolute top-20 left-1/2 transform -translate-x-1/2 w-16 h-px bg-gradient-to-r from-transparent via-golden-amber/40 to-transparent"></div>
+
+            {/* Itens do Menu */}
+            <div className="py-6 px-4 space-y-2">
+              {menuItems.map((item, index) => {
+                const IconComponent = item.icon;
+                const isActive = location === item.href;
+                
+                return (
+                  <div key={item.href + item.label} className="relative">
+                    <Link 
+                      href={item.href}
+                      onClick={() => handleNavClick(item.href)}
+                      className={`
+                        group flex items-center space-x-4 px-4 py-4 rounded-lg transition-all duration-300 relative overflow-hidden
+                        ${isActive 
+                          ? 'text-golden-amber bg-gradient-to-r from-golden-amber/20 to-golden-amber/10 border-l-4 border-golden-amber shadow-lg' 
+                          : 'text-ritualistic-beige hover:text-golden-amber hover:bg-golden-amber/10 hover:translate-x-1'
+                        }
+                      `}>
+                      
+                      {/* Background pattern for active item */}
+                      {isActive && (
+                        <div className="absolute inset-0 bg-gradient-to-r from-golden-amber/5 to-transparent opacity-50"></div>
+                      )}
+                      
+                      {/* Icon Container */}
+                      <div className="relative z-10">
+                        <IconComponent 
+                          size={20} 
+                          className={`${isActive ? 'text-golden-amber' : 'text-golden-amber/60 group-hover:text-golden-amber'} transition-all duration-300`} 
+                        />
+                        {isActive && (
+                          <div className="absolute -inset-1 border border-golden-amber/40 rounded animate-pulse"></div>
+                        )}
+                      </div>
+                      
+                      {/* Text Content */}
+                      <div className="flex-1 relative z-10">
+                        <div className="font-cinzel text-sm tracking-wide uppercase font-medium">
+                          {item.label}
+                        </div>
+                        <div className="text-xs text-ritualistic-beige/60 mt-1 font-garamond">
+                          {item.subtitle}
+                        </div>
+                      </div>
+                      
+                      {/* Active Indicator */}
+                      {isActive && (
+                        <div className="relative z-10">
+                          <div className="w-2 h-2 bg-golden-amber rounded-full animate-pulse shadow-lg"></div>
+                        </div>
+                      )}
+                    </Link>
+                    
+                    {/* Separator */}
+                    {index < menuItems.length - 1 && (
+                      <div className="ml-4 mr-4 mt-2 h-px bg-gradient-to-r from-transparent via-golden-amber/20 to-transparent"></div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Footer Místico */}
+            <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-golden-amber/30 bg-gradient-to-t from-black/80 to-transparent">
+              <div className="text-center">
+                <div className="text-golden-amber/70 text-sm font-cinzel mb-2">
+                  ⟨ Templo do Abismo ⟩
+                </div>
+                <div className="text-ritualistic-beige/40 text-xs">
+                  Portal dos Mistérios Arcanos
+                </div>
+                <div className="mt-3 flex justify-center">
+                  <div className="w-12 h-px bg-gradient-to-r from-transparent via-golden-amber/40 to-transparent"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Backdrop escuro com efeito */}
+          {isMenuOpen && (
+            <div 
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 transition-opacity duration-300"
+              onClick={closeMenu}
+              style={{
+                background: 'radial-gradient(circle at center, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.9) 100%)'
+              }}
+            />
           )}
         </div>
       </div>
