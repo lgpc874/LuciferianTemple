@@ -119,7 +119,7 @@ export default function BibliotecaSections() {
           {/* Sistema de Abas Místicas */}
           <Tabs defaultValue={sections[0]?.slug || 'porta-das-sombras'} className="w-full">
             {/* Navegação Arcana */}
-            <div className={`relative ${isMobile ? 'mb-8' : 'mb-12'} z-20`}>
+            <div className={`${isMobile ? 'sticky top-0 bg-background/95 backdrop-blur-md py-4 mb-6' : 'relative mb-12'} z-30`}>
               {/* Ornamento Central Superior */}
               <div className="flex items-center justify-center mb-6">
                 <div className="h-px bg-gradient-to-r from-transparent via-golden-amber/60 to-transparent w-32"></div>
