@@ -144,6 +144,7 @@ Changelog:
 - June 14, 2025. Logo personalizado implementado - substituído selo genérico pelo logo oficial "Templo do Abismo" com filtro avermelhado rotativo no background
 - June 14, 2025. Sistema de autenticação corrigido - bypass implementado para ambiente Replit, acesso administrativo total garantido
 - June 14, 2025. Verificação completa do painel administrativo - todas as funcionalidades 100% operacionais (Analytics, Grimórios, IA, Stripe, Usuários)
+- June 14, 2025. Símbolos místicos luciferianos implementados - todos os títulos principais das páginas ornamentados com símbolos alquímicos autênticos (⧭, 🜚, ⧨, ⚱, ⚔, 🜔, ⚠)
 ```
 
 ## User Preferences
