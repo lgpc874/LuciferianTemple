@@ -45,7 +45,7 @@ body::before {
   left: 50%;
   width: 400px;
   height: 400px;
-  background-image: url('/assets/templo-logo.png?v=1');
+  background-image: url('/assets/logo-oficial.png');
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -53,8 +53,8 @@ body::before {
   animation: rotate-seal 180s linear infinite;
   z-index: -1;
   pointer-events: none;
-  filter: sepia(100%) saturate(250%) hue-rotate(345deg) brightness(0.8) contrast(1.4);
-  opacity: 0.35;
+  filter: sepia(100%) saturate(200%) hue-rotate(330deg) brightness(0.7) contrast(1.2);
+  opacity: 0.2;
 }
 
 @keyframes rotate-seal {
