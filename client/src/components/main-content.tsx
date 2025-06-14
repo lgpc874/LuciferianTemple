@@ -12,72 +12,72 @@ export default function MainContent() {
         <UserMenu />
       </div>
       
-      {/* Header with Central Seal */}
-      <header className="relative py-8 sm:py-12 md:py-16 lg:py-20">
+      {/* Header with Inverted Cross Title */}
+      <header className="relative py-16 sm:py-20 md:py-24 lg:py-32">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          {/* Central Sacred Seal */}
-          <div className="mb-6 sm:mb-8">
-            <img 
-              src="https://i.postimg.cc/g20gqmdX/IMG-20250527-182235-1.png" 
-              alt="Selo Central do Templo do Abismo" 
-              className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 lg:w-56 lg:h-56 mx-auto sacred-seal"
-            />
-          </div>
-          
-          {/* Main Title */}
-          <h1 className="font-cinzel text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl text-golden-amber mb-3 sm:mb-4 tracking-wide px-2">
+          {/* Main Title with Inverted Crosses */}
+          <h1 className="font-cinzel text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl text-golden-amber mb-8 sm:mb-12 tracking-wider px-2 relative">
+            <span className="text-blood-red mr-4 sm:mr-6 transform rotate-180 inline-block">†</span>
             TEMPLO DO ABISMO
+            <span className="text-blood-red ml-4 sm:ml-6 transform rotate-180 inline-block">†</span>
           </h1>
-          
-          {/* Subtitle */}
-          <p className="font-garamond text-ritualistic-beige text-lg sm:text-xl md:text-2xl mb-6 sm:mb-8 italic px-4">
-            Portal dos Mistérios Ancestrais
-          </p>
           
           {/* Mysterious Quote */}
           <div className="max-w-xs sm:max-w-lg md:max-w-2xl lg:max-w-3xl mx-auto px-4">
-            <blockquote className="font-fell text-blood-red text-base sm:text-lg md:text-xl leading-relaxed border-l-2 sm:border-l-4 border-golden-amber pl-4 sm:pl-6 text-left">
-              "Há conhecimentos que sussurram nas trevas há milênios,
-              aguardando aqueles que ousam escutar além do véu do comum.
-              O que aqui jaz selado desperta apenas para os preparados."
+            <blockquote className="font-fell text-blood-red text-lg sm:text-xl md:text-2xl leading-relaxed border-l-2 sm:border-l-4 border-golden-amber pl-4 sm:pl-6 text-left">
+              "Nas profundezas do silêncio eterno, 
+              onde as sombras guardam segredos milenares,
+              apenas os verdadeiramente preparados ousam despertar 
+              aquilo que jamais deveria ter adormecido."
             </blockquote>
           </div>
         </div>
       </header>
 
-      {/* Main Content Section - Os Sussurros do Abismo */}
+      {/* Main Content Section - The Awakening */}
       <section className="content-section rounded-lg border border-burned-amber mb-8 sm:mb-12">
         <div className="max-w-4xl mx-auto">
-          <h2 className="font-cinzel text-2xl sm:text-3xl md:text-4xl text-golden-amber mb-6 sm:mb-8 text-center px-4">
-            OS SUSSURROS DO ABISMO
+          <h2 className="font-cinzel text-3xl sm:text-4xl md:text-5xl text-golden-amber mb-8 sm:mb-12 text-center px-4 tracking-wide">
+            O DESPERTAR DAS SOMBRAS
           </h2>
           
           <div className="text-center mb-8 sm:mb-12 px-4">
-            <p className="font-garamond text-ritualistic-beige text-base sm:text-lg leading-relaxed mb-4 sm:mb-6">
-              Neste santuário, as sombras guardam segredos que antecedem a memória humana. Cada
-              símbolo, cada palavra, cada ritual aqui preservado carrega o peso de eras esquecidas e
-              o poder de despertar o que jaz adormecido nas profundezas da alma.
+            <p className="font-garamond text-ritualistic-beige text-lg sm:text-xl leading-relaxed mb-6 sm:mb-8">
+              Existe uma força ancestral que pulsa além dos véus da realidade comum. 
+              Aqui, onde o tempo se curva e as dimensões sussurram seus segredos mais profundos,
+              apenas os que possuem coragem verdadeira ousam trilhar este caminho sem retorno.
             </p>
             
-            <div className="font-fell text-blood-red text-sm sm:text-base italic mb-6 sm:mb-8 px-2">
-              "Aqueles que buscam apenas curiosidade encontrarão apenas véus.
-              Mas aqueles que chegam com sede verdadeira... descobrirão fontes inimagináveis."
+            <div className="font-fell text-blood-red text-base sm:text-lg italic mb-8 sm:mb-10 px-2 bg-black/20 py-4 border-l-4 border-golden-amber">
+              "Há poderes que habitam nas trevas desde antes da primeira luz...
+              <br />Forças que aguardam o chamado daqueles que compreendem
+              <br />que o verdadeiro conhecimento não pode ser simplesmente lido,
+              <br />mas deve ser <em>experienciado</em> nas profundezas da alma."
             </div>
             
-            <p className="font-cormorant text-soft-amber text-base sm:text-lg italic leading-relaxed px-2">
-              O que você encontrará aqui não pode ser desfeito.
-              O conhecimento, uma vez despertado, transforma para sempre
-              aquele que ousa contemplar suas verdades ocultas.
+            <p className="font-cormorant text-soft-amber text-lg sm:text-xl italic leading-relaxed px-2 mb-6">
+              Este não é um caminho para os fracos de espírito.
+              <br />O que você descobrirá aqui irá transformá-lo de maneiras inimagináveis.
+              <br />Pois algumas verdades, uma vez reveladas, jamais podem ser esquecidas.
             </p>
+
+            <div className="bg-gradient-to-b from-black/40 to-transparent p-6 sm:p-8 rounded-lg border border-golden-amber/30">
+              <p className="font-garamond text-ancient-golden text-base sm:text-lg tracking-wider mb-4">
+                "Os antigos sabiam que existem dimensões além do véu da percepção comum..."
+              </p>
+              <p className="font-fell text-blood-red text-sm sm:text-base italic">
+                Você está preparado para descobrir o que eles tentaram ocultar?
+              </p>
+            </div>
           </div>
           
           {/* Mystical Invitation */}
-          <div className="border-t border-burned-amber pt-6 sm:pt-8 text-center px-4">
-            <p className="font-cardo text-ancient-golden tracking-wider text-base sm:text-lg">
-              "FIAT LUX IN TENEBRIS ABYSSI"
+          <div className="border-t border-burned-amber pt-8 sm:pt-10 text-center px-4">
+            <p className="font-cardo text-ancient-golden tracking-[0.3em] text-lg sm:text-xl mb-3">
+              "TENEBRAE LUMEN FACIT"
             </p>
-            <p className="font-garamond text-ritualistic-beige text-xs sm:text-sm mt-2 opacity-70">
-              Que a luz se faça nas trevas do abismo
+            <p className="font-garamond text-ritualistic-beige text-sm sm:text-base mt-2 opacity-80 italic">
+              As trevas criam a luz
             </p>
           </div>
         </div>
