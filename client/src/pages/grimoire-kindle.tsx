@@ -50,12 +50,14 @@ export default function GrimoireKindle() {
   const contentRef = useRef<HTMLDivElement>(null);
 
   // Fetch grimoire and chapters data
-  const { data: grimoire } = useQuery({
-    queryKey: [`/api/grimoires/${grimoireId}`]
+  const { data: grimoire, isLoading: grimoireLoading } = useQuery({
+    queryKey: [`/api/grimoires/${grimoireId}`],
+    enabled: !!grimoireId
   });
 
-  const { data: chapters } = useQuery({
-    queryKey: [`/api/grimoires/${grimoireId}/chapters`]
+  const { data: chapters, isLoading: chaptersLoading } = useQuery({
+    queryKey: [`/api/grimoires/${grimoireId}/chapters`],
+    enabled: !!grimoireId
   });
 
   // Fetch user progress for this grimoire

@@ -11,12 +11,12 @@ export default function GrimoireSimple() {
 
   const { data: grimoire } = useQuery({
     queryKey: ['/api/grimoires', id],
-    enabled: !!id && !!token
+    enabled: !!id
   });
 
   const { data: chapters } = useQuery({
     queryKey: [`/api/grimoires/${id}/chapters`],
-    enabled: !!id && !!token
+    enabled: !!id
   });
 
   const currentChapter = Array.isArray(chapters) ? 
