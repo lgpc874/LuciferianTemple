@@ -148,170 +148,182 @@ input, textarea {
   font-family: 'Cinzel Decorative', serif;
 }
 
-/* Ajustes específicos para desktop - reduzir tamanhos de fonte */
+/* Ajustes para desktop - tamanhos normais de website */
 @media (min-width: 768px) {
-  /* Títulos principais */
+  /* Títulos principais - tamanhos padrão */
   h1 {
-    font-size: 1.75rem !important; /* 28px ao invés de muito maior */
+    font-size: 2.5rem !important; /* 40px - tamanho normal */
     line-height: 1.2 !important;
   }
   
   h2 {
-    font-size: 1.375rem !important; /* 22px */
+    font-size: 2rem !important; /* 32px - tamanho normal */
     line-height: 1.3 !important;
   }
   
   h3 {
-    font-size: 1.125rem !important; /* 18px */
+    font-size: 1.5rem !important; /* 24px - tamanho normal */
     line-height: 1.4 !important;
   }
   
-  /* Classes de tamanho Tailwind - reduzidas para desktop */
+  /* Classes de tamanho Tailwind - valores padrão normais */
+  .text-6xl {
+    font-size: 3.75rem !important; /* 60px */
+  }
+  
+  .text-5xl {
+    font-size: 3rem !important; /* 48px */
+  }
+  
   .text-4xl {
-    font-size: 1.875rem !important; /* 30px ao invés de 36px */
+    font-size: 2.25rem !important; /* 36px */
   }
   
   .text-3xl {
-    font-size: 1.5rem !important; /* 24px ao invés de 30px */
+    font-size: 1.875rem !important; /* 30px */
   }
   
   .text-2xl {
-    font-size: 1.25rem !important; /* 20px ao invés de 24px */
+    font-size: 1.5rem !important; /* 24px */
   }
   
   .text-xl {
-    font-size: 1.125rem !important; /* 18px ao invés de 20px */
+    font-size: 1.25rem !important; /* 20px */
   }
   
   .text-lg {
-    font-size: 1rem !important; /* 16px ao invés de 18px */
+    font-size: 1.125rem !important; /* 18px */
   }
   
   .text-base {
-    font-size: 0.875rem !important; /* 14px ao invés de 16px */
+    font-size: 1rem !important; /* 16px - padrão normal */
   }
   
   .text-sm {
-    font-size: 0.75rem !important; /* 12px ao invés de 14px */
+    font-size: 0.875rem !important; /* 14px */
   }
   
-  /* Navegação e header */
+  .text-xs {
+    font-size: 0.75rem !important; /* 12px */
+  }
+  
+  /* Navegação e header - tamanhos normais */
   nav, header {
-    font-size: 0.75rem !important;
+    font-size: 1rem !important;
   }
   
   nav a, nav button, header a, header button {
-    font-size: 0.75rem !important;
-    padding: 0.375rem 0.75rem !important;
-  }
-  
-  /* Menu específico */
-  .navigation-menu a,
-  .navigation-menu button {
-    font-size: 0.6875rem !important; /* 11px */
-    padding: 0.25rem 0.5rem !important;
-  }
-  
-  /* Título do site */
-  .site-title, [class*="cinzel"] {
-    font-size: 1.5rem !important;
-  }
-  
-  /* Cards e conteúdo */
-  .card h3, .card-title {
     font-size: 1rem !important;
-  }
-  
-  .card p, .card-description {
-    font-size: 0.875rem !important;
-  }
-  
-  /* Botões */
-  button {
-    font-size: 0.75rem !important;
     padding: 0.5rem 1rem !important;
   }
   
-  /* Botões pequenos específicos */
+  /* Menu específico - tamanho normal */
+  .navigation-menu a,
+  .navigation-menu button {
+    font-size: 0.875rem !important; /* 14px - padrão para menus */
+    padding: 0.5rem 1rem !important;
+  }
+  
+  /* Título do site - tamanho adequado */
+  .site-title {
+    font-size: 2rem !important; /* 32px */
+  }
+  
+  /* Cards e conteúdo - tamanhos normais */
+  .card h3, .card-title {
+    font-size: 1.25rem !important; /* 20px */
+  }
+  
+  .card p, .card-description {
+    font-size: 1rem !important; /* 16px */
+  }
+  
+  /* Botões - tamanhos padrão */
+  button {
+    font-size: 0.875rem !important; /* 14px */
+    padding: 0.5rem 1rem !important;
+  }
+  
+  /* Botões pequenos */
   .btn-sm, button.text-xs {
-    font-size: 0.6875rem !important;
+    font-size: 0.75rem !important; /* 12px */
     padding: 0.375rem 0.75rem !important;
   }
   
-  /* Específico para biblioteca */
+  /* Específico para biblioteca - tamanhos apropriados */
   .biblioteca-title {
-    font-size: 2rem !important; /* Título principal menor */
+    font-size: 3rem !important; /* 48px - título principal */
   }
   
   .biblioteca-subtitle {
-    font-size: 1rem !important;
+    font-size: 1.125rem !important; /* 18px */
   }
   
-  /* Grimório cards */
+  /* Grimório cards - tamanhos legíveis */
   .grimoire-card h3 {
-    font-size: 1rem !important;
+    font-size: 1rem !important; /* 16px */
   }
   
   .grimoire-card p {
-    font-size: 0.875rem !important;
+    font-size: 0.875rem !important; /* 14px */
   }
   
-  /* Botões dos cards de grimórios */
+  /* Botões dos cards de grimórios - tamanho legível */
   .grimoire-card button,
   .grimoire-card .font-cinzel {
-    font-size: 0.625rem !important; /* 10px - muito menor para cards */
-    padding: 0.25rem 0.5rem !important;
+    font-size: 0.75rem !important; /* 12px */
+    padding: 0.375rem 0.75rem !important;
   }
   
   /* Status text nos cards */
   .grimoire-card .text-xs,
   .grimoire-card .text-sm {
-    font-size: 0.5625rem !important; /* 9px */
+    font-size: 0.75rem !important; /* 12px */
   }
   
-  /* Reduzir espaçamentos gerais */
+  /* Espaçamentos normais para desktop */
   .py-16 {
-    padding-top: 2rem !important;
-    padding-bottom: 2rem !important;
+    padding-top: 4rem !important; /* 64px */
+    padding-bottom: 4rem !important;
   }
   
   .py-12 {
-    padding-top: 1.5rem !important;
-    padding-bottom: 1.5rem !important;
+    padding-top: 3rem !important; /* 48px */
+    padding-bottom: 3rem !important;
   }
   
   .py-8 {
-    padding-top: 1rem !important;
-    padding-bottom: 1rem !important;
+    padding-top: 2rem !important; /* 32px */
+    padding-bottom: 2rem !important;
   }
   
   .mb-16 {
-    margin-bottom: 2rem !important;
+    margin-bottom: 4rem !important; /* 64px */
   }
   
   .mb-12 {
-    margin-bottom: 1.5rem !important;
+    margin-bottom: 3rem !important; /* 48px */
   }
   
   .mb-8 {
-    margin-bottom: 1rem !important;
+    margin-bottom: 2rem !important; /* 32px */
   }
   
   .mb-6 {
-    margin-bottom: 0.75rem !important;
+    margin-bottom: 1.5rem !important; /* 24px */
   }
   
   .mb-4 {
-    margin-bottom: 0.5rem !important;
+    margin-bottom: 1rem !important; /* 16px */
   }
   
-  /* Espaçamento específico da biblioteca */
+  /* Espaçamentos da biblioteca */
   .biblioteca-title {
-    margin-bottom: 1rem !important;
+    margin-bottom: 1.5rem !important; /* 24px */
   }
   
   .biblioteca-subtitle {
-    margin-bottom: 1rem !important;
+    margin-bottom: 2rem !important; /* 32px */
   }
 }
 
