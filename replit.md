@@ -138,6 +138,9 @@ Changelog:
 - June 14, 2025. Menu de navegação redesenhado - design místico elegante, totalmente responsivo, posicionamento normal (não fixo), colado ao header
 - June 14, 2025. Página bibliotheca-arcana removida completamente - menu simplificado para apenas Sanctum e Bibliotheca
 - June 14, 2025. Sistema de abas da biblioteca reformulado - design místico premium com ornamentos dourados, efeitos de brilho, totalmente responsivo mobile
+- June 14, 2025. Redesign visual completo - estética mística luciferiania com background gradiente avermelhado, selo rotativo, elementos transparentes flutuantes
+- June 14, 2025. Auto save do progresso de leitura implementado com feedback visual discreto (Salvando..., ✓ Salvo, ⚠ Erro)
+- June 14, 2025. Títulos aumentados mantendo responsividade total - home e biblioteca com escala xl:text-6xl
 ```
 
 ## User Preferences

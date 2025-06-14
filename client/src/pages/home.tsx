@@ -41,7 +41,7 @@ export default function Home() {
 
   return (
     <ContentProtection enableScreenshotProtection={true}>
-      <PageTransition className="min-h-screen bg-background">
+      <PageTransition className="min-h-screen bg-transparent">
         <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 max-w-7xl">
           
           {/* Header */}
@@ -55,7 +55,7 @@ export default function Home() {
           </div>
 
           {/* Main Content Card */}
-          <div className="bg-card/20 backdrop-blur-sm rounded-lg border border-burned-amber p-6 sm:p-8 mb-8 sm:mb-12">
+          <div className="floating-container rounded-lg p-6 sm:p-8 mb-8 sm:mb-12 shadow-2xl transform hover:scale-[1.02] transition-all duration-300">
             <div className="max-w-4xl mx-auto">
               
               <h2 className="font-cinzel text-2xl sm:text-3xl md:text-4xl text-golden-amber mb-6 sm:mb-8 text-center tracking-wide">

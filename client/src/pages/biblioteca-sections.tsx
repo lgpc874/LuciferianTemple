@@ -103,7 +103,7 @@ export default function BibliotecaSections() {
 
   return (
     <ContentProtection enableScreenshotProtection={true}>
-      <PageTransition className="min-h-screen bg-background">
+      <PageTransition className="min-h-screen bg-transparent">
         <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 max-w-7xl">
           {/* Header Responsivo */}
           <div className="text-center mb-4 sm:mb-6">
@@ -168,7 +168,7 @@ export default function BibliotecaSections() {
                         return (
                           <Card 
                             key={grimoire.id} 
-                            className="group relative overflow-hidden cursor-pointer border border-golden-amber/30 bg-gradient-to-br from-card/80 to-card/60 backdrop-blur-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-golden-amber/10 hover:border-golden-amber/50"
+                            className="group relative overflow-hidden cursor-pointer content-section transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-golden-amber/10"
                             onClick={() => isUnlocked && navigate(`/grimoire/${grimoire.id}`)}
                           >
                             {/* Capa Responsiva */}

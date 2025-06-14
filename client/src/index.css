@@ -412,23 +412,64 @@ input, textarea {
   border-color: var(--burned-amber);
 }
 
-/* Mystical Effects */
+/* Mystical Effects - Floating Transparent Elements */
 .floating-container {
-  backdrop-filter: blur(2px);
+  backdrop-filter: blur(3px);
   background: linear-gradient(135deg, 
-    rgba(20, 10, 10, 0.4) 0%, 
-    rgba(30, 15, 15, 0.3) 50%, 
-    rgba(15, 8, 8, 0.4) 100%);
-  border: 1px solid hsl(0, 40%, 20%);
+    rgba(20, 8, 8, 0.15) 0%, 
+    rgba(30, 12, 12, 0.12) 50%, 
+    rgba(15, 6, 6, 0.18) 100%);
+  border: 1px solid rgba(204, 41, 54, 0.2);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(204, 41, 54, 0.1) inset,
+    0 2px 8px rgba(204, 41, 54, 0.1);
+  animation: subtle-float 6s ease-in-out infinite;
 }
 
 .content-section {
   backdrop-filter: blur(2px);
   background: linear-gradient(135deg, 
-    rgba(25, 12, 12, 0.3) 0%, 
-    rgba(20, 10, 10, 0.2) 50%, 
-    rgba(15, 8, 8, 0.3) 100%);
-  border: 1px solid hsl(15, 30%, 25%);
+    rgba(25, 10, 10, 0.12) 0%, 
+    rgba(20, 8, 8, 0.08) 50%, 
+    rgba(15, 6, 6, 0.15) 100%);
+  border: 1px solid rgba(218, 165, 32, 0.15);
+  box-shadow: 
+    0 4px 16px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(218, 165, 32, 0.08) inset;
+  animation: gentle-float 8s ease-in-out infinite;
+}
+
+@keyframes subtle-float {
+  0%, 100% { 
+    transform: translateY(0px) rotateX(0deg);
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.3),
+      0 0 0 1px rgba(204, 41, 54, 0.1) inset,
+      0 2px 8px rgba(204, 41, 54, 0.1);
+  }
+  50% { 
+    transform: translateY(-3px) rotateX(1deg);
+    box-shadow: 
+      0 12px 40px rgba(0, 0, 0, 0.4),
+      0 0 0 1px rgba(204, 41, 54, 0.15) inset,
+      0 4px 12px rgba(204, 41, 54, 0.15);
+  }
+}
+
+@keyframes gentle-float {
+  0%, 100% { 
+    transform: translateY(0px);
+    box-shadow: 
+      0 4px 16px rgba(0, 0, 0, 0.2),
+      0 0 0 1px rgba(218, 165, 32, 0.08) inset;
+  }
+  50% { 
+    transform: translateY(-2px);
+    box-shadow: 
+      0 6px 20px rgba(0, 0, 0, 0.3),
+      0 0 0 1px rgba(218, 165, 32, 0.12) inset;
+  }
 }
 
 .warning-overlay {
