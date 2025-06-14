@@ -205,36 +205,27 @@ export default function BibliotecaSections() {
                           <Card 
                             key={grimoire.id}
                             className={`
-                              group relative overflow-hidden
-                              border-2 border-golden-amber/30 bg-gradient-to-br from-card/90 via-card/70 to-card/50 
-                              backdrop-blur-xl shadow-lg shadow-black/20
-                              transition-all duration-300 ease-out
-                              ${isMobile ? 'active:scale-95' : 'hover:scale-105 hover:-translate-y-2'}
-                              hover:border-golden-amber/50 hover:shadow-2xl hover:shadow-golden-amber/20
-                              ${!isUnlocked ? 'opacity-60 saturate-50' : 'hover:bg-gradient-to-br hover:from-card/95 hover:via-golden-amber/5 hover:to-card/60'}
+                              group relative overflow-hidden cursor-pointer
+                              border border-golden-amber/30 bg-gradient-to-br from-card/80 to-card/60 
+                              transition-all duration-300
+                              ${isMobile ? 'active:scale-95' : 'hover:scale-105'}
+                              hover:border-golden-amber/50 hover:shadow-lg hover:shadow-golden-amber/10
+                              ${!isUnlocked ? 'opacity-60' : ''}
                             `}
+                            onClick={() => isUnlocked && navigate(`/grimoire/${grimoire.id}`)}
                           >
-                            {/* Efeito de Brilho Místico */}
-                            <div className="absolute inset-0 bg-gradient-to-br from-golden-amber/5 via-transparent to-golden-amber/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-                            
-                            {/* Ornamentos nos Cantos - Menores no Mobile */}
-                            <div className={`absolute top-2 left-2 ${isMobile ? 'w-2 h-2' : 'w-3 h-3'} border-l-2 border-t-2 border-golden-amber/40 opacity-60`}></div>
-                            <div className={`absolute top-2 right-2 ${isMobile ? 'w-2 h-2' : 'w-3 h-3'} border-r-2 border-t-2 border-golden-amber/40 opacity-60`}></div>
-                            <div className={`absolute bottom-2 left-2 ${isMobile ? 'w-2 h-2' : 'w-3 h-3'} border-l-2 border-b-2 border-golden-amber/40 opacity-60`}></div>
-                            <div className={`absolute bottom-2 right-2 ${isMobile ? 'w-2 h-2' : 'w-3 h-3'} border-r-2 border-b-2 border-golden-amber/40 opacity-60`}></div>
-
-                            <CardHeader className="p-0">
-                              <div className="relative overflow-hidden">
-                                {/* Capa do Grimório - Altura Responsiva */}
-                                <div className={`relative ${isMobile ? 'h-48' : 'h-64'} bg-gradient-to-br from-golden-amber/20 via-black/60 to-black/80 flex items-center justify-center ${isMobile ? 'active:scale-105' : 'group-hover:scale-110'} transition-transform duration-500`}>
-                                  <div 
-                                    className={`w-full h-full flex items-center justify-center ${isMobile ? 'scale-70' : 'scale-75 group-hover:scale-85'} transition-transform duration-500`}
-                                    dangerouslySetInnerHTML={{ __html: coverUrl }}
-                                  />
-                                  
-                                  {/* Overlay Gradient */}
-                                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20 opacity-60 group-hover:opacity-40 transition-opacity duration-300"></div>
+                            {/* Capa Compacta */}
+                            <div className={`relative overflow-hidden ${isMobile ? 'h-32' : 'h-40'} bg-gradient-to-br from-golden-amber/10 to-black/60`}>
+                              <div 
+                                className="w-full h-full flex items-center justify-center scale-75"
+                                dangerouslySetInnerHTML={{ __html: coverUrl }}
+                              />
+                              {!isUnlocked && (
+                                <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
+                                  <Lock className={`${isMobile ? 'w-4 h-4' : 'w-6 h-6'} text-gray-400`} />
                                 </div>
+                              )}
+                            </div>
                                 
                                 {/* Status Badges Elegantes */}
                                 <div className="absolute top-3 left-3 flex flex-col gap-2">
