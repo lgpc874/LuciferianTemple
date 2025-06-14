@@ -148,11 +148,14 @@ export default function AdminDashboard() {
 
   // Determinar qual componente renderizar baseado na URL - hook sempre executa
   const currentTab = useMemo(() => {
-    if (location === '/admin' || location === '/admin/') {
+    console.log('Current location:', location); // Debug
+    if (location === '/admin' || location === '/admin/' || !location.includes('?')) {
       return 'overview';
     }
     const urlParams = new URLSearchParams(location.split('?')[1] || '');
-    return urlParams.get('tab') || 'overview';
+    const tab = urlParams.get('tab') || 'overview';
+    console.log('Current tab:', tab); // Debug
+    return tab;
   }, [location]);
 
   // Verificar se é admin - usando email ou propriedade isAdmin
