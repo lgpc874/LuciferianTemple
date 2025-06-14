@@ -1,78 +1,63 @@
 import MysticalFooter from "./mystical-footer";
-import UserMenu from "./user-menu";
 import { useAuth } from "@/hooks/use-auth";
 
 export default function MainContent() {
   const { user } = useAuth();
 
   return (
-    <div className="min-h-screen bg-background fade-in">
+    <div className="min-h-screen bg-background">
       <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 max-w-7xl">
-        {/* Header with Inverted Cross Title */}
+        
+        {/* Header */}
         <div className="text-center mb-4 sm:mb-6">
-          <h1 className="font-cinzel text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl text-golden-amber mb-8 sm:mb-12 tracking-wider px-2 relative">
-            <span className="text-blood-red mr-4 sm:mr-6 transform rotate-180 inline-block">†</span>
-            TEMPLO DO ABISMO
-            <span className="text-blood-red ml-4 sm:ml-6 transform rotate-180 inline-block">†</span>
+          <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-cinzel text-golden-amber tracking-wider mb-2">
+            ⸸ TEMPLO DO ABISMO ⸸
           </h1>
-          
-          {/* Mysterious Quote */}
-          <div className="max-w-xs sm:max-w-lg md:max-w-2xl lg:max-w-3xl mx-auto px-4">
-            <blockquote className="font-fell text-blood-red text-lg sm:text-xl md:text-2xl leading-relaxed border-l-2 sm:border-l-4 border-golden-amber pl-4 sm:pl-6 text-left">
-              "Nas profundezas do silêncio eterno, 
-              onde as sombras guardam segredos milenares,
-              apenas os verdadeiramente preparados ousam despertar 
-              aquilo que jamais deveria ter adormecido."
-            </blockquote>
-          </div>
+          <p className="text-xs sm:text-sm text-ritualistic-beige/70 max-w-xl mx-auto px-4">
+            Onde as sombras revelam seus segredos milenares
+          </p>
         </div>
 
-        {/* Main Content Section - The Awakening */}
+        {/* Main Content Card */}
         <div className="bg-card/20 backdrop-blur-sm rounded-lg border border-burned-amber p-6 sm:p-8 mb-8 sm:mb-12">
           <div className="max-w-4xl mx-auto">
-            <h2 className="font-cinzel text-3xl sm:text-4xl md:text-5xl text-golden-amber mb-8 sm:mb-12 text-center px-4 tracking-wide">
+            
+            <h2 className="font-cinzel text-2xl sm:text-3xl md:text-4xl text-golden-amber mb-6 sm:mb-8 text-center tracking-wide">
               O DESPERTAR DAS SOMBRAS
             </h2>
             
-            <div className="text-center mb-8 sm:mb-12 px-4">
-              <p className="font-garamond text-ritualistic-beige text-lg sm:text-xl leading-relaxed mb-6 sm:mb-8">
+            <div className="text-center mb-6 sm:mb-8">
+              <blockquote className="font-fell text-blood-red text-base sm:text-lg md:text-xl leading-relaxed border-l-2 sm:border-l-4 border-golden-amber pl-4 sm:pl-6 text-left mb-6">
+                "Nas profundezas do silêncio eterno, onde as sombras guardam segredos milenares,
+                apenas os verdadeiramente preparados ousam despertar aquilo que jamais deveria ter adormecido."
+              </blockquote>
+              
+              <p className="font-garamond text-ritualistic-beige text-sm sm:text-base leading-relaxed mb-4">
                 Existe uma força ancestral que pulsa além dos véus da realidade comum. 
                 Aqui, onde o tempo se curva e as dimensões sussurram seus segredos mais profundos,
                 apenas os que possuem coragem verdadeira ousam trilhar este caminho sem retorno.
               </p>
               
-              <div className="font-fell text-blood-red text-base sm:text-lg italic mb-8 sm:mb-10 px-2 bg-black/20 py-4 border-l-4 border-golden-amber">
-                "Há poderes que habitam nas trevas desde antes da primeira luz...
-                <br />Forças que aguardam o chamado daqueles que compreendem
-                <br />que o verdadeiro conhecimento não pode ser simplesmente lido,
-                <br />mas deve ser <em>experienciado</em> nas profundezas da alma."
-              </div>
-              
-              <p className="font-cormorant text-soft-amber text-lg sm:text-xl italic leading-relaxed px-2 mb-6">
-                Este não é um caminho para os fracos de espírito.
-                <br />O que você descobrirá aqui irá transformá-lo de maneiras inimagináveis.
-                <br />Pois algumas verdades, uma vez reveladas, jamais podem ser esquecidas.
-              </p>
-
-              <div className="bg-gradient-to-b from-black/40 to-transparent p-6 sm:p-8 rounded-lg border border-golden-amber/30">
-                <p className="font-garamond text-ancient-golden text-base sm:text-lg tracking-wider mb-4">
+              <div className="bg-gradient-to-b from-black/40 to-transparent p-4 sm:p-6 rounded-lg border border-golden-amber/30">
+                <p className="font-garamond text-ancient-golden text-sm sm:text-base tracking-wider mb-3">
                   "Os antigos sabiam que existem dimensões além do véu da percepção comum..."
                 </p>
-                <p className="font-fell text-blood-red text-sm sm:text-base italic">
+                <p className="font-fell text-blood-red text-xs sm:text-sm italic">
                   Você está preparado para descobrir o que eles tentaram ocultar?
                 </p>
               </div>
             </div>
             
-            {/* Mystical Invitation */}
-            <div className="border-t border-burned-amber pt-8 sm:pt-10 text-center px-4">
-              <p className="font-cardo text-ancient-golden tracking-[0.3em] text-lg sm:text-xl mb-3">
+            {/* Latin Quote */}
+            <div className="border-t border-burned-amber pt-6 sm:pt-8 text-center">
+              <p className="font-cardo text-ancient-golden tracking-[0.3em] text-base sm:text-lg mb-2">
                 "TENEBRAE LUMEN FACIT"
               </p>
-              <p className="font-garamond text-ritualistic-beige text-sm sm:text-base mt-2 opacity-80 italic">
+              <p className="font-garamond text-ritualistic-beige text-xs sm:text-sm opacity-80 italic">
                 As trevas criam a luz
               </p>
             </div>
+            
           </div>
         </div>
         
