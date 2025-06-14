@@ -119,7 +119,7 @@ export default function BibliotecaSections() {
           {/* Sistema de Abas Místicas */}
           <Tabs defaultValue={sections[0]?.slug || 'porta-das-sombras'} className="w-full">
             {/* Navegação Arcana */}
-            <div className="relative mb-12 z-20">
+            <div className={`relative ${isMobile ? 'mb-8' : 'mb-12'} z-20`}>
               {/* Ornamento Central Superior */}
               <div className="flex items-center justify-center mb-6">
                 <div className="h-px bg-gradient-to-r from-transparent via-golden-amber/60 to-transparent w-32"></div>
@@ -193,8 +193,8 @@ export default function BibliotecaSections() {
               </div>
             </div>
             
-            {/* Espaçador para Mobile */}
-            {isMobile && <div className="h-8"></div>}
+            {/* Espaçador entre Abas e Conteúdo */}
+            <div className={`${isMobile ? 'h-12' : 'h-8'}`}></div>
 
             {/* Conteúdo das Abas */}
             {sections.map((section) => {
@@ -203,7 +203,7 @@ export default function BibliotecaSections() {
               return (
                 <TabsContent key={section.slug} value={section.slug} className="mt-0 relative z-10">
                   {/* Portal da Seção */}
-                  <div className="relative mb-12">
+                  <div className={`relative ${isMobile ? 'mb-8' : 'mb-12'}`}>
                     {/* Ornamento de Entrada */}
                     <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-3">
                       <div className="w-6 h-6 bg-golden-amber/20 rotate-45 border border-golden-amber/40"></div>
