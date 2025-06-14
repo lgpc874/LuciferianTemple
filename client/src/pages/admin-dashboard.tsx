@@ -101,6 +101,12 @@ export default function AdminDashboard() {
   const { user, isAuthenticated } = useAuth();
   const [location] = useLocation();
 
+  // Determinar qual componente renderizar baseado na URL - hook sempre executa
+  const currentTab = useMemo(() => {
+    const urlParams = new URLSearchParams(location.split('?')[1] || '');
+    return urlParams.get('tab') || 'overview';
+  }, [location]);
+
   // Verificar se é admin - usando email ou propriedade isAdmin
   const isAdmin = user?.email === "admin@templodoabismo.com" || 
                   user?.email === "templo.admin@templodoabismo.com" ||
@@ -121,12 +127,6 @@ export default function AdminDashboard() {
       </PageTransition>
     );
   }
-
-  // Determinar qual componente renderizar baseado na URL
-  const currentTab = useMemo(() => {
-    const urlParams = new URLSearchParams(location.split('?')[1] || '');
-    return urlParams.get('tab') || 'overview';
-  }, [location]);
 
   const renderContent = () => {
     switch (currentTab) {
