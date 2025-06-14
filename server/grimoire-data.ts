@@ -1338,10 +1338,9 @@ class GrimoireDataStore {
       const updatedGrimoire = { ...existingGrimoire, ...updates };
 
       // Tentar atualizar no Supabase
-      if (this.supabaseClient) {
-        const supabaseClient = this.getSupabaseClient();
-        if (supabaseClient) {
-          const { data, error } = await supabaseClient
+      const supabaseClient = this.getSupabaseClient();
+      if (supabaseClient) {
+        const { data, error } = await supabaseClient
             .from('grimoires')
             .update({
               title: updatedGrimoire.title,
@@ -1358,10 +1357,9 @@ class GrimoireDataStore {
             .select()
             .single();
 
-          if (!error && data) {
-            this.grimoires.set(id, updatedGrimoire);
-            return updatedGrimoire;
-          }
+        if (!error && data) {
+          this.grimoires.set(id, updatedGrimoire);
+          return updatedGrimoire;
         }
       }
 
@@ -1377,29 +1375,27 @@ class GrimoireDataStore {
   async deleteGrimoire(id: number): Promise<boolean> {
     try {
       // Tentar deletar do Supabase
-      if (this.useSupabase) {
-        const supabaseClient = this.getSupabaseClient();
-        if (supabaseClient) {
-          // Deletar capítulos primeiro
-          await supabaseClient
-            .from('chapters')
-            .delete()
-            .eq('grimoireId', id);
+      const supabaseClient = this.getSupabaseClient();
+      if (supabaseClient) {
+        // Deletar capítulos primeiro
+        await supabaseClient
+          .from('chapters')
+          .delete()
+          .eq('grimoireId', id);
 
-          // Deletar grimório
-          const { error } = await supabaseClient
-            .from('grimoires')
-            .delete()
-            .eq('id', id);
+        // Deletar grimório
+        const { error } = await supabaseClient
+          .from('grimoires')
+          .delete()
+          .eq('id', id);
 
-          if (!error) {
-            this.grimoires.delete(id);
-            // Também remover capítulos da memória
-            Array.from(this.chapters.values())
-              .filter(chapter => chapter.grimoireId === id)
-              .forEach(chapter => this.chapters.delete(chapter.id));
-            return true;
-          }
+        if (!error) {
+          this.grimoires.delete(id);
+          // Também remover capítulos da memória
+          Array.from(this.chapters.values())
+            .filter(chapter => chapter.grimoireId === id)
+            .forEach(chapter => this.chapters.delete(chapter.id));
+          return true;
         }
       }
 
