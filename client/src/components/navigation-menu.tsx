@@ -17,7 +17,7 @@ export default function NavigationMenu() {
 
   // Adiciona item dinâmico baseado no status de autenticação
   const authMenuItem = isAuthenticated 
-    ? { href: "#", label: user?.username || "Usuário", icon: User, subtitle: "Sair", isLogout: true }
+    ? { href: "/perfil", label: user?.username || "Perfil", icon: User, subtitle: "Área do Usuário", isLogout: false }
     : { href: "/auth", label: "Initium", icon: Key, subtitle: "Portal dos Iniciados", isLogout: false };
 
   const menuItems = [...baseMenuItems, authMenuItem];
@@ -67,42 +67,28 @@ export default function NavigationMenu() {
           <ul className="flex items-center space-x-8">
             {menuItems.map((item, index) => {
               const IconComponent = item.icon;
-              const isActive = location === item.href && !item.isLogout;
+              const isActive = location === item.href;
               
               return (
                 <li key={item.href + item.label} className="relative group">
-                  {item.isLogout ? (
-                    <button
-                      onClick={() => handleNavClick(item.href, true)}
-                      className="flex flex-col items-center space-y-1 px-2 py-1 transition-all duration-300 text-ritualistic-beige hover:text-golden-amber">
-                      <IconComponent 
-                        size={16} 
-                        className="transition-all duration-300 text-golden-amber/60 group-hover:text-golden-amber" 
-                      />
-                      <span className="font-cinzel text-xs tracking-wider uppercase">
-                        {item.label}
-                      </span>
-                    </button>
-                  ) : (
-                    <Link 
-                      href={item.href} 
-                      onClick={() => handleNavClick(item.href)}
-                      className={`
-                        flex flex-col items-center space-y-1 px-2 py-1 transition-all duration-300
-                        ${isActive 
-                          ? 'text-golden-amber' 
-                          : 'text-ritualistic-beige hover:text-golden-amber'
-                        }
-                      `}>
-                      <IconComponent 
-                        size={16} 
-                        className={`transition-all duration-300 ${isActive ? 'text-golden-amber' : 'text-golden-amber/60 group-hover:text-golden-amber'}`} 
-                      />
-                      <span className="font-cinzel text-xs tracking-wider uppercase">
-                        {item.label}
-                      </span>
-                    </Link>
-                  )}
+                  <Link 
+                    href={item.href} 
+                    onClick={() => handleNavClick(item.href)}
+                    className={`
+                      flex flex-col items-center space-y-1 px-2 py-1 transition-all duration-300
+                      ${isActive 
+                        ? 'text-golden-amber' 
+                        : 'text-ritualistic-beige hover:text-golden-amber'
+                      }
+                    `}>
+                    <IconComponent 
+                      size={16} 
+                      className={`transition-all duration-300 ${isActive ? 'text-golden-amber' : 'text-golden-amber/60 group-hover:text-golden-amber'}`} 
+                    />
+                    <span className="font-cinzel text-xs tracking-wider uppercase">
+                      {item.label}
+                    </span>
+                  </Link>
                   
                   {/* Separador místico entre itens */}
                   {index < menuItems.length - 1 && (
@@ -121,36 +107,25 @@ export default function NavigationMenu() {
           <ul className="flex items-center space-x-6">
             {menuItems.map((item) => {
               const IconComponent = item.icon;
-              const isActive = location === item.href && !item.isLogout;
+              const isActive = location === item.href;
               
               return (
                 <li key={item.href + item.label}>
-                  {item.isLogout ? (
-                    <button
-                      onClick={() => handleNavClick(item.href, true)}
-                      className="flex flex-col items-center space-y-1 px-1 py-1 transition-all duration-300 text-ritualistic-beige hover:text-golden-amber">
-                      <IconComponent size={14} className="text-golden-amber/60" />
-                      <span className="font-cinzel text-xs tracking-wide uppercase">
-                        {item.label}
-                      </span>
-                    </button>
-                  ) : (
-                    <Link 
-                      href={item.href}
-                      onClick={() => handleNavClick(item.href)}
-                      className={`
-                        flex flex-col items-center space-y-1 px-1 py-1 transition-all duration-300
-                        ${isActive 
-                          ? 'text-golden-amber' 
-                          : 'text-ritualistic-beige hover:text-golden-amber'
-                        }
-                      `}>
-                      <IconComponent size={14} className={`${isActive ? 'text-golden-amber' : 'text-golden-amber/60'}`} />
-                      <span className="font-cinzel text-xs tracking-wide uppercase">
-                        {item.label}
-                      </span>
-                    </Link>
-                  )}
+                  <Link 
+                    href={item.href}
+                    onClick={() => handleNavClick(item.href)}
+                    className={`
+                      flex flex-col items-center space-y-1 px-1 py-1 transition-all duration-300
+                      ${isActive 
+                        ? 'text-golden-amber' 
+                        : 'text-ritualistic-beige hover:text-golden-amber'
+                      }
+                    `}>
+                    <IconComponent size={14} className={`${isActive ? 'text-golden-amber' : 'text-golden-amber/60'}`} />
+                    <span className="font-cinzel text-xs tracking-wide uppercase">
+                      {item.label}
+                    </span>
+                  </Link>
                 </li>
               );
             })}
