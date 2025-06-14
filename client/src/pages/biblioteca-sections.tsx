@@ -38,7 +38,7 @@ export default function BibliotecaSections() {
   });
 
   // Fetch progresso do usuário
-  const { data: userProgress = [] } = useQuery({
+  const { data: userProgress = [] } = useQuery<any[]>({
     queryKey: ['/api/progress'],
     enabled: isAuthenticated
   });
@@ -65,7 +65,7 @@ export default function BibliotecaSections() {
   };
 
   const getGrimoireCover = (grimoire: Grimoire) => {
-    return grimoireCoverSvgs[grimoire.category] || grimoireCoverSvgs['default'];
+    return grimoireCoverSvgs[grimoire.category as keyof typeof grimoireCoverSvgs] || grimoireCoverSvgs['introducao-ocultismo'];
   };
 
   const isGrimoireUnlocked = (grimoire: Grimoire) => {
@@ -81,7 +81,7 @@ export default function BibliotecaSections() {
     
     // Grimórios pagos apenas se comprados
     if (grimoire.isPaid) {
-      return userProgress.some((progress: any) => 
+      return (userProgress as any[]).some((progress: any) => 
         progress.grimoireId === grimoire.id && progress.isPurchased
       );
     }
@@ -90,7 +90,7 @@ export default function BibliotecaSections() {
   };
 
   const getUserProgress = (grimoireId: number) => {
-    return userProgress.find((progress: any) => progress.grimoireId === grimoireId);
+    return (userProgress as any[]).find((progress: any) => progress.grimoireId === grimoireId);
   };
 
   if (loadingSections || loadingGrimoires) {
