@@ -8,8 +8,8 @@ export default function MainContent() {
   return (
     <div className="min-h-screen fade-in">
       {/* Header with Inverted Cross Title */}
-      <header className="relative py-4 sm:py-6 md:py-8 lg:py-10">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <header className="relative py-4 sm:py-6">
+        <div className="container mx-auto px-3 sm:px-4 max-w-7xl text-center">
           {/* Main Title with Inverted Crosses */}
           <h1 className="font-cinzel text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl text-golden-amber mb-8 sm:mb-12 tracking-wider px-2 relative">
             <span className="text-blood-red mr-4 sm:mr-6 transform rotate-180 inline-block">†</span>

@@ -46,6 +46,7 @@ export default function GrimoireKindle() {
   const [currentPage, setCurrentPage] = useState(1);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [startTime, setStartTime] = useState<number>(0);
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const progressSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   // Content pagination
@@ -111,6 +112,14 @@ export default function GrimoireKindle() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/progress/grimoire/${grimoireId}`] });
       queryClient.invalidateQueries({ queryKey: ['/api/progress'] });
+      // Feedback visual discreto
+      setSaveStatus('saved');
+      setTimeout(() => setSaveStatus('idle'), 2000);
+    },
+    onError: (error) => {
+      console.error('Error saving progress:', error);
+      setSaveStatus('error');
+      setTimeout(() => setSaveStatus('idle'), 3000);
     }
   });
 
@@ -140,6 +149,9 @@ export default function GrimoireKindle() {
     if (progressSaveTimeoutRef.current) {
       clearTimeout(progressSaveTimeoutRef.current);
     }
+    
+    // Show saving status
+    setSaveStatus('saving');
     
     // Set new timeout to save after 2 seconds of inactivity
     progressSaveTimeoutRef.current = setTimeout(() => {
@@ -452,7 +464,19 @@ export default function GrimoireKindle() {
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-between text-sm text-muted-foreground mb-2">
             <span>Página {currentPage} de {totalPages}</span>
-            <span>Cap. {selectedChapter} de {(chapters as Chapter[])?.length}</span>
+            <div className="flex items-center gap-2">
+              <span>Cap. {selectedChapter} de {(chapters as Chapter[])?.length}</span>
+              {/* Indicador de Auto Save */}
+              {saveStatus === 'saving' && (
+                <span className="text-xs text-golden-amber/70 animate-pulse">Salvando...</span>
+              )}
+              {saveStatus === 'saved' && (
+                <span className="text-xs text-green-400/70">✓ Salvo</span>
+              )}
+              {saveStatus === 'error' && (
+                <span className="text-xs text-red-400/70">⚠ Erro</span>
+              )}
+            </div>
             <span>{Math.round(progressPercentage)}%</span>
           </div>
           <div className="w-full bg-muted rounded-full h-1">
