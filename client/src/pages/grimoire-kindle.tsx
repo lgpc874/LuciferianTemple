@@ -27,6 +27,8 @@ interface Grimoire {
   description: string;
   category: string;
   difficultyLevel: number;
+  isPaid: boolean;
+  price: string | null;
 }
 
 export default function GrimoireKindle() {
@@ -70,7 +72,8 @@ export default function GrimoireKindle() {
     if (!isAuthenticated) return false;
     if (isAdmin) return true; // Admin tem acesso total
     if (!grimoire) return false;
-    if (!grimoire.isPaid) return true; // Grimórios gratuitos
+    const grimoireData = grimoire as Grimoire;
+    if (!grimoireData.isPaid) return true; // Grimórios gratuitos
     
     // TODO: Verificar se usuário pagou pelo grimório
     // Por enquanto, bloqueia grimórios pagos para usuários normais
@@ -326,6 +329,22 @@ export default function GrimoireKindle() {
         </div>
       </PageTransition>
     );
+  }
+
+  // Access control - verificação de acesso com bypass total para admin
+  if (!canAccessGrimoire()) {
+    if (!isAuthenticated) {
+      // Redirecionar para login
+      setLocation('/auth');
+      return null;
+    }
+    
+    const grimoireData = grimoire as Grimoire;
+    if (grimoireData.isPaid && !isAdmin) {
+      // Redirecionar para checkout
+      setLocation(`/checkout?grimoire=${grimoireId}`);
+      return null;
+    }
   }
 
   return (
