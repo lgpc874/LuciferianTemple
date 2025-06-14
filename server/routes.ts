@@ -357,6 +357,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Migrar grimórios existentes para a primeira seção
+  app.post("/api/admin/migrate-grimoires", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const grimoires = grimoireStore.getGrimoires();
+      let updated = 0;
+      
+      for (const grimoire of grimoires) {
+        if (!grimoire.sectionId) {
+          await grimoireStore.updateGrimoire(grimoire.id, { sectionId: 1 });
+          updated++;
+        }
+      }
+      
+      res.json({ message: `${updated} grimórios migrados para a seção Porta das Sombras`, updated });
+    } catch (error) {
+      console.error("Error migrating grimoires:", error);
+      res.status(500).json({ error: "Erro ao migrar grimórios" });
+    }
+  });
+
   // Library Sections Management
   app.get("/api/library-sections", async (req, res) => {
     try {
