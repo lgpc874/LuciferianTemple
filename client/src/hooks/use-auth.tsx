@@ -33,22 +33,27 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const { data: userData, isLoading } = useQuery({
     queryKey: ["/api/auth/me"],
     queryFn: async () => {
-      if (!token) return null;
+      // Sempre tentar fazer a requisição, mesmo sem token no Replit
+      const headers: any = {};
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
       
-      const response = await fetch("/api/auth/me", {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
+      const response = await fetch("/api/auth/me", { headers });
       
       if (!response.ok) {
+        // No Replit, se não há token, ainda pode haver bypass
+        if (window.location.hostname.includes('replit') || window.location.hostname.includes('localhost')) {
+          // Retornar null para permitir que o backend faça o bypass
+          return null;
+        }
         throw new Error("Authentication failed");
       }
       
       const data = await response.json();
       return data.user;
     },
-    enabled: !!token,
+    enabled: true, // Sempre habilitado para permitir bypass no Replit
     retry: false,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
