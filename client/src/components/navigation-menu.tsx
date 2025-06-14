@@ -45,7 +45,7 @@ export default function NavigationMenu() {
   }, [isMenuOpen]);
 
   return (
-    <nav className="navigation-menu fixed top-16 sm:top-20 left-0 right-0 z-40 bg-transparent">
+    <nav className="navigation-menu relative bg-transparent">
       <div className="container mx-auto px-2 sm:px-4 lg:px-8 xl:px-12">
         
         {/* Desktop Menu - Large screens */}
