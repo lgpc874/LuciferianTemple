@@ -71,14 +71,15 @@ export default function BibliotecaSections() {
     
     const categoryKey = grimoire.category as keyof typeof grimoireCoverSvgs;
     if (grimoireCoverSvgs[categoryKey]) {
-      return `data:image/svg+xml;base64,${btoa(grimoireCoverSvgs[categoryKey])}`;
+      const svgString = grimoireCoverSvgs[categoryKey] as unknown as string;
+      return `data:image/svg+xml;base64,${btoa(svgString)}`;
     }
     
     return `https://via.placeholder.com/300x400/1a1a1a/d4af37?text=${encodeURIComponent(grimoire.title)}`;
   };
 
   const getUserProgress = (grimoireId: number) => {
-    return userProgress.find((p: any) => p.grimoireId === grimoireId);
+    return (userProgress as any[]).find((p: any) => p.grimoireId === grimoireId);
   };
 
   const isGrimoireUnlocked = (grimoire: Grimoire) => {
