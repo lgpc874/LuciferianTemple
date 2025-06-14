@@ -11,8 +11,7 @@ export default function NavigationMenu() {
 
   const baseMenuItems = [
     { href: "/", label: "Sanctum", icon: Home, subtitle: "Portão Principal" },
-    { href: "/biblioteca", label: "Bibliotheca", icon: BookOpen, subtitle: "Grimórios Arcanos" },
-    { href: "/bibliotheca-arcana", label: "Arcanum", icon: Scroll, subtitle: "Conhecimento Oculto" }
+    { href: "/biblioteca", label: "Bibliotheca", icon: BookOpen, subtitle: "Grimórios Arcanos" }
   ];
 
   // Adiciona item dinâmico baseado no status de autenticação

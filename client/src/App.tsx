@@ -11,7 +11,7 @@ import ContentProtection from "@/components/content-protection";
 import Home from "@/pages/home";
 import NotFound from "@/pages/not-found";
 import AuthPage from "@/pages/auth";
-import BibliothecaArcana from "@/pages/bibliotheca-arcana";
+
 import BibliotecaSections from "@/pages/biblioteca-sections";
 import GrimoireReader from "@/pages/grimoire-kindle";
 import GrimoireSimple from "@/pages/grimoire-simple";
@@ -39,7 +39,6 @@ function Router() {
           <Route path="/" component={Home} />
           <Route path="/auth" component={AuthPage} />
           <Route path="/perfil" component={Perfil} />
-          <Route path="/bibliotheca-arcana" component={BibliothecaArcana} />
           <Route path="/biblioteca" component={BibliotecaSections} />
           <Route path="/checkout" component={Checkout} />
           <Route path="/grimoire/:id" component={GrimoireReader} />
