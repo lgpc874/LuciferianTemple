@@ -679,6 +679,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         difficultyLevel: grimoireData.difficultyLevel,
         unlockOrder: grimoireStore.getGrimoires().length + 1,
         isActive: true,
+        price: null,
+        isPaid: false,
         coverImageUrl: `https://via.placeholder.com/300x400?text=${encodeURIComponent(grimoireData.title)}`
       });
 
