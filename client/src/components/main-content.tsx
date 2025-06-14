@@ -7,11 +7,6 @@ export default function MainContent() {
 
   return (
     <div className="min-h-screen fade-in">
-      {/* User Menu */}
-      <div className="absolute top-4 right-4 z-40">
-        <UserMenu />
-      </div>
-      
       {/* Header with Inverted Cross Title */}
       <header className="relative py-4 sm:py-6 md:py-8 lg:py-10">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">

@@ -273,6 +273,5 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
           </div>
         </CardContent>
       </Card>
-    </div>
   );
 }
