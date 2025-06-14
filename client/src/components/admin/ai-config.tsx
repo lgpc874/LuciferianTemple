@@ -142,23 +142,26 @@ export default function AIConfig() {
   const queryClient = useQueryClient();
 
   // Fetch current AI config
-  const { data: currentConfig, isLoading } = useQuery({
-    queryKey: ['/api/admin/ai-config'],
-    onSuccess: (data) => {
-      if (data) {
-        setConfig(data);
-      }
-    }
+  const { data: currentConfig, isLoading } = useQuery<AIConfig>({
+    queryKey: ['/api/admin/ai-config']
   });
+
+  // Update config when data is loaded
+  useEffect(() => {
+    if (currentConfig) {
+      setConfig(currentConfig);
+    }
+  }, [currentConfig]);
 
   // Save AI config mutation
   const saveConfigMutation = useMutation({
     mutationFn: async (newConfig: AIConfig) => {
-      return apiRequest('/api/admin/ai-config', {
+      const response = await apiRequest('/api/admin/ai-config', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newConfig),
       });
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/ai-config'] });

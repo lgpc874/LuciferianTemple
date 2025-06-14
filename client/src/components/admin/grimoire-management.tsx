@@ -70,12 +70,12 @@ export default function GrimoireManagement() {
   const queryClient = useQueryClient();
 
   // Fetch grimórios
-  const { data: grimoires = [], isLoading: loadingGrimoires } = useQuery({
+  const { data: grimoires = [], isLoading: loadingGrimoires } = useQuery<Grimoire[]>({
     queryKey: ['/api/admin/grimoires']
   });
 
   // Fetch categorias
-  const { data: categories = [] } = useQuery({
+  const { data: categories = [] } = useQuery<string[]>({
     queryKey: ['/api/admin/categories']
   });
 
@@ -97,7 +97,7 @@ export default function GrimoireManagement() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/grimoires'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/grimoires'] });
       toast({
         title: "Grimório excluído",
         description: "O grimório foi removido permanentemente."
@@ -116,7 +116,7 @@ export default function GrimoireManagement() {
       return response.json();
     },
     onSuccess: (_, { isActive }) => {
-      queryClient.invalidateQueries({ queryKey: ['/api/grimoires'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/grimoires'] });
       toast({
         title: isActive ? "Grimório publicado" : "Grimório despublicado",
         description: isActive ? "Agora está visível na biblioteca" : "Removido da biblioteca pública"
