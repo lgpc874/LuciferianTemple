@@ -184,7 +184,7 @@ export default function AIConfig() {
     setConfig(prev => ({
       ...prev,
       [section]: {
-        ...prev[section],
+        ...(prev[section] as any),
         [field]: value
       }
     }));
@@ -195,7 +195,7 @@ export default function AIConfig() {
     setConfig(prev => ({
       ...prev,
       [section]: {
-        ...prev[section],
+        ...(prev[section] as any),
         [field]: (prev[section] as any)[field].map((item: string, i: number) => 
           i === index ? value : item
         )
@@ -208,7 +208,7 @@ export default function AIConfig() {
     setConfig(prev => ({
       ...prev,
       [section]: {
-        ...prev[section],
+        ...(prev[section] as any),
         [field]: [...(prev[section] as any)[field], defaultValue]
       }
     }));
@@ -219,7 +219,7 @@ export default function AIConfig() {
     setConfig(prev => ({
       ...prev,
       [section]: {
-        ...prev[section],
+        ...(prev[section] as any),
         [field]: (prev[section] as any)[field].filter((_: any, i: number) => i !== index)
       }
     }));

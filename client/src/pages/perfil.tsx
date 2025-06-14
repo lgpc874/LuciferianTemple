@@ -87,7 +87,7 @@ export default function Perfil() {
   // Mutation para atualizar perfil
   const updateProfileMutation = useMutation({
     mutationFn: async (data: typeof editForm) => {
-      return apiRequest('PUT', '/api/user/profile', data);
+      return apiRequest('PUT', '/api/user/profile', {}, { body: JSON.stringify(data), headers: { 'Content-Type': 'application/json' } });
     },
     onSuccess: () => {
       toast({
