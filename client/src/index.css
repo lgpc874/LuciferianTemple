@@ -220,7 +220,14 @@ input, textarea {
   
   /* Botões */
   button {
-    font-size: 0.875rem !important;
+    font-size: 0.75rem !important;
+    padding: 0.5rem 1rem !important;
+  }
+  
+  /* Botões pequenos específicos */
+  .btn-sm, button.text-xs {
+    font-size: 0.6875rem !important;
+    padding: 0.375rem 0.75rem !important;
   }
   
   /* Específico para biblioteca */
@@ -239,6 +246,19 @@ input, textarea {
   
   .grimoire-card p {
     font-size: 0.875rem !important;
+  }
+  
+  /* Botões dos cards de grimórios */
+  .grimoire-card button,
+  .grimoire-card .font-cinzel {
+    font-size: 0.625rem !important; /* 10px - muito menor para cards */
+    padding: 0.25rem 0.5rem !important;
+  }
+  
+  /* Status text nos cards */
+  .grimoire-card .text-xs,
+  .grimoire-card .text-sm {
+    font-size: 0.5625rem !important; /* 9px */
   }
 }
 
