@@ -106,28 +106,22 @@ export default function BibliotecaSections() {
     <ContentProtection enableScreenshotProtection={true}>
       <PageTransition className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-8 max-w-7xl">
-          {/* Header */}
-          <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-cinzel text-golden-amber mb-6 tracking-wider">
+          {/* Header Compacto */}
+          <div className={`text-center ${isMobile ? 'mb-4' : 'mb-8'}`}>
+            <h1 className={`${isMobile ? 'text-2xl mb-2' : 'text-4xl md:text-5xl mb-4'} font-cinzel text-golden-amber tracking-wider`}>
               BIBLIOTHECA ARCANA
             </h1>
-            <p className="text-lg text-ritualistic-beige/80 max-w-3xl mx-auto leading-relaxed">
-              Adentre os halls sagrados do conhecimento. Cada seção revela mistérios mais profundos aos iniciados dignos.
-            </p>
+            {!isMobile && (
+              <p className="text-base text-ritualistic-beige/80 max-w-2xl mx-auto">
+                Adentre os halls sagrados do conhecimento. Cada seção revela mistérios mais profundos aos iniciados dignos.
+              </p>
+            )}
           </div>
 
           {/* Sistema de Abas Místicas */}
           <Tabs defaultValue={sections[0]?.slug || 'porta-das-sombras'} className="w-full">
             {/* Navegação Arcana */}
-            <div className={`${isMobile ? 'sticky top-0 bg-background/95 backdrop-blur-md py-4 mb-6' : 'relative mb-12'} z-30`}>
-              {/* Ornamento Central Superior */}
-              <div className="flex items-center justify-center mb-6">
-                <div className="h-px bg-gradient-to-r from-transparent via-golden-amber/60 to-transparent w-32"></div>
-                <div className="mx-4 p-3 rounded-full bg-gradient-to-br from-golden-amber/20 to-golden-amber/5 border border-golden-amber/30">
-                  <BookOpen className="w-6 h-6 text-golden-amber" />
-                </div>
-                <div className="h-px bg-gradient-to-r from-transparent via-golden-amber/60 to-transparent w-32"></div>
-              </div>
+            <div className={`${isMobile ? 'sticky top-0 bg-background/95 backdrop-blur-md py-2' : 'relative mb-8'} z-30`}>
 
               {/* Abas Místicas */}
               <TabsList className={`
@@ -141,8 +135,8 @@ export default function BibliotecaSections() {
                       key={section.slug} 
                       value={section.slug}
                       className={`
-                        group relative flex flex-col items-center gap-2 h-auto
-                        ${isMobile ? 'p-3' : 'p-6 gap-3'}
+                        group relative flex flex-col items-center h-auto
+                        ${isMobile ? 'p-2 gap-1' : 'p-6 gap-3'}
                         bg-gradient-to-br from-card/60 to-card/30 backdrop-blur-md
                         border border-golden-amber/20 rounded-lg
                         transition-all duration-300 ease-in-out
@@ -183,18 +177,7 @@ export default function BibliotecaSections() {
                 })}
               </TabsList>
 
-              {/* Ornamento Inferior */}
-              <div className={`flex items-center justify-center ${isMobile ? 'mt-4' : 'mt-6'}`}>
-                <div className="h-px bg-gradient-to-r from-transparent via-golden-amber/40 to-transparent w-24"></div>
-                <div className="mx-3 w-1 h-1 bg-golden-amber/60 rounded-full"></div>
-                <div className="mx-1 w-1 h-1 bg-golden-amber/40 rounded-full"></div>
-                <div className="mx-3 w-1 h-1 bg-golden-amber/60 rounded-full"></div>
-                <div className="h-px bg-gradient-to-r from-transparent via-golden-amber/40 to-transparent w-24"></div>
-              </div>
             </div>
-            
-            {/* Espaçador entre Abas e Conteúdo */}
-            <div className={`${isMobile ? 'h-12' : 'h-8'}`}></div>
 
             {/* Conteúdo das Abas */}
             {sections.map((section) => {
@@ -202,71 +185,17 @@ export default function BibliotecaSections() {
               
               return (
                 <TabsContent key={section.slug} value={section.slug} className="mt-0 relative z-10">
-                  {/* Portal da Seção */}
-                  <div className={`relative ${isMobile ? 'mb-8' : 'mb-12'}`}>
-                    {/* Ornamento de Entrada */}
-                    <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-3">
-                      <div className="w-6 h-6 bg-golden-amber/20 rotate-45 border border-golden-amber/40"></div>
+                  {/* Seção Simplificada */}
+                  {!isMobile && (
+                    <div className="text-center mb-6">
+                      <h2 className="text-xl font-cinzel text-golden-amber mb-2">{section.name}</h2>
+                      <p className="text-sm text-golden-amber/70 italic">"{section.description}"</p>
                     </div>
-                    
-                    <Card className="relative overflow-hidden border-2 border-golden-amber/30 bg-gradient-to-br from-card/80 via-card/60 to-card/40 backdrop-blur-xl shadow-2xl shadow-golden-amber/10">
-                      {/* Efeito de Brilho Interno */}
-                      <div className="absolute inset-0 bg-gradient-to-br from-golden-amber/5 via-transparent to-golden-amber/10 pointer-events-none"></div>
-                      
-                      {/* Padrão Geométrico de Fundo */}
-                      <div className="absolute inset-0 opacity-5">
-                        <div className="absolute top-4 left-4 w-8 h-8 border border-golden-amber rotate-45"></div>
-                        <div className="absolute top-4 right-4 w-6 h-6 border border-golden-amber rotate-12"></div>
-                        <div className="absolute bottom-4 left-1/3 w-4 h-4 bg-golden-amber/20 rotate-45"></div>
-                        <div className="absolute bottom-4 right-1/3 w-5 h-5 border border-golden-amber/30 rounded-full"></div>
-                      </div>
-                      
-                      <CardHeader className="relative text-center py-8 px-6">
-                        {/* Símbolo da Seção */}
-                        <div className="mb-6">
-                          <div className="relative inline-block">
-                            <div className="absolute inset-0 bg-golden-amber/30 rounded-full blur-xl animate-pulse"></div>
-                            <div className="relative p-4 bg-gradient-to-br from-golden-amber/20 to-golden-amber/5 rounded-full border border-golden-amber/40">
-                              {(() => {
-                                const IconComponent = getSectionIcon(section.slug);
-                                return <IconComponent className="w-8 h-8 text-golden-amber" />;
-                              })()}
-                            </div>
-                          </div>
-                        </div>
-                        
-                        {/* Título Arcano */}
-                        <CardTitle className="text-3xl md:text-4xl font-cinzel text-golden-amber mb-4 tracking-wider relative">
-                          <span className="relative z-10">{section.name}</span>
-                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-golden-amber/10 to-transparent blur-sm"></div>
-                        </CardTitle>
-                        
-                        {/* Citação Mística */}
-                        <div className="relative">
-                          <CardDescription className="text-lg md:text-xl italic text-golden-amber/90 font-garamond max-w-2xl mx-auto leading-relaxed">
-                            <span className="text-golden-amber/60 text-2xl leading-none">"</span>
-                            <span className="mx-1">{section.description}</span>
-                            <span className="text-golden-amber/60 text-2xl leading-none">"</span>
-                          </CardDescription>
-                        </div>
-                        
-                        {/* Separador Ornamental */}
-                        <div className="mt-6 flex items-center justify-center">
-                          <div className="h-px bg-gradient-to-r from-transparent via-golden-amber/60 to-transparent w-16"></div>
-                          <div className="mx-4 w-2 h-2 bg-golden-amber/60 rounded-full"></div>
-                          <div className="h-px bg-gradient-to-r from-transparent via-golden-amber/60 to-transparent w-16"></div>
-                        </div>
-                      </CardHeader>
-                    </Card>
-                  </div>
+                  )}
 
                   {/* Grid de Grimórios */}
                   {sectionGrimoires.length > 0 ? (
-                    <div className={`grid gap-6 ${
-                      isMobile 
-                        ? 'grid-cols-1' 
-                        : 'grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
-                    }`}>
+                    <div className={`grid ${isMobile ? 'gap-3 grid-cols-1' : 'gap-4 grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'}`}>
                       {sectionGrimoires.map((grimoire) => {
                         const progress = getUserProgress(grimoire.id);
                         const isUnlocked = isGrimoireUnlocked(grimoire);
