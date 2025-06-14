@@ -20,11 +20,12 @@ import AdminDashboard from "@/pages/admin-dashboard";
 function Router() {
   const [location] = useLocation();
   const isGrimoireReader = location.startsWith('/grimoire/');
+  const isAdminPage = location.startsWith('/admin');
   
   return (
     <div>
-      {/* Header e menu apenas para páginas que não são de leitura */}
-      {!isGrimoireReader && (
+      {/* Header e menu apenas para páginas que não são de leitura nem admin */}
+      {!isGrimoireReader && !isAdminPage && (
         <>
           <FixedHeader />
           <NavigationMenu />

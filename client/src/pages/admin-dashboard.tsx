@@ -103,6 +103,9 @@ export default function AdminDashboard() {
 
   // Determinar qual componente renderizar baseado na URL - hook sempre executa
   const currentTab = useMemo(() => {
+    if (location === '/admin' || location === '/admin/') {
+      return 'overview';
+    }
     const urlParams = new URLSearchParams(location.split('?')[1] || '');
     return urlParams.get('tab') || 'overview';
   }, [location]);
