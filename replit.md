@@ -136,6 +136,8 @@ Changelog:
 - June 14, 2025. Aba "Configurar IA" adicionada - personalidade, comportamento, filosofia e diretrizes de conteúdo configuráveis
 - June 14, 2025. Sistema de pagamento Stripe integrado - página de checkout, configuração admin, bypass completo para administradores
 - June 14, 2025. Menu de navegação redesenhado - design místico elegante, totalmente responsivo, posicionamento normal (não fixo), colado ao header
+- June 14, 2025. Página bibliotheca-arcana removida completamente - menu simplificado para apenas Sanctum e Bibliotheca
+- June 14, 2025. Sistema de abas da biblioteca reformulado - design místico premium com ornamentos dourados, efeitos de brilho, totalmente responsivo mobile
 ```
 
 ## User Preferences
