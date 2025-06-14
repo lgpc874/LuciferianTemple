@@ -157,6 +157,9 @@ export default function Biblioteca() {
               const coverKey = getCoverSvgKey(grimoire.category, grimoire.title);
               const coverSvg = grimoireCoverSvgs[coverKey as keyof typeof grimoireCoverSvgs];
               
+              // Debug log
+              console.log('Grimoire:', grimoire.title, 'Category:', grimoire.category, 'Cover Key:', coverKey, 'Has Cover:', !!coverSvg);
+              
               // Check if user has progress in this grimoire
               const grimoireProgress = Array.isArray(allProgress) ? 
                 allProgress.filter((p: any) => p.grimoireId === grimoire.id && p.progressType === 'reading') : [];
@@ -208,9 +211,20 @@ export default function Biblioteca() {
                   className={`group relative content-section ${cardBorderColor} rounded-lg overflow-hidden transition-all duration-500 hover:shadow-lg hover:shadow-current/10 cursor-pointer grimoire-card`}
                 >
                   {/* Capa do grimório */}
-                  <div className="aspect-[4/5] p-3 sm:p-4 bg-gradient-to-br from-dark-brown to-very-dark-brown">
-                    <div className="w-full h-full rounded-md overflow-hidden shadow-lg transform group-hover:scale-105 transition-transform duration-300">
-                      {coverSvg}
+                  <div className="aspect-[4/5] p-3 sm:p-4 bg-gradient-to-br from-gray-800 to-gray-900">
+                    <div className="w-full h-full rounded-md overflow-hidden shadow-lg transform group-hover:scale-105 transition-transform duration-300 bg-gradient-to-br from-amber-900/20 to-red-900/20">
+                      {coverSvg ? (
+                        <div className="w-full h-full">
+                          {coverSvg}
+                        </div>
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-amber-900 to-red-900 text-golden-amber">
+                          <div className="text-center">
+                            <div className="text-2xl mb-2">📜</div>
+                            <div className="text-xs font-cinzel">GRIMÓRIO</div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
 
