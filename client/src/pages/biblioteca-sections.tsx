@@ -7,6 +7,7 @@ import ContentProtection from '@/components/content-protection';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { grimoireCoverSvgs } from '@/components/grimoire-covers';
 import { 
   BookOpen, 
@@ -115,36 +116,48 @@ export default function BibliotecaSections() {
             </p>
           </div>
 
-          {/* Seções da Biblioteca - Layout Vertical */}
-          <div className="space-y-16">
+          {/* Sistema de Abas */}
+          <Tabs defaultValue={sections[0]?.slug || 'porta-das-sombras'} className="w-full">
+            {/* Lista de Abas */}
+            <TabsList className={`grid ${isMobile ? 'grid-cols-2' : 'grid-cols-4'} w-full max-w-4xl mx-auto mb-8 bg-card/80 backdrop-blur border border-golden-amber/20`}>
+              {sections.map((section) => {
+                const IconComponent = getSectionIcon(section.slug);
+                return (
+                  <TabsTrigger 
+                    key={section.slug} 
+                    value={section.slug}
+                    className="flex flex-col items-center gap-2 py-4 data-[state=active]:bg-golden-amber/20 data-[state=active]:text-golden-amber"
+                  >
+                    <IconComponent className="w-5 h-5" />
+                    <span className={`font-cinzel text-xs ${isMobile ? 'text-center' : ''}`}>
+                      {section.name}
+                    </span>
+                  </TabsTrigger>
+                );
+              })}
+            </TabsList>
+
+            {/* Conteúdo das Abas */}
             {sections.map((section) => {
-              const IconComponent = getSectionIcon(section.slug);
               const sectionGrimoires = getGrimoiresBySection(section.id);
               
               return (
-                <div key={section.id} className="space-y-8">
-                  {/* Header da Seção */}
-                  <div className="text-center">
-                    <div className="flex items-center justify-center gap-4 mb-4">
-                      <div className="h-px bg-gradient-to-r from-transparent via-golden-amber/40 to-transparent flex-1"></div>
-                      <IconComponent className="w-8 h-8 text-golden-amber" />
-                      <div className="h-px bg-gradient-to-r from-transparent via-golden-amber/40 to-transparent flex-1"></div>
-                    </div>
-                    
-                    <h2 className="text-3xl md:text-4xl font-cinzel text-golden-amber mb-3 tracking-wider">
-                      {section.name.toUpperCase()}
-                    </h2>
-                    
-                    <p className="text-lg italic text-golden-amber/80 font-garamond max-w-2xl mx-auto">
-                      "{section.description}"
-                    </p>
-                    
-                    <div className="mt-4">
-                      <Badge variant="outline" className="border-golden-amber/30 text-golden-amber">
-                        {sectionGrimoires.length} {sectionGrimoires.length === 1 ? 'Grimório' : 'Grimórios'}
-                      </Badge>
-                    </div>
-                  </div>
+                <TabsContent key={section.slug} value={section.slug} className="mt-0">
+                  {/* Introdução da Seção */}
+                  <Card className="border-golden-amber/20 bg-card/50 backdrop-blur mb-8">
+                    <CardHeader className="text-center">
+                      <CardTitle className="text-2xl font-cinzel text-golden-amber flex items-center justify-center gap-3">
+                        {(() => {
+                          const IconComponent = getSectionIcon(section.slug);
+                          return <IconComponent className="w-6 h-6" />;
+                        })()}
+                        {section.name}
+                      </CardTitle>
+                      <CardDescription className="text-lg italic text-golden-amber/80 font-garamond">
+                        "{section.description}"
+                      </CardDescription>
+                    </CardHeader>
+                  </Card>
 
                   {/* Grid de Grimórios */}
                   {sectionGrimoires.length > 0 ? (
@@ -259,10 +272,10 @@ export default function BibliotecaSections() {
                       <p className="text-muted-foreground">Nenhum grimório disponível nesta seção.</p>
                     </div>
                   )}
-                </div>
+                </TabsContent>
               );
             })}
-          </div>
+          </Tabs>
         </div>
       </PageTransition>
     </ContentProtection>
