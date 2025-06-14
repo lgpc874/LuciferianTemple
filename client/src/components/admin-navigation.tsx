@@ -66,20 +66,20 @@ export default function AdminNavigation() {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-1">
             {navigationItems.slice(0, 6).map((item) => (
-              <Link key={item.id} href={item.path}>
-                <Button
-                  variant={isActive(item.path) ? "secondary" : "ghost"}
-                  size="sm"
-                  className={`flex items-center space-x-2 ${
-                    isActive(item.path) 
-                      ? 'bg-golden-amber/10 text-golden-amber border border-golden-amber/30' 
-                      : 'hover:bg-golden-amber/5 hover:text-golden-amber'
-                  }`}
-                >
-                  <item.icon className="w-4 h-4" />
-                  <span className="hidden lg:inline">{item.label}</span>
-                </Button>
-              </Link>
+              <Button
+                key={item.id}
+                variant={isActive(item.path) ? "secondary" : "ghost"}
+                size="sm"
+                className={`flex items-center space-x-2 ${
+                  isActive(item.path) 
+                    ? 'bg-golden-amber/10 text-golden-amber border border-golden-amber/30' 
+                    : 'hover:bg-golden-amber/5 hover:text-golden-amber'
+                }`}
+                onClick={() => window.location.href = item.path}
+              >
+                <item.icon className="w-4 h-4" />
+                <span className="hidden lg:inline">{item.label}</span>
+              </Button>
             ))}
           </div>
 
@@ -138,20 +138,22 @@ export default function AdminNavigation() {
           <div className="md:hidden border-t border-golden-amber/20 py-4">
             <div className="space-y-2">
               {navigationItems.map((item) => (
-                <Link key={item.id} href={item.path}>
-                  <Button
-                    variant={isActive(item.path) ? "secondary" : "ghost"}
-                    className={`w-full justify-start ${
-                      isActive(item.path) 
-                        ? 'bg-golden-amber/10 text-golden-amber' 
-                        : 'hover:bg-golden-amber/5 hover:text-golden-amber'
-                    }`}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    <item.icon className="w-4 h-4 mr-3" />
-                    {item.label}
-                  </Button>
-                </Link>
+                <Button
+                  key={item.id}
+                  variant={isActive(item.path) ? "secondary" : "ghost"}
+                  className={`w-full justify-start ${
+                    isActive(item.path) 
+                      ? 'bg-golden-amber/10 text-golden-amber' 
+                      : 'hover:bg-golden-amber/5 hover:text-golden-amber'
+                  }`}
+                  onClick={() => {
+                    window.location.href = item.path;
+                    setIsMobileMenuOpen(false);
+                  }}
+                >
+                  <item.icon className="w-4 h-4 mr-3" />
+                  {item.label}
+                </Button>
               ))}
               
               <div className="pt-3 border-t border-golden-amber/20 space-y-2">
