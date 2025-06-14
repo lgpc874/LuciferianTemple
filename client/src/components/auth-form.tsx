@@ -104,26 +104,34 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-b from-gray-950 via-gray-900 to-black">
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMTExIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-20"></div>
-      
-      <Card className="w-full max-w-md relative z-10 bg-gray-950/80 border-gray-800 backdrop-blur-sm">
-        <CardHeader className="text-center space-y-4">
-          <div className="mx-auto w-16 h-16 bg-gradient-to-b from-red-900 to-red-950 rounded-full flex items-center justify-center">
-            <div className="text-red-400 text-2xl font-serif">⚡</div>
-          </div>
-          <CardTitle className="text-2xl font-serif text-red-200">
-            {isLogin ? "Portal de Acesso" : "Marque seu nome nos registros do Templo"}
-          </CardTitle>
-          <CardDescription className="text-gray-400 font-serif text-sm">
-            {isLogin 
-              ? "Adentre os véus do conhecimento sagrado" 
-              : "Junte-se aos guardiões dos mistérios ancestrais"
-            }
-          </CardDescription>
-        </CardHeader>
+    <Card className="w-full max-w-md relative bg-black/90 backdrop-blur-md border-golden-amber/40 shadow-2xl shadow-golden-amber/20">
+      <CardHeader className="text-center space-y-4 pb-6">
+        {/* Símbolo místico central */}
+        <div className="mx-auto w-20 h-20 relative flex items-center justify-center">
+          <div className="absolute inset-0 border-2 border-golden-amber/30 rounded-full animate-pulse"></div>
+          <div className="text-golden-amber text-3xl font-cinzel">⸸</div>
+        </div>
+        
+        <CardTitle className="text-2xl font-cinzel font-bold tracking-wide text-golden-amber">
+          {isLogin ? "PORTAL DOS INICIADOS" : "DESPERTAR ARCANO"}
+        </CardTitle>
+        
+        <CardDescription className="text-ritualistic-beige font-garamond italic text-base">
+          {isLogin 
+            ? "Atravesse o véu e adentre os mistérios ocultos eternos" 
+            : "Desperte para os ensinamentos das sombras ancestrais"
+          }
+        </CardDescription>
+        
+        {/* Separador místico */}
+        <div className="flex items-center justify-center space-x-4 py-3">
+          <div className="h-px bg-golden-amber/40 flex-1"></div>
+          <span className="text-blood-red text-lg transform rotate-180">†</span>
+          <div className="h-px bg-golden-amber/40 flex-1"></div>
+        </div>
+      </CardHeader>
 
-        <CardContent className="space-y-6">
+      <CardContent className="space-y-6 px-6 pb-6">
           {isLogin ? (
             <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
               <div className="space-y-2">
