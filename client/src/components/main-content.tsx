@@ -6,14 +6,14 @@ export default function MainContent() {
   const { user } = useAuth();
 
   return (
-    <div className="min-h-screen fade-in">
+    <div className="min-h-screen fade-in pt-24 sm:pt-28 md:pt-32">
       {/* User Menu */}
-      <div className="absolute top-4 right-4 z-50">
+      <div className="absolute top-20 sm:top-24 right-4 z-40">
         <UserMenu />
       </div>
       
       {/* Header with Inverted Cross Title */}
-      <header className="relative py-16 sm:py-20 md:py-24 lg:py-32">
+      <header className="relative py-8 sm:py-12 md:py-16 lg:py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           {/* Main Title with Inverted Crosses */}
           <h1 className="font-cinzel text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl text-golden-amber mb-8 sm:mb-12 tracking-wider px-2 relative">
