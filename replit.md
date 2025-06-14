@@ -129,6 +129,8 @@ Changelog:
 - June 13, 2025. Admin user configuration resolved - admin@templodoabismo.com login active
 - June 14, 2025. Admin navigation refactored - removed tabs, implemented URL-based navigation
 - June 14, 2025. Real-time Supabase data integration for admin analytics implemented
+- June 14, 2025. Sidebar responsiva implementada - compacta no desktop, overlay no mobile
+- June 14, 2025. Persistência Supabase para grimórios implementada - dados não se perdem mais
 ```
 
 ## User Preferences

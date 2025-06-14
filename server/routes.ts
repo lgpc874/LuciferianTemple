@@ -205,7 +205,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         category,
         difficultyLevel,
         unlockOrder: (grimoireStore.getGrimoires().length + 1),
-        isActive: true
+        isActive: true,
+        coverImageUrl: `https://via.placeholder.com/300x400/1a1a1a/d4af37?text=${encodeURIComponent(title)}`
       };
 
       const newGrimoire = await grimoireStore.addGrimoire(grimoireData);
@@ -646,35 +647,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const grimoireData = JSON.parse(aiResult.choices[0].message.content);
 
       // Add generated grimoire to the system
-      const newGrimoireId = Date.now();
-      const newGrimoire = {
-        id: newGrimoireId,
+      const savedGrimoire = await grimoireStore.addGrimoire({
         title: grimoireData.title,
         description: grimoireData.description,
         category: grimoireData.category,
         difficultyLevel: grimoireData.difficultyLevel,
-        coverImageUrl: `https://via.placeholder.com/300x400?text=${encodeURIComponent(grimoireData.title)}`,
-        createdAt: new Date()
-      };
+        unlockOrder: grimoireStore.getGrimoires().length + 1,
+        isActive: true,
+        coverImageUrl: `https://via.placeholder.com/300x400?text=${encodeURIComponent(grimoireData.title)}`
+      });
+
+      if (!savedGrimoire) {
+        throw new Error("Falha ao salvar grimório no banco de dados");
+      }
 
       // Add chapters
-      grimoireData.chapters.forEach((chapter: any, index: number) => {
-        const chapterId = newGrimoireId * 100 + index + 1;
-        grimoireStore.addChapter({
-          id: chapterId,
-          grimoireId: newGrimoireId,
+      for (const [index, chapter] of grimoireData.chapters.entries()) {
+        await grimoireStore.addChapter({
+          grimoireId: savedGrimoire.id,
           title: chapter.title,
           content: chapter.content,
           chapterOrder: chapter.chapterOrder || index + 1,
           estimatedReadingTime: chapter.estimatedReadingTime || 15,
-          unlockCriteria: index === 0 ? "always" : "previous_chapter",
-          createdAt: new Date()
+          unlockCriteria: index === 0 ? "always" : "previous_chapter"
         });
-      });
+      }
 
       res.json({
         success: true,
-        grimoire: newGrimoire,
+        grimoire: savedGrimoire,
         chapterCount: grimoireData.chapters.length,
         message: "Grimório gerado com sucesso pela IA"
       });
