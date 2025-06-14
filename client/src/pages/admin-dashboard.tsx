@@ -10,6 +10,7 @@ import AdminGrimoires from '@/components/admin/admin-grimoires';
 import AdminContent from '@/components/admin/admin-content';
 import AdminThemes from '@/components/admin/admin-themes';
 import AdminAIComplete from '@/components/admin/admin-ai-complete';
+import AIConfig from '@/components/admin/ai-config';
 import GrimoireManagement from '@/components/admin/grimoire-management';
 import AdminAnalytics from '@/components/admin/admin-analytics';
 import AdminSettings from '@/components/admin/admin-settings';
@@ -187,6 +188,7 @@ export default function AdminDashboard() {
     { id: 'grimoires', label: 'Grimórios', icon: BookOpen, shortLabel: 'Books' },
     { id: 'grimoire-management', label: 'Gerenciar Grimórios', icon: Settings, shortLabel: 'Manage' },
     { id: 'ai', label: 'IA Generator', icon: Bot, shortLabel: 'IA' },
+    { id: 'ai-config', label: 'Configurar IA', icon: Settings, shortLabel: 'IA Config' },
     { id: 'content', label: 'Conteúdo', icon: FileText, shortLabel: 'Content' },
     { id: 'themes', label: 'Temas', icon: Palette, shortLabel: 'Themes' },
     { id: 'analytics', label: 'Analytics', icon: BarChart3, shortLabel: 'Stats' },
@@ -207,6 +209,8 @@ export default function AdminDashboard() {
         return <AdminThemes />;
       case 'ai':
         return <AdminAIComplete />;
+      case 'ai-config':
+        return <AIConfig />;
       case 'analytics':
         return <AdminAnalytics />;
       case 'settings':

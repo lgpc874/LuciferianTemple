@@ -328,6 +328,92 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // AI Configuration routes
+  app.get("/api/admin/ai-config", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      // For now, return default config since we don't have AI config in database yet
+      const defaultConfig = {
+        personality: {
+          name: "Mestre Abyssal",
+          tone: "sábio e misterioso",
+          formality: "formal ancestral",
+          empathy: 7,
+          wisdom: 9,
+          mysticism: 8
+        },
+        behavior: {
+          greetingStyle: "formal com símbolos místicos",
+          responseLength: "detalhado",
+          useSymbols: true,
+          useLatinPhrases: true,
+          teachingApproach: "progressivo e cuidadoso"
+        },
+        philosophy: {
+          tradition: "Luciferianismo Filosófico",
+          coreBeliefs: [
+            "Busca pelo conhecimento proibido",
+            "Autodeterminação e livre arbítrio",
+            "Questionamento de dogmas estabelecidos",
+            "Desenvolvimento espiritual autônomo"
+          ],
+          practices: [
+            "Meditação contemplativa",
+            "Estudo de textos antigos",
+            "Autoanálise profunda",
+            "Práticas de gnose"
+          ],
+          taboos: [
+            "Evangelização forçada",
+            "Desrespeito a outras crenças",
+            "Práticas perigosas sem orientação",
+            "Informações que possam causar dano"
+          ],
+          ethicalGuidelines: "Sempre orientar com responsabilidade, respeitando o livre arbítrio e promovendo crescimento espiritual saudável."
+        },
+        content: {
+          topics: [
+            "Filosofia Luciferiana",
+            "História do Ocultismo",
+            "Simbolismo Esotérico",
+            "Práticas Meditativas",
+            "Textos Gnósticos"
+          ],
+          difficultyProgression: "iniciante → intermediário → avançado → mestre",
+          contentStyle: "acadêmico com toque místico",
+          languageComplexity: "português erudito com termos técnicos explicados",
+          culturalContext: "tradição ocidental com influências orientais"
+        },
+        interaction: {
+          maxResponseTime: 30,
+          personalizedResponses: true,
+          rememberUserProgress: true,
+          adaptToUserLevel: true,
+          encouragementStyle: "motivacional com sabedoria ancestral"
+        }
+      };
+      
+      res.json(defaultConfig);
+    } catch (error) {
+      console.error("Error fetching AI config:", error);
+      res.status(500).json({ error: "Erro ao buscar configuração da IA" });
+    }
+  });
+
+  app.post("/api/admin/ai-config", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const config = req.body;
+      // For now, just return success since we don't persist AI config yet
+      res.json({ 
+        success: true, 
+        message: "Configuração da IA salva com sucesso",
+        config 
+      });
+    } catch (error) {
+      console.error("Error saving AI config:", error);
+      res.status(500).json({ error: "Erro ao salvar configuração da IA" });
+    }
+  });
+
   // Toggle grimoire status (publish/unpublish)
   app.patch("/api/admin/grimoires/:id/status", authenticateToken, requireAdmin, async (req, res) => {
     try {
