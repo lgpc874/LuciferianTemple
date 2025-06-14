@@ -220,7 +220,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Admin routes for grimoire management
   app.post("/api/admin/grimoires", authenticateToken, requireAdmin, async (req, res) => {
     try {
-      const { title, description, category, difficultyLevel, price, isPaid } = req.body;
+      const { title, description, category, difficultyLevel, price, isPaid, coverImageUrl } = req.body;
       
       const grimoireData = {
         title,
@@ -231,7 +231,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         isActive: true,
         price: isPaid ? price : null,
         isPaid: isPaid || false,
-        coverImageUrl: `https://via.placeholder.com/300x400/1a1a1a/d4af37?text=${encodeURIComponent(title)}`
+        coverImageUrl: coverImageUrl || `https://via.placeholder.com/300x400/1a1a1a/d4af37?text=${encodeURIComponent(title)}`
       };
 
       const newGrimoire = await grimoireStore.addGrimoire(grimoireData);
@@ -248,6 +248,73 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error creating grimoire:", error);
       res.status(500).json({ error: "Erro ao criar grimório" });
+    }
+  });
+
+  // Update grimoire
+  app.patch("/api/admin/grimoires/:id", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const updates = req.body;
+      
+      const updatedGrimoire = await grimoireStore.updateGrimoire(id, updates);
+      
+      if (!updatedGrimoire) {
+        return res.status(404).json({ error: "Grimório não encontrado" });
+      }
+
+      res.json({
+        success: true,
+        grimoire: updatedGrimoire,
+        message: "Grimório atualizado com sucesso"
+      });
+    } catch (error) {
+      console.error("Error updating grimoire:", error);
+      res.status(500).json({ error: "Erro ao atualizar grimório" });
+    }
+  });
+
+  // Delete grimoire
+  app.delete("/api/admin/grimoires/:id", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      
+      const deleted = await grimoireStore.deleteGrimoire(id);
+      
+      if (!deleted) {
+        return res.status(404).json({ error: "Grimório não encontrado" });
+      }
+
+      res.json({
+        success: true,
+        message: "Grimório excluído com sucesso"
+      });
+    } catch (error) {
+      console.error("Error deleting grimoire:", error);
+      res.status(500).json({ error: "Erro ao excluir grimório" });
+    }
+  });
+
+  // Toggle grimoire status (publish/unpublish)
+  app.patch("/api/admin/grimoires/:id/status", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { isActive } = req.body;
+      
+      const updatedGrimoire = await grimoireStore.updateGrimoire(id, { isActive });
+      
+      if (!updatedGrimoire) {
+        return res.status(404).json({ error: "Grimório não encontrado" });
+      }
+
+      res.json({
+        success: true,
+        grimoire: updatedGrimoire,
+        message: isActive ? "Grimório publicado" : "Grimório despublicado"
+      });
+    } catch (error) {
+      console.error("Error toggling grimoire status:", error);
+      res.status(500).json({ error: "Erro ao alterar status do grimório" });
     }
   });
 

@@ -1327,6 +1327,94 @@ class GrimoireDataStore {
       return memoryGrimoire;
     }
   }
+
+  async updateGrimoire(id: number, updates: Partial<Omit<Grimoire, 'id' | 'createdAt'>>): Promise<Grimoire | null> {
+    try {
+      const existingGrimoire = this.grimoires.get(id);
+      if (!existingGrimoire) {
+        return null;
+      }
+
+      const updatedGrimoire = { ...existingGrimoire, ...updates };
+
+      // Tentar atualizar no Supabase
+      if (this.supabaseClient) {
+        const supabaseClient = this.getSupabaseClient();
+        if (supabaseClient) {
+          const { data, error } = await supabaseClient
+            .from('grimoires')
+            .update({
+              title: updatedGrimoire.title,
+              description: updatedGrimoire.description,
+              category: updatedGrimoire.category,
+              difficultyLevel: updatedGrimoire.difficultyLevel,
+              coverImageUrl: updatedGrimoire.coverImageUrl,
+              unlockOrder: updatedGrimoire.unlockOrder,
+              isActive: updatedGrimoire.isActive,
+              price: updatedGrimoire.price,
+              isPaid: updatedGrimoire.isPaid
+            })
+            .eq('id', id)
+            .select()
+            .single();
+
+          if (!error && data) {
+            this.grimoires.set(id, updatedGrimoire);
+            return updatedGrimoire;
+          }
+        }
+      }
+
+      // Fallback para memória
+      this.grimoires.set(id, updatedGrimoire);
+      return updatedGrimoire;
+    } catch (error) {
+      console.error("Error updating grimoire:", error);
+      return null;
+    }
+  }
+
+  async deleteGrimoire(id: number): Promise<boolean> {
+    try {
+      // Tentar deletar do Supabase
+      if (this.useSupabase) {
+        const supabaseClient = this.getSupabaseClient();
+        if (supabaseClient) {
+          // Deletar capítulos primeiro
+          await supabaseClient
+            .from('chapters')
+            .delete()
+            .eq('grimoireId', id);
+
+          // Deletar grimório
+          const { error } = await supabaseClient
+            .from('grimoires')
+            .delete()
+            .eq('id', id);
+
+          if (!error) {
+            this.grimoires.delete(id);
+            // Também remover capítulos da memória
+            Array.from(this.chapters.values())
+              .filter(chapter => chapter.grimoireId === id)
+              .forEach(chapter => this.chapters.delete(chapter.id));
+            return true;
+          }
+        }
+      }
+
+      // Fallback para memória
+      this.grimoires.delete(id);
+      // Também remover capítulos da memória
+      Array.from(this.chapters.values())
+        .filter(chapter => chapter.grimoireId === id)
+        .forEach(chapter => this.chapters.delete(chapter.id));
+      return true;
+    } catch (error) {
+      console.error("Error deleting grimoire:", error);
+      return false;
+    }
+  }
 }
 
 // Singleton para manter os dados durante a sessão
