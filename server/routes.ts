@@ -398,14 +398,120 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Admin routes
+  // Admin routes - Users management
   app.get("/api/admin/users", authenticateToken, requireAdmin, async (req: any, res) => {
     try {
-      // Return all users for admin (this would need implementation in storage)
-      res.json({ message: "Admin access granted", admin: req.user.email });
+      const supabaseUrl = process.env.SUPABASE_URL;
+      const supabaseKey = process.env.SUPABASE_ANON_KEY;
+      
+      if (!supabaseUrl || !supabaseKey) {
+        return res.status(500).json({ error: "Configuração do Supabase não encontrada" });
+      }
+
+      const supabase = createClient(supabaseUrl, supabaseKey);
+
+      // Buscar todos os usuários com paginação
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 20;
+      const offset = (page - 1) * limit;
+      const search = req.query.search as string || '';
+
+      let query = supabase
+        .from('users')
+        .select('id, username, email, created_at', { count: 'exact' })
+        .range(offset, offset + limit - 1)
+        .order('created_at', { ascending: false });
+
+      // Aplicar filtro de busca se fornecido
+      if (search) {
+        query = query.or(`username.ilike.%${search}%,email.ilike.%${search}%`);
+      }
+
+      const { data: users, error, count } = await query;
+
+      if (error) {
+        console.error("Supabase error:", error);
+        return res.status(500).json({ error: "Erro ao buscar usuários no banco de dados" });
+      }
+
+      // Mapear usuários para incluir informações administrativas
+      const usersWithAdminInfo = users?.map(user => ({
+        ...user,
+        role: user.email === "admin@templodoabismo.com" || user.email === "templo.admin@templodoabismo.com" ? "admin" : "user",
+        isAdmin: user.email === "admin@templodoabismo.com" || user.email === "templo.admin@templodoabismo.com",
+        createdAt: user.created_at
+      })) || [];
+
+      res.json({
+        users: usersWithAdminInfo,
+        pagination: {
+          page,
+          limit,
+          total: count || 0,
+          pages: Math.ceil((count || 0) / limit)
+        }
+      });
     } catch (error) {
       console.error("Error fetching users:", error);
       res.status(500).json({ error: "Erro ao buscar usuários" });
+    }
+  });
+
+  // Delete user endpoint
+  app.delete("/api/admin/users/:id", authenticateToken, requireAdmin, async (req: any, res) => {
+    try {
+      const userId = parseInt(req.params.id);
+      
+      if (userId === req.user.id) {
+        return res.status(400).json({ error: "Não é possível deletar sua própria conta" });
+      }
+
+      const supabaseUrl = process.env.SUPABASE_URL;
+      const supabaseKey = process.env.SUPABASE_ANON_KEY;
+      
+      if (!supabaseUrl || !supabaseKey) {
+        return res.status(500).json({ error: "Configuração do Supabase não encontrada" });
+      }
+
+      const supabase = createClient(supabaseUrl, supabaseKey);
+
+      const { error } = await supabase
+        .from('users')
+        .delete()
+        .eq('id', userId);
+
+      if (error) {
+        console.error("Supabase delete error:", error);
+        return res.status(500).json({ error: "Erro ao deletar usuário" });
+      }
+
+      res.json({ success: true, message: "Usuário deletado com sucesso" });
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      res.status(500).json({ error: "Erro ao deletar usuário" });
+    }
+  });
+
+  // Update user role endpoint
+  app.patch("/api/admin/users/:id/role", authenticateToken, requireAdmin, async (req: any, res) => {
+    try {
+      const userId = parseInt(req.params.id);
+      const { role } = req.body;
+      
+      if (!role || !['admin', 'user'].includes(role)) {
+        return res.status(400).json({ error: "Role inválida" });
+      }
+
+      // Para este sistema, a role admin é determinada pelo email
+      // Então este endpoint retorna sucesso mas não altera nada
+      res.json({ 
+        success: true, 
+        message: "Roles são determinadas pelo email no sistema atual",
+        note: "admin@templodoabismo.com é sempre admin"
+      });
+    } catch (error) {
+      console.error("Error updating user role:", error);
+      res.status(500).json({ error: "Erro ao atualizar role do usuário" });
     }
   });
 
