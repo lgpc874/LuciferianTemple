@@ -38,11 +38,11 @@ export default function Biblioteca() {
       <div className="min-h-screen mystical-bg pt-24 fade-in">
         <div className="relative py-16 bg-gradient-to-b from-red-950/20 to-transparent">
           <div className="relative text-center">
-            <h1 className="font-cinzel text-4xl sm:text-5xl md:text-6xl text-golden-amber mb-6 tracking-wider biblioteca-title">
+            <h1 className="font-cinzel text-4xl sm:text-5xl md:text-6xl text-golden-amber mb-6 tracking-wider">
               ⸸ ACESSO RESTRITO ⸸
             </h1>
             <div className="w-32 h-1 bg-golden-amber mx-auto mb-6"></div>
-            <p className="font-garamond text-xl text-ritualistic-beige max-w-3xl mx-auto leading-relaxed px-4 italic mb-8 biblioteca-subtitle">
+            <p className="font-garamond text-xl text-ritualistic-beige max-w-3xl mx-auto leading-relaxed px-4 italic mb-8">
               Os segredos da Bibliotheca Arcana são reservados apenas aos que já têm seu nome registrado no abismo.
               Identifique-se para adentrar os corredores do conhecimento proibido.
             </p>
@@ -68,7 +68,10 @@ export default function Biblioteca() {
           <div className="text-center mt-8">
             <a href="/bibliotheca-arcana">
               <button className="veil-button bg-gradient-to-r from-ritualistic-beige/10 to-ritualistic-beige/5 hover:from-ritualistic-beige/20 hover:to-ritualistic-beige/10 text-ritualistic-beige font-cinzel py-3 px-6 rounded-lg transition-all duration-300 border border-ritualistic-beige/50 hover:border-golden-amber/50 hover:text-golden-amber tracking-wide">
-                ← Voltar ao Portal Principal
+                <span className="flex items-center justify-center space-x-2">
+                  <span>←</span>
+                  <span>RETORNAR À ANTECÂMARA</span>
+                </span>
               </button>
             </a>
           </div>
@@ -77,39 +80,35 @@ export default function Biblioteca() {
     );
   }
 
-  if (loadingGrimoires) {
-    return (
-      <PageTransition className="min-h-screen mystical-bg pt-24 fade-in">
-        <div className="text-center py-16">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-golden-amber mx-auto mb-4"></div>
-          <p className="text-ritualistic-beige">Carregando biblioteca...</p>
-        </div>
-      </PageTransition>
-    );
-  }
-
   return (
-    <PageTransition className="min-h-screen mystical-bg pt-24 fade-in">
-      {/* Header da biblioteca */}
+    <div className="min-h-screen mystical-bg pt-24 fade-in">
+      {/* Header místico */}
       <div className="relative py-16 bg-gradient-to-b from-red-950/20 to-transparent">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-golden-amber/5 via-transparent to-transparent"></div>
         <div className="relative text-center">
-          <h1 className="font-cinzel text-4xl sm:text-5xl md:text-6xl text-golden-amber mb-6 tracking-wider biblioteca-title">
+          <h1 className="font-cinzel text-4xl sm:text-5xl md:text-6xl text-golden-amber mb-6 tracking-wider">
             ⸸ BIBLIOTHECA ARCANA ⸸
           </h1>
           <div className="w-32 h-1 bg-golden-amber mx-auto mb-6"></div>
           
           {user && (
-            <div className="mb-8">
-              <p className="font-garamond text-lg text-ritualistic-beige px-4">
+            <div className="mb-6">
+              <p className="font-garamond text-lg text-golden-amber/80">
                 Bem-vindo de volta, <span className="text-golden-amber font-semibold">{user.username}</span>
-                {user.username === 'admin' && (
-                  <span className="text-burned-amber ml-2">[Administrador]</span>
+              </p>
+              <p className="font-garamond text-sm text-ritualistic-beige/70 italic">
+                {user.email === "templo.admin@templodoabismo.com" ? (
+                  <span className="text-red-400 font-semibold">
+                    ⸸ SUPREMO GUARDIÃO DO TEMPLO ⸸
+                  </span>
+                ) : (
+                  "Iniciado dos Mistérios Arcanos"
                 )}
               </p>
             </div>
           )}
           
-          <p className="font-garamond text-xl text-ritualistic-beige max-w-4xl mx-auto leading-relaxed px-4 italic biblioteca-subtitle">
+          <p className="font-garamond text-xl text-ritualistic-beige max-w-4xl mx-auto leading-relaxed px-4 italic">
             Nos corredores sombrios desta biblioteca digital repousam os grimórios ancestrais,
             cada um guardando fragmentos da sabedoria proibida. Escolha seu caminho com prudência,
             pois cada página virada é um passo mais profundo nas trevas da gnose.
@@ -132,10 +131,8 @@ export default function Biblioteca() {
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-6">
-            {Array.isArray(grimoires) && grimoires.map((grimoire: any) => {
-              // Get cover based on category or use default
-              const categoryKey = grimoire.category?.toLowerCase().replace(/\s+/g, '-') || 'introducao-ocultismo';
-              const coverSvg = grimoireCoverSvgs[categoryKey as keyof typeof grimoireCoverSvgs] || grimoireCoverSvgs['introducao-ocultismo'];
+            {grimoires.map((grimoire) => {
+              const coverSvg = grimoireCoverSvgs[grimoire.category as keyof typeof grimoireCoverSvgs];
               
               // Check if user has progress in this grimoire
               const grimoireProgress = Array.isArray(allProgress) ? 
@@ -146,7 +143,7 @@ export default function Biblioteca() {
                 grimoireProgress.sort((a: any, b: any) => new Date(b.completedAt || b.createdAt).getTime() - new Date(a.completedAt || a.createdAt).getTime())[0] : null;
               
               // Determine reading status and card style
-              let statusText = grimoire.isPaid && grimoire.price ? `R$ ${grimoire.price}` : "LER";
+              let statusText = grimoire.isPaid && grimoire.price ? grimoire.price : "LER";
               let statusColor = "text-golden-amber";
               let cardBorderColor = "border-burned-amber/50 hover:border-golden-amber/70";
               let statusBg = "bg-golden-amber/10";
@@ -184,7 +181,7 @@ export default function Biblioteca() {
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                     setLocation(`/grimoire/${grimoire.id}`);
                   }}
-                  className={`group relative content-section ${cardBorderColor} rounded-lg overflow-hidden transition-all duration-500 hover:shadow-lg hover:shadow-current/10 cursor-pointer grimoire-card`}
+                  className={`group relative content-section ${cardBorderColor} rounded-lg overflow-hidden transition-all duration-500 hover:shadow-lg hover:shadow-current/10 cursor-pointer`}
                 >
                   {/* Capa do grimório */}
                   <div className="aspect-[4/5] p-3 sm:p-4 bg-gradient-to-br from-dark-brown to-very-dark-brown">
@@ -237,16 +234,55 @@ export default function Biblioteca() {
               >
                 <div className="aspect-[4/5] p-3 sm:p-4 bg-gradient-to-br from-gray-800 to-gray-900">
                   <div className="w-full h-full rounded-md bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center">
-                    <span className="font-cinzel text-xs text-gray-500">
-                      Em Breve
-                    </span>
+                    <span className="text-gray-500 text-2xl sm:text-3xl">?</span>
+                  </div>
+                </div>
+                <div className="p-3 sm:p-4">
+                  <div className="w-full bg-gray-700/50 text-gray-500 font-cinzel py-2 sm:py-3 px-3 sm:px-4 rounded-md text-sm text-center">
+                    SELADO
                   </div>
                 </div>
               </div>
             ))}
           </div>
         </div>
+
+        {/* Rodapé da biblioteca */}
+        <div className="text-center mt-16 pt-8 border-t border-burned-amber/30">
+          <div className="mb-8">
+            <p className="font-garamond text-burned-amber text-sm italic max-w-2xl mx-auto">
+              "O conhecimento é poder, mas o poder sem sabedoria é destruição. 
+              Que cada página lida seja um passo em direção à verdadeira iluminação."
+            </p>
+          </div>
+          
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <a href="/bibliotheca-arcana">
+              <button className="veil-button bg-gradient-to-r from-ritualistic-beige/10 to-ritualistic-beige/5 hover:from-ritualistic-beige/20 hover:to-ritualistic-beige/10 text-ritualistic-beige font-cinzel py-4 px-8 rounded-lg transition-all duration-300 border border-ritualistic-beige/50 hover:border-golden-amber/50 hover:text-golden-amber hover:shadow-lg tracking-wide">
+                <span className="flex items-center justify-center space-x-2">
+                  <span>←</span>
+                  <span>RETORNAR À ANTECÂMARA</span>
+                </span>
+              </button>
+            </a>
+            
+            <button 
+              onClick={logout}
+              className="veil-button bg-gradient-to-r from-red-900/10 to-red-900/5 hover:from-red-900/20 hover:to-red-900/10 text-red-400 font-cinzel py-3 px-6 rounded-lg transition-all duration-300 border border-red-400/50 hover:border-red-400 hover:shadow-lg tracking-wide text-sm"
+            >
+              ENCERRAR SESSÃO
+            </button>
+          </div>
+          
+          {user && (
+            <div className="mt-6 pt-4 border-t border-burned-amber/20">
+              <p className="font-garamond text-burned-amber/60 text-xs">
+                Sessão ativa: {user.username} • {user.email}
+              </p>
+            </div>
+          )}
+        </div>
       </div>
-    </PageTransition>
+    </div>
   );
 }
