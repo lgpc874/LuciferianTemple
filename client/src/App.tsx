@@ -37,7 +37,7 @@ function Router() {
           <Route path="/" component={Home} />
           <Route path="/auth" component={AuthPage} />
           <Route path="/bibliotheca-arcana" component={BibliothecaArcana} />
-          <Route path="/biblioteca" component={Biblioteca} />
+          <Route path="/biblioteca" component={BibliotecaSections} />
           <Route path="/grimoire/:id" component={GrimoireReader} />
           <Route path="/admin" component={AdminDashboard} />
           <Route component={NotFound} />

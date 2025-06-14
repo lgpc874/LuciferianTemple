@@ -4,6 +4,7 @@ import { storage } from "./storage";
 import { registerSchema, loginSchema, type RegisterData, type LoginData, insertProgressSchema, type InsertProgress } from "@shared/schema";
 import { grimoireStore } from "./grimoire-data";
 import { ContentFormatter } from "./content-formatter";
+import { type LibrarySection, type InsertLibrarySection } from "@shared/schema";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { createClient } from "@supabase/supabase-js";
@@ -353,6 +354,158 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching admin grimoire:", error);
       res.status(500).json({ error: "Erro ao buscar grimório" });
+    }
+  });
+
+  // Library Sections Management
+  app.get("/api/library-sections", async (req, res) => {
+    try {
+      const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!);
+      const { data: sections, error } = await supabase
+        .from('library_sections')
+        .select('*')
+        .eq('isActive', true)
+        .order('displayOrder');
+
+      if (error) {
+        // Return default sections if database query fails
+        const defaultSections = [
+          {
+            id: 1,
+            name: "Porta das Sombras",
+            description: "Para os que chegaram ao limiar. Os olhos ainda fechados… mas já sentem o fogo.",
+            slug: "porta-das-sombras",
+            displayOrder: 1,
+            isActive: true
+          },
+          {
+            id: 2,
+            name: "Vestíbulo da Chama",
+            description: "Para aqueles que ousaram cruzar o limiar e desejam tocar o fogo com as mãos.",
+            slug: "vestibulo-da-chama",
+            displayOrder: 2,
+            isActive: true
+          },
+          {
+            id: 3,
+            name: "Torre dos Selos",
+            description: "Onde o Conhecimento se transforma em Poder. O verbo vira carne. A carne, verbo.",
+            slug: "torre-dos-selos",
+            displayOrder: 3,
+            isActive: true
+          },
+          {
+            id: 4,
+            name: "Sanctum Profundum",
+            description: "Somente para os que foram vistos e aprovados. Aqui, o próprio Abismo escreve.",
+            slug: "sanctum-profundum",
+            displayOrder: 4,
+            isActive: true
+          }
+        ];
+        return res.json(defaultSections);
+      }
+
+      res.json(sections || []);
+    } catch (error) {
+      console.error("Error fetching library sections:", error);
+      res.status(500).json({ error: "Erro ao buscar seções da biblioteca" });
+    }
+  });
+
+  app.get("/api/admin/library-sections", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!);
+      const { data: sections, error } = await supabase
+        .from('library_sections')
+        .select('*')
+        .order('displayOrder');
+
+      if (error) {
+        console.error("Supabase error:", error);
+        return res.status(500).json({ error: "Erro ao buscar seções" });
+      }
+
+      res.json(sections || []);
+    } catch (error) {
+      console.error("Error fetching admin library sections:", error);
+      res.status(500).json({ error: "Erro ao buscar seções da biblioteca" });
+    }
+  });
+
+  app.post("/api/admin/library-sections", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const { name, description, slug, displayOrder } = req.body;
+      const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!);
+      
+      const { data: newSection, error } = await supabase
+        .from('library_sections')
+        .insert({
+          name,
+          description,
+          slug,
+          displayOrder: displayOrder || 0,
+          isActive: true
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error("Supabase error:", error);
+        return res.status(500).json({ error: "Erro ao criar seção" });
+      }
+
+      res.json({ success: true, section: newSection });
+    } catch (error) {
+      console.error("Error creating library section:", error);
+      res.status(500).json({ error: "Erro ao criar seção da biblioteca" });
+    }
+  });
+
+  app.patch("/api/admin/library-sections/:id", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const updates = req.body;
+      const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!);
+      
+      const { data: updatedSection, error } = await supabase
+        .from('library_sections')
+        .update(updates)
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) {
+        console.error("Supabase error:", error);
+        return res.status(500).json({ error: "Erro ao atualizar seção" });
+      }
+
+      res.json({ success: true, section: updatedSection });
+    } catch (error) {
+      console.error("Error updating library section:", error);
+      res.status(500).json({ error: "Erro ao atualizar seção da biblioteca" });
+    }
+  });
+
+  app.delete("/api/admin/library-sections/:id", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!);
+      
+      const { error } = await supabase
+        .from('library_sections')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        console.error("Supabase error:", error);
+        return res.status(500).json({ error: "Erro ao excluir seção" });
+      }
+
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error deleting library section:", error);
+      res.status(500).json({ error: "Erro ao excluir seção da biblioteca" });
     }
   });
 
