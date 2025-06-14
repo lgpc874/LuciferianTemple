@@ -221,11 +221,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Admin routes for grimoire management
   app.post("/api/admin/grimoires", authenticateToken, requireAdmin, async (req, res) => {
     try {
-      const { title, description, category, difficultyLevel, price, isPaid, coverImageUrl } = req.body;
+      const { title, description, category, difficultyLevel, price, isPaid, coverImageUrl, rawContent } = req.body;
+      
+      // Gera descrição automática se não fornecida
+      const finalDescription = description || ContentFormatter.generateDescription(title, category);
       
       const grimoireData = {
         title,
-        description,
+        description: finalDescription,
         category,
         difficultyLevel,
         unlockOrder: (grimoireStore.getGrimoires().length + 1),
@@ -241,10 +244,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(500).json({ error: "Falha ao salvar grimório" });
       }
 
+      // Se há conteúdo bruto, cria capítulos automaticamente formatados
+      if (rawContent && newGrimoire.id) {
+        const chapterContents = rawContent.split(/\n\s*---\s*\n|\n\s*===\s*\n/); // Divide por separadores
+        
+        for (let i = 0; i < chapterContents.length; i++) {
+          const content = chapterContents[i].trim();
+          if (content.length > 50) { // Apenas capítulos com conteúdo substancial
+            const formattedContent = ContentFormatter.formatContent(content);
+            const chapterTitle = ContentFormatter.generateChapterTitle(content, i + 1, category);
+            const readingTime = ContentFormatter.estimateReadingTime(formattedContent);
+            
+            await grimoireStore.addChapter({
+              grimoireId: newGrimoire.id,
+              title: chapterTitle,
+              content: formattedContent,
+              chapterOrder: i + 1,
+              estimatedReadingTime: readingTime,
+              unlockCriteria: i === 0 ? "none" : `complete_chapter_${i}`
+            });
+          }
+        }
+      }
+
       res.json({
         success: true,
         grimoire: newGrimoire,
-        message: "Grimório criado com sucesso"
+        message: "Grimório criado com sucesso com formatação automática aplicada"
       });
     } catch (error) {
       console.error("Error creating grimoire:", error);

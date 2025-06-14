@@ -75,8 +75,10 @@ export class ContentFormatter {
     let formattedContent = content;
     
     latinTerms.forEach(term => {
-      const regex = new RegExp(`\\b(${term})\\b`, 'gi');
-      formattedContent = formattedContent.replace(regex, '<em class="text-golden-amber font-medium tracking-wide">$1</em>');
+      const regex = new RegExp(`\\b(${term})\\b`, 'g');
+      formattedContent = formattedContent.replace(regex, (match) => 
+        `<em class="text-golden-amber font-medium tracking-wide">${match}</em>`
+      );
     });
 
     return formattedContent;
@@ -89,7 +91,7 @@ export class ContentFormatter {
       .replace(/^[\-\*]\s*(.+)$/gmi, '<li class="mb-2 text-muted-foreground">• $1</li>')
       
       // Envolve listas consecutivas em <ul>
-      .replace(/(<li[^>]*>.*?<\/li>\s*)+/gsi, '<ul class="list-none space-y-1 my-4 ml-4">$&</ul>');
+      .replace(/(<li[^>]*>.*?<\/li>\s*)+/g, '<ul class="list-none space-y-1 my-4 ml-4">$&</ul>');
   }
 
   // Identifica texto em negrito, itálico e sublinhado

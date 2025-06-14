@@ -132,6 +132,8 @@ Changelog:
 - June 14, 2025. Sidebar responsiva implementada - compacta no desktop, overlay no mobile
 - June 14, 2025. Persistência Supabase para grimórios implementada - dados não se perdem mais
 - June 14, 2025. Sistema completo de gerenciamento de grimórios implementado - CRUD completo com preços, categorias, níveis, publicação/despublicação
+- June 14, 2025. Sistema de formatação automática implementado - identifica títulos, citações, termos latinos, listas e aplica formatação HTML automaticamente
+- June 14, 2025. Aba "Configurar IA" adicionada - personalidade, comportamento, filosofia e diretrizes de conteúdo configuráveis
 ```
 
 ## User Preferences
