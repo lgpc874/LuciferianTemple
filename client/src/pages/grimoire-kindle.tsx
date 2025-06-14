@@ -312,8 +312,7 @@ export default function GrimoireKindle() {
   }
 
   return (
-    <ContentProtection enableScreenshotProtection={true}>
-      <div className="fixed inset-0 bg-background min-h-screen" 
+    <div className="fixed inset-0 bg-background min-h-screen" 
            style={{
              background: 'url("https://i.postimg.cc/qqX1Q7zn/Textura-envelhecida-e-marcada-pelo-tempo.png") center/cover fixed',
              backgroundAttachment: 'fixed'
@@ -428,7 +427,6 @@ export default function GrimoireKindle() {
           </div>
         </div>
       </div>
-      </div>
-    </ContentProtection>
+    </div>
   );
 }
