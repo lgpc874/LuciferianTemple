@@ -194,6 +194,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin routes for grimoire management
+  app.post("/api/admin/grimoires", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const { title, description, category, difficultyLevel } = req.body;
+      
+      const grimoireData = {
+        title,
+        description,
+        category,
+        difficultyLevel,
+        unlockOrder: (grimoireStore.getGrimoires().length + 1),
+        isActive: true
+      };
+
+      const newGrimoire = await grimoireStore.addGrimoire(grimoireData);
+      
+      if (!newGrimoire) {
+        return res.status(500).json({ error: "Falha ao salvar grimório" });
+      }
+
+      res.json({
+        success: true,
+        grimoire: newGrimoire,
+        message: "Grimório criado com sucesso"
+      });
+    } catch (error) {
+      console.error("Error creating grimoire:", error);
+      res.status(500).json({ error: "Erro ao criar grimório" });
+    }
+  });
+
+  app.patch("/api/admin/grimoires/:id", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { title, description, category, difficultyLevel } = req.body;
+      
+      // TODO: Implement update grimoire functionality
+      res.status(501).json({ error: "Atualização de grimórios ainda não implementada" });
+    } catch (error) {
+      console.error("Error updating grimoire:", error);
+      res.status(500).json({ error: "Erro ao atualizar grimório" });
+    }
+  });
+
   // Rotas de progresso (requerem autenticação)
   app.get("/api/progress", authenticateToken, async (req: any, res) => {
     try {

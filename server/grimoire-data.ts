@@ -1,17 +1,129 @@
 import { type Grimoire, type Chapter, type UserProgress, type InsertProgress } from "@shared/schema";
+import { createClient } from "@supabase/supabase-js";
 
-// Sistema simples de dados em memória para grimórios e progresso
+// Sistema híbrido: dados em memória com sincronização Supabase
 class GrimoireDataStore {
   private grimoires: Map<number, Grimoire> = new Map();
   private chapters: Map<number, Chapter> = new Map();
   private userProgress: Map<string, UserProgress> = new Map();
   private progressIdCounter = 1;
+  private isInitialized = false;
 
   constructor() {
-    this.initializeData();
+    this.initializeData().catch(console.error);
   }
 
-  private initializeData() {
+  private getSupabaseClient() {
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_ANON_KEY;
+    
+    if (!supabaseUrl || !supabaseKey) {
+      return null;
+    }
+    
+    return createClient(supabaseUrl, supabaseKey);
+  }
+
+  private async loadFromSupabase() {
+    const supabase = this.getSupabaseClient();
+    if (!supabase) return false;
+
+    try {
+      // Carregar grimórios
+      const { data: grimoires, error: grimoireError } = await supabase
+        .from('grimoires')
+        .select('*')
+        .order('unlock_order');
+
+      if (!grimoireError && grimoires) {
+        this.grimoires.clear();
+        grimoires.forEach(grimoire => {
+          this.grimoires.set(grimoire.id, grimoire);
+        });
+      }
+
+      // Carregar capítulos
+      const { data: chapters, error: chapterError } = await supabase
+        .from('chapters')
+        .select('*')
+        .order('grimoire_id, chapter_order');
+
+      if (!chapterError && chapters) {
+        this.chapters.clear();
+        chapters.forEach(chapter => {
+          this.chapters.set(chapter.id, chapter);
+        });
+      }
+
+      console.log(`Loaded ${grimoires?.length || 0} grimoires and ${chapters?.length || 0} chapters from Supabase`);
+      return true;
+    } catch (error) {
+      console.error('Error loading from Supabase:', error);
+      return false;
+    }
+  }
+
+  private async saveGrimoireToSupabase(grimoire: Omit<Grimoire, 'id' | 'createdAt'>) {
+    const supabase = this.getSupabaseClient();
+    if (!supabase) return null;
+
+    try {
+      const { data, error } = await supabase
+        .from('grimoires')
+        .insert([grimoire])
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error saving grimoire to Supabase:', error);
+        return null;
+      }
+
+      return data;
+    } catch (error) {
+      console.error('Error saving grimoire to Supabase:', error);
+      return null;
+    }
+  }
+
+  private async saveChapterToSupabase(chapter: Omit<Chapter, 'id' | 'createdAt'>) {
+    const supabase = this.getSupabaseClient();
+    if (!supabase) return null;
+
+    try {
+      const { data, error } = await supabase
+        .from('chapters')
+        .insert([chapter])
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error saving chapter to Supabase:', error);
+        return null;
+      }
+
+      return data;
+    } catch (error) {
+      console.error('Error saving chapter to Supabase:', error);
+      return null;
+    }
+  }
+
+  private async initializeData() {
+    if (this.isInitialized) return;
+
+    // Tentar carregar dados do Supabase primeiro
+    const loadedFromSupabase = await this.loadFromSupabase();
+    
+    // Se não conseguiu carregar do Supabase ou não há dados, criar dados padrão
+    if (!loadedFromSupabase || this.grimoires.size === 0) {
+      this.createDefaultData();
+    }
+
+    this.isInitialized = true;
+  }
+
+  private createDefaultData() {
     const grimoireCategories = [
       {
         id: 1,
@@ -1157,14 +1269,47 @@ class GrimoireDataStore {
     
     return unlockedIds;
   }
-  addChapter(chapter: Chapter): Chapter {
-    this.chapters.set(chapter.id, chapter);
-    return chapter;
+  async addChapter(chapter: Omit<Chapter, 'id' | 'createdAt'>): Promise<Chapter | null> {
+    // Tentar salvar no Supabase primeiro
+    const savedChapter = await this.saveChapterToSupabase(chapter);
+    
+    if (savedChapter) {
+      // Se salvou no Supabase, adicionar à memória
+      this.chapters.set(savedChapter.id, savedChapter);
+      return savedChapter;
+    } else {
+      // Fallback para memória apenas (com ID incremental)
+      const newId = Math.max(...Array.from(this.chapters.keys()), 0) + 1;
+      const memoryChapter: Chapter = {
+        ...chapter,
+        id: newId,
+        createdAt: new Date()
+      };
+      this.chapters.set(newId, memoryChapter);
+      return memoryChapter;
+    }
   }
 
-  addGrimoire(grimoire: Grimoire): Grimoire {
-    this.grimoires.set(grimoire.id, grimoire);
-    return grimoire;
+  async addGrimoire(grimoire: Omit<Grimoire, 'id' | 'createdAt'>): Promise<Grimoire | null> {
+    // Tentar salvar no Supabase primeiro
+    const savedGrimoire = await this.saveGrimoireToSupabase(grimoire);
+    
+    if (savedGrimoire) {
+      // Se salvou no Supabase, adicionar à memória
+      this.grimoires.set(savedGrimoire.id, savedGrimoire);
+      return savedGrimoire;
+    } else {
+      // Fallback para memória apenas (com ID incremental)
+      const newId = Math.max(...Array.from(this.grimoires.keys()), 0) + 1;
+      const memoryGrimoire: Grimoire = {
+        ...grimoire,
+        id: newId,
+        createdAt: new Date(),
+        isActive: true
+      };
+      this.grimoires.set(newId, memoryGrimoire);
+      return memoryGrimoire;
+    }
   }
 }
 
