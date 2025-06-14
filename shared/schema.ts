@@ -18,6 +18,7 @@ export const grimoires = pgTable("grimoires", {
   description: text("description").notNull(),
   coverImageUrl: text("cover_image_url").notNull(),
   category: text("category").notNull(),
+  sectionId: integer("section_id").references(() => librarySections.id),
   difficultyLevel: integer("difficulty_level").notNull(),
   unlockOrder: integer("unlock_order").notNull(),
   isActive: boolean("is_active").default(true).notNull(),
@@ -46,6 +47,16 @@ export const userProgress = pgTable("user_progress", {
   currentPage: integer("current_page").default(1),
   readingTime: integer("reading_time").default(0),
   completedAt: timestamp("completed_at").defaultNow(),
+});
+
+export const librarySections = pgTable("library_sections", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description").notNull(),
+  slug: text("slug").notNull().unique(),
+  displayOrder: integer("display_order").notNull().default(0),
+  isActive: boolean("is_active").notNull().default(true),
+  createdAt: timestamp("created_at").defaultNow(),
 });
 
 export const insertUserSchema = createInsertSchema(users).pick({
@@ -98,6 +109,14 @@ export const insertProgressSchema = createInsertSchema(userProgress).pick({
   readingTime: true,
 });
 
+export const insertLibrarySectionSchema = createInsertSchema(librarySections).pick({
+  name: true,
+  description: true,
+  slug: true,
+  displayOrder: true,
+  isActive: true,
+});
+
 // Types
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -110,3 +129,5 @@ export type Chapter = typeof chapters.$inferSelect;
 export type InsertChapter = z.infer<typeof insertChapterSchema>;
 export type UserProgress = typeof userProgress.$inferSelect;
 export type InsertProgress = z.infer<typeof insertProgressSchema>;
+export type LibrarySection = typeof librarySections.$inferSelect;
+export type InsertLibrarySection = z.infer<typeof insertLibrarySectionSchema>;

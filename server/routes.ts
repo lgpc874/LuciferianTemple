@@ -221,7 +221,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Admin routes for grimoire management
   app.post("/api/admin/grimoires", authenticateToken, requireAdmin, async (req, res) => {
     try {
-      const { title, description, category, difficultyLevel, price, isPaid, coverImageUrl, rawContent } = req.body;
+      const { title, description, category, difficultyLevel, price, isPaid, coverImageUrl, rawContent, sectionId } = req.body;
       
       // Gera descrição automática se não fornecida
       const finalDescription = description || ContentFormatter.generateDescription(title, category);
@@ -230,6 +230,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         title,
         description: finalDescription,
         category,
+        sectionId: sectionId || null,
         difficultyLevel,
         unlockOrder: (grimoireStore.getGrimoires().length + 1),
         isActive: true,
