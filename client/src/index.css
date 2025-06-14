@@ -53,8 +53,8 @@ body::before {
   animation: rotate-seal 180s linear infinite;
   z-index: -1;
   pointer-events: none;
-  filter: sepia(100%) saturate(200%) hue-rotate(330deg) brightness(0.7) contrast(1.2);
-  opacity: 0.2;
+  filter: brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%);
+  opacity: 0.35;
 }
 
 @keyframes rotate-seal {
