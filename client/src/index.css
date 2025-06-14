@@ -43,11 +43,9 @@ body::before {
   position: fixed;
   top: 50%;
   left: 50%;
-  width: 80vw;
-  height: 80vw;
-  max-width: 600px;
-  max-height: 600px;
-  background-image: url('/attached_assets/image_1749677386788.png');
+  width: 400px;
+  height: 400px;
+  background-image: url('/assets/templo-logo.png?v=1');
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -55,8 +53,9 @@ body::before {
   animation: rotate-seal 180s linear infinite;
   z-index: -1;
   pointer-events: none;
-  filter: sepia(100%) saturate(300%) hue-rotate(340deg) brightness(0.4) contrast(1.5);
-  opacity: 0.12;
+  filter: sepia(100%) saturate(250%) hue-rotate(345deg) brightness(0.8) contrast(1.4);
+  opacity: 0.35;
+  border: 1px solid red; /* Debug temporário */
 }
 
 @keyframes rotate-seal {
