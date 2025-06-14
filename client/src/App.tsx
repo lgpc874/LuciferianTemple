@@ -17,6 +17,7 @@ import GrimoireReader from "@/pages/grimoire-kindle";
 import GrimoireSimple from "@/pages/grimoire-simple";
 import Checkout from "@/pages/checkout";
 import AdminDashboard from "@/pages/admin-dashboard";
+import Perfil from "@/pages/perfil";
 
 function Router() {
   const [location] = useLocation();
@@ -37,11 +38,12 @@ function Router() {
         <Switch location={location}>
           <Route path="/" component={Home} />
           <Route path="/auth" component={AuthPage} />
+          <Route path="/perfil" component={Perfil} />
           <Route path="/bibliotheca-arcana" component={BibliothecaArcana} />
           <Route path="/biblioteca" component={BibliotecaSections} />
           <Route path="/checkout" component={Checkout} />
           <Route path="/grimoire/:id" component={GrimoireReader} />
-          <Route path="/admin" component={AdminDashboard} />
+          <Route path="/admin-dashboard" component={AdminDashboard} />
           <Route component={NotFound} />
         </Switch>
       </AnimatePresence>

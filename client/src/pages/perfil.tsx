@@ -620,6 +620,155 @@ export default function Perfil() {
               )}
             </div>
           </TabsContent>
+
+          {/* Aba Configurações */}
+          <TabsContent value="configuracoes" className="mt-6">
+            <div className="grid gap-6">
+              {/* Seção de Troca de Senha */}
+              <Card className="bg-black/40 backdrop-blur-sm border-golden-amber/30">
+                <CardHeader>
+                  <CardTitle className="font-cinzel text-golden-amber flex items-center">
+                    <Settings className="mr-2" size={20} />
+                    Alterar Senha
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <Label className="text-ritualistic-beige">Senha Atual</Label>
+                    <Input
+                      type="password"
+                      value={passwordForm.currentPassword}
+                      onChange={(e) => setPasswordForm({...passwordForm, currentPassword: e.target.value})}
+                      className="bg-black/20 border-golden-amber/30 text-ritualistic-beige"
+                      placeholder="Digite sua senha atual"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-ritualistic-beige">Nova Senha</Label>
+                    <Input
+                      type="password"
+                      value={passwordForm.newPassword}
+                      onChange={(e) => setPasswordForm({...passwordForm, newPassword: e.target.value})}
+                      className="bg-black/20 border-golden-amber/30 text-ritualistic-beige"
+                      placeholder="Digite a nova senha (mín. 6 caracteres)"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-ritualistic-beige">Confirmar Nova Senha</Label>
+                    <Input
+                      type="password"
+                      value={passwordForm.confirmPassword}
+                      onChange={(e) => setPasswordForm({...passwordForm, confirmPassword: e.target.value})}
+                      className="bg-black/20 border-golden-amber/30 text-ritualistic-beige"
+                      placeholder="Confirme a nova senha"
+                    />
+                  </div>
+                  <Button
+                    onClick={handleChangePassword}
+                    disabled={changePasswordMutation.isPending || !passwordForm.currentPassword || !passwordForm.newPassword || !passwordForm.confirmPassword}
+                    className="bg-golden-amber/20 hover:bg-golden-amber/30 text-golden-amber border border-golden-amber/30"
+                  >
+                    {changePasswordMutation.isPending ? 'Alterando...' : 'Alterar Senha'}
+                  </Button>
+                </CardContent>
+              </Card>
+
+              {/* Seção de Preferências */}
+              <Card className="bg-black/40 backdrop-blur-sm border-golden-amber/30">
+                <CardHeader>
+                  <CardTitle className="font-cinzel text-golden-amber flex items-center">
+                    <User className="mr-2" size={20} />
+                    Preferências da Conta
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="text-ritualistic-beige font-medium">Notificações por Email</h4>
+                      <p className="text-ritualistic-beige/70 text-sm">Receber atualizações sobre novos grimórios</p>
+                    </div>
+                    <Button variant="outline" className="border-golden-amber/30 text-golden-amber hover:bg-golden-amber/10">
+                      Habilitado
+                    </Button>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="text-ritualistic-beige font-medium">Proteção de Conteúdo</h4>
+                      <p className="text-ritualistic-beige/70 text-sm">Bloquear cópia e screenshots</p>
+                    </div>
+                    <Button variant="outline" className="border-golden-amber/30 text-golden-amber hover:bg-golden-amber/10">
+                      Ativo
+                    </Button>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="text-ritualistic-beige font-medium">Tema Escuro</h4>
+                      <p className="text-ritualistic-beige/70 text-sm">Interface em modo místico</p>
+                    </div>
+                    <Button variant="outline" className="border-golden-amber/30 text-golden-amber hover:bg-golden-amber/10">
+                      Padrão
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          {/* Aba Admin (apenas para admin@templodoabismo.com) */}
+          {user.email === 'admin@templodoabismo.com' && (
+            <TabsContent value="admin" className="mt-6">
+              <Card className="bg-black/40 backdrop-blur-sm border-golden-amber/30">
+                <CardHeader>
+                  <CardTitle className="font-cinzel text-golden-amber flex items-center">
+                    <Settings className="mr-2" size={20} />
+                    Painel Administrativo
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid gap-4">
+                    <p className="text-ritualistic-beige mb-4">
+                      Acesso completo às ferramentas administrativas do Templo do Abismo.
+                    </p>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <Link href="/admin-dashboard">
+                        <Button className="w-full bg-golden-amber/20 hover:bg-golden-amber/30 text-golden-amber border border-golden-amber/30 h-16">
+                          <div className="text-center">
+                            <Settings className="mx-auto mb-1" size={20} />
+                            <div>Dashboard Completo</div>
+                          </div>
+                        </Button>
+                      </Link>
+                      
+                      <Button 
+                        className="w-full bg-golden-amber/20 hover:bg-golden-amber/30 text-golden-amber border border-golden-amber/30 h-16"
+                        onClick={() => window.open('/admin-dashboard', '_blank')}
+                      >
+                        <div className="text-center">
+                          <User className="mx-auto mb-1" size={20} />
+                          <div>Abrir em Nova Aba</div>
+                        </div>
+                      </Button>
+                    </div>
+
+                    <div className="mt-6 p-4 bg-golden-amber/10 rounded border border-golden-amber/30">
+                      <h4 className="font-cinzel text-golden-amber mb-2">Acesso Administrativo Ativo</h4>
+                      <p className="text-ritualistic-beige/80 text-sm">
+                        Você tem privilégios completos de administrador, incluindo:
+                      </p>
+                      <ul className="text-ritualistic-beige/70 text-sm mt-2 space-y-1">
+                        <li>• Gerenciamento de grimórios e conteúdo</li>
+                        <li>• Configuração de IA e geração automática</li>
+                        <li>• Analytics e estatísticas de usuários</li>
+                        <li>• Configurações de pagamento Stripe</li>
+                        <li>• Bypass automático de pagamentos</li>
+                      </ul>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          )}
         </Tabs>
       </div>
     </PageTransition>
