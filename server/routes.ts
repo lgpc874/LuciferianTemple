@@ -194,10 +194,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin routes for categories
+  app.get("/api/admin/categories", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const grimoires = grimoireStore.getGrimoires();
+      const categories = Array.from(new Set(grimoires.map(g => g.category)));
+      res.json(categories);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      res.status(500).json({ error: "Erro ao buscar categorias" });
+    }
+  });
+
+  app.post("/api/admin/categories", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const { name } = req.body;
+      // Categories are created implicitly when grimoires are created
+      res.json({ success: true, category: name });
+    } catch (error) {
+      console.error("Error creating category:", error);
+      res.status(500).json({ error: "Erro ao criar categoria" });
+    }
+  });
+
   // Admin routes for grimoire management
   app.post("/api/admin/grimoires", authenticateToken, requireAdmin, async (req, res) => {
     try {
-      const { title, description, category, difficultyLevel } = req.body;
+      const { title, description, category, difficultyLevel, price, isPaid } = req.body;
       
       const grimoireData = {
         title,
@@ -206,6 +229,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         difficultyLevel,
         unlockOrder: (grimoireStore.getGrimoires().length + 1),
         isActive: true,
+        price: isPaid ? price : null,
+        isPaid: isPaid || false,
         coverImageUrl: `https://via.placeholder.com/300x400/1a1a1a/d4af37?text=${encodeURIComponent(title)}`
       };
 

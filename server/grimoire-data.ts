@@ -1319,7 +1319,9 @@ class GrimoireDataStore {
         ...grimoire,
         id: newId,
         createdAt: new Date(),
-        isActive: true
+        isActive: true,
+        price: grimoire.price || null,
+        isPaid: grimoire.isPaid || false
       };
       this.grimoires.set(newId, memoryGrimoire);
       return memoryGrimoire;

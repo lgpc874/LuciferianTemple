@@ -355,6 +355,36 @@ export default function GrimoireEditor({ grimoireId, onSave, onCancel }: Grimoir
                       </SelectContent>
                     </Select>
                   </div>
+
+                  {/* Seção de Preços */}
+                  <div className="space-y-4 p-4 border rounded-lg bg-golden-amber/5">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-base font-medium">Grimório pago</Label>
+                      <Switch 
+                        checked={grimoire.isPaid || false}
+                        onCheckedChange={(checked) => setGrimoire(prev => ({ 
+                          ...prev, 
+                          isPaid: checked,
+                          price: checked ? prev.price || 'R$ 29,90' : null
+                        }))}
+                      />
+                    </div>
+                    
+                    {grimoire.isPaid && (
+                      <div className="space-y-2">
+                        <Label htmlFor="price">Preço</Label>
+                        <Input
+                          id="price"
+                          value={grimoire.price || ''}
+                          onChange={(e) => setGrimoire(prev => ({ ...prev, price: e.target.value }))}
+                          placeholder="R$ 29,90"
+                        />
+                        <p className="text-sm text-muted-foreground">
+                          Este preço será exibido no botão da biblioteca. Deixe vazio para grimórios gratuitos.
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Opções de capa */}
