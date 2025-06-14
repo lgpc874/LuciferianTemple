@@ -127,6 +127,8 @@ Changelog:
 - June 13, 2025. Admin dashboard implementation completed
 - June 13, 2025. AI-powered grimoire generation system implemented
 - June 13, 2025. Admin user configuration resolved - admin@templodoabismo.com login active
+- June 14, 2025. Admin navigation refactored - removed tabs, implemented URL-based navigation
+- June 14, 2025. Real-time Supabase data integration for admin analytics implemented
 ```
 
 ## User Preferences

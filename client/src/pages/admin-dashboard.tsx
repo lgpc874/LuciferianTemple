@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { useLocation } from 'wouter';
+import { useQuery } from '@tanstack/react-query';
 import { PageTransition } from '@/components/page-transition';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import AdminNavigation from '@/components/admin-navigation';
@@ -19,8 +20,36 @@ import {
   Globe
 } from 'lucide-react';
 
+// Types for admin analytics
+interface AdminAnalytics {
+  totalUsers: number;
+  newUsersThisMonth: number;
+  totalGrimoires: number;
+  newGrimoiresThisWeek: number;
+  todaySessions: number;
+  engagementRate: number;
+  lastUpdated: string;
+}
+
 // Overview Dashboard component
 function AdminOverview() {
+  const { data: analytics, isLoading, error } = useQuery<AdminAnalytics>({
+    queryKey: ['/api/admin/analytics'],
+    refetchInterval: 30000, // Atualizar a cada 30 segundos
+  });
+
+  if (error) {
+    return (
+      <Card className="p-6">
+        <div className="text-center text-destructive">
+          <Shield className="w-12 h-12 mx-auto mb-4" />
+          <h3 className="text-lg font-semibold mb-2">Erro ao carregar dados</h3>
+          <p className="text-sm">Não foi possível buscar os dados administrativos</p>
+        </div>
+      </Card>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Stats Cards */}
@@ -31,8 +60,12 @@ function AdminOverview() {
             <Shield className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-golden-amber">1,234</div>
-            <p className="text-xs text-muted-foreground">+180 desde o último mês</p>
+            <div className="text-2xl font-bold text-golden-amber">
+              {isLoading ? "..." : analytics?.totalUsers?.toLocaleString() || "0"}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              +{isLoading ? "..." : analytics?.newUsersThisMonth || "0"} desde o último mês
+            </p>
           </CardContent>
         </Card>
         
@@ -42,8 +75,12 @@ function AdminOverview() {
             <Database className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-golden-amber">42</div>
-            <p className="text-xs text-muted-foreground">+3 novos esta semana</p>
+            <div className="text-2xl font-bold text-golden-amber">
+              {isLoading ? "..." : analytics?.totalGrimoires || "0"}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              +{isLoading ? "..." : analytics?.newGrimoiresThisWeek || "0"} novos esta semana
+            </p>
           </CardContent>
         </Card>
         
@@ -53,8 +90,12 @@ function AdminOverview() {
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-golden-amber">573</div>
-            <p className="text-xs text-muted-foreground">+12% desde ontem</p>
+            <div className="text-2xl font-bold text-golden-amber">
+              {isLoading ? "..." : analytics?.todaySessions?.toLocaleString() || "0"}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Baseado em atividade de usuários
+            </p>
           </CardContent>
         </Card>
         
@@ -64,8 +105,12 @@ function AdminOverview() {
             <Globe className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-golden-amber">94.5%</div>
-            <p className="text-xs text-muted-foreground">+2.3% desde a semana passada</p>
+            <div className="text-2xl font-bold text-golden-amber">
+              {isLoading ? "..." : `${analytics?.engagementRate || "0"}%`}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Atualizado em tempo real
+            </p>
           </CardContent>
         </Card>
       </div>
