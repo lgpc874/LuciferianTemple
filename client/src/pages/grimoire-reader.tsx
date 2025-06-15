@@ -170,6 +170,11 @@ export default function GrimoireReader() {
   const goToPage = (page: number) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
+      // Sempre voltar ao topo da página ao mudar de página
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      // Garantir que o corpo da página também volte ao topo
+      document.body.scrollTop = 0;
+      document.documentElement.scrollTop = 0;
     }
   };
 
@@ -210,22 +215,26 @@ export default function GrimoireReader() {
 
   return (
     <ContentProtection enableScreenshotProtection={true}>
-      <PageTransition className="min-h-screen bg-gradient-to-br from-black via-red-950/20 to-black">
+      <PageTransition className="h-screen bg-gradient-to-br from-black via-red-950/20 to-black overflow-hidden relative">
         
-        {/* Header */}
-        <div className="bg-black/40 backdrop-blur-sm border-b border-golden-amber/20 sticky top-0 z-10">
-          <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+        {/* Controles flutuantes - aparecem apenas no hover */}
+        <div className="absolute inset-0 z-10 pointer-events-none">
+          {/* Botão voltar (canto superior esquerdo) */}
+          <div className="absolute top-4 left-4 opacity-0 hover:opacity-100 transition-opacity duration-300 pointer-events-auto">
             <Button 
               variant="ghost" 
               onClick={handleBack}
-              className="text-golden-amber hover:bg-red-900/30 hover:text-golden-amber"
+              className="text-golden-amber hover:bg-black/60 hover:text-golden-amber backdrop-blur-sm"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Biblioteca
             </Button>
-            
-            <div className="text-center flex-1 mx-4">
-              <h1 className="text-lg font-cinzel text-golden-amber truncate">{(grimoire as any)?.title || 'Grimório'}</h1>
+          </div>
+          
+          {/* Info do grimório (centro superior) */}
+          <div className="absolute top-4 left-1/2 transform -translate-x-1/2 opacity-0 hover:opacity-100 transition-opacity duration-300 pointer-events-auto">
+            <div className="bg-black/60 backdrop-blur-sm rounded-lg px-4 py-2 text-center">
+              <h1 className="text-sm font-cinzel text-golden-amber">{(grimoire as any)?.title || 'Grimório'}</h1>
               <div className="flex items-center justify-center space-x-4 text-xs text-ritualistic-beige/60 mt-1">
                 <span className="flex items-center">
                   <Eye className="h-3 w-3 mr-1" />
@@ -239,14 +248,17 @@ export default function GrimoireReader() {
                 )}
               </div>
             </div>
+          </div>
 
+          {/* Controles de navegação (canto superior direito) */}
+          <div className="absolute top-4 right-4 opacity-0 hover:opacity-100 transition-opacity duration-300 pointer-events-auto">
             <div className="flex items-center space-x-2">
               <Button 
                 variant="ghost" 
                 size="sm"
                 onClick={goToPrevPage}
                 disabled={currentPage === 1}
-                className="text-golden-amber hover:bg-red-900/30 disabled:opacity-30"
+                className="text-golden-amber hover:bg-black/60 disabled:opacity-30 backdrop-blur-sm"
               >
                 <ChevronLeft className="h-4 w-4" />
               </Button>
@@ -255,14 +267,18 @@ export default function GrimoireReader() {
                 size="sm"
                 onClick={goToNextPage}
                 disabled={currentPage === totalPages}
-                className="text-golden-amber hover:bg-red-900/30 disabled:opacity-30"
+                className="text-golden-amber hover:bg-black/60 disabled:opacity-30 backdrop-blur-sm"
               >
                 <ChevronRight className="h-4 w-4" />
               </Button>
-              
-              {/* Indicador de status de salvamento */}
-              {saveStatus && (
-                <div className="flex items-center gap-2 text-xs ml-4">
+            </div>
+          </div>
+          
+          {/* Indicador de status de salvamento (canto inferior direito) */}
+          {saveStatus && (
+            <div className="absolute bottom-4 right-4 pointer-events-auto">
+              <div className="bg-black/60 backdrop-blur-sm rounded-lg px-3 py-2">
+                <div className="flex items-center gap-2 text-xs">
                   {saveStatus === 'saving' && (
                     <>
                       <div className="w-3 h-3 border border-golden-amber/60 border-t-transparent rounded-full animate-spin" />
@@ -282,14 +298,14 @@ export default function GrimoireReader() {
                     </>
                   )}
                 </div>
-              )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
-        {/* Leitor principal */}
-        <div className="container mx-auto px-4 py-8 max-w-4xl">
-          <div className="bg-black/40 backdrop-blur-sm border border-golden-amber/20 rounded-lg p-8 min-h-[600px] relative">
+        {/* Leitor principal - ocupa toda a tela */}
+        <div className="h-full flex items-center justify-center p-4">
+          <div className="bg-black/40 backdrop-blur-sm border border-golden-amber/20 rounded-lg p-8 w-full max-w-4xl h-[80vh] relative">
             
             {/* Área de clique invisível para navegação */}
             <div className="absolute inset-0 flex">
