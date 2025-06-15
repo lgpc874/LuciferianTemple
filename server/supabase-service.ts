@@ -743,6 +743,58 @@ export class SupabaseService {
       throw new Error(`Error generating image with AI: ${error.message}`);
     }
   }
+
+  async getUnlockedGrimoires(userId: number, sectionId: number): Promise<number[]> {
+    try {
+      // Busca todos os grimórios da seção ordenados por unlock_order
+      const { data: grimoires, error: grimoiresError } = await this.supabase
+        .from('grimoires')
+        .select('id, unlock_order, title')
+        .eq('section_id', sectionId)
+        .eq('is_published', true)
+        .order('unlock_order', { ascending: true });
+
+      if (grimoiresError || !grimoires) {
+        console.error('Erro ao buscar grimórios:', grimoiresError);
+        return [];
+      }
+
+      // Busca o progresso de leitura do usuário
+      const { data: progress, error: progressError } = await this.supabase
+        .from('user_progress')
+        .select('grimoire_id, progress_percentage')
+        .eq('user_id', userId);
+
+      if (progressError) {
+        console.error('Erro ao buscar progresso:', progressError);
+        return [];
+      }
+
+      const unlockedIds = [];
+      
+      for (const grimoire of grimoires) {
+        // O primeiro grimório sempre está desbloqueado
+        if (grimoire.unlock_order === 1) {
+          unlockedIds.push(grimoire.id);
+          continue;
+        }
+
+        // Verifica se o grimório anterior foi completado (>=80% de progresso)
+        const previousGrimoire = grimoires.find(g => g.unlock_order === grimoire.unlock_order - 1);
+        if (previousGrimoire) {
+          const previousProgress = progress?.find(p => p.grimoire_id === previousGrimoire.id);
+          if (previousProgress && parseFloat(previousProgress.progress_percentage) >= 80) {
+            unlockedIds.push(grimoire.id);
+          }
+        }
+      }
+
+      return unlockedIds;
+    } catch (error) {
+      console.error('Erro ao verificar grimórios desbloqueados:', error);
+      return [];
+    }
+  }
 }
 
 export const supabaseService = new SupabaseService();

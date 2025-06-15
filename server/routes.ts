@@ -424,6 +424,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // GRIMÓRIOS DESBLOQUEADOS POR SEÇÃO
+  app.get("/api/unlocked-grimoires/:sectionId", authenticateToken, async (req: any, res) => {
+    try {
+      const userId = req.user.id;
+      const sectionId = parseInt(req.params.sectionId);
+      const unlockedIds = await supabaseService.getUnlockedGrimoires(userId, sectionId);
+      res.json({ unlockedGrimoires: unlockedIds });
+    } catch (error: any) {
+      console.error("Error fetching unlocked grimoires:", error);
+      res.status(500).json({ error: "Erro ao buscar grimórios desbloqueados" });
+    }
+  });
+
   app.post("/api/user/progress", authenticateToken, async (req: any, res) => {
     try {
       const progressData: InsertProgress = {
