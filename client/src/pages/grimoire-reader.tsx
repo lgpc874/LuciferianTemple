@@ -23,9 +23,6 @@ export default function GrimoireReader() {
   const [, params] = useRoute("/grimoire/:id");
   const [, setLocation] = useLocation();
   const isMobile = useIsMobile();
-  
-  // Debug log
-  console.log('isMobile:', isMobile, 'window.innerWidth:', typeof window !== 'undefined' ? window.innerWidth : 'undefined');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [paginatedContent, setPaginatedContent] = useState<string[]>([]);
