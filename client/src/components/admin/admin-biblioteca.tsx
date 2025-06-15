@@ -1344,34 +1344,34 @@ function SettingsTab() {
   });
 
   // Atualizar estados com dados reais do Supabase
-  useEffect(() => {
+  React.useEffect(() => {
     if (currentAISettings) {
       setAiSettings(currentAISettings);
     }
   }, [currentAISettings]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (currentSystemSettings) {
       setSystemSettings(currentSystemSettings);
     }
   }, [currentSystemSettings]);
 
-  const saveSettings = async () => {
+  const saveAISettings = async () => {
     setIsSaving(true);
     try {
-      await apiRequest("/api/admin/settings", {
+      await apiRequest("/api/admin/ai/settings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(settings)
+        body: JSON.stringify(aiSettings)
       });
       toast({
-        title: "Configurações Salvas",
-        description: "Todas as configurações foram atualizadas"
+        title: "Configurações de IA Salvas",
+        description: "Configurações persistidas no Supabase"
       });
     } catch (error) {
       toast({
         title: "Erro",
-        description: "Erro ao salvar configurações",
+        description: "Erro ao salvar configurações de IA",
         variant: "destructive"
       });
     } finally {
@@ -1379,32 +1379,72 @@ function SettingsTab() {
     }
   };
 
-  const resetToDefaults = () => {
-    if (confirm("Tem certeza que deseja restaurar as configurações padrão?")) {
-      setSettings({
-        siteName: "Templo do Abismo",
-        siteDescription: "Portal de Ensinamentos Luciferianos",
-        allowRegistrations: true,
-        moderateComments: true,
-        stripeEnabled: true,
-        defaultCurrency: "BRL",
-        freeTrialDays: 7,
-        maxGrimoireSize: 50,
-        allowedFileTypes: ["pdf", "epub", "txt"],
-        autoPublish: false,
-        requireApproval: true,
-        metaTitle: "Templo do Abismo - Biblioteca Luciferiana",
-        metaDescription: "Acesse grimórios e ensinamentos luciferianos autênticos",
-        keywords: ["luciferianismo", "grimórios", "ocultismo", "magia"],
-        enableContentProtection: true,
-        maxLoginAttempts: 5,
-        sessionTimeout: 24,
-        emailNotifications: true,
-        newGrimoireAlert: true,
-        paymentAlerts: true
+  const saveSystemSettings = async () => {
+    setIsSaving(true);
+    try {
+      await apiRequest("/api/admin/settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(systemSettings)
+      });
+      toast({
+        title: "Configurações do Sistema Salvas",
+        description: "Configurações persistidas no Supabase"
+      });
+    } catch (error) {
+      toast({
+        title: "Erro",
+        description: "Erro ao salvar configurações do sistema",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const resetAIToDefaults = () => {
+    if (confirm("Restaurar configurações padrão de IA?")) {
+      setAiSettings({
+        personality: 'luciferian',
+        complexity: 'beginner',
+        length: 'medium',
+        style: 'mixed',
+        guidelines: '',
+        defaultSection: '',
+        autoPrice: false,
+        priceRange: { min: '9.99', max: '49.99' }
       });
     }
   };
+
+  const resetSystemToDefaults = () => {
+    if (confirm("Restaurar configurações padrão do sistema?")) {
+      setSystemSettings({
+        siteName: 'Templo do Abismo',
+        siteDescription: 'Portal de ensinamentos luciferianos',
+        siteKeywords: 'lucifer, ocultismo, magia, grimórios',
+        adminEmail: 'admin@templodoabismo.com',
+        contentLanguage: 'português',
+        contentTone: 'formal',
+        contentTargetAudience: 'iniciantes',
+        enableUserRegistration: true,
+        enablePaidContent: true,
+        enableAIGeneration: true,
+        securityLevel: 'medium',
+        enableContentProtection: true,
+        enableDownloadProtection: true
+      });
+    }
+  };
+
+  if (loadingAI || loadingSystem) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin w-8 h-8 border-4 border-amber-500 border-t-transparent rounded-full"></div>
+        <span className="ml-3 text-amber-500">Carregando configurações do Supabase...</span>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
