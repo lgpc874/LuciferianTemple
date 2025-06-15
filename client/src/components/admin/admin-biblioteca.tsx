@@ -54,6 +54,7 @@ interface Grimoire {
   price: string | null;
   is_published: boolean;
   level: string;
+  cover_image_url: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -632,10 +633,43 @@ function EditGrimoireForm({
     price: grimoire.price || "",
     level: grimoire.level || "iniciante",
     is_published: grimoire.is_published || false,
+    cover_image_url: grimoire.cover_image_url || "",
   });
+
+  const [coverImageMode, setCoverImageMode] = useState<'url' | 'ai' | 'upload'>('url');
+  const [isGeneratingCover, setIsGeneratingCover] = useState(false);
 
   const [chapters, setChapters] = useState<any[]>([]);
   const [isLoadingChapters, setIsLoadingChapters] = useState(true);
+
+  // Função para gerar capa com IA
+  const generateCoverWithAI = async () => {
+    setIsGeneratingCover(true);
+    try {
+      const data = await apiRequest("POST", "/api/admin/generate-cover", {
+        title: formData.title,
+        description: formData.description
+      });
+      setFormData({ ...formData, cover_image_url: data.imageUrl });
+    } catch (error) {
+      console.error("Erro ao gerar capa:", error);
+    } finally {
+      setIsGeneratingCover(false);
+    }
+  };
+
+  // Função para upload de imagem
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const base64 = e.target?.result as string;
+        setFormData({ ...formData, cover_image_url: base64 });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   // Carregar capítulos do grimório
   const { data: chaptersData } = useQuery({
@@ -771,6 +805,121 @@ function EditGrimoireForm({
           rows={3}
           required
         />
+      </div>
+
+      {/* Seção de Capa */}
+      <div className="space-y-4 border border-amber-500/30 rounded-lg p-4 bg-amber-500/5">
+        <div className="flex items-center space-x-2">
+          <ImageIcon className="h-5 w-5 text-amber-500" />
+          <Label className="text-lg font-semibold text-amber-500">Capa do Grimório</Label>
+        </div>
+
+        {/* Modo de edição de capa */}
+        <div className="flex space-x-2">
+          <Button
+            type="button"
+            variant={coverImageMode === 'url' ? 'default' : 'outline'}
+            onClick={() => setCoverImageMode('url')}
+            size="sm"
+            className={coverImageMode === 'url' ? 'bg-amber-500 text-black' : ''}
+          >
+            🔗 Link
+          </Button>
+          <Button
+            type="button"
+            variant={coverImageMode === 'ai' ? 'default' : 'outline'}
+            onClick={() => setCoverImageMode('ai')}
+            size="sm"
+            className={coverImageMode === 'ai' ? 'bg-amber-500 text-black' : ''}
+          >
+            🤖 Gerar IA
+          </Button>
+          <Button
+            type="button"
+            variant={coverImageMode === 'upload' ? 'default' : 'outline'}
+            onClick={() => setCoverImageMode('upload')}
+            size="sm"
+            className={coverImageMode === 'upload' ? 'bg-amber-500 text-black' : ''}
+          >
+            📁 Upload
+          </Button>
+        </div>
+
+        {/* Interface específica do modo selecionado */}
+        {coverImageMode === 'url' && (
+          <div className="space-y-2">
+            <Label htmlFor="cover-url">URL da Imagem</Label>
+            <Input
+              id="cover-url"
+              value={formData.cover_image_url || ''}
+              onChange={(e) => setFormData({ ...formData, cover_image_url: e.target.value })}
+              placeholder="https://exemplo.com/imagem.jpg"
+            />
+          </div>
+        )}
+
+        {coverImageMode === 'ai' && (
+          <div className="space-y-3">
+            <p className="text-sm text-gray-400">
+              A IA irá gerar uma capa baseada no título e descrição do grimório
+            </p>
+            <Button
+              type="button"
+              onClick={generateCoverWithAI}
+              disabled={isGeneratingCover || !formData.title}
+              className="bg-amber-500 hover:bg-amber-600 text-black"
+            >
+              {isGeneratingCover ? (
+                <>
+                  <div className="animate-spin w-4 h-4 border-2 border-black border-t-transparent rounded-full mr-2"></div>
+                  Gerando...
+                </>
+              ) : (
+                <>🎨 Gerar Capa com IA</>
+              )}
+            </Button>
+          </div>
+        )}
+
+        {coverImageMode === 'upload' && (
+          <div className="space-y-2">
+            <Label htmlFor="cover-upload">Fazer Upload de Imagem</Label>
+            <Input
+              id="cover-upload"
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-amber-500 file:text-black hover:file:bg-amber-600"
+            />
+          </div>
+        )}
+
+        {/* Preview da capa */}
+        {formData.cover_image_url && (
+          <div className="space-y-2">
+            <Label>Preview da Capa</Label>
+            <div className="relative w-32 h-48 border border-gray-600 rounded-lg overflow-hidden">
+              <img
+                src={formData.cover_image_url}
+                alt="Preview da capa"
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4IiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDEyOCAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEyOCIgaGVpZ2h0PSIxOTIiIGZpbGw9IiMzNzM3MzciLz48dGV4dCB4PSI2NCIgeT0iOTYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM5OTk5OTkiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiI+SW1hZ2VtPC90ZXh0Pjx0ZXh0IHg9IjY0IiB5PSIxMTAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM5OTk5OTkiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiI+SW7DoWxpZGE8L3RleHQ+PC9zdmc+';
+                }}
+              />
+              <Button
+                type="button"
+                onClick={() => setFormData({ ...formData, cover_image_url: '' })}
+                variant="outline"
+                size="sm"
+                className="absolute top-1 right-1 p-1 h-auto w-auto bg-red-500/80 hover:bg-red-600/80 text-white border-none"
+              >
+                ✕
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

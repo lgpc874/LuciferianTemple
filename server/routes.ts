@@ -629,6 +629,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Geração de capa com IA
+  app.post("/api/admin/generate-cover", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const { title, description } = req.body;
+      
+      if (!title) {
+        return res.status(400).json({ error: "Título é obrigatório para gerar a capa" });
+      }
+
+      // Criar prompt otimizado para geração de capa
+      const coverPrompt = `
+        Create a mystical book cover for a Luciferian grimoire titled "${title}".
+        
+        Style requirements:
+        - Dark, mystical atmosphere with occult symbolism
+        - Color palette: deep blacks, dark reds, gold/amber accents
+        - Include subtle Luciferian symbols (pentagrams, flames, sigils)
+        - Professional book cover layout with title space
+        - Atmospheric lighting and shadows
+        - Ancient, esoteric aesthetic
+        
+        Additional description: ${description || 'Mystical Luciferian grimoire with occult knowledge'}
+        
+        The cover should evoke mystery, power, and ancient wisdom while maintaining an elegant, premium book aesthetic.
+      `;
+
+      // Integração com OpenAI DALL-E para gerar a imagem
+      const result = await supabaseService.generateImageWithAI(coverPrompt);
+      
+      res.json({ 
+        imageUrl: result.imageUrl,
+        message: "Capa gerada com sucesso pela IA" 
+      });
+    } catch (error: any) {
+      console.error("Error generating cover:", error);
+      res.status(500).json({ error: "Erro ao gerar capa: " + error.message });
+    }
+  });
+
   // Salvar configurações gerais do sistema
   app.post("/api/admin/settings", authenticateToken, async (req, res) => {
     try {
