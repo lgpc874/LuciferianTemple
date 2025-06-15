@@ -23,6 +23,9 @@ export default function GrimoireReader() {
   const [, params] = useRoute("/grimoire/:id");
   const [, setLocation] = useLocation();
   const isMobile = useIsMobile();
+  
+  // Debug log
+  console.log('isMobile:', isMobile, 'window.innerWidth:', typeof window !== 'undefined' ? window.innerWidth : 'undefined');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [paginatedContent, setPaginatedContent] = useState<string[]>([]);
@@ -247,7 +250,7 @@ export default function GrimoireReader() {
             </Button>
             
             <div className="text-center flex-1 mx-4">
-              <h1 className={`font-cinzel text-golden-amber truncate ${isMobile ? 'text-[8px]' : 'text-lg'}`}>
+              <h1 className="font-cinzel text-golden-amber truncate grimoire-header-title">
                 {grimoireLoading ? 'Carregando...' : grimoire?.title || 'Grimório'}
               </h1>
               <div className="flex items-center justify-center space-x-4 text-xs text-ritualistic-beige/60 mt-1">
@@ -342,7 +345,7 @@ export default function GrimoireReader() {
               >
                 {paginatedContent[currentPage - 1] ? (
                   <div 
-                    className={`prose-grimoire max-w-none text-ritualistic-beige leading-relaxed font-garamond ${isMobile ? 'text-sm' : 'text-lg'}`}
+                    className="grimoire-content prose-grimoire max-w-none text-ritualistic-beige leading-relaxed font-garamond"
                     style={{
                       fontFamily: 'Garamond, Georgia, serif',
                       lineHeight: '1.8',

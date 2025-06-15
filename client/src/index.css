@@ -898,6 +898,28 @@ input, textarea {
   color: #f5f5dc !important;
 }
 
+/* Grimoire Reader Responsive Fonts */
+.grimoire-content {
+  font-size: 14px !important; /* Mobile padrão */
+}
+
+@media (min-width: 768px) {
+  .grimoire-content {
+    font-size: 18px !important; /* Desktop */
+  }
+}
+
+/* Header do grimoire reader */
+.grimoire-header-title {
+  font-size: 8px !important; /* Mobile */
+}
+
+@media (min-width: 768px) {
+  .grimoire-header-title {
+    font-size: 18px !important; /* Desktop */
+  }
+}
+
 /* Accessibility */
 @media (prefers-reduced-motion: reduce) {
   .sacred-seal {
