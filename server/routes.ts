@@ -255,7 +255,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         level: level || "iniciante",
         unlock_order: unlockOrder,
         cover_image_url: coverImageUrl,
-        word_count: formattedGrimoire.metadata.wordCount,
         estimated_reading_time: formattedGrimoire.metadata.estimatedReadingTime,
         is_published: false
       };
@@ -586,7 +585,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         price: settings?.auto_price ? (settings?.price_range_min || "29.99") : null,
         level: aiResult.level || settings?.complexity || "iniciante",
         unlock_order: 0,
-        word_count: totalWordCount,
         estimated_reading_time: estimatedReadingTime,
         is_published: settings?.auto_publish !== false, // Publicar automaticamente por padrão
         cover_image_url: `https://via.placeholder.com/300x400/1a1a1a/d4af37?text=${encodeURIComponent(aiResult.title || 'Grimório')}`
@@ -605,7 +603,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             title: chapter.title,
             content: chapter.content,
             chapter_number: i + 1,
-            word_count: chapter.content.split(' ').length
+            estimated_reading_time: Math.max(5, Math.ceil(chapter.content.split(' ').length / 200))
           };
           
           const createdChapter = await supabaseService.createChapter(chapterData);
