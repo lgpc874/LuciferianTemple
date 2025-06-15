@@ -94,11 +94,11 @@ export default function Perfil() {
   const myLibrary = React.useMemo(() => {
     if (!userProgress || !allGrimoires || !librarySections) return [];
 
-    return userProgress.map((progress: any) => {
-      const grimoire = allGrimoires.find((g: any) => g.id === progress.grimoire_id);
+    return userProgress?.map((progress: any) => {
+      const grimoire = allGrimoires?.find((g: any) => g.id === progress.grimoire_id);
       if (!grimoire) return null;
 
-      const section = librarySections.find((s: any) => s.id === grimoire.section_id);
+      const section = librarySections?.find((s: any) => s.id === grimoire.section_id);
       
       return {
         id: grimoire.id,
@@ -142,7 +142,7 @@ export default function Perfil() {
   // Mutation para atualizar perfil
   const updateProfileMutation = useMutation({
     mutationFn: async (data: typeof editForm) => {
-      return apiRequest('PUT', '/api/user/profile', {}, { body: JSON.stringify(data), headers: { 'Content-Type': 'application/json' } });
+      return apiRequest('PUT', '/api/user/profile', data);
     },
     onSuccess: () => {
       toast({
@@ -234,8 +234,8 @@ export default function Perfil() {
   const userLibraryProgress = React.useMemo(() => {
     if (!userProgress || !allGrimoires) return [];
     
-    return userProgress.map((progress: any) => {
-      const grimoire = allGrimoires.find((g: any) => g.id === progress.grimoire_id);
+    return userProgress?.map((progress: any) => {
+      const grimoire = allGrimoires?.find((g: any) => g.id === progress.grimoire_id);
       if (!grimoire) return null;
       
       const progressPercentage = progress.total_pages > 0 
@@ -467,7 +467,7 @@ export default function Perfil() {
           {/* Aba Biblioteca */}
           <TabsContent value="biblioteca" className="mt-6">
             <div className="grid gap-4">
-              {myLibrary?.map((grimoire) => (
+              {myLibrary?.map((grimoire: any) => (
                 <Card key={grimoire.id} className="bg-black/40 backdrop-blur-sm border-golden-amber/30">
                   <CardContent className="p-4">
                     <div className="flex items-center gap-4">
@@ -702,7 +702,7 @@ export default function Perfil() {
                 </Card>
               ))}
 
-              {(!myLibrary?.filter(g => g.isPaid).length) && (
+              {(!myLibrary?.filter((g: any) => g.isPaid).length) && (
                 <Card className="bg-black/40 backdrop-blur-sm border-golden-amber/30">
                   <CardContent className="p-8 text-center">
                     <ShoppingCart size={48} className="mx-auto text-golden-amber/40 mb-4" />
