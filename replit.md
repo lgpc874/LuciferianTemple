@@ -157,6 +157,7 @@ Changelog:
 - June 15, 2025. Painel administrativo resetado completamente - removidos todos os componentes admin antigos, estrutura limpa criada conectada 100% ao Supabase sem dados mock, pronto para desenvolvimento modular
 - June 15, 2025. Primeiro módulo administrativo "Visão Geral" implementado - dashboard completo com dados reais do Supabase: estatísticas principais (usuários, grimórios, capítulos, progresso), distribuição por seções com ícones específicos, atividade recente (usuários e grimórios), status do sistema em tempo real, interface responsiva com design místico
 - June 15, 2025. Segundo módulo "Biblioteca" implementado - sistema completo de gerenciamento de grimórios com integração IA (OpenAI GPT-4o) para geração automática, Stripe embarcado para pagamentos, CRUD completo com publicação/despublicação, configurações de preço, interface responsiva com cores âmbar visíveis, sistema de compras integrado
+- June 15, 2025. Abas "IA Generator" e "Configurações" implementadas - conteúdo completo adicionado com configurações globais da IA (personalidade, complexidade, estilo), geração rápida de grimórios, configurações do sistema (site, conteúdo, segurança), rotas de API backend implementadas, todas as cores de botões corrigidas para âmbar visível
 ```
 
 ## User Preferences

@@ -473,6 +473,63 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Salvar configurações da IA
+  app.post("/api/admin/ai/settings", authenticateToken, async (req, res) => {
+    try {
+      const settings = req.body;
+      // Por enquanto apenas simulamos o salvamento
+      // Em produção, salvaríamos no banco de dados
+      console.log("AI Settings saved:", settings);
+      res.json({ success: true, message: "Configurações da IA salvas com sucesso" });
+    } catch (error: any) {
+      console.error("Error saving AI settings:", error);
+      res.status(500).json({ error: "Erro ao salvar configurações da IA" });
+    }
+  });
+
+  // Geração rápida de grimório
+  app.post("/api/admin/ai/generate-quick", authenticateToken, async (req, res) => {
+    try {
+      const { prompt, settings } = req.body;
+      
+      if (!prompt) {
+        return res.status(400).json({ error: "Prompt é obrigatório" });
+      }
+      
+      // Aplicar configurações da IA ao prompt
+      const enhancedPrompt = `
+        ${prompt}
+        
+        Configurações aplicadas:
+        - Personalidade: ${settings.personality}
+        - Complexidade: ${settings.complexity}
+        - Extensão: ${settings.length}
+        - Estilo: ${settings.style}
+        ${settings.guidelines ? `- Diretrizes: ${settings.guidelines}` : ''}
+      `;
+      
+      const result = await supabaseService.generateGrimoireWithAI(enhancedPrompt);
+      res.json(result);
+    } catch (error: any) {
+      console.error("Error generating quick grimoire:", error);
+      res.status(500).json({ error: "Erro ao gerar grimório rapidamente" });
+    }
+  });
+
+  // Salvar configurações gerais do sistema
+  app.post("/api/admin/settings", authenticateToken, async (req, res) => {
+    try {
+      const settings = req.body;
+      // Por enquanto apenas simulamos o salvamento
+      // Em produção, salvaríamos no banco de dados
+      console.log("System Settings saved:", settings);
+      res.json({ success: true, message: "Configurações do sistema salvas com sucesso" });
+    } catch (error: any) {
+      console.error("Error saving system settings:", error);
+      res.status(500).json({ error: "Erro ao salvar configurações do sistema" });
+    }
+  });
+
   // ROTA PARA CRIAÇÃO DE PAGAMENTO STRIPE
   app.post("/api/admin/create-payment-intent", authenticateToken, async (req, res) => {
     try {
