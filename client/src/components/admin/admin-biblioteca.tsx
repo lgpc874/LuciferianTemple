@@ -458,7 +458,15 @@ function CreateGrimoireForm({
   isLoading,
   onAIGenerate,
   isAIGenerating 
-}: any) {
+}: {
+  mode: "manual" | "ai";
+  onModeChange: (mode: "manual" | "ai") => void;
+  sections: LibrarySection[];
+  onSubmit: (data: any) => void;
+  isLoading: boolean;
+  onAIGenerate: (prompt: string) => void;
+  isAIGenerating: boolean;
+}) {
   const [formData, setFormData] = useState({
     title: "",
     description: "",

@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, decimal } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, serial, integer, boolean, timestamp, decimal } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -67,6 +67,18 @@ export const user_progress = pgTable("user_progress", {
   last_read_at: timestamp("last_read_at").defaultNow(),
   created_at: timestamp("created_at").defaultNow(),
   updated_at: timestamp("updated_at").defaultNow(),
+});
+
+// Compras de grimórios (Stripe)
+export const grimoire_purchases = pgTable("grimoire_purchases", {
+  id: serial("id").primaryKey(),
+  user_id: integer("user_id").references(() => users.id).notNull(),
+  grimoire_id: integer("grimoire_id").references(() => grimoires.id).notNull(),
+  payment_intent_id: text("payment_intent_id").notNull().unique(),
+  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+  status: text("status").notNull().default("pending"), // pending, completed, failed
+  purchased_at: timestamp("purchased_at").defaultNow(),
+  created_at: timestamp("created_at").defaultNow(),
 });
 
 export const insertUserSchema = createInsertSchema(users).pick({
