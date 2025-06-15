@@ -36,7 +36,9 @@ import {
   ShoppingCart,
   Crown,
   Flame,
-  Skull
+  Skull,
+  Save,
+  RotateCcw
 } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -734,17 +736,227 @@ function CreateGrimoireForm({
 
 // Placeholder para outras abas
 function AIGeneratorTab() {
+  const [aiSettings, setAiSettings] = useState({
+    personality: "mystical",
+    complexity: "intermediate", 
+    length: "medium",
+    style: "narrative",
+    guidelines: "",
+    defaultSection: "",
+    autoPrice: false,
+    priceRange: { min: "9.99", max: "49.99" }
+  });
+
+  const [quickPrompt, setQuickPrompt] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const { toast } = useToast();
+
+  const saveAISettings = async () => {
+    try {
+      await apiRequest("/api/admin/ai/settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(aiSettings)
+      });
+      toast({
+        title: "Configurações Salvas",
+        description: "Configurações da IA atualizadas com sucesso"
+      });
+    } catch (error) {
+      toast({
+        title: "Erro",
+        description: "Erro ao salvar configurações da IA",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const generateQuickGrimoire = async () => {
+    if (!quickPrompt.trim()) {
+      toast({
+        title: "Prompt Necessário",
+        description: "Digite um prompt para geração",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsGenerating(true);
+    try {
+      await apiRequest("/api/admin/ai/generate-quick", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          prompt: quickPrompt,
+          settings: aiSettings 
+        })
+      });
+      toast({
+        title: "Grimório Gerado",
+        description: "Grimório criado com sucesso pela IA"
+      });
+      setQuickPrompt("");
+    } catch (error) {
+      toast({
+        title: "Erro na Geração",
+        description: "Erro ao gerar grimório com IA",
+        variant: "destructive"
+      });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-golden-amber">🤖 IA Generator</CardTitle>
-      </CardHeader>
-      <CardContent>
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-xl font-semibold text-golden-amber">🤖 Gerador de IA</h2>
         <p className="text-muted-foreground">
-          Configurações globais da IA para geração de conteúdo automático.
+          Configure a IA para geração automática de grimórios luciferianos
         </p>
-      </CardContent>
-    </Card>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-golden-amber">Configurações Globais da IA</CardTitle>
+          <CardDescription>
+            Estas configurações serão aplicadas a todas as gerações automáticas
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Personalidade da IA</Label>
+              <Select value={aiSettings.personality} onValueChange={(value) => 
+                setAiSettings({...aiSettings, personality: value})
+              }>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="mystical">Místico e Esotérico</SelectItem>
+                  <SelectItem value="academic">Acadêmico e Formal</SelectItem>
+                  <SelectItem value="practical">Prático e Direto</SelectItem>
+                  <SelectItem value="philosophical">Filosófico e Reflexivo</SelectItem>
+                  <SelectItem value="luciferian">Luciferiano Tradicional</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Nível de Complexidade</Label>
+              <Select value={aiSettings.complexity} onValueChange={(value) => 
+                setAiSettings({...aiSettings, complexity: value})
+              }>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="beginner">Iniciante</SelectItem>
+                  <SelectItem value="intermediate">Intermediário</SelectItem>
+                  <SelectItem value="advanced">Avançado</SelectItem>
+                  <SelectItem value="master">Mestre</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Extensão Padrão</Label>
+              <Select value={aiSettings.length} onValueChange={(value) => 
+                setAiSettings({...aiSettings, length: value})
+              }>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="short">Curto (5-10 páginas)</SelectItem>
+                  <SelectItem value="medium">Médio (15-25 páginas)</SelectItem>
+                  <SelectItem value="long">Longo (30-50 páginas)</SelectItem>
+                  <SelectItem value="extensive">Extenso (50+ páginas)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Estilo de Escrita</Label>
+              <Select value={aiSettings.style} onValueChange={(value) => 
+                setAiSettings({...aiSettings, style: value})
+              }>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="narrative">Narrativo</SelectItem>
+                  <SelectItem value="instructional">Instrucional</SelectItem>
+                  <SelectItem value="dialogue">Diálogo Socrático</SelectItem>
+                  <SelectItem value="ritual">Ritual e Cerimonial</SelectItem>
+                  <SelectItem value="mixed">Misto</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Diretrizes Especiais</Label>
+            <textarea
+              className="w-full p-3 border rounded-lg resize-none"
+              placeholder="Instruções específicas sobre filosofia, abordagem, temas a evitar ou enfatizar..."
+              rows={3}
+              value={aiSettings.guidelines}
+              onChange={(e) => setAiSettings({...aiSettings, guidelines: e.target.value})}
+            />
+          </div>
+
+          <Button 
+            onClick={saveAISettings}
+            className="w-full bg-amber-500 hover:bg-amber-600 text-black font-semibold"
+          >
+            <Settings className="mr-2 h-4 w-4" />
+            Salvar Configurações da IA
+          </Button>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-golden-amber">Geração Rápida</CardTitle>
+          <CardDescription>
+            Gere um grimório instantaneamente com prompt personalizado
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label>Prompt para Geração</Label>
+            <textarea
+              className="w-full p-3 border rounded-lg resize-none"
+              placeholder="Ex: 'Rituais de proteção usando elementos', 'Meditações para despertar o eu superior', 'Práticas de magia lunar avançada'"
+              rows={3}
+              value={quickPrompt}
+              onChange={(e) => setQuickPrompt(e.target.value)}
+            />
+          </div>
+
+          <Button 
+            onClick={generateQuickGrimoire}
+            disabled={isGenerating || !quickPrompt.trim()}
+            className="w-full bg-amber-500 hover:bg-amber-600 text-black font-semibold"
+          >
+            {isGenerating ? (
+              <>
+                <Sparkles className="mr-2 h-4 w-4 animate-spin" />
+                Gerando Grimório...
+              </>
+            ) : (
+              <>
+                <Sparkles className="mr-2 h-4 w-4" />
+                Gerar Grimório Automaticamente
+              </>
+            )}
+          </Button>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
 
@@ -774,16 +986,294 @@ function SectionsTab({ sections }: { sections: any[] }) {
 }
 
 function SettingsTab() {
+  const [settings, setSettings] = useState({
+    // Configurações Gerais
+    siteName: "Templo do Abismo",
+    siteDescription: "Portal de Ensinamentos Luciferianos",
+    allowRegistrations: true,
+    moderateComments: true,
+    
+    // Configurações de Pagamento
+    stripeEnabled: true,
+    defaultCurrency: "BRL",
+    freeTrialDays: 7,
+    
+    // Configurações de Conteúdo
+    maxGrimoireSize: 50, // MB
+    allowedFileTypes: ["pdf", "epub", "txt"],
+    autoPublish: false,
+    requireApproval: true,
+    
+    // Configurações de SEO
+    metaTitle: "Templo do Abismo - Biblioteca Luciferiana",
+    metaDescription: "Acesse grimórios e ensinamentos luciferianos autênticos",
+    keywords: ["luciferianismo", "grimórios", "ocultismo", "magia"],
+    
+    // Configurações de Segurança
+    enableContentProtection: true,
+    maxLoginAttempts: 5,
+    sessionTimeout: 24, // horas
+    
+    // Notificações
+    emailNotifications: true,
+    newGrimoireAlert: true,
+    paymentAlerts: true
+  });
+
+  const [isSaving, setIsSaving] = useState(false);
+  const { toast } = useToast();
+
+  const saveSettings = async () => {
+    setIsSaving(true);
+    try {
+      await apiRequest("/api/admin/settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(settings)
+      });
+      toast({
+        title: "Configurações Salvas",
+        description: "Todas as configurações foram atualizadas"
+      });
+    } catch (error) {
+      toast({
+        title: "Erro",
+        description: "Erro ao salvar configurações",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const resetToDefaults = () => {
+    if (confirm("Tem certeza que deseja restaurar as configurações padrão?")) {
+      setSettings({
+        siteName: "Templo do Abismo",
+        siteDescription: "Portal de Ensinamentos Luciferianos",
+        allowRegistrations: true,
+        moderateComments: true,
+        stripeEnabled: true,
+        defaultCurrency: "BRL",
+        freeTrialDays: 7,
+        maxGrimoireSize: 50,
+        allowedFileTypes: ["pdf", "epub", "txt"],
+        autoPublish: false,
+        requireApproval: true,
+        metaTitle: "Templo do Abismo - Biblioteca Luciferiana",
+        metaDescription: "Acesse grimórios e ensinamentos luciferianos autênticos",
+        keywords: ["luciferianismo", "grimórios", "ocultismo", "magia"],
+        enableContentProtection: true,
+        maxLoginAttempts: 5,
+        sessionTimeout: 24,
+        emailNotifications: true,
+        newGrimoireAlert: true,
+        paymentAlerts: true
+      });
+    }
+  };
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-golden-amber">⚙️ Configurações</CardTitle>
-      </CardHeader>
-      <CardContent>
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-xl font-semibold text-golden-amber">⚙️ Configurações do Sistema</h2>
         <p className="text-muted-foreground">
-          Configurações gerais do sistema de biblioteca.
+          Configure o comportamento geral da plataforma
         </p>
-      </CardContent>
-    </Card>
+      </div>
+
+      {/* Configurações Gerais */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-golden-amber">Configurações Gerais</CardTitle>
+          <CardDescription>Informações básicas do site</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Nome do Site</Label>
+              <input
+                type="text"
+                className="w-full p-2 border rounded-lg"
+                value={settings.siteName}
+                onChange={(e) => setSettings({...settings, siteName: e.target.value})}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label>Moeda Padrão</Label>
+              <Select value={settings.defaultCurrency} onValueChange={(value) => 
+                setSettings({...settings, defaultCurrency: value})
+              }>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="BRL">Real (BRL)</SelectItem>
+                  <SelectItem value="USD">Dólar (USD)</SelectItem>
+                  <SelectItem value="EUR">Euro (EUR)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Descrição do Site</Label>
+            <textarea
+              className="w-full p-2 border rounded-lg resize-none"
+              rows={2}
+              value={settings.siteDescription}
+              onChange={(e) => setSettings({...settings, siteDescription: e.target.value})}
+            />
+          </div>
+
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                id="allowRegistrations"
+                checked={settings.allowRegistrations}
+                onChange={(e) => setSettings({...settings, allowRegistrations: e.target.checked})}
+              />
+              <Label htmlFor="allowRegistrations">Permitir Registros</Label>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                id="moderateComments"
+                checked={settings.moderateComments}
+                onChange={(e) => setSettings({...settings, moderateComments: e.target.checked})}
+              />
+              <Label htmlFor="moderateComments">Moderar Comentários</Label>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Configurações de Conteúdo */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-golden-amber">Gestão de Conteúdo</CardTitle>
+          <CardDescription>Controle da publicação e qualidade</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Tamanho Máximo (MB)</Label>
+              <input
+                type="number"
+                className="w-full p-2 border rounded-lg"
+                value={settings.maxGrimoireSize}
+                onChange={(e) => setSettings({...settings, maxGrimoireSize: parseInt(e.target.value)})}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Teste Gratuito (dias)</Label>
+              <input
+                type="number"
+                className="w-full p-2 border rounded-lg"
+                value={settings.freeTrialDays}
+                onChange={(e) => setSettings({...settings, freeTrialDays: parseInt(e.target.value)})}
+              />
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                id="autoPublish"
+                checked={settings.autoPublish}
+                onChange={(e) => setSettings({...settings, autoPublish: e.target.checked})}
+              />
+              <Label htmlFor="autoPublish">Publicação Automática</Label>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                id="requireApproval"
+                checked={settings.requireApproval}
+                onChange={(e) => setSettings({...settings, requireApproval: e.target.checked})}
+              />
+              <Label htmlFor="requireApproval">Requer Aprovação</Label>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Configurações de Segurança */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-golden-amber">Segurança</CardTitle>
+          <CardDescription>Proteção e controle de acesso</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Tentativas de Login</Label>
+              <input
+                type="number"
+                className="w-full p-2 border rounded-lg"
+                value={settings.maxLoginAttempts}
+                onChange={(e) => setSettings({...settings, maxLoginAttempts: parseInt(e.target.value)})}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Timeout Sessão (horas)</Label>
+              <input
+                type="number"
+                className="w-full p-2 border rounded-lg"
+                value={settings.sessionTimeout}
+                onChange={(e) => setSettings({...settings, sessionTimeout: parseInt(e.target.value)})}
+              />
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              id="enableContentProtection"
+              checked={settings.enableContentProtection}
+              onChange={(e) => setSettings({...settings, enableContentProtection: e.target.checked})}
+            />
+            <Label htmlFor="enableContentProtection">Ativar Proteção de Conteúdo</Label>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Botões de Ação */}
+      <div className="flex justify-between">
+        <Button
+          variant="outline"
+          onClick={resetToDefaults}
+          className="border-gray-500 text-gray-500 hover:bg-gray-500 hover:text-white"
+        >
+          <RotateCcw className="mr-2 h-4 w-4" />
+          Restaurar Padrões
+        </Button>
+
+        <Button
+          onClick={saveSettings}
+          disabled={isSaving}
+          className="bg-amber-500 hover:bg-amber-600 text-black font-semibold"
+        >
+          {isSaving ? (
+            <>
+              <Settings className="mr-2 h-4 w-4 animate-spin" />
+              Salvando...
+            </>
+          ) : (
+            <>
+              <Save className="mr-2 h-4 w-4" />
+              Salvar Configurações
+            </>
+          )}
+        </Button>
+      </div>
+    </div>
   );
 }
