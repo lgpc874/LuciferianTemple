@@ -225,26 +225,65 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // ADMIN - Gerenciamento de Grimórios
+  // ADMIN - Gerenciamento de Grimórios com Capítulos Individuais
   app.post("/api/admin/grimoires", authenticateToken, requireAdmin, async (req, res) => {
     try {
-      const grimoireData: InsertGrimoire = insertGrimoireSchema.parse(req.body);
+      const { title, description, section_id, chapters, is_paid, price, level } = req.body;
       
-      // Gerar ordem de desbloqueio automática se não fornecida
-      if (!grimoireData.unlock_order) {
-        const existingGrimoires = await supabaseService.getGrimoires();
-        grimoireData.unlock_order = existingGrimoires.length + 1;
+      if (!title || !description || !section_id || !chapters || chapters.length === 0) {
+        return res.status(400).json({ error: "Dados obrigatórios: título, descrição, seção e pelo menos um capítulo" });
       }
 
-      // Gerar URL de capa padrão se não fornecida
-      if (!grimoireData.cover_image_url) {
-        grimoireData.cover_image_url = `https://via.placeholder.com/300x400/1a1a1a/d4af37?text=${encodeURIComponent(grimoireData.title)}`;
-      }
+      // Aplicar formatação automática ao conteúdo
+      const formattedGrimoire = formatGrimoireContent(title, description, chapters);
+      
+      // Gerar ordem de desbloqueio automática
+      const existingGrimoires = await supabaseService.getGrimoires();
+      const unlockOrder = existingGrimoires.length + 1;
+
+      // Gerar URL de capa padrão
+      const coverImageUrl = `https://via.placeholder.com/300x400/1a1a1a/d4af37?text=${encodeURIComponent(title)}`;
+      
+      // Criar grimório no banco
+      const grimoireData: InsertGrimoire = {
+        title: formattedGrimoire.title,
+        description: formattedGrimoire.description,
+        section_id: parseInt(section_id),
+        content: `${formattedGrimoire.chapters.length} capítulos criados automaticamente`,
+        is_paid: is_paid || false,
+        price: is_paid ? price : null,
+        level: level || "iniciante",
+        unlock_order: unlockOrder,
+        cover_image_url: coverImageUrl,
+        word_count: formattedGrimoire.metadata.wordCount,
+        estimated_reading_time: formattedGrimoire.metadata.estimatedReadingTime,
+        is_published: false
+      };
 
       const newGrimoire = await supabaseService.createGrimoire(grimoireData);
-      res.status(201).json(newGrimoire);
+      
+      // Criar capítulos individuais com formatação automática
+      const createdChapters = [];
+      for (let i = 0; i < formattedGrimoire.chapters.length; i++) {
+        const chapter = formattedGrimoire.chapters[i];
+        const createdChapter = await supabaseService.createChapter({
+          grimoire_id: newGrimoire.id,
+          title: chapter.title,
+          content: chapter.formattedContent,
+          chapter_number: i + 1,
+          word_count: chapter.content.split(' ').length
+        });
+        createdChapters.push(createdChapter);
+      }
+
+      res.status(201).json({
+        ...newGrimoire,
+        chapters: createdChapters,
+        metadata: formattedGrimoire.metadata,
+        message: `Grimório criado com ${createdChapters.length} capítulos formatados automaticamente`
+      });
     } catch (error: any) {
-      console.error("Error creating grimoire:", error);
+      console.error("Error creating grimoire with chapters:", error);
       res.status(400).json({ error: error.message || "Erro ao criar grimório" });
     }
   });
