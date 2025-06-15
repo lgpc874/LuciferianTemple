@@ -78,13 +78,13 @@ export default function NavigationMenu() {
                       className={`
                         flex flex-col items-center space-y-1 px-2 py-1 transition-all duration-300
                         ${isActive 
-                          ? 'text-golden-amber' 
+                          ? 'text-red-500' 
                           : 'text-ritualistic-beige hover:text-golden-amber'
                         }
                       `}>
                       <IconComponent 
                         size={16} 
-                        className={`transition-all duration-300 ${isActive ? 'text-golden-amber' : 'text-golden-amber/60 group-hover:text-golden-amber'}`} 
+                        className={`transition-all duration-300 ${isActive ? 'text-red-500' : 'text-golden-amber/60 group-hover:text-golden-amber'}`} 
                       />
                       <span className="font-cinzel text-xs tracking-wider uppercase">
                         {item.label}
@@ -118,11 +118,11 @@ export default function NavigationMenu() {
                       className={`
                         flex flex-col items-center space-y-1 px-1 py-1 transition-all duration-300
                         ${isActive 
-                          ? 'text-golden-amber' 
+                          ? 'text-red-500' 
                           : 'text-ritualistic-beige hover:text-golden-amber'
                         }
                       `}>
-                      <IconComponent size={14} className={`${isActive ? 'text-golden-amber' : 'text-golden-amber/60'}`} />
+                      <IconComponent size={14} className={`${isActive ? 'text-red-500' : 'text-golden-amber/60'}`} />
                       <span className="font-cinzel text-xs tracking-wide uppercase">
                         {item.label}
                       </span>
