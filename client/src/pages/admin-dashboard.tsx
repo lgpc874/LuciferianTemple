@@ -1,33 +1,17 @@
-import { useState } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { useQuery } from '@tanstack/react-query';
-import { useIsMobile } from '@/hooks/use-mobile';
 import { PageTransition } from '@/components/page-transition';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import AdminUsers from '@/components/admin/admin-users';
 import AdminBiblioteca from '@/components/admin/admin-biblioteca';
-import AdminAIComplete from '@/components/admin/admin-ai-complete';
 import AdminSettings from '@/components/admin/admin-settings';
+import AdminNavigation from '@/components/admin-navigation';
 import { 
   BarChart3,
   Shield,
   Database,
   TrendingUp,
-  Globe,
-  Users,
-  BookOpen,
-  Layers,
-  Bot,
-  FileText,
-  Palette,
-  Settings,
-  LogOut,
-  Home,
-  Menu,
-  X,
-  ChevronLeft,
-  CreditCard
+  Globe
 } from 'lucide-react';
 
 // Types for admin analytics
@@ -93,7 +77,7 @@ function AdminOverview() {
             </p>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Sessões Hoje</CardTitle>
@@ -101,14 +85,14 @@ function AdminOverview() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-golden-amber">
-              {isLoading ? "..." : analytics?.todaySessions?.toLocaleString() || "0"}
+              {isLoading ? "..." : analytics?.todaySessions || "0"}
             </div>
             <p className="text-xs text-muted-foreground">
-              Baseado em atividade de usuários
+              Usuários ativos no sistema
             </p>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Taxa de Engajamento</CardTitle>
@@ -116,10 +100,10 @@ function AdminOverview() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-golden-amber">
-              {isLoading ? "..." : `${analytics?.engagementRate || "0"}%`}
+              {isLoading ? "..." : `${analytics?.engagementRate || 0}%`}
             </div>
             <p className="text-xs text-muted-foreground">
-              Atualizado em tempo real
+              Leitura completa de grimórios
             </p>
           </CardContent>
         </Card>
@@ -128,23 +112,23 @@ function AdminOverview() {
       {/* Quick Actions */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-golden-amber">Ações Rápidas</CardTitle>
+          <CardTitle className="text-golden-amber">⧭ Ações Rápidas</CardTitle>
           <CardDescription>
-            Acesso direto às funcionalidades mais utilizadas
+            Acesso direto às principais funcionalidades administrativas
           </CardDescription>
         </CardHeader>
         <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="p-4 border rounded-lg hover:bg-muted/50 cursor-pointer transition-colors">
-            <h3 className="font-semibold text-golden-amber mb-2">Gerar Grimório com IA</h3>
-            <p className="text-sm text-muted-foreground">Criar novo conteúdo automaticamente</p>
+            <h3 className="font-semibold text-golden-amber mb-2">Gerenciar Biblioteca</h3>
+            <p className="text-sm text-muted-foreground">Grimórios, seções e IA generator</p>
           </div>
           <div className="p-4 border rounded-lg hover:bg-muted/50 cursor-pointer transition-colors">
             <h3 className="font-semibold text-golden-amber mb-2">Gerenciar Usuários</h3>
             <p className="text-sm text-muted-foreground">Administrar contas e permissões</p>
           </div>
           <div className="p-4 border rounded-lg hover:bg-muted/50 cursor-pointer transition-colors">
-            <h3 className="font-semibold text-golden-amber mb-2">Ver Analytics</h3>
-            <p className="text-sm text-muted-foreground">Relatórios e métricas detalhadas</p>
+            <h3 className="font-semibold text-golden-amber mb-2">Configurações</h3>
+            <p className="text-sm text-muted-foreground">Sistema e preferências gerais</p>
           </div>
         </CardContent>
       </Card>
@@ -153,8 +137,7 @@ function AdminOverview() {
 }
 
 export default function AdminDashboard() {
-  const { user, isAuthenticated, logout } = useAuth();
-  const isMobile = useIsMobile();
+  const { user, isAuthenticated } = useAuth();
   
   // Get current tab from URL
   const urlParams = new URLSearchParams(window.location.search);
@@ -194,162 +177,12 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleTabChange = (tabId: string) => {
-    setActiveTab(tabId);
-    if (isMobile) {
-      setIsSidebarOpen(false);
-    }
-  };
-
-  const currentTabLabel = sidebarItems.find(item => item.id === activeTab)?.label || 'Painel Admin';
-
   return (
-    <div className="min-h-screen bg-background flex">
-      {/* Mobile Header */}
-      {isMobile && (
-        <div className="fixed top-0 left-0 right-0 z-50 bg-card border-b border-golden-amber/20 h-14 flex items-center justify-between px-4">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setIsSidebarOpen(true)}
-            className="hover:bg-golden-amber/5"
-          >
-            <Menu className="w-5 h-5" />
-          </Button>
-          <h1 className="font-cinzel text-lg font-bold text-golden-amber truncate">
-            {currentTabLabel}
-          </h1>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleLogout}
-            className="hover:bg-destructive/5 text-destructive"
-          >
-            <LogOut className="w-4 h-4" />
-          </Button>
-        </div>
-      )}
-
-      {/* Mobile Overlay */}
-      {isMobile && isSidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-40"
-          onClick={() => setIsSidebarOpen(false)}
-        />
-      )}
-
-      {/* Sidebar */}
-      <div className={`
-        ${isMobile ? 'fixed' : 'relative'}
-        ${isMobile ? (isSidebarOpen ? 'translate-x-0' : '-translate-x-full') : 'translate-x-0'}
-        transition-transform duration-300 ease-in-out
-        ${isMobile ? 'w-80 z-50' : 'w-16 lg:w-64'}
-        bg-card border-r border-golden-amber/20 flex flex-col
-        ${isMobile ? 'h-full' : 'min-h-screen'}
-      `}>
-        {/* Header */}
-        <div className={`border-b border-golden-amber/20 ${isMobile ? 'p-4' : 'p-3 lg:p-6'}`}>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <Shield className={`text-golden-amber ${isMobile ? 'w-8 h-8' : 'w-6 h-6 lg:w-8 lg:h-8'}`} />
-              <div className={`${isMobile ? 'block' : 'hidden lg:block'}`}>
-                <h1 className="font-cinzel text-xl font-bold text-golden-amber">
-                  <span className="text-blood-red">⚔</span> Admin Panel <span className="text-blood-red">⚔</span>
-                </h1>
-                <p className="text-xs text-muted-foreground">
-                  Templo do Abismo
-                </p>
-              </div>
-            </div>
-            {isMobile && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsSidebarOpen(false)}
-                className="hover:bg-golden-amber/5"
-              >
-                <X className="w-5 h-5" />
-              </Button>
-            )}
-          </div>
-        </div>
-
-        {/* User Info */}
-        <div className={`border-b border-golden-amber/20 ${isMobile ? 'p-4' : 'p-3 lg:p-4'}`}>
-          <div className="flex items-center space-x-3">
-            <div className={`rounded-full bg-golden-amber/20 flex items-center justify-center ${isMobile ? 'w-10 h-10' : 'w-8 h-8 lg:w-10 lg:h-10'}`}>
-              <Shield className={`text-golden-amber ${isMobile ? 'w-5 h-5' : 'w-4 h-4 lg:w-5 lg:h-5'}`} />
-            </div>
-            <div className={`${isMobile ? 'block' : 'hidden lg:block'}`}>
-              <p className="font-medium text-golden-amber text-sm">{user?.username || 'Admin'}</p>
-              <p className="text-xs text-muted-foreground">Administrador</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Navigation */}
-        <nav className={`flex-1 space-y-1 ${isMobile ? 'p-4' : 'p-2 lg:p-4'}`}>
-          {sidebarItems.map((item) => (
-            <Button
-              key={item.id}
-              variant={activeTab === item.id ? "secondary" : "ghost"}
-              className={`
-                w-full justify-start 
-                ${isMobile ? 'h-12' : 'h-10 lg:h-12'}
-                ${activeTab === item.id
-                  ? 'bg-golden-amber/10 text-golden-amber border border-golden-amber/30'
-                  : 'hover:bg-golden-amber/5 hover:text-golden-amber'
-                }
-              `}
-              onClick={() => handleTabChange(item.id)}
-            >
-              <item.icon className={`${isMobile ? 'w-5 h-5' : 'w-4 h-4 lg:w-5 lg:h-5'} ${isMobile ? 'mr-3' : 'lg:mr-3'}`} />
-              <span className={`${isMobile ? 'block' : 'hidden lg:block'} text-sm`}>
-                {item.label}
-              </span>
-            </Button>
-          ))}
-        </nav>
-
-        {/* Footer Actions */}
-        <div className={`border-t border-golden-amber/20 space-y-2 ${isMobile ? 'p-4' : 'p-2 lg:p-4'}`}>
-          <Button
-            variant="outline"
-            className={`
-              w-full justify-start border-golden-amber/30 hover:bg-golden-amber/5
-              ${isMobile ? 'h-10' : 'h-9 lg:h-10'}
-            `}
-            onClick={() => window.location.href = '/'}
-          >
-            <Home className={`${isMobile ? 'w-4 h-4 mr-3' : 'w-4 h-4 lg:mr-3'}`} />
-            <span className={`${isMobile ? 'block' : 'hidden lg:block'} text-sm`}>
-              Voltar ao Site
-            </span>
-          </Button>
-          <Button
-            variant="outline"
-            className={`
-              w-full justify-start border-destructive/30 hover:bg-destructive/5 text-destructive
-              ${isMobile ? 'h-10' : 'h-9 lg:h-10'}
-            `}
-            onClick={handleLogout}
-          >
-            <LogOut className={`${isMobile ? 'w-4 h-4 mr-3' : 'w-4 h-4 lg:mr-3'}`} />
-            <span className={`${isMobile ? 'block' : 'hidden lg:block'} text-sm`}>
-              Sair do Admin
-            </span>
-          </Button>
-        </div>
+    <PageTransition className="min-h-screen bg-background">
+      <AdminNavigation />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {renderContent()}
       </div>
-
-      {/* Main Content */}
-      <div className={`flex-1 overflow-auto ${isMobile ? 'pt-14' : ''}`}>
-        <PageTransition className={`${isMobile ? 'p-4' : 'p-6'}`}>
-          <div className="max-w-full">
-            {renderContent()}
-          </div>
-        </PageTransition>
-      </div>
-    </div>
+    </PageTransition>
   );
 }
