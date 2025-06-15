@@ -6,16 +6,9 @@ import { PageTransition } from '@/components/page-transition';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import AdminUsers from '@/components/admin/admin-users';
-import AdminGrimoires from '@/components/admin/admin-grimoires';
-import AdminSections from '@/components/admin/admin-sections';
-import AdminContent from '@/components/admin/admin-content';
-import AdminThemes from '@/components/admin/admin-themes';
+import AdminBiblioteca from '@/components/admin/admin-biblioteca';
 import AdminAIComplete from '@/components/admin/admin-ai-complete';
-import AIConfig from '@/components/admin/ai-config';
-import GrimoireManagement from '@/components/admin/grimoire-management';
-import AdminAnalytics from '@/components/admin/admin-analytics';
 import AdminSettings from '@/components/admin/admin-settings';
-import StripeConfig from '@/components/admin/stripe-config';
 import { 
   BarChart3,
   Shield,
@@ -161,9 +154,11 @@ function AdminOverview() {
 
 export default function AdminDashboard() {
   const { user, isAuthenticated, logout } = useAuth();
-  const [activeTab, setActiveTab] = useState('overview');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const isMobile = useIsMobile();
+  
+  // Get current tab from URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const activeTab = urlParams.get('tab') || 'overview';
 
   // Verificar se é admin - usando email ou propriedade isAdmin
   const isAdmin = user?.email === "admin@templodoabismo.com" || 
@@ -186,53 +181,19 @@ export default function AdminDashboard() {
     );
   }
 
-  const sidebarItems = [
-    { id: 'overview', label: 'Visão Geral', icon: BarChart3, shortLabel: 'Geral' },
-    { id: 'users', label: 'Usuários', icon: Users, shortLabel: 'Users' },
-    { id: 'grimoires', label: 'Grimórios', icon: BookOpen, shortLabel: 'Books' },
-    { id: 'sections', label: 'Seções da Biblioteca', icon: Layers, shortLabel: 'Seções' },
-    { id: 'grimoire-management', label: 'Gerenciar Grimórios', icon: Settings, shortLabel: 'Manage' },
-    { id: 'stripe', label: 'Pagamentos Stripe', icon: CreditCard, shortLabel: 'Stripe' },
-    { id: 'ai', label: 'IA Generator', icon: Bot, shortLabel: 'IA' },
-    { id: 'ai-config', label: 'Configurar IA', icon: Settings, shortLabel: 'IA Config' },
-    { id: 'content', label: 'Conteúdo', icon: FileText, shortLabel: 'Content' },
-    { id: 'themes', label: 'Temas', icon: Palette, shortLabel: 'Themes' },
-    { id: 'analytics', label: 'Analytics', icon: BarChart3, shortLabel: 'Stats' },
-    { id: 'settings', label: 'Configurações', icon: Settings, shortLabel: 'Config' }
-  ];
-
   const renderContent = () => {
     switch (activeTab) {
+      case 'biblioteca':
+        return <AdminBiblioteca />;
       case 'users':
         return <AdminUsers />;
-      case 'grimoires':
-        return <AdminGrimoires />;
-      case 'sections':
-        return <AdminSections />;
-      case 'grimoire-management':
-        return <GrimoireManagement />;
-      case 'stripe':
-        return <StripeConfig />;
-      case 'content':
-        return <AdminContent />;
-      case 'themes':
-        return <AdminThemes />;
       case 'ai':
         return <AdminAIComplete />;
-      case 'ai-config':
-        return <AIConfig />;
-      case 'analytics':
-        return <AdminAnalytics />;
       case 'settings':
         return <AdminSettings />;
       default:
         return <AdminOverview />;
     }
-  };
-
-  const handleLogout = () => {
-    logout();
-    window.location.href = '/';
   };
 
   const handleTabChange = (tabId: string) => {
