@@ -148,6 +148,8 @@ export default function AdminDashboard() {
 
   const renderContent = () => {
     switch (activeTab) {
+      case 'biblioteca':
+        return <AdminBiblioteca />;
       case 'users':
         return <AdminUsers />;
       case 'settings':

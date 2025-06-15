@@ -119,18 +119,16 @@ export default function Biblioteca() {
   return (
     <PageTransition className="min-h-screen mystical-bg pt-4 fade-in">
       {/* Header da biblioteca */}
-      <div className="relative py-16 bg-gradient-to-b from-red-950/20 to-transparent">
-        <div className="relative text-center">
-          <h1 className="font-cinzel text-4xl sm:text-5xl md:text-6xl text-red-500 mb-6 tracking-wider biblioteca-title">
+      <div className="relative h-screen flex flex-col justify-center items-center text-center px-4">
+        <div className="relative">
+          <h1 className="font-cinzel text-5xl md:text-6xl xl:text-7xl text-red-500 mb-8 tracking-wider biblioteca-title">
             ⸸ BIBLIOTHECA ARCANA ⸸
           </h1>
-          <div className="w-32 h-1 bg-red-500 mx-auto mb-8"></div>
           
-          <div className="max-w-3xl mx-auto px-4">
-            <p className="font-garamond text-lg text-ritualistic-beige/90 leading-relaxed italic">
-              Nos corredores silenciosos desta biblioteca ancestral repousam os segredos mais profundos 
-              do conhecimento proibido. Cada grimório é uma chave para os mistérios do abismo, 
-              onde apenas os iniciados ousam trilhar os caminhos da verdadeira iluminação.
+          <div className="max-w-2xl mx-auto mb-16">
+            <p className="font-garamond text-lg md:text-xl text-ritualistic-beige/90 leading-relaxed italic">
+              Nos corredores silenciosos desta biblioteca ancestral repousam os segredos 
+              do conhecimento proibido. Cada grimório é uma chave para os mistérios do abismo.
             </p>
             <div className="flex items-center justify-center space-x-4 mt-6 text-red-400/60">
               <span className="text-2xl">◆</span>
