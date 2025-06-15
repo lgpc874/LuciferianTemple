@@ -46,9 +46,21 @@ export default function Home() {
           
           {/* Header */}
           <div className="text-center mb-4 sm:mb-6">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-cinzel text-golden-amber tracking-wider mb-2">
-              <span className="text-blood-red">⧭</span> TEMPLO DO ABISMO <span className="text-blood-red">⧭</span>
-            </h1>
+            <div className="flex items-center justify-center space-x-3 mb-2">
+              <img 
+                src="https://i.postimg.cc/g20gqmdX/IMG-20250527-182235-1.png" 
+                alt="Logo" 
+                className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 xl:w-16 xl:h-16 brightness-0 saturate-100 invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)"
+              />
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-cinzel text-golden-amber tracking-wider">
+                TEMPLO DO ABISMO
+              </h1>
+              <img 
+                src="https://i.postimg.cc/g20gqmdX/IMG-20250527-182235-1.png" 
+                alt="Logo" 
+                className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 xl:w-16 xl:h-16 brightness-0 saturate-100 invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)"
+              />
+            </div>
             <p className="text-xs sm:text-sm text-ritualistic-beige/70 max-w-xl mx-auto px-4">
               Onde as sombras revelam seus segredos milenares
             </p>

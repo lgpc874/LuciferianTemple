@@ -170,9 +170,21 @@ export default function NavigationMenu() {
         <div className="bg-black/30 backdrop-blur-sm border border-golden-amber/30 rounded-lg p-3">
           {/* Mobile Header */}
           <div className="flex items-center justify-between">
-            <span className="font-cinzel text-golden-amber text-sm tracking-wider">
-              ⧭ TEMPLO DO ABISMO
-            </span>
+            <div className="flex items-center space-x-2">
+              <img 
+                src="https://i.postimg.cc/g20gqmdX/IMG-20250527-182235-1.png" 
+                alt="Logo" 
+                className="w-5 h-5 brightness-0 saturate-100 invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)"
+              />
+              <span className="font-cinzel text-golden-amber text-sm tracking-wider">
+                TEMPLO DO ABISMO
+              </span>
+              <img 
+                src="https://i.postimg.cc/g20gqmdX/IMG-20250527-182235-1.png" 
+                alt="Logo" 
+                className="w-5 h-5 brightness-0 saturate-100 invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)"
+              />
+            </div>
             <button
               onClick={toggleMenu}
               className="p-2 text-golden-amber hover:bg-golden-amber/10 rounded transition-all duration-300"
