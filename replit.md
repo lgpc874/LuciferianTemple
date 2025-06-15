@@ -161,6 +161,9 @@ Changelog:
 - June 15, 2025. Sistema completo de criação de grimórios com capítulos individuais implementado - criação manual capítulo por capítulo (título e conteúdo), configuração de IA com número personalizado de capítulos e títulos, sistema de formatação automática com estética luciferiana (símbolos místicos, ornamentação dourada, tipografia Cinzel/Garamond), processamento backend com word count e tempo de leitura, schema atualizado para suportar capítulos com metadados
 - June 15, 2025. Sistema de geração de capas com IA implementado - integração DALL-E 3 para criação automática de capas de grimórios, prompt otimizado para estética luciferiana, campo cover_image_url adicionado ao schema, interface de formulário com opções de URL manual e geração por IA
 - June 15, 2025. Persistência real de configurações implementada - eliminadas todas as simulações, tabelas ai_settings e system_settings criadas no Supabase, funções completas de salvamento/carregamento, invalidação de cache implementada, dados persistem corretamente entre sessões, sistema 100% real sem mock data
+- June 15, 2025. Script SQL de correção executado no Supabase - removido campo categoria dos grimórios, corrigido campo display_order para sort_order nas library_sections, estrutura de banco 100% sincronizada
+- June 15, 2025. Página biblioteca simplificada conforme solicitação - mantido apenas título "BIBLIOTHECA ARCANA", frase descritiva e sistema de abas direto, removido conteúdo extra desnecessário
+- June 15, 2025. Erros TypeScript corrigidos no painel administrativo - todas as referências a variáveis indefinidas resolvidas, sistema de configurações funcionando perfeitamente
 ```
 
 ## User Preferences
