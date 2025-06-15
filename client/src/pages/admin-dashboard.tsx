@@ -187,8 +187,6 @@ export default function AdminDashboard() {
         return <AdminBiblioteca />;
       case 'users':
         return <AdminUsers />;
-      case 'ai':
-        return <AdminAIComplete />;
       case 'settings':
         return <AdminSettings />;
       default:

@@ -27,7 +27,6 @@ export default function AdminNavigation() {
     { id: 'overview', label: 'Visão Geral', icon: BarChart3, path: '/admin' },
     { id: 'biblioteca', label: 'Biblioteca', icon: BookOpen, path: '/admin?tab=biblioteca' },
     { id: 'users', label: 'Usuários', icon: Users, path: '/admin?tab=users' },
-    { id: 'ai', label: 'IA Generator', icon: Bot, path: '/admin?tab=ai' },
     { id: 'settings', label: 'Configurações', icon: Settings, path: '/admin?tab=settings' }
   ];
 

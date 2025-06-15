@@ -3,7 +3,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AdminGrimoires from './admin-grimoires';
 import AdminSections from './admin-sections';
-import { BookOpen, Layers, Database, TrendingUp } from 'lucide-react';
+import AdminAIComplete from './admin-ai-complete';
+import { BookOpen, Layers, Database, TrendingUp, Bot } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 
@@ -102,7 +103,7 @@ export default function AdminBiblioteca() {
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="grimoires" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
+            <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="grimoires" className="flex items-center gap-2">
                 <BookOpen className="w-4 h-4" />
                 Grimórios
@@ -110,6 +111,10 @@ export default function AdminBiblioteca() {
               <TabsTrigger value="sections" className="flex items-center gap-2">
                 <Layers className="w-4 h-4" />
                 Seções
+              </TabsTrigger>
+              <TabsTrigger value="ai-generator" className="flex items-center gap-2">
+                <Bot className="w-4 h-4" />
+                IA Generator
               </TabsTrigger>
             </TabsList>
             
@@ -119,6 +124,10 @@ export default function AdminBiblioteca() {
             
             <TabsContent value="sections" className="mt-6">
               <AdminSections />
+            </TabsContent>
+            
+            <TabsContent value="ai-generator" className="mt-6">
+              <AdminAIComplete />
             </TabsContent>
           </Tabs>
         </CardContent>
