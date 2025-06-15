@@ -78,9 +78,15 @@ export default function Perfil() {
     enabled: !!user
   });
 
-  // Buscar progresso dos grimórios
-  const { data: grimoireProgress } = useQuery<GrimoireProgress[]>({
-    queryKey: ['/api/user/grimoire-progress'],
+  // Buscar progresso dos grimórios do usuário
+  const { data: userProgress } = useQuery({
+    queryKey: ['/api/progress/user'],
+    enabled: !!user
+  });
+
+  // Buscar todos os grimórios para cruzar com o progresso
+  const { data: allGrimoires } = useQuery({
+    queryKey: ['/api/grimoires'],
     enabled: !!user
   });
 
@@ -174,6 +180,37 @@ export default function Perfil() {
     const mins = minutes % 60;
     return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
   };
+
+  // Combinar progresso do usuário com dados dos grimórios
+  const myLibrary = React.useMemo(() => {
+    if (!userProgress || !allGrimoires) return [];
+    
+    return userProgress.map((progress: any) => {
+      const grimoire = allGrimoires.find((g: any) => g.id === progress.grimoire_id);
+      if (!grimoire) return null;
+      
+      const progressPercentage = progress.total_pages > 0 
+        ? Math.round((progress.current_page / progress.total_pages) * 100)
+        : 0;
+      
+      return {
+        id: progress.id,
+        grimoireId: grimoire.id,
+        grimoireTitle: grimoire.title,
+        sectionName: grimoire.section_name || 'Seção Desconhecida',
+        progress: progressPercentage,
+        currentPage: progress.current_page,
+        totalPages: progress.total_pages,
+        readingTime: progress.reading_time_minutes || 0,
+        lastReadAt: progress.updated_at,
+        coverImageUrl: grimoire.cover_image_url,
+        price: grimoire.price,
+        isPaid: grimoire.price > 0,
+        isPublished: grimoire.is_published,
+        status: progressPercentage >= 100 ? 'completed' : 'reading'
+      };
+    }).filter(Boolean);
+  }, [userProgress, allGrimoires]);
 
   if (!user) {
     return (

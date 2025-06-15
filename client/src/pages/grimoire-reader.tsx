@@ -42,6 +42,30 @@ export default function GrimoireReader() {
     enabled: !!grimoireId,
   });
 
+  // Buscar progresso do usuário
+  const { data: userProgress } = useQuery({
+    queryKey: [`/api/progress/user`],
+    enabled: !!grimoireId,
+  });
+
+  // Mutação para salvar progresso
+  const saveProgressMutation = useMutation({
+    mutationFn: async (data: { grimoireId: number; currentPage: number; totalPages: number; readingTimeMinutes: number }) => {
+      return apiRequest("POST", "/api/progress", data);
+    },
+    onMutate: () => {
+      setSaveStatus('saving');
+    },
+    onSuccess: () => {
+      setSaveStatus('saved');
+      setTimeout(() => setSaveStatus(null), 2000);
+    },
+    onError: () => {
+      setSaveStatus('error');
+      setTimeout(() => setSaveStatus(null), 3000);
+    },
+  });
+
   // Função para paginar o conteúdo
   const paginateContent = (content: string, charsPerPage: number = 1200) => {
     if (!content) return [];
@@ -80,8 +104,67 @@ export default function GrimoireReader() {
       const pages = paginateContent(fullContent);
       setPaginatedContent(pages);
       setTotalPages(pages.length);
+      
+      // Restaurar progresso salvo
+      if (userProgress && grimoireId) {
+        const progress = userProgress.find((p: any) => p.grimoire_id === grimoireId);
+        if (progress) {
+          setCurrentPage(progress.current_page || 1);
+          setReadingTime(progress.reading_time_minutes || 0);
+        }
+      }
     }
-  }, [chapters]);
+  }, [chapters, userProgress, grimoireId]);
+
+  // Timer para contar tempo de leitura
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setReadingTime(prev => prev + 1);
+    }, 60000); // Incrementa a cada minuto
+
+    return () => clearInterval(timer);
+  }, []);
+
+  // Função para salvar progresso com debounce
+  const saveProgress = () => {
+    if (!grimoireId) return;
+    
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+
+    saveTimeoutRef.current = setTimeout(() => {
+      saveProgressMutation.mutate({
+        grimoireId,
+        currentPage,
+        totalPages,
+        readingTimeMinutes: readingTime
+      });
+    }, 2000); // Salva após 2 segundos de inatividade
+  };
+
+  // Salvar progresso quando mudar de página
+  useEffect(() => {
+    if (currentPage > 1) { // Só salva se não for a primeira página
+      saveProgress();
+    }
+  }, [currentPage]);
+
+  // Salvar progresso a cada 5 minutos de leitura
+  useEffect(() => {
+    if (readingTime > 0 && readingTime % 5 === 0) {
+      saveProgress();
+    }
+  }, [readingTime]);
+
+  // Limpar timeout ao desmontar
+  useEffect(() => {
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Navegação entre páginas
   const goToPage = (page: number) => {
@@ -176,6 +259,30 @@ export default function GrimoireReader() {
               >
                 <ChevronRight className="h-4 w-4" />
               </Button>
+              
+              {/* Indicador de status de salvamento */}
+              {saveStatus && (
+                <div className="flex items-center gap-2 text-xs ml-4">
+                  {saveStatus === 'saving' && (
+                    <>
+                      <div className="w-3 h-3 border border-golden-amber/60 border-t-transparent rounded-full animate-spin" />
+                      <span className="text-golden-amber/80">Salvando...</span>
+                    </>
+                  )}
+                  {saveStatus === 'saved' && (
+                    <>
+                      <div className="w-3 h-3 bg-green-500 rounded-full" />
+                      <span className="text-green-400">✓ Salvo</span>
+                    </>
+                  )}
+                  {saveStatus === 'error' && (
+                    <>
+                      <div className="w-3 h-3 bg-red-500 rounded-full" />
+                      <span className="text-red-400">⚠ Erro</span>
+                    </>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>
