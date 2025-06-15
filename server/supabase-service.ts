@@ -295,7 +295,7 @@ export class SupabaseService {
       };
     } catch (error: any) {
       console.error('Error fetching overview stats:', error);
-      throw new Error(`Error fetching overview stats: ${error.message}`);
+      throw new Error(`Error fetching overview stats: ${error?.message || 'Unknown error'}`);
     }
   }
 }
