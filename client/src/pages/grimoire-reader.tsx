@@ -32,7 +32,7 @@ export default function GrimoireReader() {
 
   // Buscar dados do grimório
   const { data: grimoire, isLoading: grimoireLoading } = useQuery({
-    queryKey: ['/api/grimoires', grimoireId],
+    queryKey: [`/api/grimoires/${grimoireId}`],
     enabled: !!grimoireId,
   });
 
@@ -245,7 +245,9 @@ export default function GrimoireReader() {
             </Button>
             
             <div className="text-center flex-1 mx-4">
-              <h1 className="text-base font-cinzel text-golden-amber truncate">{(grimoire as any)?.title || 'Carregando...'}</h1>
+              <h1 className="text-base font-cinzel text-golden-amber truncate">
+                {grimoireLoading ? 'Carregando...' : grimoire?.title || 'Grimório'}
+              </h1>
               <div className="flex items-center justify-center space-x-4 text-xs text-ritualistic-beige/60 mt-1">
                 <span className="flex items-center">
                   <Eye className="h-3 w-3 mr-1" />
