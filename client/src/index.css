@@ -1024,10 +1024,6 @@ input, textarea {
 .grimoire-content .blessing-final {
   text-align: center;
   margin-top: 2rem;
-  padding: 1.5rem;
-  background: rgba(139, 69, 19, 0.1);
-  border-radius: 8px;
-  border: 1px solid rgba(212, 175, 55, 0.3);
 }
 
 .grimoire-content .blessing {
@@ -1037,19 +1033,12 @@ input, textarea {
 }
 
 .grimoire-content .mystical-seal {
-  font-size: 2rem !important;
-  color: #d4af37 !important;
-  margin-top: 1rem !important;
-  text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+  display: none;
 }
 
 .grimoire-content .chapter-closing {
   text-align: center;
   margin-top: 3rem;
-  padding: 2rem;
-  background: rgba(139, 69, 19, 0.1);
-  border-radius: 8px;
-  border: 1px solid rgba(212, 175, 55, 0.3);
 }
 
 .grimoire-content .final-blessing {
@@ -1078,27 +1067,19 @@ input, textarea {
 .grimoire-content .duke-card,
 .grimoire-content .queen-profile,
 .grimoire-content .king-card {
-  background: rgba(139, 69, 19, 0.15);
-  border: 1px solid rgba(212, 175, 55, 0.3);
-  border-radius: 8px;
-  padding: 1rem;
-  margin: 0.5rem 0;
+  margin: 1rem 0;
+  padding: 0;
 }
 
 .grimoire-content .sign-icon {
-  font-size: 2rem !important;
-  text-align: center;
-  margin-bottom: 0.5rem !important;
+  display: none;
 }
 
 .grimoire-content .sign-meaning,
 .grimoire-content .truth-revelation,
 .grimoire-content .liberation-key {
-  background: rgba(212, 175, 55, 0.1);
-  border-left: 3px solid #d4af37;
-  padding: 0.8rem;
-  margin: 0.5rem 0;
-  border-radius: 0 6px 6px 0;
+  margin: 1rem 0;
+  padding: 0;
 }
 
 /* Listas simples */
@@ -1167,25 +1148,21 @@ input, textarea {
   padding: 0;
 }
 
-/* Texto de invocação */
+/* Texto simples */
 .grimoire-content .invocation-text,
 .grimoire-content .blessing-text {
-  font-family: 'EB Garamond', serif !important;
   font-style: italic;
   color: #d4af37 !important;
   line-height: 1.8 !important;
   text-align: center;
+  margin: 1rem 0;
 }
 
-/* Elementos específicos do ritual */
+/* Elementos simples */
 .grimoire-content .prep-timing,
 .grimoire-content .prep-space,
 .grimoire-content .prep-materials,
 .grimoire-content .prep-personal {
-  background: rgba(139, 69, 19, 0.08);
-  border: 1px solid rgba(212, 175, 55, 0.2);
-  border-radius: 6px;
-  padding: 1rem;
   margin: 1rem 0;
 }
 
