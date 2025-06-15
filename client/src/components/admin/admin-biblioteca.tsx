@@ -1663,7 +1663,7 @@ function SettingsTab() {
       <div className="flex justify-between">
         <Button
           variant="outline"
-          onClick={resetToDefaults}
+          onClick={resetAIToDefaults}
           className="border-gray-500 text-gray-500 hover:bg-gray-500 hover:text-white"
         >
           <RotateCcw className="mr-2 h-4 w-4" />
@@ -1671,7 +1671,7 @@ function SettingsTab() {
         </Button>
 
         <Button
-          onClick={saveSettings}
+          onClick={saveSystemSettings}
           disabled={isSaving}
           className="bg-amber-500 hover:bg-amber-600 text-black font-semibold"
         >

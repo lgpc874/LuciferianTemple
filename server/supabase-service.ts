@@ -40,7 +40,7 @@ export class SupabaseService {
       .from('library_sections')
       .select('*')
       .eq('is_active', true)
-      .order('display_order');
+      .order('sort_order');
 
     if (error) throw new Error(`Error fetching sections: ${error.message}`);
     return data || [];
