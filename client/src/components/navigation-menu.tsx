@@ -162,131 +162,85 @@ export default function NavigationMenu() {
         </div>
 
         {/* Mobile Menu */}
-        <div className="sm:hidden flex items-center justify-between py-0" ref={menuRef}>
-          <div className="flex items-center space-x-1">
-            <span className="text-blood-red text-sm">†</span>
-            <span className="font-cinzel text-golden-amber text-xs tracking-wider uppercase">
-              Navegação
-            </span>
-            <span className="text-blood-red text-sm">†</span>
-          </div>
-          
+        <div className="sm:hidden flex items-center justify-center py-2" ref={menuRef}>
           <button
             onClick={toggleMenu}
-            className="relative p-3 text-golden-amber/70 hover:text-golden-amber transition-all duration-300 bg-black/30 rounded-full border border-golden-amber/40 shadow-lg"
+            className="relative p-4 text-golden-amber/70 hover:text-golden-amber transition-all duration-300 bg-black/30 rounded-full border border-golden-amber/40 shadow-lg"
             aria-label="Menu Arcano"
           >
             <div className="relative">
               {isMenuOpen ? (
-                <X size={18} className="transform rotate-90 transition-transform duration-300" />
+                <X size={20} className="transform rotate-90 transition-transform duration-300" />
               ) : (
-                <Menu size={18} className="transition-transform duration-300" />
+                <Menu size={20} className="transition-transform duration-300" />
               )}
             </div>
             <div className="absolute inset-0 rounded-full bg-gradient-to-r from-golden-amber/20 to-transparent animate-pulse"></div>
           </button>
 
-          {/* Mobile Menu Overlay - Slide from right */}
+          {/* Mobile Menu Overlay - Full screen */}
           <div className={`
-            fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-black/95 backdrop-blur-xl border-l border-golden-amber/30 z-50
-            transform transition-transform duration-500 ease-out shadow-2xl
+            fixed inset-0 bg-black/95 backdrop-blur-xl z-50
+            transform transition-transform duration-300 ease-out
             ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}
           `}>
-            {/* Header do Menu Místico */}
-            <div className="flex items-center justify-between p-6 border-b border-golden-amber/30 bg-gradient-to-r from-black/60 to-golden-amber/10">
-              <div className="text-center flex-1">
-                <h2 className="font-cinzel text-lg text-golden-amber tracking-wider mb-1">
-                  ☩ Menu Arcano ☩
-                </h2>
-                <div className="text-xs text-golden-amber/60">
-                  Portal dos Mistérios
-                </div>
-              </div>
+            {/* Header do Menu */}
+            <div className="flex items-center justify-between p-4 border-b border-golden-amber/30">
+              <h2 className="font-cinzel text-xl text-golden-amber tracking-wider">
+                ⧭ Menu
+              </h2>
               <button
                 onClick={closeMenu}
                 className="p-2 text-golden-amber/70 hover:text-golden-amber transition-colors duration-300 rounded-full hover:bg-golden-amber/10"
               >
-                <X size={20} />
+                <X size={24} />
               </button>
             </div>
 
-            {/* Decoração mística */}
-            <div className="absolute top-20 left-1/2 transform -translate-x-1/2 w-16 h-px bg-gradient-to-r from-transparent via-golden-amber/40 to-transparent"></div>
-
             {/* Itens do Menu */}
-            <div className="py-6 px-4 space-y-2">
+            <div className="p-4 space-y-3 mt-8">
               {menuItems.map((item, index) => {
                 const IconComponent = item.icon;
                 const isActive = location === item.href;
                 
                 return (
-                  <div key={item.href + item.label} className="relative">
-                    <Link 
-                      href={item.href}
-                      onClick={() => handleNavClick(item.href)}
-                      className={`
-                        group flex items-center space-x-4 px-4 py-4 rounded-lg transition-all duration-300 relative overflow-hidden
-                        ${isActive 
-                          ? 'text-golden-amber bg-gradient-to-r from-golden-amber/20 to-golden-amber/10 border-l-4 border-golden-amber shadow-lg' 
-                          : 'text-ritualistic-beige hover:text-golden-amber hover:bg-golden-amber/10 hover:translate-x-1'
-                        }
-                      `}>
-                      
-                      {/* Background pattern for active item */}
-                      {isActive && (
-                        <div className="absolute inset-0 bg-gradient-to-r from-golden-amber/5 to-transparent opacity-50"></div>
-                      )}
-                      
-                      {/* Icon Container */}
-                      <div className="relative z-10">
-                        <IconComponent 
-                          size={20} 
-                          className={`${isActive ? 'text-golden-amber' : 'text-golden-amber/60 group-hover:text-golden-amber'} transition-all duration-300`} 
-                        />
-                        {isActive && (
-                          <div className="absolute -inset-1 border border-golden-amber/40 rounded animate-pulse"></div>
-                        )}
-                      </div>
-                      
-                      {/* Text Content */}
-                      <div className="flex-1 relative z-10">
-                        <div className="font-cinzel text-sm tracking-wide uppercase font-medium">
-                          {item.label}
-                        </div>
-                        <div className="text-xs text-ritualistic-beige/60 mt-1 font-garamond">
-                          {item.subtitle}
-                        </div>
-                      </div>
-                      
-                      {/* Active Indicator */}
-                      {isActive && (
-                        <div className="relative z-10">
-                          <div className="w-2 h-2 bg-golden-amber rounded-full animate-pulse shadow-lg"></div>
-                        </div>
-                      )}
-                    </Link>
+                  <Link 
+                    key={item.href + item.label}
+                    href={item.href}
+                    onClick={() => handleNavClick(item.href)}
+                    className={`
+                      flex items-center space-x-4 p-4 rounded-lg transition-all duration-300 w-full
+                      ${isActive 
+                        ? 'text-golden-amber bg-golden-amber/20 border border-golden-amber/30' 
+                        : 'text-ritualistic-beige hover:text-golden-amber hover:bg-golden-amber/10'
+                      }
+                    `}>
                     
-                    {/* Separator */}
-                    {index < menuItems.length - 1 && (
-                      <div className="ml-4 mr-4 mt-2 h-px bg-gradient-to-r from-transparent via-golden-amber/20 to-transparent"></div>
-                    )}
-                  </div>
+                    <IconComponent 
+                      size={24} 
+                      className={`${isActive ? 'text-golden-amber' : 'text-golden-amber/60'} transition-colors duration-300`} 
+                    />
+                    
+                    <div className="flex-1">
+                      <div className="font-cinzel text-lg tracking-wide uppercase font-medium">
+                        {item.label}
+                      </div>
+                      <div className="text-sm text-ritualistic-beige/60 mt-1 font-garamond">
+                        {item.subtitle}
+                      </div>
+                    </div>
+                  </Link>
                 );
               })}
             </div>
 
-            {/* Footer Místico */}
-            <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-golden-amber/30 bg-gradient-to-t from-black/80 to-transparent">
-              <div className="text-center">
-                <div className="text-golden-amber/70 text-sm font-cinzel mb-2">
-                  ⟨ Templo do Abismo ⟩
-                </div>
-                <div className="text-ritualistic-beige/40 text-xs">
-                  Portal dos Mistérios Arcanos
-                </div>
-                <div className="mt-3 flex justify-center">
-                  <div className="w-12 h-px bg-gradient-to-r from-transparent via-golden-amber/40 to-transparent"></div>
-                </div>
+            {/* Footer */}
+            <div className="absolute bottom-8 left-0 right-0 text-center px-4">
+              <div className="text-golden-amber/70 text-sm font-cinzel">
+                Templo do Abismo
+              </div>
+              <div className="text-ritualistic-beige/40 text-xs mt-1">
+                Portal dos Mistérios Arcanos
               </div>
             </div>
           </div>
