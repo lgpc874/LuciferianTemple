@@ -50,7 +50,8 @@ export default function Home() {
               <img 
                 src="https://i.postimg.cc/g20gqmdX/IMG-20250527-182235-1.png" 
                 alt="Logo" 
-                className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 xl:w-16 xl:h-16 brightness-0 saturate-100 invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)"
+                className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 xl:w-16 xl:h-16"
+                style={{ filter: 'brightness(0) saturate(100%) invert(8%) sepia(100%) saturate(7462%) hue-rotate(5deg) brightness(92%) contrast(120%)' }}
               />
               <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-cinzel text-golden-amber tracking-wider">
                 TEMPLO DO ABISMO
@@ -58,7 +59,8 @@ export default function Home() {
               <img 
                 src="https://i.postimg.cc/g20gqmdX/IMG-20250527-182235-1.png" 
                 alt="Logo" 
-                className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 xl:w-16 xl:h-16 brightness-0 saturate-100 invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)"
+                className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 xl:w-16 xl:h-16"
+                style={{ filter: 'brightness(0) saturate(100%) invert(8%) sepia(100%) saturate(7462%) hue-rotate(5deg) brightness(92%) contrast(120%)' }}
               />
             </div>
             <p className="text-xs sm:text-sm text-ritualistic-beige/70 max-w-xl mx-auto px-4">

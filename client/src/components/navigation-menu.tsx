@@ -174,7 +174,8 @@ export default function NavigationMenu() {
               <img 
                 src="https://i.postimg.cc/g20gqmdX/IMG-20250527-182235-1.png" 
                 alt="Logo" 
-                className="w-5 h-5 brightness-0 saturate-100 invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)"
+                className="w-5 h-5"
+                style={{ filter: 'brightness(0) saturate(100%) invert(8%) sepia(100%) saturate(7462%) hue-rotate(5deg) brightness(92%) contrast(120%)' }}
               />
               <span className="font-cinzel text-golden-amber text-sm tracking-wider">
                 TEMPLO DO ABISMO
@@ -182,7 +183,8 @@ export default function NavigationMenu() {
               <img 
                 src="https://i.postimg.cc/g20gqmdX/IMG-20250527-182235-1.png" 
                 alt="Logo" 
-                className="w-5 h-5 brightness-0 saturate-100 invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)"
+                className="w-5 h-5"
+                style={{ filter: 'brightness(0) saturate(100%) invert(8%) sepia(100%) saturate(7462%) hue-rotate(5deg) brightness(92%) contrast(120%)' }}
               />
             </div>
             <button
