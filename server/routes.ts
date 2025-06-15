@@ -250,6 +250,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         description: formattedGrimoire.description,
         section_id: parseInt(section_id),
         content: `${formattedGrimoire.chapters.length} capítulos criados automaticamente`,
+        category: level || "iniciante",
         is_paid: is_paid || false,
         price: is_paid ? price : null,
         level: level || "iniciante",
