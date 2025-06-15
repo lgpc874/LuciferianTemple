@@ -250,7 +250,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         description: formattedGrimoire.description,
         section_id: parseInt(section_id),
         content: `${formattedGrimoire.chapters.length} capítulos criados automaticamente`,
-        category: level || "iniciante",
         is_paid: is_paid || false,
         price: is_paid ? price : null,
         level: level || "iniciante",
@@ -571,7 +570,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         description: aiResult.description || "Grimório criado automaticamente pela IA",
         section_id: 1, // Porta das Sombras por padrão
         content: aiResult.content || "",
-        category: "Grimório IA",
         difficulty_level: settings?.complexity === 'advanced' ? 3 : settings?.complexity === 'intermediate' ? 2 : 1,
         is_paid: false,
         price: null,

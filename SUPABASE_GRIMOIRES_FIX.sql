@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS library_sections (
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 2. CRIAR TABELA GRIMOIRES COMPLETA
+-- 2. CRIAR TABELA GRIMOIRES COMPLETA (SEM CATEGORIA)
 DROP TABLE IF EXISTS grimoires CASCADE;
 CREATE TABLE grimoires (
   id SERIAL PRIMARY KEY,
@@ -22,7 +22,6 @@ CREATE TABLE grimoires (
   description TEXT NOT NULL,
   content TEXT,
   section_id INTEGER REFERENCES library_sections(id) NOT NULL,
-  category TEXT DEFAULT 'Grimório' NOT NULL,
   difficulty_level INTEGER DEFAULT 1 NOT NULL,
   cover_image_url TEXT,
   price DECIMAL(10,2),
@@ -103,7 +102,6 @@ INSERT INTO grimoires (
   title,
   description,
   section_id,
-  category,
   difficulty_level,
   is_paid,
   is_published,
@@ -115,7 +113,6 @@ INSERT INTO grimoires (
   'Grimório de Teste - Sistema Completo',
   'Este grimório foi criado para testar todas as funcionalidades do sistema.',
   1,
-  'Teste',
   1,
   false,
   true,

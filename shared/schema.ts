@@ -29,7 +29,6 @@ export const grimoires = pgTable("grimoires", {
   title: text("title").notNull(),
   description: text("description").notNull(),
   content: text("content"),
-  category: text("category").notNull(),
   difficulty_level: integer("difficulty_level").default(1).notNull(),
   section_id: integer("section_id").references(() => library_sections.id).notNull(),
   cover_image_url: text("cover_image_url"),
