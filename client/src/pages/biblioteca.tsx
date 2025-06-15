@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useLocation } from "wouter";
 import { PageTransition } from "@/components/page-transition";
 import ContentProtection from "@/components/content-protection";
 import MysticalFooter from "@/components/mystical-footer";
@@ -22,6 +23,7 @@ import type { Grimoire, LibrarySection } from "@shared/schema";
 
 export default function Biblioteca() {
   const [activeSection, setActiveSection] = useState(1);
+  const [, setLocation] = useLocation();
 
   const { data: sections = [], isLoading: sectionsLoading } = useQuery({
     queryKey: ['/api/library/sections'],
@@ -49,6 +51,25 @@ export default function Biblioteca() {
     // }
 
     return { text: 'Ler', action: 'read' };
+  };
+
+  // Função para lidar com ações do grimório
+  const handleGrimoireAction = (grimoire: any) => {
+    const buttonState = getButtonState(grimoire);
+    
+    switch (buttonState.action) {
+      case 'read':
+      case 'continue':
+        // Navegar para o leitor do grimório
+        setLocation(`/grimoire/${grimoire.id}`);
+        break;
+      case 'purchase':
+        // Navegar para página de compra (implementar depois)
+        console.log(`Comprar grimório: ${grimoire.title}`);
+        break;
+      default:
+        console.log(`Ação não reconhecida: ${buttonState.action}`);
+    }
   };
 
   const getSectionIcon = (sectionId: number) => {
@@ -210,10 +231,7 @@ export default function Biblioteca() {
                                     <Button 
                                       size="sm" 
                                       className="bg-red-900/50 hover:bg-red-900/70 text-golden-amber border border-golden-amber/20 hover:border-golden-amber/40 px-6"
-                                      onClick={() => {
-                                        const buttonState = getButtonState(grimoire);
-                                        console.log(`Ação: ${buttonState.action} para grimório ${grimoire.title}`);
-                                      }}
+                                      onClick={() => handleGrimoireAction(grimoire)}
                                     >
                                       {getButtonState(grimoire).text}
                                     </Button>
