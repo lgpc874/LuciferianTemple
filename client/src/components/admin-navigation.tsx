@@ -25,6 +25,7 @@ export default function AdminNavigation() {
 
   const navigationItems = [
     { id: 'overview', label: 'Visão Geral', icon: BarChart3, path: '/admin-dashboard' },
+    { id: 'biblioteca', label: 'Biblioteca', icon: BookOpen, path: '/admin-dashboard/biblioteca' },
     { id: 'users', label: 'Usuários', icon: Users, path: '/admin-dashboard/users' },
     { id: 'settings', label: 'Configurações', icon: Settings, path: '/admin-dashboard/settings' }
   ];
@@ -37,6 +38,7 @@ export default function AdminNavigation() {
   const getCurrentTab = () => {
     const path = location;
     if (path === '/admin-dashboard') return 'overview';
+    if (path.includes('/admin-dashboard/biblioteca')) return 'biblioteca';
     if (path.includes('/admin-dashboard/users')) return 'users';
     if (path.includes('/admin-dashboard/settings')) return 'settings';
     return 'overview';

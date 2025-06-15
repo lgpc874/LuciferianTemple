@@ -10,7 +10,8 @@ export default function NavigationMenu() {
   const { isAuthenticated, user, logout } = useAuth();
 
   const baseMenuItems = [
-    { href: "/", label: "Sanctum", icon: Home, subtitle: "Portão Principal" }
+    { href: "/", label: "Sanctum", icon: Home, subtitle: "Portão Principal" },
+    { href: "/biblioteca", label: "Bibliotheca", icon: BookOpen, subtitle: "Grimórios Arcanos" }
   ];
 
   // Adiciona item dinâmico baseado no status de autenticação

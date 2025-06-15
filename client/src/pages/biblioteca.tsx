@@ -121,21 +121,23 @@ export default function Biblioteca() {
       {/* Header da biblioteca */}
       <div className="relative py-16 bg-gradient-to-b from-red-950/20 to-transparent">
         <div className="relative text-center">
-          <h1 className="font-cinzel text-4xl sm:text-5xl md:text-6xl text-golden-amber mb-6 tracking-wider biblioteca-title">
+          <h1 className="font-cinzel text-4xl sm:text-5xl md:text-6xl text-red-500 mb-6 tracking-wider biblioteca-title">
             ⸸ BIBLIOTHECA ARCANA ⸸
           </h1>
-          <div className="w-32 h-1 bg-golden-amber mx-auto mb-6"></div>
+          <div className="w-32 h-1 bg-red-500 mx-auto mb-8"></div>
           
-          {isAuthenticated && user && (
-            <div className="mb-8">
-              <p className="font-garamond text-lg text-ritualistic-beige px-4">
-                Bem-vindo de volta, <span className="text-golden-amber font-semibold">{user.username}</span>
-                {user.isAdmin && (
-                  <span className="text-red-400 ml-2">[Administrador]</span>
-                )}
-              </p>
+          <div className="max-w-3xl mx-auto px-4">
+            <p className="font-garamond text-lg text-ritualistic-beige/90 leading-relaxed italic">
+              Nos corredores silenciosos desta biblioteca ancestral repousam os segredos mais profundos 
+              do conhecimento proibido. Cada grimório é uma chave para os mistérios do abismo, 
+              onde apenas os iniciados ousam trilhar os caminhos da verdadeira iluminação.
+            </p>
+            <div className="flex items-center justify-center space-x-4 mt-6 text-red-400/60">
+              <span className="text-2xl">◆</span>
+              <span className="font-cinzel text-sm tracking-widest">IN TENEBRIS LUX</span>
+              <span className="text-2xl">◆</span>
             </div>
-          )}
+          </div>
         </div>
       </div>
 
