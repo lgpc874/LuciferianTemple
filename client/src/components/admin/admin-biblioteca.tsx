@@ -29,6 +29,7 @@ import {
   Trash2, 
   Eye, 
   EyeOff,
+  Book,
   DollarSign,
   Bot,
   Sparkles,
@@ -85,6 +86,7 @@ interface CreateGrimoireRequest {
 export default function AdminBiblioteca() {
   const [activeTab, setActiveTab] = useState("grimoires");
   const [selectedGrimoire, setSelectedGrimoire] = useState<Grimoire | null>(null);
+  const [viewingGrimoire, setViewingGrimoire] = useState<Grimoire | null>(null);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isAIGenerating, setIsAIGenerating] = useState(false);
   const [createMode, setCreateMode] = useState<"manual" | "ai">("manual");
@@ -390,6 +392,7 @@ export default function AdminBiblioteca() {
                                 onClick={() => togglePublished(grimoire)}
                                 disabled={updateGrimoireMutation.isPending}
                                 className="border-amber-500 text-amber-500 hover:bg-amber-500 hover:text-black"
+                                title={grimoire.is_published ? "Despublicar" : "Publicar"}
                               >
                                 {grimoire.is_published ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                               </Button>
@@ -397,8 +400,19 @@ export default function AdminBiblioteca() {
                               <Button
                                 size="sm"
                                 variant="outline"
+                                className="border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white"
+                                onClick={() => setViewingGrimoire(grimoire)}
+                                title="Ver grimório"
+                              >
+                                <Book className="h-4 w-4" />
+                              </Button>
+                              
+                              <Button
+                                size="sm"
+                                variant="outline"
                                 className="border-amber-500 text-amber-500 hover:bg-amber-500 hover:text-black"
                                 onClick={() => setSelectedGrimoire(grimoire)}
+                                title="Editar"
                               >
                                 <Edit className="h-4 w-4" />
                               </Button>
@@ -476,6 +490,25 @@ export default function AdminBiblioteca() {
               isLoading={updateGrimoireMutation.isPending}
               onCancel={() => setSelectedGrimoire(null)}
             />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal de Visualização */}
+      <Dialog open={!!viewingGrimoire} onOpenChange={() => setViewingGrimoire(null)}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-golden-amber flex items-center gap-2">
+              <Book className="h-5 w-5" />
+              {viewingGrimoire?.title}
+            </DialogTitle>
+            <DialogDescription>
+              Visualização completa do grimório e seus capítulos
+            </DialogDescription>
+          </DialogHeader>
+          
+          {viewingGrimoire && (
+            <GrimoireViewer grimoire={viewingGrimoire} />
           )}
         </DialogContent>
       </Dialog>
