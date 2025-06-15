@@ -1351,6 +1351,42 @@ input, textarea {
   font-size: 0.9rem !important;
 }
 
+/* Advertência em vermelho no prólogo */
+.grimoire-content .warning,
+.grimoire-content .advertencia,
+.grimoire-content .aviso,
+.grimoire-content [style*="color: red"],
+.grimoire-content [style*="color:#ff0000"],
+.grimoire-content [style*="color: #ff0000"],
+.grimoire-content strong[style*="color"],
+.grimoire-content em[style*="color"],
+.grimoire-content p:has(strong[style*="color"]),
+.grimoire-content div:has(strong[style*="color"]) {
+  color: #ff4444 !important;
+  font-weight: bold !important;
+  background-color: rgba(255, 68, 68, 0.1) !important;
+  padding: 0.2rem 0.4rem !important;
+  border-left: 3px solid #ff4444 !important;
+  margin: 1rem 0 !important;
+  display: block !important;
+}
+
+/* Seletores específicos para texto de advertência */
+.grimoire-content p:contains("ADVERTÊNCIA"),
+.grimoire-content p:contains("WARNING"),
+.grimoire-content p:contains("AVISO"),
+.grimoire-content strong:contains("ADVERTÊNCIA"),
+.grimoire-content strong:contains("WARNING"),
+.grimoire-content strong:contains("AVISO") {
+  color: #ff4444 !important;
+  font-weight: bold !important;
+  background-color: rgba(255, 68, 68, 0.1) !important;
+  padding: 0.2rem 0.4rem !important;
+  border-left: 3px solid #ff4444 !important;
+  margin: 1rem 0 !important;
+  display: block !important;
+}
+
 /* Listas ordenadas */
 .grimoire-content ol {
   list-style: none;
