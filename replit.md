@@ -179,6 +179,7 @@ Changelog:
 - June 15, 2025. Seções da biblioteca renomeadas - "Porta das Sombras" → "Atrium Ignis", "Vestíbulo da Chama" → "Porta Umbrae", "Torre dos Selos" → "Arcana Noctis", "Sanctum Profundum" → "Via Tenebris" com descrições místicas atualizadas
 - June 15, 2025. Ícones customizados das seções implementados - criados 4 símbolos SVG únicos: cruz invertida (Atrium Ignis), estrela invertida (Porta Umbrae), chama mística multicamadas (Arcana Noctis), coroa sombria com gemas (Via Tenebris), substituindo ícones genéricos por símbolos autenticamente luciferianos
 - June 15, 2025. Nova seção "Templo do Abismo" criada - adicionada quinta seção com logo oficial do site (mesmo que gira no background) em vermelho como ícone, descrição como santuário dos mistérios mais profundos e vedados canalizados das divindades primordiais, grid da biblioteca ajustado para 5 colunas responsivas (2 mobile, 5 desktop)
+- June 15, 2025. Coleção completa "Atrium Ignis" criada - 6 grimórios filosóficos preparatórios para iniciantes no luciferianismo (O Que Não Te Contaram Sobre o Inferno, Quem é Lúcifer?, O Medo de Ser Livre, O Falso Deus, A Luz que Não Vem do Céu), cada um com 5-6 capítulos, tom ocultista provocador e desconstrutivo, sem práticas ritualísticas, preparando para próxima etapa Porta Umbrae
 ```
 
 ## User Preferences
