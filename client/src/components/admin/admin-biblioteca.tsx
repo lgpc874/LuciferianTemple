@@ -102,7 +102,7 @@ export default function AdminBiblioteca() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="grimoires" className="w-full">
+          <Tabs defaultValue="grimoires" className="w-full admin-biblioteca-tabs">
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="grimoires" className="flex items-center gap-2">
                 <BookOpen className="w-4 h-4" />

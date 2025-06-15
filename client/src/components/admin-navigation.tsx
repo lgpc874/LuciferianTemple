@@ -71,7 +71,7 @@ export default function AdminNavigation() {
                 size="sm"
                 className={`flex items-center space-x-2 ${
                   isActive(item.id) 
-                    ? 'bg-golden-amber/10 text-golden-amber border border-golden-amber/30' 
+                    ? 'admin-tab-active' 
                     : 'hover:bg-golden-amber/5 hover:text-golden-amber'
                 }`}
                 onClick={() => {
@@ -82,8 +82,10 @@ export default function AdminNavigation() {
                   }
                 }}
               >
-                <item.icon className="w-4 h-4" />
-                <span className="hidden lg:inline">{item.label}</span>
+                <item.icon className={`w-4 h-4 ${isActive(item.id) ? 'text-red-600' : ''}`} />
+                <span className={`hidden lg:inline ${isActive(item.id) ? 'text-red-600' : ''}`}>
+                  {item.label}
+                </span>
               </Button>
             ))}
           </div>
@@ -148,7 +150,7 @@ export default function AdminNavigation() {
                   variant={isActive(item.id) ? "secondary" : "ghost"}
                   className={`w-full justify-start ${
                     isActive(item.id) 
-                      ? 'bg-golden-amber/10 text-golden-amber' 
+                      ? 'admin-tab-active' 
                       : 'hover:bg-golden-amber/5 hover:text-golden-amber'
                   }`}
                   onClick={() => {
@@ -160,8 +162,10 @@ export default function AdminNavigation() {
                     setIsMobileMenuOpen(false);
                   }}
                 >
-                  <item.icon className="w-4 h-4 mr-3" />
-                  {item.label}
+                  <item.icon className={`w-4 h-4 mr-3 ${isActive(item.id) ? 'text-red-600' : ''}`} />
+                  <span className={isActive(item.id) ? 'text-red-600' : ''}>
+                    {item.label}
+                  </span>
                 </Button>
               ))}
               

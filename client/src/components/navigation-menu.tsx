@@ -201,7 +201,8 @@ export default function NavigationMenu() {
             <div className="border-t border-golden-amber/20 pt-3 mt-3 space-y-2">
               {menuItems.map((item) => {
                 const IconComponent = item.icon;
-                const isActive = location === item.href;
+                const isActive = location === item.href || 
+                  (item.href === '/biblioteca' && location.startsWith('/biblioteca'));
                 
                 return (
                   <Link
@@ -211,18 +212,20 @@ export default function NavigationMenu() {
                     className={`
                       flex items-center space-x-3 p-3 rounded-lg transition-all duration-200 w-full
                       ${isActive 
-                        ? 'text-golden-amber bg-golden-amber/20 border border-golden-amber/30' 
+                        ? 'menu-item-active' 
                         : 'text-ritualistic-beige hover:text-golden-amber hover:bg-golden-amber/10'
                       }
                     `}>
                     
                     <IconComponent 
                       size={16} 
-                      className={`${isActive ? 'text-golden-amber' : 'text-golden-amber/60'}`} 
+                      className={`${isActive ? 'text-red-600' : 'text-golden-amber/60'}`} 
                     />
                     
                     <div className="flex-1">
-                      <div className="font-cinzel text-sm tracking-wide uppercase font-medium">
+                      <div className={`font-cinzel text-sm tracking-wide uppercase font-medium ${
+                        isActive ? 'text-red-600' : ''
+                      }`}>
                         {item.label}
                       </div>
                       <div className="text-xs text-ritualistic-beige/60 mt-0.5">
