@@ -11,13 +11,15 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { 
   BookOpen, 
-  Eye, 
+  Cross, 
+  Star, 
   Flame, 
   Crown, 
   Skull, 
   FileText, 
   Brain,
-  Clock
+  Clock,
+  Eye
 } from "lucide-react";
 import type { Grimoire, LibrarySection } from "@shared/schema";
 
@@ -74,10 +76,10 @@ export default function Biblioteca() {
 
   const getSectionIcon = (sectionId: number) => {
     switch (sectionId) {
-      case 1: return Eye;
-      case 2: return Flame;
-      case 3: return Crown;
-      case 4: return Skull;
+      case 1: return Cross; // Atrium Ignis - Cruz invertida
+      case 2: return Star;  // Porta Umbrae - Estrela invertida
+      case 3: return Flame; // Arcana Noctis - Chama
+      case 4: return Crown; // Via Tenebris - Coroa
       case 5: return FileText;
       case 6: return Brain;
       default: return BookOpen;
