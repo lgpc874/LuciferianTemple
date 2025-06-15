@@ -1122,12 +1122,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const savedGrimoire = await grimoireStore.addGrimoire({
         title: grimoireData.title,
         description: grimoireData.description,
-        sectionId: 1, // Padrão para primeira seção
+        sectionId: 1, // Padrão para primeira seção (Porta das Sombras)
         unlockOrder: grimoireStore.getGrimoires().length + 1,
         isActive: true,
         price: null,
         isPaid: false,
-        sectionId: 1, // Por padrão na primeira seção (Porta das Sombras)
         coverImageUrl: `https://via.placeholder.com/300x400?text=${encodeURIComponent(grimoireData.title)}`
       });
 

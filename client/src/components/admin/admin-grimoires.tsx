@@ -47,10 +47,13 @@ interface Grimoire {
   id: number;
   title: string;
   description: string;
-  category: string;
-  difficultyLevel: number;
+  sectionId: number;
+  sectionName?: string;
   totalChapters?: number;
   createdAt?: string;
+  isActive: boolean;
+  price?: string;
+  isPaid: boolean;
 }
 
 export default function AdminGrimoires() {
@@ -61,9 +64,18 @@ export default function AdminGrimoires() {
 
   // Fetch grimoires
   const { data: grimoires, isLoading } = useQuery({
-    queryKey: ['/api/grimoires'],
+    queryKey: ['/api/admin/grimoires'],
     queryFn: async () => {
-      const response = await apiRequest('/api/grimoires');
+      const response = await apiRequest('/api/admin/grimoires');
+      return response.json();
+    }
+  });
+
+  // Fetch sections
+  const { data: sections = [] } = useQuery({
+    queryKey: ['/api/admin/sections'],
+    queryFn: async () => {
+      const response = await apiRequest('/api/admin/sections');
       return response.json();
     }
   });
@@ -251,10 +263,10 @@ export default function AdminGrimoires() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Título</TableHead>
-                  <TableHead>Categoria</TableHead>
-                  <TableHead>Dificuldade</TableHead>
-                  <TableHead>Capítulos</TableHead>
+                  <TableHead>Seção</TableHead>
                   <TableHead>Status</TableHead>
+                  <TableHead>Capítulos</TableHead>
+                  <TableHead>Preço</TableHead>
                   <TableHead className="text-right">Ações</TableHead>
                 </TableRow>
               </TableHeader>
@@ -268,12 +280,14 @@ export default function AdminGrimoires() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant="outline">{grimoire.category}</Badge>
+                      <Badge variant="outline">
+                        {sections.find((s: any) => s.id === grimoire.sectionId)?.name || 'Sem seção'}
+                      </Badge>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <div className={`w-2 h-2 rounded-full ${getDifficultyColor(grimoire.difficultyLevel)}`} />
-                        <span>Nível {grimoire.difficultyLevel}</span>
+                        <div className={`w-2 h-2 rounded-full ${grimoire.isActive ? 'bg-green-500' : 'bg-red-500'}`} />
+                        <span>{grimoire.isActive ? 'Ativo' : 'Inativo'}</span>
                       </div>
                     </TableCell>
                     <TableCell>
@@ -281,6 +295,15 @@ export default function AdminGrimoires() {
                         <Clock className="w-4 h-4 text-muted-foreground" />
                         {grimoire.totalChapters || 12} cap.
                       </div>
+                    </TableCell>
+                    <TableCell>
+                      {grimoire.isPaid ? (
+                        <Badge variant="default" className="bg-golden-amber/20 text-golden-amber">
+                          R$ {grimoire.price || '0,00'}
+                        </Badge>
+                      ) : (
+                        <Badge variant="secondary">Gratuito</Badge>
+                      )}
                     </TableCell>
                     <TableCell>
                       <Badge className="bg-green-500/20 text-green-700 border-green-500/30">
@@ -337,15 +360,15 @@ export default function AdminGrimoires() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="edit-category">Categoria</Label>
-                  <Select name="category" defaultValue={editingGrimoire.category}>
+                  <Label htmlFor="edit-section">Seção</Label>
+                  <Select name="sectionId" defaultValue={editingGrimoire.sectionId?.toString()}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {categories.map((category) => (
-                        <SelectItem key={category} value={category}>
-                          {category}
+                      {sections.map((section: any) => (
+                        <SelectItem key={section.id} value={section.id.toString()}>
+                          {section.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
