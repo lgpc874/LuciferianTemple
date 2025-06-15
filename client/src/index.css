@@ -920,6 +920,525 @@ input, textarea {
   }
 }
 
+/* Estilos específicos para o grimório luciferiano */
+.grimoire-content .chapter-opening {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  border: 2px solid rgba(212, 175, 55, 0.3);
+  border-radius: 8px;
+  background: rgba(139, 69, 19, 0.1);
+}
+
+.grimoire-content .mystical-border {
+  padding: 1rem;
+}
+
+.grimoire-content .chapter-title {
+  font-family: 'Cinzel Decorative', serif !important;
+  font-size: 1.8rem !important;
+  color: #d4af37 !important;
+  margin-bottom: 0.5rem !important;
+  text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+}
+
+.grimoire-content .chapter-subtitle {
+  font-family: 'EB Garamond', serif !important;
+  font-size: 1.2rem !important;
+  color: #f5f5dc !important;
+  font-style: italic;
+  margin-bottom: 1rem !important;
+}
+
+.grimoire-content .ritual-divider {
+  color: #d4af37 !important;
+  font-size: 1.1rem !important;
+  margin: 1rem 0 !important;
+  letter-spacing: 2px;
+}
+
+.grimoire-content .invocation-box {
+  background: rgba(139, 69, 19, 0.2);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  border-radius: 6px;
+  padding: 1rem;
+  margin: 1.5rem 0;
+  text-align: center;
+}
+
+.grimoire-content .latin-phrase {
+  font-family: 'EB Garamond', serif !important;
+  font-style: italic !important;
+  color: #d4af37 !important;
+  font-size: 1.1rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.grimoire-content .translation {
+  color: #f5f5dc !important;
+  font-size: 0.9rem !important;
+  opacity: 0.8;
+}
+
+.grimoire-content .opening-paragraph {
+  font-size: 1.1rem !important;
+  line-height: 1.8 !important;
+  margin-bottom: 2rem !important;
+  text-align: justify !important;
+  color: #f5f5dc !important;
+}
+
+.grimoire-content .section-header {
+  font-family: 'Cinzel', serif !important;
+  color: #d4af37 !important;
+  font-size: 1.4rem !important;
+  margin: 2rem 0 1rem 0 !important;
+  text-align: center !important;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+  padding-bottom: 0.5rem !important;
+}
+
+.grimoire-content .mystical-quote {
+  background: rgba(139, 69, 19, 0.15);
+  border-left: 4px solid #d4af37;
+  padding: 1rem 1.5rem;
+  margin: 1.5rem 0;
+  font-style: italic;
+  color: #f5f5dc !important;
+  border-radius: 0 8px 8px 0;
+}
+
+.grimoire-content .warning-section {
+  background: rgba(220, 38, 38, 0.1);
+  border: 1px solid rgba(220, 38, 38, 0.3);
+  border-radius: 6px;
+  padding: 1rem;
+  margin: 1.5rem 0;
+}
+
+.grimoire-content .warning-section h4 {
+  color: #dc2626 !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.grimoire-content .blessing-final {
+  text-align: center;
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: rgba(139, 69, 19, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.grimoire-content .blessing {
+  font-style: italic;
+  color: #d4af37 !important;
+  line-height: 1.6 !important;
+}
+
+.grimoire-content .mystical-seal {
+  font-size: 2rem !important;
+  color: #d4af37 !important;
+  margin-top: 1rem !important;
+  text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+}
+
+.grimoire-content .chapter-closing {
+  text-align: center;
+  margin-top: 3rem;
+  padding: 2rem;
+  background: rgba(139, 69, 19, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.grimoire-content .final-blessing {
+  color: #d4af37 !important;
+  font-style: italic;
+  line-height: 1.8 !important;
+  margin-bottom: 1rem !important;
+}
+
+/* Elementos de grid e cards */
+.grimoire-content .signs-grid,
+.grimoire-content .attributes-grid,
+.grimoire-content .comparison-grid,
+.grimoire-content .pillars-section,
+.grimoire-content .dukes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.grimoire-content .sign-card,
+.grimoire-content .attribute,
+.grimoire-content .comparison-item,
+.grimoire-content .pillar,
+.grimoire-content .duke-card,
+.grimoire-content .queen-profile,
+.grimoire-content .king-card {
+  background: rgba(139, 69, 19, 0.15);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 0.5rem 0;
+}
+
+.grimoire-content .sign-icon {
+  font-size: 2rem !important;
+  text-align: center;
+  margin-bottom: 0.5rem !important;
+}
+
+.grimoire-content .sign-meaning,
+.grimoire-content .truth-revelation,
+.grimoire-content .liberation-key {
+  background: rgba(212, 175, 55, 0.1);
+  border-left: 3px solid #d4af37;
+  padding: 0.8rem;
+  margin: 0.5rem 0;
+  border-radius: 0 6px 6px 0;
+}
+
+/* Listas estilizadas */
+.grimoire-content ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.grimoire-content ul li {
+  position: relative;
+  padding-left: 1.5rem;
+  margin: 0.5rem 0;
+  color: #f5f5dc !important;
+}
+
+.grimoire-content ul li::before {
+  content: "🔥";
+  position: absolute;
+  left: 0;
+  color: #d4af37;
+}
+
+/* Elementos de método e prática */
+.grimoire-content .method-section,
+.grimoire-content .practice-time,
+.grimoire-content .ritual-step {
+  background: rgba(139, 69, 19, 0.1);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 6px;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+.grimoire-content .step-instructions {
+  margin-top: 0.5rem;
+}
+
+/* Blockquotes especiais */
+.grimoire-content blockquote {
+  background: rgba(139, 69, 19, 0.15);
+  border-left: 4px solid #d4af37;
+  padding: 1rem 1.5rem;
+  margin: 1.5rem 0;
+  font-style: italic;
+  color: #f5f5dc !important;
+  border-radius: 0 8px 8px 0;
+}
+
+/* Aviso de ritual */
+.grimoire-content .ritual-warning,
+.grimoire-content .safety-warning {
+  background: rgba(220, 38, 38, 0.15);
+  border: 2px solid rgba(220, 38, 38, 0.4);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 2rem 0;
+  text-align: center;
+}
+
+.grimoire-content .ritual-warning h4,
+.grimoire-content .safety-warning h4 {
+  color: #dc2626 !important;
+  font-size: 1.2rem !important;
+  margin-bottom: 1rem !important;
+}
+
+/* Seções de expectativa */
+.grimoire-content .expectation-timeline,
+.grimoire-content .liberation-strategies {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.grimoire-content .expectation-period,
+.grimoire-content .strategy {
+  background: rgba(139, 69, 19, 0.1);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 6px;
+  padding: 1rem;
+}
+
+/* Elementos de meditação */
+.grimoire-content .contemplation-section,
+.grimoire-content .philosophical-meditation,
+.grimoire-content .pantheon-meditation {
+  background: rgba(75, 0, 130, 0.1);
+  border: 1px solid rgba(147, 51, 234, 0.3);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 2rem 0;
+  text-align: center;
+}
+
+/* Texto de invocação */
+.grimoire-content .invocation-text,
+.grimoire-content .blessing-text {
+  font-family: 'EB Garamond', serif !important;
+  font-style: italic;
+  color: #d4af37 !important;
+  line-height: 1.8 !important;
+  text-align: center;
+}
+
+/* Elementos específicos do ritual */
+.grimoire-content .prep-timing,
+.grimoire-content .prep-space,
+.grimoire-content .prep-materials,
+.grimoire-content .prep-personal {
+  background: rgba(139, 69, 19, 0.08);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 6px;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+/* Hierarquias e estágios */
+.grimoire-content .stage,
+.grimoire-content .fear-level,
+.grimoire-content .fire-aspect {
+  background: rgba(139, 69, 19, 0.1);
+  border-left: 3px solid #d4af37;
+  padding: 1rem;
+  margin: 0.8rem 0;
+  border-radius: 0 6px 6px 0;
+}
+
+/* Aspecto final */
+.grimoire-content .final-invocation,
+.grimoire-content .pantheon-blessing,
+.grimoire-content .graduation-declaration {
+  background: rgba(139, 69, 19, 0.2);
+  border: 2px solid rgba(212, 175, 55, 0.4);
+  border-radius: 10px;
+  padding: 2rem;
+  margin: 2rem 0;
+  text-align: center;
+}
+
+.grimoire-content .mystical-seal-final {
+  font-size: 3rem !important;
+  color: #d4af37 !important;
+  text-shadow: 0 0 15px rgba(212, 175, 55, 0.7);
+  margin: 1rem 0 !important;
+}
+
+/* Headers específicos */
+.grimoire-content h1,
+.grimoire-content h2,
+.grimoire-content h3,
+.grimoire-content h4,
+.grimoire-content h5,
+.grimoire-content h6 {
+  color: #d4af37 !important;
+  font-family: 'Cinzel', serif !important;
+  margin: 1.5rem 0 1rem 0 !important;
+}
+
+.grimoire-content h1 { font-size: 2rem !important; }
+.grimoire-content h2 { font-size: 1.8rem !important; }
+.grimoire-content h3 { font-size: 1.6rem !important; }
+.grimoire-content h4 { font-size: 1.4rem !important; }
+.grimoire-content h5 { font-size: 1.2rem !important; }
+.grimoire-content h6 { font-size: 1.1rem !important; }
+
+/* Parágrafos e texto */
+.grimoire-content p {
+  color: #f5f5dc !important;
+  line-height: 1.7 !important;
+  margin: 1rem 0 !important;
+  text-align: justify !important;
+}
+
+.grimoire-content strong {
+  color: #d4af37 !important;
+  font-weight: bold !important;
+}
+
+.grimoire-content em {
+  color: #f5f5dc !important;
+  font-style: italic !important;
+}
+
+/* Divs especiais que podem estar aparecendo como código */
+.grimoire-content .myth-revelation,
+.grimoire-content .myth-comparison,
+.grimoire-content .false-version,
+.grimoire-content .true-version,
+.grimoire-content .primordial-names,
+.grimoire-content .name-card,
+.grimoire-content .corruption-timeline,
+.grimoire-content .timeline-item,
+.grimoire-content .stellar-aspects,
+.grimoire-content .eden-truth,
+.grimoire-content .eden-analysis,
+.grimoire-content .promethean-fire,
+.grimoire-content .lies-section,
+.grimoire-content .lie-card,
+.grimoire-content .lie-header,
+.grimoire-content .lie-content,
+.grimoire-content .danger-symbol,
+.grimoire-content .mechanism,
+.grimoire-content .effect,
+.grimoire-content .prison-analysis,
+.grimoire-content .prison-type,
+.grimoire-content .prison-description,
+.grimoire-content .egregore-section,
+.grimoire-content .egregore-card,
+.grimoire-content .pact-breaking-ritual,
+.grimoire-content .ritual-steps,
+.grimoire-content .ritual-text,
+.grimoire-content .liberation-signs,
+.grimoire-content .sign,
+.grimoire-content .daily-liberation,
+.grimoire-content .liberation-schedule,
+.grimoire-content .liberation-invocation,
+.grimoire-content .queens-section,
+.grimoire-content .queen-header,
+.grimoire-content .queen-content,
+.grimoire-content .queen-symbol,
+.grimoire-content .queen-domains,
+.grimoire-content .lilith-aspects,
+.grimoire-content .aspect,
+.grimoire-content .lilith-invocation,
+.grimoire-content .hecate-powers,
+.grimoire-content .kings-section,
+.grimoire-content .king-header,
+.grimoire-content .king-content,
+.grimoire-content .king-symbol,
+.grimoire-content .belial-teachings,
+.grimoire-content .belial-invocation,
+.grimoire-content .leviathan-powers,
+.grimoire-content .asmodeus-teachings,
+.grimoire-content .alliance-principles,
+.grimoire-content .principle-item,
+.grimoire-content .working-methods,
+.grimoire-content .method-description,
+.grimoire-content .method-example,
+.grimoire-content .safety-guidelines,
+.grimoire-content .development-stages,
+.grimoire-content .readiness-assessment,
+.grimoire-content .assessment-section,
+.grimoire-content .questions,
+.grimoire-content .readiness-verdict,
+.grimoire-content .ritual-preparation,
+.grimoire-content .ritual-execution,
+.grimoire-content .post-initiation-guidance,
+.grimoire-content .integration-practices,
+.grimoire-content .daily-structure,
+.grimoire-content .temple-invitation,
+.grimoire-content .temple-resources,
+.grimoire-content .continued-learning,
+.grimoire-content .conclusion {
+  background: rgba(139, 69, 19, 0.08);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 6px;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+/* Elementos com ícones específicos */
+.grimoire-content .lie-header h4,
+.grimoire-content .queen-header h4,
+.grimoire-content .king-header h4 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Classes de texto especiais */
+.grimoire-content .source,
+.grimoire-content .conclusion,
+.grimoire-content .essence {
+  font-style: italic;
+  color: #d4af37 !important;
+  font-size: 0.9rem !important;
+}
+
+/* Listas ordenadas */
+.grimoire-content ol {
+  list-style: none;
+  counter-reset: item;
+  padding-left: 0;
+}
+
+.grimoire-content ol li {
+  counter-increment: item;
+  position: relative;
+  padding-left: 2rem;
+  margin: 0.8rem 0;
+  color: #f5f5dc !important;
+}
+
+.grimoire-content ol li::before {
+  content: counter(item) ".";
+  position: absolute;
+  left: 0;
+  color: #d4af37;
+  font-weight: bold;
+}
+
+/* Início de capítulo sempre em nova página */
+.grimoire-content .chapter-start {
+  padding-top: 0;
+  margin-top: 0;
+}
+
+.grimoire-content .chapter-start .chapter-title {
+  font-family: 'Cinzel Decorative', serif !important;
+  font-size: 1.8rem !important;
+  color: #d4af37 !important;
+  text-align: center !important;
+  margin-bottom: 2rem !important;
+  text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+  border-bottom: 2px solid rgba(212, 175, 55, 0.3);
+  padding-bottom: 1rem !important;
+}
+
+/* Responsividade mobile */
+@media (max-width: 768px) {
+  .grimoire-content .signs-grid,
+  .grimoire-content .attributes-grid,
+  .grimoire-content .comparison-grid,
+  .grimoire-content .pillars-section,
+  .grimoire-content .dukes-grid {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+  }
+  
+  .grimoire-content .chapter-title,
+  .grimoire-content .chapter-start .chapter-title {
+    font-size: 1.4rem !important;
+  }
+  
+  .grimoire-content .section-header {
+    font-size: 1.2rem !important;
+  }
+}
+
 /* Accessibility */
 @media (prefers-reduced-motion: reduce) {
   .sacred-seal {

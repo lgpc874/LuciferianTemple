@@ -97,15 +97,23 @@ export default function GrimoireReader() {
   // Preparar conteúdo paginado quando capítulos carregarem
   useEffect(() => {
     if (Array.isArray(chapters) && chapters.length > 0) {
-      // Combinar todos os capítulos em um texto único sem formatação
-      const fullContent = chapters
-        .sort((a: any, b: any) => a.chapter_number - b.chapter_number)
-        .map((chapter: any) => `${chapter.title}\n\n${chapter.content}`)
-        .join('\n\n\n');
+      const sortedChapters = chapters.sort((a: any, b: any) => a.chapter_number - b.chapter_number);
+      const allPages: string[] = [];
       
-      const pages = paginateContent(fullContent);
-      setPaginatedContent(pages);
-      setTotalPages(pages.length);
+      // Cada capítulo começa em uma nova página
+      for (const chapter of sortedChapters) {
+        const chapterContent = `<div class="chapter-start">
+          <h2 class="chapter-title">${chapter.title}</h2>
+          ${chapter.content}
+        </div>`;
+        
+        // Paginar o conteúdo do capítulo individualmente
+        const chapterPages = paginateContent(chapterContent, isMobile ? 800 : 1200);
+        allPages.push(...chapterPages);
+      }
+      
+      setPaginatedContent(allPages);
+      setTotalPages(allPages.length);
       
       // Restaurar progresso salvo
       if (userProgress && grimoireId) {
@@ -116,7 +124,7 @@ export default function GrimoireReader() {
         }
       }
     }
-  }, [chapters, userProgress, grimoireId]);
+  }, [chapters, userProgress, grimoireId, isMobile]);
 
   // Timer para contar tempo de leitura
   useEffect(() => {

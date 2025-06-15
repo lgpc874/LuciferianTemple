@@ -174,6 +174,7 @@ Changelog:
 - June 15, 2025. Sistema de fontes responsivas corrigido definitivamente - implementado CSS media queries puro com classes específicas (.grimoire-header-title e .grimoire-content): mobile (8px título/14px conteúdo), desktop (18px ambos), solução final validada pelo usuário
 - June 15, 2025. Grimório existente completamente apagado conforme solicitação - removido grimório ID 4 e todos os capítulos, sistema limpo para criação de novo conteúdo personalizado
 - June 15, 2025. Novo grimório luciferiano criado - "Introdução ao Luciferianismo" com visão ancestral, teísta, abissal e infernal, 1 prólogo + 6 capítulos completos, formatação HTML rica, linguagem épica, rituais práticos de iniciação
+- June 15, 2025. Sistema de paginação aprimorado - cada capítulo sempre inicia em nova página, CSS específico implementado para renderização correta de elementos HTML no leitor, formatação luciferiana completamente funcional
 ```
 
 ## User Preferences
