@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import AdminUsers from '@/components/admin/admin-users';
 import AdminGrimoires from '@/components/admin/admin-grimoires';
+import AdminSections from '@/components/admin/admin-sections';
 import AdminContent from '@/components/admin/admin-content';
 import AdminThemes from '@/components/admin/admin-themes';
 import AdminAIComplete from '@/components/admin/admin-ai-complete';
@@ -23,6 +24,7 @@ import {
   Globe,
   Users,
   BookOpen,
+  Layers,
   Bot,
   FileText,
   Palette,
@@ -188,6 +190,7 @@ export default function AdminDashboard() {
     { id: 'overview', label: 'Visão Geral', icon: BarChart3, shortLabel: 'Geral' },
     { id: 'users', label: 'Usuários', icon: Users, shortLabel: 'Users' },
     { id: 'grimoires', label: 'Grimórios', icon: BookOpen, shortLabel: 'Books' },
+    { id: 'sections', label: 'Seções da Biblioteca', icon: Layers, shortLabel: 'Seções' },
     { id: 'grimoire-management', label: 'Gerenciar Grimórios', icon: Settings, shortLabel: 'Manage' },
     { id: 'stripe', label: 'Pagamentos Stripe', icon: CreditCard, shortLabel: 'Stripe' },
     { id: 'ai', label: 'IA Generator', icon: Bot, shortLabel: 'IA' },
@@ -204,6 +207,8 @@ export default function AdminDashboard() {
         return <AdminUsers />;
       case 'grimoires':
         return <AdminGrimoires />;
+      case 'sections':
+        return <AdminSections />;
       case 'grimoire-management':
         return <GrimoireManagement />;
       case 'stripe':
