@@ -1,4 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
+import OpenAI from 'openai';
+import Stripe from 'stripe';
 import type { 
   Grimoire, 
   InsertGrimoire, 
@@ -9,6 +11,16 @@ import type {
   UserProgress,
   InsertProgress 
 } from '@shared/schema';
+
+// Inicializar OpenAI
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
+});
+
+// Inicializar Stripe
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: '2024-06-20'
+});
 
 export class SupabaseService {
   private supabase;
@@ -296,6 +308,166 @@ export class SupabaseService {
     } catch (error: any) {
       console.error('Error fetching overview stats:', error);
       throw new Error(`Error fetching overview stats: ${error?.message || 'Unknown error'}`);
+    }
+  }
+
+  // GERAÇÃO DE GRIMÓRIOS COM IA
+  async generateGrimoireWithAI(prompt: string) {
+    try {
+      // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [
+          {
+            role: "system",
+            content: `Você é um especialista em textos luciferianos e ocultismo. Crie um grimório detalhado baseado no prompt fornecido. 
+            
+            Retorne um JSON com a seguinte estrutura:
+            {
+              "title": "Título do grimório",
+              "description": "Descrição detalhada do conteúdo",
+              "chapters": ["Nome do Capítulo 1", "Nome do Capítulo 2", ...],
+              "content": "Conteúdo completo do grimório com formatação HTML adequada",
+              "level": "iniciante|intermediario|avancado",
+              "suggested_price": "valor sugerido em reais"
+            }
+            
+            Use linguagem mística, erudita e adequada ao tema luciferiano. Inclua símbolos, rituais práticos, filosofia e ensinamentos profundos.`
+          },
+          {
+            role: "user",
+            content: prompt
+          }
+        ],
+        response_format: { type: "json_object" },
+        temperature: 0.8,
+        max_tokens: 4000
+      });
+
+      const generatedContent = JSON.parse(response.choices[0].message.content || '{}');
+      
+      return {
+        title: generatedContent.title || "Grimório Gerado",
+        description: generatedContent.description || "Descrição gerada pela IA",
+        chapters: generatedContent.chapters || [],
+        content: generatedContent.content || "Conteúdo gerado pela IA",
+        level: generatedContent.level || "iniciante",
+        suggested_price: generatedContent.suggested_price || "29.99"
+      };
+    } catch (error: any) {
+      console.error('Error generating grimoire with AI:', error);
+      throw new Error(`Error generating grimoire with AI: ${error?.message || 'Unknown error'}`);
+    }
+  }
+
+  // PAGAMENTOS COM STRIPE
+  async createPaymentIntent(grimoireId: number, amount: number) {
+    try {
+      // Buscar informações do grimório
+      const { data: grimoire, error } = await this.supabase
+        .from('grimoires')
+        .select('*')
+        .eq('id', grimoireId)
+        .single();
+
+      if (error || !grimoire) {
+        throw new Error('Grimório não encontrado');
+      }
+
+      // Converter valor para centavos
+      const amountInCents = Math.round(amount * 100);
+
+      // Criar Payment Intent no Stripe
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: amountInCents,
+        currency: 'brl',
+        automatic_payment_methods: {
+          enabled: true,
+        },
+        metadata: {
+          grimoireId: grimoireId.toString(),
+          grimoireTitle: grimoire.title,
+          type: 'grimoire_purchase'
+        },
+        description: `Compra do grimório: ${grimoire.title}`
+      });
+
+      return paymentIntent;
+    } catch (error: any) {
+      console.error('Error creating payment intent:', error);
+      throw new Error(`Error creating payment intent: ${error?.message || 'Unknown error'}`);
+    }
+  }
+
+  // PROCESSAR PAGAMENTO CONFIRMADO (webhook)
+  async processPaymentConfirmed(paymentIntentId: string, userId: number) {
+    try {
+      // Buscar detalhes do Payment Intent
+      const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+      
+      if (paymentIntent.status !== 'succeeded') {
+        throw new Error('Pagamento não foi confirmado');
+      }
+
+      const grimoireId = parseInt(paymentIntent.metadata.grimoireId);
+      
+      // Registrar compra na tabela de compras (precisa ser criada)
+      const { data: purchase, error } = await this.supabase
+        .from('grimoire_purchases')
+        .insert({
+          user_id: userId,
+          grimoire_id: grimoireId,
+          payment_intent_id: paymentIntentId,
+          amount: paymentIntent.amount / 100, // Converter de centavos
+          status: 'completed',
+          purchased_at: new Date().toISOString()
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error recording purchase:', error);
+        throw new Error('Erro ao registrar compra');
+      }
+
+      return {
+        success: true,
+        grimoireId,
+        purchase
+      };
+    } catch (error: any) {
+      console.error('Error processing payment confirmation:', error);
+      throw new Error(`Error processing payment: ${error?.message || 'Unknown error'}`);
+    }
+  }
+
+  // VERIFICAR SE USUÁRIO POSSUI ACESSO AO GRIMÓRIO
+  async hasUserAccess(userId: number, grimoireId: number): Promise<boolean> {
+    try {
+      // Verificar se é gratuito
+      const { data: grimoire } = await this.supabase
+        .from('grimoires')
+        .select('is_paid')
+        .eq('id', grimoireId)
+        .single();
+
+      if (!grimoire?.is_paid) {
+        return true; // Grimório gratuito
+      }
+
+      // Verificar se usuário comprou
+      const { data: purchase } = await this.supabase
+        .from('grimoire_purchases')
+        .select('id')
+        .eq('user_id', userId)
+        .eq('grimoire_id', grimoireId)
+        .eq('status', 'completed')
+        .single();
+
+      return !!purchase;
+    } catch (error: any) {
+      console.error('Error checking user access:', error);
+      return false;
     }
   }
 }

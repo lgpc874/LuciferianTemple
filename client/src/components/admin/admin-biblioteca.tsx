@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -102,7 +102,12 @@ export default function AdminBiblioteca() {
   // Mutations
   const createGrimoireMutation = useMutation({
     mutationFn: async (data: CreateGrimoireRequest) => {
-      return apiRequest("POST", "/api/admin/grimoires", data);
+      const response = await apiRequest("/api/admin/grimoires", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/grimoires'] });
@@ -123,7 +128,12 @@ export default function AdminBiblioteca() {
 
   const updateGrimoireMutation = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: Partial<Grimoire> }) => {
-      return apiRequest("PUT", `/api/admin/grimoires/${id}`, data);
+      const response = await apiRequest(`/api/admin/grimoires/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/grimoires'] });
@@ -143,7 +153,10 @@ export default function AdminBiblioteca() {
 
   const deleteGrimoireMutation = useMutation({
     mutationFn: async (id: number) => {
-      return apiRequest("DELETE", `/api/admin/grimoires/${id}`);
+      const response = await apiRequest(`/api/admin/grimoires/${id}`, {
+        method: "DELETE",
+      });
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/grimoires'] });
@@ -164,7 +177,12 @@ export default function AdminBiblioteca() {
   const generateAIGrimoireMutation = useMutation({
     mutationFn: async (prompt: string) => {
       setIsAIGenerating(true);
-      return apiRequest("POST", "/api/admin/ai/generate-grimoire", { prompt });
+      const response = await apiRequest("/api/admin/ai/generate-grimoire", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt }),
+      });
+      return response.json();
     },
     onSuccess: (data) => {
       setIsAIGenerating(false);
