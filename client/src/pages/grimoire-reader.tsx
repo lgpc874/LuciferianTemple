@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useState, useEffect, useRef } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { useLocation, useRoute } from "wouter";
 import { PageTransition } from "@/components/page-transition";
 import ContentProtection from "@/components/content-protection";
@@ -16,6 +16,7 @@ import {
   User
 } from "lucide-react";
 import type { Grimoire, Chapter } from "@shared/schema";
+import { apiRequest } from "@/lib/queryClient";
 
 export default function GrimoireReader() {
   const [, params] = useRoute("/grimoire/:id");
@@ -23,6 +24,9 @@ export default function GrimoireReader() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [paginatedContent, setPaginatedContent] = useState<string[]>([]);
+  const [readingTime, setReadingTime] = useState(0);
+  const [saveStatus, setSaveStatus] = useState<'saving' | 'saved' | 'error' | null>(null);
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   const grimoireId = params?.id ? parseInt(params.id) : null;
 
