@@ -555,18 +555,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
         ${prompt}
         
         Configurações aplicadas:
-        - Personalidade: ${settings.personality}
-        - Complexidade: ${settings.complexity}
-        - Extensão: ${settings.length}
-        - Estilo: ${settings.style}
-        ${settings.guidelines ? `- Diretrizes: ${settings.guidelines}` : ''}
+        - Personalidade: ${settings?.personality || 'luciferian'}
+        - Complexidade: ${settings?.complexity || 'beginner'}
+        - Extensão: ${settings?.length || 'medium'}
+        - Estilo: ${settings?.style || 'mixed'}
+        ${settings?.guidelines ? `- Diretrizes: ${settings.guidelines}` : ''}
       `;
       
-      const result = await supabaseService.generateGrimoireWithAI(enhancedPrompt);
-      res.json(result);
+      // Gerar conteúdo com IA
+      const aiResult = await supabaseService.generateGrimoireWithAI(enhancedPrompt);
+      
+      // Criar grimório automaticamente no banco
+      const grimoireData = {
+        title: aiResult.title || "Grimório Gerado pela IA",
+        description: aiResult.description || "Grimório criado automaticamente pela IA",
+        section_id: 1, // Porta das Sombras por padrão
+        content: aiResult.content || "",
+        category: "Grimório IA",
+        difficulty_level: settings?.complexity === 'advanced' ? 3 : settings?.complexity === 'intermediate' ? 2 : 1,
+        is_paid: false,
+        price: null,
+        level: settings?.complexity || "iniciante",
+        unlock_order: 0,
+        word_count: aiResult.content ? aiResult.content.split(' ').length : 500,
+        estimated_reading_time: Math.max(5, Math.ceil((aiResult.content ? aiResult.content.split(' ').length : 500) / 200)),
+        is_published: true, // Publicar automaticamente
+        tags: ["ia-gerado", "automático"]
+      };
+
+      const newGrimoire = await supabaseService.createGrimoire(grimoireData);
+      
+      res.json({
+        ...aiResult,
+        grimoire: newGrimoire,
+        message: "Grimório gerado e salvo com sucesso!"
+      });
     } catch (error: any) {
       console.error("Error generating quick grimoire:", error);
-      res.status(500).json({ error: "Erro ao gerar grimório rapidamente" });
+      res.status(500).json({ error: "Erro ao gerar grimório rapidamente: " + error.message });
     }
   });
 
