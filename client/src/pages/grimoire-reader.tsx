@@ -34,7 +34,7 @@ export default function GrimoireReader() {
 
   // Buscar capítulos do grimório
   const { data: chapters = [], isLoading: chaptersLoading } = useQuery({
-    queryKey: ['/api/chapters', grimoireId],
+    queryKey: [`/api/chapters/${grimoireId}`],
     enabled: !!grimoireId,
   });
 
