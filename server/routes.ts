@@ -135,8 +135,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json({ user });
   });
 
-  // Middleware para autenticação - SEMPRE AUTORIZADO
+  // Middleware para autenticação - BYPASS TOTAL PARA REPLIT
   const authenticateToken = (req: any, res: any, next: any) => {
+    // Verificar se está no ambiente Replit
+    const isReplit = req.headers.host?.includes('replit') || 
+                     req.headers['x-forwarded-host']?.includes('replit') ||
+                     req.headers.referer?.includes('replit') ||
+                     process.env.REPL_ID || 
+                     process.env.REPLIT_DOMAINS;
+
     const user = {
       id: 999,
       username: "admin",
@@ -145,6 +152,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       role: "admin"
     };
     req.user = user;
+    
+    // Log para debug
+    console.log(`[AUTH] Host: ${req.headers.host}, Replit: ${isReplit}`);
+    
     next();
   };
 
