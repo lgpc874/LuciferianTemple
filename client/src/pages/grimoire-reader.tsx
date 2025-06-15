@@ -68,73 +68,56 @@ export default function GrimoireReader() {
     },
   });
 
-  // Função para paginar o conteúdo preservando HTML
-  const paginateContent = (content: string, charsPerPage: number = 1200) => {
+  // Função para paginar o conteúdo de forma mais fluida
+  const paginateContent = (content: string, charsPerPage: number = 2000) => {
     if (!content) return [];
     
-    // Dividir conteúdo em blocos lógicos preservando a estrutura HTML
-    const blocks = [];
-    let currentBlock = '';
-    let tagStack = [];
-    let i = 0;
-    
-    while (i < content.length) {
-      const char = content[i];
-      
-      if (char === '<') {
-        // Encontrou uma tag
-        let tag = '<';
-        i++;
-        
-        while (i < content.length && content[i] !== '>') {
-          tag += content[i];
-          i++;
-        }
-        
-        if (i < content.length) {
-          tag += '>';
-          i++;
-        }
-        
-        currentBlock += tag;
-        
-        // Verificar se é uma tag de fechamento de bloco
-        if (tag.includes('</div>') || tag.includes('</section>') || 
-            tag.includes('</h') || tag.includes('</blockquote>') ||
-            tag.includes('</p>')) {
-          
-          // Se o bloco atual está muito grande, finalize-o
-          if (currentBlock.length > charsPerPage / 2) {
-            blocks.push(currentBlock);
-            currentBlock = '';
-          }
-        }
-      } else {
-        currentBlock += char;
-        i++;
-      }
-    }
-    
-    if (currentBlock.trim()) {
-      blocks.push(currentBlock);
-    }
-    
-    // Agrupar blocos em páginas
+    // Dividir por parágrafos principais primeiro
+    const mainSections = content.split(/(?=<h[1-6])|(?=<div class="[^"]*section)|(?=<blockquote)/);
     const pages = [];
     let currentPage = '';
     
-    for (const block of blocks) {
-      const testPage = currentPage + block;
+    for (const section of mainSections) {
+      if (!section.trim()) continue;
       
-      if (testPage.length > charsPerPage && currentPage) {
+      const testPage = currentPage + section;
+      
+      // Se a seção é muito grande para uma página sozinha, divida internamente
+      if (section.length > charsPerPage) {
+        // Finalizar página atual se houver conteúdo
+        if (currentPage.trim()) {
+          pages.push(currentPage);
+          currentPage = '';
+        }
+        
+        // Dividir seção grande em partes menores por parágrafos
+        const paragraphs = section.split(/(?=<p>)|(?=<\/p>)/);
+        let tempPage = '';
+        
+        for (const para of paragraphs) {
+          const testTemp = tempPage + para;
+          if (testTemp.length > charsPerPage && tempPage) {
+            pages.push(tempPage);
+            tempPage = para;
+          } else {
+            tempPage = testTemp;
+          }
+        }
+        
+        if (tempPage.trim()) {
+          currentPage = tempPage;
+        }
+      } else if (testPage.length > charsPerPage && currentPage.trim()) {
+        // Página atual + nova seção excede limite, finalizar página atual
         pages.push(currentPage);
-        currentPage = block;
+        currentPage = section;
       } else {
+        // Adicionar seção à página atual
         currentPage = testPage;
       }
     }
     
-    if (currentPage) {
+    if (currentPage.trim()) {
       pages.push(currentPage);
     }
     
