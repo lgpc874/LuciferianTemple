@@ -79,7 +79,7 @@ export default function Biblioteca() {
 
   if (loadingGrimoires) {
     return (
-      <PageTransition className="min-h-screen mystical-bg pt-24 fade-in">
+      <PageTransition className="min-h-screen mystical-bg pt-4 fade-in">
         <div className="text-center py-16">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-golden-amber mx-auto mb-4"></div>
           <p className="text-ritualistic-beige">Carregando biblioteca...</p>
@@ -89,7 +89,7 @@ export default function Biblioteca() {
   }
 
   return (
-    <PageTransition className="min-h-screen mystical-bg pt-24 fade-in">
+    <PageTransition className="min-h-screen mystical-bg pt-4 fade-in">
       {/* Header da biblioteca */}
       <div className="relative py-16 bg-gradient-to-b from-red-950/20 to-transparent">
         <div className="relative text-center">

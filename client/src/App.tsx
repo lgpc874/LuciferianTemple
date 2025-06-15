@@ -5,7 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/hooks/use-auth";
 import { AnimatePresence } from "framer-motion";
-import FixedHeader from "@/components/fixed-header";
+
 import NavigationMenu from "@/components/navigation-menu";
 import ContentProtection from "@/components/content-protection";
 import Home from "@/pages/home";
@@ -26,12 +26,9 @@ function Router() {
   
   return (
     <div>
-      {/* Header e menu apenas para páginas que não são de leitura nem admin */}
+      {/* Menu apenas para páginas que não são de leitura nem admin */}
       {!isGrimoireReader && !isAdminPage && (
-        <>
-          <FixedHeader />
-          <NavigationMenu />
-        </>
+        <NavigationMenu />
       )}
       
       <AnimatePresence mode="wait" initial={false}>
