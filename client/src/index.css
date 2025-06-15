@@ -1169,8 +1169,31 @@ input, textarea {
   text-align: center;
 }
 
-.grimoire-content .mystical-seal-final {
-  display: none;
+/* Ocultar todos os ícones, símbolos e emojis */
+.grimoire-content .mystical-seal-final,
+.grimoire-content .sign-icon,
+.grimoire-content .mystical-seal,
+.grimoire-content span[style*="font-size"],
+.grimoire-content .emoji {
+  display: none !important;
+}
+
+/* Remover emojis específicos através de seletores de texto */
+.grimoire-content span:first-child:only-child {
+  font-size: 0 !important;
+  color: transparent !important;
+  width: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Ocultar spans que contêm apenas símbolos */
+.grimoire-content span:empty,
+.grimoire-content span[style*="font-size: 2rem"],
+.grimoire-content span[style*="font-size: 1.5rem"],
+.grimoire-content span[style*="font-size:2rem"],
+.grimoire-content span[style*="font-size:1.5rem"] {
+  display: none !important;
 }
 
 /* Headers específicos com espaçamento uniforme */
@@ -1205,6 +1228,18 @@ input, textarea {
 .grimoire-content span {
   margin: 0.4rem 0 !important;
   display: inline-block;
+}
+
+/* Filtro universal para remover emojis e símbolos Unicode */
+.grimoire-content span:only-child {
+  font-size: 0 !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+/* Remover spans que só contêm símbolos ou emojis */
+.grimoire-content span:not(:has(text)):not([class*="color"]):not([style*="color"]) {
+  display: none !important;
 }
 
 /* Elementos que contêm símbolos e títulos juntos */
