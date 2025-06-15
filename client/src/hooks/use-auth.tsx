@@ -61,14 +61,38 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setToken(null);
     setUser(null);
     localStorage.removeItem("auth_token");
+    localStorage.setItem("logout_state", "true");
     queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
     // Redirecionar para a página inicial após logout
     window.location.href = '/';
   };
 
-  // BYPASS PARA AMBIENTE REPLIT - MAS PERMITE LOGOUT
+  // Sistema de logout funcional - verifica se foi feito logout manual
+  const wasLoggedOut = localStorage.getItem('logout_state') === 'true';
   const isInReplit = window.location.hostname.includes('replit') || window.location.hostname.includes('repl');
   
+  // Se foi feito logout manual, manter deslogado até login manual
+  if (wasLoggedOut) {
+    const value: AuthContextType = {
+      user: null,
+      token: null,
+      isLoading: false,
+      login: (newToken: string, newUser: User) => {
+        localStorage.removeItem('logout_state');
+        login(newToken, newUser);
+      },
+      logout,
+      isAuthenticated: false,
+    };
+    
+    return (
+      <AuthContext.Provider value={value}>
+        {children}
+      </AuthContext.Provider>
+    );
+  }
+  
+  // Bypass apenas se não foi feito logout e não há token
   const value: AuthContextType = isInReplit && !token ? {
     user: { id: 999, username: 'magurk', email: 'admin@templodoabismo.com.br', isAdmin: true },
     token: 'replit-bypass-token',

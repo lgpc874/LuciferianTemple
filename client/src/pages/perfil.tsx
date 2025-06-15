@@ -424,7 +424,7 @@ export default function Perfil() {
 
         {/* Tabs do Perfil */}
         <Tabs defaultValue="biblioteca" className="w-full">
-          <TabsList className={`grid w-full ${user.email === 'admin@templodoabismo.com' ? 'grid-cols-5' : 'grid-cols-4'} bg-black/40 backdrop-blur-sm border border-golden-amber/30`}>
+          <TabsList className={`grid w-full ${user.email === 'admin@templodoabismo.com.br' ? 'grid-cols-4' : 'grid-cols-3'} bg-black/40 backdrop-blur-sm border border-golden-amber/30`}>
             <TabsTrigger 
               value="biblioteca" 
               className="data-[state=active]:bg-golden-amber/20 data-[state=active]:text-golden-amber text-ritualistic-beige"
