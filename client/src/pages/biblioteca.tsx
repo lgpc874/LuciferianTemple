@@ -11,8 +11,6 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { 
   BookOpen, 
-  Cross, 
-  Star, 
   Flame, 
   Crown, 
   Skull, 
@@ -21,6 +19,19 @@ import {
   Clock,
   Eye
 } from "lucide-react";
+
+// Ícones customizados
+const InvertedCross = ({ size = 20, className = "" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M12 2v20M8 18h8"/>
+  </svg>
+);
+
+const InvertedStar = ({ size = 20, className = "" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M12 20l-2.5-7.5H2l6.5-4.5L6 0l6 4.5L18 0l-2.5 8.5L22 12.5h-7.5L12 20z"/>
+  </svg>
+);
 import type { Grimoire, LibrarySection } from "@shared/schema";
 
 export default function Biblioteca() {
@@ -76,8 +87,8 @@ export default function Biblioteca() {
 
   const getSectionIcon = (sectionId: number) => {
     switch (sectionId) {
-      case 1: return Cross; // Atrium Ignis - Cruz invertida
-      case 2: return Star;  // Porta Umbrae - Estrela invertida
+      case 1: return InvertedCross; // Atrium Ignis - Cruz invertida
+      case 2: return InvertedStar;  // Porta Umbrae - Estrela invertida
       case 3: return Flame; // Arcana Noctis - Chama
       case 4: return Crown; // Via Tenebris - Coroa
       case 5: return FileText;
