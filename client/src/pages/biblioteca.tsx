@@ -51,14 +51,16 @@ const DarkCrown = ({ size = 20, className = "" }) => (
 );
 
 const TemploLogo = ({ size = 20, className = "" }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <path d="M12 2L4 8h16l-8-6z" fill="#DC2626" fillOpacity="0.3"/>
-    <path d="M4 8v12h16V8"/>
-    <path d="M8 12h8"/>
-    <path d="M10 16h4"/>
-    <circle cx="12" cy="14" r="1" fill="#DC2626"/>
-    <path d="M6 20l12-8M18 20L6 12" stroke="#DC2626" strokeWidth="1"/>
-  </svg>
+  <div className={`inline-block ${className}`} style={{ width: size, height: size }}>
+    <img 
+      src="https://i.postimg.cc/g20gqmdX/IMG-20250527-182235-1.png" 
+      alt="Templo do Abismo" 
+      className="w-full h-full object-contain"
+      style={{ 
+        filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)' 
+      }}
+    />
+  </div>
 );
 import type { Grimoire, LibrarySection } from "@shared/schema";
 
