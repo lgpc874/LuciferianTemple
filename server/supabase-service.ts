@@ -468,6 +468,40 @@ export class SupabaseService {
       return false;
     }
   }
+
+  // GERAR IMAGEM COM IA (DALL-E)
+  async generateImageWithAI(prompt: string): Promise<{ imageUrl: string }> {
+    try {
+      if (!process.env.OPENAI_API_KEY) {
+        throw new Error('OpenAI API key not configured');
+      }
+
+      const OpenAI = require('openai');
+      const openai = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY,
+      });
+
+      const response = await openai.images.generate({
+        model: "dall-e-3",
+        prompt: prompt,
+        n: 1,
+        size: "1024x1024",
+        quality: "standard",
+        style: "vivid"
+      });
+
+      if (!response.data || !response.data[0] || !response.data[0].url) {
+        throw new Error('No image URL received from OpenAI');
+      }
+
+      return {
+        imageUrl: response.data[0].url
+      };
+    } catch (error: any) {
+      console.error('Error generating image with AI:', error);
+      throw new Error(`Error generating image with AI: ${error.message}`);
+    }
+  }
 }
 
 export const supabaseService = new SupabaseService();

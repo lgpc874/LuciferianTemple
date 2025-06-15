@@ -586,6 +586,7 @@ function CreateGrimoireForm({
       section_id: parseInt(formData.section_id),
       chapters: formData.chapters.filter(c => c.title?.trim() && c.content?.trim()),
       price: formData.is_paid ? formData.price : null,
+      cover_image_url: formData.cover_image_url || null,
     };
     onSubmit(data);
   };
