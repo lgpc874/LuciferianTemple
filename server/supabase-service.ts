@@ -118,20 +118,12 @@ export class SupabaseService {
   }
 
   async createGrimoire(grimoire: InsertGrimoire): Promise<Grimoire> {
-    // Usar apenas campos que existem na tabela Supabase
+    // Usar apenas campos que existem na tabela Supabase (baseado no teste bem-sucedido)
     const grimoireData = {
       title: grimoire.title,
       description: grimoire.description,
       section_id: grimoire.section_id,
-      category: grimoire.category || 'Grimório',
-      // Campos opcionais que podem existir
-      ...(grimoire.level && { level: grimoire.level }),
-      ...(grimoire.price && { price: grimoire.price?.toString() }),
-      ...(grimoire.is_paid !== undefined && { is_paid: grimoire.is_paid }),
-      ...(grimoire.cover_image_url && { cover_image_url: grimoire.cover_image_url }),
-      ...(grimoire.word_count && { word_count: grimoire.word_count }),
-      ...(grimoire.estimated_reading_time && { estimated_reading_time: grimoire.estimated_reading_time }),
-      ...(grimoire.tags && { tags: grimoire.tags })
+      category: grimoire.category || 'Grimório'
     };
 
     const { data, error } = await this.supabase

@@ -565,22 +565,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Gerar conteúdo com IA
       const aiResult = await supabaseService.generateGrimoireWithAI(enhancedPrompt);
       
-      // Criar grimório automaticamente no banco
+      // Criar grimório automaticamente no banco (apenas campos básicos que existem)
       const grimoireData = {
         title: aiResult.title || "Grimório Gerado pela IA",
         description: aiResult.description || "Grimório criado automaticamente pela IA",
         section_id: 1, // Porta das Sombras por padrão
-        content: aiResult.content || "",
-        category: "Grimório IA",
-        difficulty_level: settings?.complexity === 'advanced' ? 3 : settings?.complexity === 'intermediate' ? 2 : 1,
-        is_paid: false,
-        price: null,
-        level: settings?.complexity || "iniciante",
-        unlock_order: 0,
-        word_count: aiResult.content ? aiResult.content.split(' ').length : 500,
-        estimated_reading_time: Math.max(5, Math.ceil((aiResult.content ? aiResult.content.split(' ').length : 500) / 200)),
-        is_published: true, // Publicar automaticamente
-        tags: ["ia-gerado", "automático"]
+        category: "Grimório IA"
       };
 
       const newGrimoire = await supabaseService.createGrimoire(grimoireData);
