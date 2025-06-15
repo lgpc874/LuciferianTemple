@@ -207,15 +207,16 @@ export default function GrimoireReader() {
               >
                 {paginatedContent[currentPage - 1] ? (
                   <div 
-                    className="max-w-none text-ritualistic-beige leading-relaxed font-garamond text-lg whitespace-pre-wrap"
+                    className="prose-grimoire max-w-none text-ritualistic-beige leading-relaxed font-garamond text-lg"
                     style={{
                       fontFamily: 'Garamond, Georgia, serif',
                       lineHeight: '1.8',
                       textAlign: 'justify'
                     }}
-                  >
-                    {paginatedContent[currentPage - 1]}
-                  </div>
+                    dangerouslySetInnerHTML={{ 
+                      __html: paginatedContent[currentPage - 1]
+                    }}
+                  />
                 ) : (
                   <div className="flex items-center justify-center h-full">
                     <p className="text-ritualistic-beige/50">Conteúdo não encontrado</p>

@@ -840,6 +840,64 @@ input, textarea {
   border-color: #dc2626 !important;
 }
 
+/* Estilos para conteúdo de grimórios */
+.prose-grimoire p {
+  color: #f5f5dc !important;
+  margin-bottom: 1rem !important;
+  line-height: 1.8 !important;
+}
+
+.prose-grimoire h1,
+.prose-grimoire h2,
+.prose-grimoire h3,
+.prose-grimoire h4,
+.prose-grimoire h5,
+.prose-grimoire h6 {
+  color: #d4af37 !important;
+  font-family: 'Cinzel', serif !important;
+  margin: 1.5rem 0 1rem 0 !important;
+}
+
+.prose-grimoire strong {
+  color: #d4af37 !important;
+  font-weight: 600 !important;
+}
+
+.prose-grimoire em {
+  color: #f5f5dc !important;
+  font-style: italic !important;
+}
+
+.prose-grimoire ul,
+.prose-grimoire ol {
+  color: #f5f5dc !important;
+  margin: 1rem 0 !important;
+  padding-left: 1.5rem !important;
+}
+
+.prose-grimoire li {
+  margin-bottom: 0.5rem !important;
+  color: #f5f5dc !important;
+}
+
+.prose-grimoire blockquote {
+  border-left: 4px solid #d4af37 !important;
+  background: rgba(212, 175, 55, 0.1) !important;
+  padding: 1rem 1.5rem !important;
+  margin: 1.5rem 0 !important;
+  font-style: italic !important;
+  color: #f5f5dc !important;
+}
+
+.prose-grimoire a {
+  color: #d4af37 !important;
+  text-decoration: underline !important;
+}
+
+.prose-grimoire a:hover {
+  color: #f5f5dc !important;
+}
+
 /* Accessibility */
 @media (prefers-reduced-motion: reduce) {
   .sacred-seal {
