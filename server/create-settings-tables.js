@@ -111,7 +111,7 @@ async function createSettingsTables() {
           site_name: 'Templo do Abismo',
           site_description: 'Portal de ensinamentos luciferianos',
           site_keywords: 'lucifer, ocultismo, magia, grimórios',
-          admin_email: 'admin@templodoabismo.com',
+          admin_email: 'admin@templodoabismo.com.br',
           content_language: 'português',
           content_tone: 'formal',
           content_target_audience: 'iniciantes',

@@ -621,7 +621,7 @@ export class SupabaseService {
           siteName: 'Templo do Abismo',
           siteDescription: 'Portal de ensinamentos luciferianos',
           siteKeywords: 'lucifer, ocultismo, magia, grimórios',
-          adminEmail: 'admin@templodoabismo.com',
+          adminEmail: 'admin@templodoabismo.com.br',
           contentLanguage: 'português',
           contentTone: 'formal',
           contentTargetAudience: 'iniciantes',

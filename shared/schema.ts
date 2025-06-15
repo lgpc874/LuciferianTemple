@@ -105,7 +105,7 @@ export const system_settings = pgTable("system_settings", {
   site_name: text("site_name").default("Templo do Abismo").notNull(),
   site_description: text("site_description").default("Portal de ensinamentos luciferianos").notNull(),
   site_keywords: text("site_keywords").default("lucifer, ocultismo, magia, grimórios").notNull(),
-  admin_email: text("admin_email").default("admin@templodoabismo.com").notNull(),
+  admin_email: text("admin_email").default("admin@templodoabismo.com.br").notNull(),
   content_language: text("content_language").default("português").notNull(),
   content_tone: text("content_tone").default("formal").notNull(),
   content_target_audience: text("content_target_audience").default("iniciantes").notNull(),

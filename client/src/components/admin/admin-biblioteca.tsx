@@ -1988,7 +1988,7 @@ function SettingsTab() {
         siteName: currentSystemSettings.site_name || "Templo do Abismo",
         siteDescription: currentSystemSettings.site_description || "Portal de ensinamentos luciferianos",
         siteKeywords: currentSystemSettings.site_keywords || "luciferianismo,ocultismo,grimórios",
-        adminEmail: currentSystemSettings.admin_email || "admin@templodoabismo.com",
+        adminEmail: currentSystemSettings.admin_email || "admin@templodoabismo.com.br",
         contentLanguage: currentSystemSettings.content_language || "português",
         contentTone: currentSystemSettings.content_tone || "formal",
         contentTargetAudience: currentSystemSettings.content_target_audience || "iniciantes",
