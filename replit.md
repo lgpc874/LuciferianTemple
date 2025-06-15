@@ -175,6 +175,8 @@ Changelog:
 - June 15, 2025. Grimório existente completamente apagado conforme solicitação - removido grimório ID 4 e todos os capítulos, sistema limpo para criação de novo conteúdo personalizado
 - June 15, 2025. Novo grimório luciferiano criado - "Introdução ao Luciferianismo" com visão ancestral, teísta, abissal e infernal, 1 prólogo + 6 capítulos completos, formatação HTML rica, linguagem épica, rituais práticos de iniciação
 - June 15, 2025. Sistema de paginação aprimorado - cada capítulo sempre inicia em nova página, CSS específico implementado para renderização correta de elementos HTML no leitor, formatação luciferiana completamente funcional
+- June 15, 2025. Grimório "Introdução ao Luciferianismo" reescrito com abordagem introdutória - removido conteúdo avançado, criada versão para buscadores iniciantes focada em filosofia e questionamento racional ao invés de práticas místicas
+- June 15, 2025. Seções da biblioteca renomeadas - "Porta das Sombras" → "Atrium Ignis", "Vestíbulo da Chama" → "Porta Umbrae", "Torre dos Selos" → "Arcana Noctis", "Sanctum Profundum" → "Via Tenebris" com descrições místicas atualizadas
 ```
 
 ## User Preferences
