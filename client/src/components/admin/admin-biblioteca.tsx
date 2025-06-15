@@ -1477,15 +1477,15 @@ function SettingsTab() {
               <input
                 type="text"
                 className="w-full p-2 border rounded-lg"
-                value={settings.siteName}
-                onChange={(e) => setSettings({...settings, siteName: e.target.value})}
+                value={systemSettings.siteName}
+                onChange={(e) => setSystemSettings({...systemSettings, siteName: e.target.value})}
               />
             </div>
             
             <div className="space-y-2">
               <Label>Moeda Padrão</Label>
-              <Select value={settings.defaultCurrency} onValueChange={(value) => 
-                setSettings({...settings, defaultCurrency: value})
+              <Select value={systemSettings.defaultCurrency} onValueChange={(value) => 
+                setSystemSettings({...systemSettings, defaultCurrency: value})
               }>
                 <SelectTrigger>
                   <SelectValue />
@@ -1504,8 +1504,8 @@ function SettingsTab() {
             <textarea
               className="w-full p-2 border rounded-lg resize-none"
               rows={2}
-              value={settings.siteDescription}
-              onChange={(e) => setSettings({...settings, siteDescription: e.target.value})}
+              value={systemSettings.siteDescription}
+              onChange={(e) => setSystemSettings({...systemSettings, siteDescription: e.target.value})}
             />
           </div>
 
@@ -1514,8 +1514,8 @@ function SettingsTab() {
               <input
                 type="checkbox"
                 id="allowRegistrations"
-                checked={settings.allowRegistrations}
-                onChange={(e) => setSettings({...settings, allowRegistrations: e.target.checked})}
+                checked={systemSettings.enableUserRegistration}
+                onChange={(e) => setSystemSettings({...systemSettings, enableUserRegistration: e.target.checked})}
               />
               <Label htmlFor="allowRegistrations">Permitir Registros</Label>
             </div>
@@ -1524,8 +1524,8 @@ function SettingsTab() {
               <input
                 type="checkbox"
                 id="moderateComments"
-                checked={settings.moderateComments}
-                onChange={(e) => setSettings({...settings, moderateComments: e.target.checked})}
+                checked={systemSettings.enableCommentModeration}
+                onChange={(e) => setSystemSettings({...systemSettings, enableCommentModeration: e.target.checked})}
               />
               <Label htmlFor="moderateComments">Moderar Comentários</Label>
             </div>
@@ -1546,8 +1546,8 @@ function SettingsTab() {
               <input
                 type="number"
                 className="w-full p-2 border rounded-lg"
-                value={settings.maxGrimoireSize}
-                onChange={(e) => setSettings({...settings, maxGrimoireSize: parseInt(e.target.value)})}
+                value={systemSettings.maxFileSize}
+                onChange={(e) => setSystemSettings({...systemSettings, maxFileSize: parseInt(e.target.value)})}
               />
             </div>
 
@@ -1556,8 +1556,8 @@ function SettingsTab() {
               <input
                 type="number"
                 className="w-full p-2 border rounded-lg"
-                value={settings.freeTrialDays}
-                onChange={(e) => setSettings({...settings, freeTrialDays: parseInt(e.target.value)})}
+                value={systemSettings.freeTrialDays}
+                onChange={(e) => setSystemSettings({...systemSettings, freeTrialDays: parseInt(e.target.value)})}
               />
             </div>
           </div>
