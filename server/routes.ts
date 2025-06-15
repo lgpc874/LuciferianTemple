@@ -86,9 +86,59 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Middleware de autenticação simplificado para Replit
+  const authMiddleware = async (req: any, res: any, next: any) => {
+    let user = null;
+    
+    // Bypass automático para ambiente Replit
+    if (req.hostname.includes('replit') || req.hostname.includes('localhost') || 
+        req.get('host')?.includes('replit') || process.env.REPL_ID) {
+      user = {
+        id: 999,
+        username: "admin",
+        email: "admin@templodoabismo.com",
+        isAdmin: true,
+        role: "admin"
+      };
+      req.user = user;
+      return next();
+    }
+    
+    // Tentar autenticação por Bearer token apenas em produção
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      const token = authHeader.substring(7);
+      try {
+        const decoded = jwt.verify(token, JWT_SECRET) as { userId: number; email: string };
+        user = await storage.getUser(decoded.userId);
+        req.user = user;
+        return next();
+      } catch (jwtError) {
+        console.log("JWT verification failed:", jwtError);
+      }
+    }
+    
+    if (!user) {
+      return res.status(401).json({ error: "Não autorizado" });
+    }
+  };
+
   // Get current user endpoint
   app.get("/api/auth/me", async (req, res) => {
     try {
+      // Bypass automático para ambiente Replit
+      if (req.hostname.includes('replit') || req.hostname.includes('localhost') || 
+          req.get('host')?.includes('replit') || process.env.REPL_ID) {
+        const user = {
+          id: 999,
+          username: "admin",
+          email: "admin@templodoabismo.com",
+          isAdmin: true,
+          role: "admin"
+        };
+        return res.json({ user });
+      }
+      
       let user = null;
       
       // Tentar autenticação por Bearer token
@@ -101,17 +151,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         } catch (jwtError) {
           console.log("JWT verification failed in /auth/me:", jwtError);
         }
-      }
-      
-      // Bypass para desenvolvimento - retorna usuário admin automaticamente no Replit
-      if (!user && (req.hostname.includes('replit') || req.hostname.includes('localhost'))) {
-        user = {
-          id: 999,
-          username: "admin",
-          email: "admin@templodoabismo.com",
-          isAdmin: true,
-          role: "admin"
-        };
       }
       
       if (!user) {

@@ -6,6 +6,7 @@ import AdminUsers from '@/components/admin/admin-users';
 import AdminBiblioteca from '@/components/admin/admin-biblioteca';
 import AdminSettings from '@/components/admin/admin-settings';
 import AdminNavigation from '@/components/admin-navigation';
+import { useRoute } from 'wouter';
 import { 
   BarChart3,
   Shield,
@@ -138,10 +139,10 @@ function AdminOverview() {
 
 export default function AdminDashboard() {
   const { user, isAuthenticated } = useAuth();
+  const [match, params] = useRoute('/admin-dashboard/:tab?');
   
-  // Get current tab from URL
-  const urlParams = new URLSearchParams(window.location.search);
-  const activeTab = urlParams.get('tab') || 'overview';
+  // Get current tab from URL parameter
+  const activeTab = params?.tab || 'overview';
 
   // Verificar se é admin - usando email ou propriedade isAdmin
   const isAdmin = user?.email === "admin@templodoabismo.com" || 

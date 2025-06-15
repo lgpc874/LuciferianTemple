@@ -39,7 +39,7 @@ function Router() {
           <Route path="/biblioteca" component={BibliotecaSections} />
           <Route path="/checkout" component={Checkout} />
           <Route path="/grimoire/:id" component={GrimoireReader} />
-          <Route path="/admin-dashboard" component={AdminDashboard} />
+          <Route path="/admin-dashboard/:tab?" component={AdminDashboard} />
           <Route component={NotFound} />
         </Switch>
       </AnimatePresence>
