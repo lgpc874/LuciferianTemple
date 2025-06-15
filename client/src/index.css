@@ -1101,97 +1101,70 @@ input, textarea {
   border-radius: 0 6px 6px 0;
 }
 
-/* Listas estilizadas */
+/* Listas simples */
 .grimoire-content ul {
-  list-style: none;
-  padding-left: 0;
+  list-style: disc;
+  padding-left: 1.5rem;
 }
 
 .grimoire-content ul li {
-  position: relative;
-  padding-left: 1.5rem;
   margin: 0.5rem 0;
   color: #f5f5dc !important;
 }
 
-.grimoire-content ul li::before {
-  content: "🔥";
-  position: absolute;
-  left: 0;
-  color: #d4af37;
-}
-
-/* Elementos de método e prática */
+/* Elementos simples de livro */
 .grimoire-content .method-section,
 .grimoire-content .practice-time,
 .grimoire-content .ritual-step {
-  background: rgba(139, 69, 19, 0.1);
-  border: 1px solid rgba(212, 175, 55, 0.2);
-  border-radius: 6px;
-  padding: 1rem;
   margin: 1rem 0;
+  padding: 0;
 }
 
 .grimoire-content .step-instructions {
   margin-top: 0.5rem;
 }
 
-/* Blockquotes especiais */
+/* Blockquotes simples */
 .grimoire-content blockquote {
-  background: rgba(139, 69, 19, 0.15);
-  border-left: 4px solid #d4af37;
-  padding: 1rem 1.5rem;
+  border-left: 2px solid #d4af37;
+  padding-left: 1rem;
   margin: 1.5rem 0;
   font-style: italic;
-  color: #f5f5dc !important;
-  border-radius: 0 8px 8px 0;
+  color: #e6d7a3 !important;
 }
 
-/* Aviso de ritual */
+/* Avisos simples */
 .grimoire-content .ritual-warning,
 .grimoire-content .safety-warning {
-  background: rgba(220, 38, 38, 0.15);
-  border: 2px solid rgba(220, 38, 38, 0.4);
-  border-radius: 8px;
-  padding: 1.5rem;
   margin: 2rem 0;
-  text-align: center;
+  padding: 0;
 }
 
 .grimoire-content .ritual-warning h4,
 .grimoire-content .safety-warning h4 {
-  color: #dc2626 !important;
+  color: #d4af37 !important;
   font-size: 1.2rem !important;
   margin-bottom: 1rem !important;
 }
 
-/* Seções de expectativa */
+/* Seções simples */
 .grimoire-content .expectation-timeline,
 .grimoire-content .liberation-strategies {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
   margin: 1.5rem 0;
 }
 
 .grimoire-content .expectation-period,
 .grimoire-content .strategy {
-  background: rgba(139, 69, 19, 0.1);
-  border: 1px solid rgba(212, 175, 55, 0.3);
-  border-radius: 6px;
-  padding: 1rem;
+  margin: 1rem 0;
+  padding: 0;
 }
 
-/* Elementos de meditação */
+/* Elementos de meditação simples */
 .grimoire-content .contemplation-section,
 .grimoire-content .philosophical-meditation,
 .grimoire-content .pantheon-meditation {
-  background: rgba(75, 0, 130, 0.1);
-  border: 1px solid rgba(147, 51, 234, 0.3);
-  border-radius: 8px;
-  padding: 1.5rem;
   margin: 2rem 0;
-  text-align: center;
+  padding: 0;
 }
 
 /* Texto de invocação */
@@ -1283,7 +1256,7 @@ input, textarea {
   font-style: italic !important;
 }
 
-/* Divs especiais que podem estar aparecendo como código */
+/* Divs especiais agora com formatação simples de livro */
 .grimoire-content .myth-revelation,
 .grimoire-content .myth-comparison,
 .grimoire-content .false-version,
@@ -1354,11 +1327,8 @@ input, textarea {
 .grimoire-content .continued-learning,
 .grimoire-content .conclusion,
 .grimoire-content .ancient-names {
-  background: rgba(139, 69, 19, 0.08);
-  border: 1px solid rgba(212, 175, 55, 0.2);
-  border-radius: 6px;
-  padding: 1rem;
   margin: 1rem 0;
+  padding: 0;
 }
 
 /* Elementos com ícones específicos */
