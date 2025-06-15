@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
+import { useAuth } from "@/hooks/use-auth";
 import { PageTransition } from "@/components/page-transition";
 import ContentProtection from "@/components/content-protection";
 import MysticalFooter from "@/components/mystical-footer";
@@ -17,7 +18,10 @@ import {
   FileText, 
   Brain,
   Clock,
-  Eye
+  Eye,
+  Lock,
+  CheckCircle,
+  PlayCircle
 } from "lucide-react";
 
 // Ícones customizados
@@ -67,6 +71,7 @@ import type { Grimoire, LibrarySection } from "@shared/schema";
 export default function Biblioteca() {
   const [activeSection, setActiveSection] = useState(1);
   const [, setLocation] = useLocation();
+  const { user, isAuthenticated } = useAuth();
 
   const { data: sections = [], isLoading: sectionsLoading } = useQuery({
     queryKey: ['/api/library/sections'],
@@ -76,42 +81,86 @@ export default function Biblioteca() {
     queryKey: ['/api/grimoires'],
   });
 
-  // Função para determinar o estado do botão
-  const getButtonState = (grimoire: any) => {
-    // Verificar se é pago e se foi comprado
-    if (grimoire.is_paid) {
-      // Verificar compras do usuário (implementar depois)
-      const isPurchased = false; // placeholder
-      if (!isPurchased) {
-        return { text: 'Comprar', action: 'purchase' };
-      }
+  // Buscar progresso do usuário
+  const { data: userProgress = [] } = useQuery({
+    queryKey: ['/api/user/progress'],
+    enabled: isAuthenticated,
+  });
+
+  // Buscar grimórios desbloqueados para a seção ativa
+  const { data: unlockedData } = useQuery({
+    queryKey: ['/api/unlocked-grimoires', activeSection],
+    enabled: isAuthenticated && !!activeSection,
+  });
+
+  const unlockedGrimoires = (unlockedData as any)?.unlockedGrimoires || [];
+
+  // Função para determinar o estado do grimório e botão
+  const getGrimoireState = (grimoire: any) => {
+    const isUnlocked = unlockedGrimoires.includes(grimoire.id);
+    const progress = userProgress.find((p: any) => p.grimoire_id === grimoire.id);
+    const progressPercentage = progress ? parseFloat(progress.progress_percentage || '0') : 0;
+    
+    // Verificar se está bloqueado
+    if (!isUnlocked) {
+      return { 
+        text: 'Bloqueado', 
+        action: 'locked', 
+        isLocked: true,
+        progress: 0,
+        icon: Lock
+      };
     }
 
-    // Verificar progresso de leitura (implementar depois)
-    // const progress = userProgress.find((p: any) => p.grimoire_id === grimoire.id);
-    // if (progress && progress.progress_percentage > 0) {
-    //   return { text: 'Continuar', action: 'continue' };
-    // }
+    // Verificar se foi completado (>=80%)
+    if (progressPercentage >= 80) {
+      return { 
+        text: 'Completado', 
+        action: 'completed', 
+        isLocked: false,
+        progress: progressPercentage,
+        icon: CheckCircle
+      };
+    }
 
-    return { text: 'Ler', action: 'read' };
+    // Verificar se tem progresso
+    if (progressPercentage > 0) {
+      return { 
+        text: 'Continuar', 
+        action: 'continue', 
+        isLocked: false,
+        progress: progressPercentage,
+        icon: PlayCircle
+      };
+    }
+
+    // Disponível para leitura
+    return { 
+      text: 'Ler', 
+      action: 'read', 
+      isLocked: false,
+      progress: 0,
+      icon: BookOpen
+    };
   };
 
   // Função para lidar com ações do grimório
   const handleGrimoireAction = (grimoire: any) => {
-    const buttonState = getButtonState(grimoire);
+    const grimoireState = getGrimoireState(grimoire);
     
-    switch (buttonState.action) {
+    switch (grimoireState.action) {
       case 'read':
       case 'continue':
+      case 'completed':
         // Navegar para o leitor do grimório
         setLocation(`/grimoire/${grimoire.id}`);
         break;
-      case 'purchase':
-        // Navegar para página de compra (implementar depois)
-        console.log(`Comprar grimório: ${grimoire.title}`);
+      case 'locked':
+        // Grimório bloqueado - não fazer nada ou mostrar mensagem
+        console.log(`Grimório bloqueado: ${grimoire.title}`);
         break;
       default:
-        console.log(`Ação não reconhecida: ${buttonState.action}`);
+        console.log(`Ação não reconhecida: ${grimoireState.action}`);
     }
   };
 
@@ -276,7 +325,7 @@ export default function Biblioteca() {
                                       className="bg-red-900/50 hover:bg-red-900/70 text-golden-amber border border-golden-amber/20 hover:border-golden-amber/40 px-6"
                                       onClick={() => handleGrimoireAction(grimoire)}
                                     >
-                                      {getButtonState(grimoire).text}
+                                      {getGrimoireState(grimoire).text}
                                     </Button>
                                   </div>
                                 </div>
