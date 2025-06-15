@@ -164,6 +164,7 @@ Changelog:
 - June 15, 2025. Script SQL de correção executado no Supabase - removido campo categoria dos grimórios, corrigido campo display_order para sort_order nas library_sections, estrutura de banco 100% sincronizada
 - June 15, 2025. Página biblioteca simplificada conforme solicitação - mantido apenas título "BIBLIOTHECA ARCANA", frase descritiva e sistema de abas direto, removido conteúdo extra desnecessário
 - June 15, 2025. Erros TypeScript corrigidos no painel administrativo - todas as referências a variáveis indefinidas resolvidas, sistema de configurações funcionando perfeitamente
+- June 15, 2025. Problema na geração de grimórios com IA corrigido - removidas todas as referências ao campo word_count inexistente, melhorado prompt da IA para gerar capítulos completos de 800-1200 palavras, aumentado limite de tokens para 16000, sistema agora gera grimórios completos com conteúdo detalhado ao invés de apenas título e descrição
 ```
 
 ## User Preferences
