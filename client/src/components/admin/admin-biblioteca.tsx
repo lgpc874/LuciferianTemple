@@ -507,7 +507,37 @@ function EditGrimoireForm({
     is_published: grimoire.is_published || false,
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [chapters, setChapters] = useState<any[]>([]);
+  const [isLoadingChapters, setIsLoadingChapters] = useState(true);
+
+  // Carregar capítulos do grimório
+  const { data: chaptersData } = useQuery({
+    queryKey: [`/api/grimoires/${grimoire.id}/chapters`],
+    enabled: !!grimoire.id,
+  });
+
+  React.useEffect(() => {
+    if (chaptersData) {
+      setChapters(Array.isArray(chaptersData) ? chaptersData : []);
+      setIsLoadingChapters(false);
+    }
+  }, [chaptersData]);
+
+  const updateChapter = (index: number, field: string, value: string) => {
+    const updatedChapters = [...chapters];
+    updatedChapters[index] = { ...updatedChapters[index], [field]: value };
+    setChapters(updatedChapters);
+  };
+
+  const addChapter = () => {
+    setChapters([...chapters, { title: "", content: "", chapter_number: chapters.length + 1 }]);
+  };
+
+  const removeChapter = (index: number) => {
+    setChapters(chapters.filter((_, i) => i !== index));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     const updateData = {
@@ -516,7 +546,58 @@ function EditGrimoireForm({
       price: formData.is_paid ? formData.price : null,
     };
 
+    // Salvar dados do grimório
     onSubmit(updateData);
+    
+    // Salvar capítulos alterados
+    await saveChapters();
+  };
+
+  const saveChapters = async () => {
+    for (const [index, chapter] of chapters.entries()) {
+      if (chapter.id) {
+        // Atualizar capítulo existente
+        if (chapter.title || chapter.content) {
+          try {
+            await fetch(`/api/admin/chapters/${chapter.id}`, {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+              body: JSON.stringify({
+                title: chapter.title,
+                content: chapter.content,
+                chapter_number: index + 1,
+              }),
+            });
+          } catch (error) {
+            console.error("Erro ao atualizar capítulo:", error);
+          }
+        }
+      } else {
+        // Criar novo capítulo
+        if (chapter.title && chapter.content) {
+          try {
+            await fetch("/api/admin/chapters", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+              body: JSON.stringify({
+                grimoire_id: grimoire.id,
+                title: chapter.title,
+                content: chapter.content,
+                chapter_number: index + 1,
+              }),
+            });
+          } catch (error) {
+            console.error("Erro ao criar capítulo:", error);
+          }
+        }
+      }
+    }
   };
 
   return (
@@ -620,6 +701,78 @@ function EditGrimoireForm({
           />
         </div>
       )}
+
+      {/* Seção de Capítulos */}
+      <div className="space-y-4 border-t pt-6">
+        <div className="flex items-center justify-between">
+          <Label className="text-lg font-semibold text-golden-amber">📚 Capítulos</Label>
+          <Button
+            type="button"
+            onClick={addChapter}
+            className="bg-amber-500 hover:bg-amber-600 text-black"
+            size="sm"
+          >
+            ➕ Adicionar Capítulo
+          </Button>
+        </div>
+
+        {isLoadingChapters ? (
+          <div className="text-center py-4">
+            <div className="animate-spin w-6 h-6 border-2 border-amber-500 border-t-transparent rounded-full mx-auto mb-2"></div>
+            <p className="text-sm text-gray-400">Carregando capítulos...</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {chapters.length === 0 ? (
+              <div className="text-center py-8 text-gray-400">
+                <p>Nenhum capítulo encontrado.</p>
+                <p className="text-sm">Clique em "Adicionar Capítulo" para começar.</p>
+              </div>
+            ) : (
+              chapters.map((chapter, index) => (
+                <div key={index} className="border border-gray-600 rounded-lg p-4 bg-gray-800/50">
+                  <div className="flex items-center justify-between mb-3">
+                    <h4 className="text-amber-400 font-semibold">Capítulo {index + 1}</h4>
+                    <Button
+                      type="button"
+                      onClick={() => removeChapter(index)}
+                      variant="outline"
+                      size="sm"
+                      className="text-red-400 border-red-400 hover:bg-red-400/10"
+                    >
+                      🗑️ Remover
+                    </Button>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <div>
+                      <Label htmlFor={`chapter-title-${index}`}>Título do Capítulo</Label>
+                      <Input
+                        id={`chapter-title-${index}`}
+                        value={chapter.title || ""}
+                        onChange={(e) => updateChapter(index, "title", e.target.value)}
+                        placeholder="Digite o título do capítulo"
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor={`chapter-content-${index}`}>Conteúdo</Label>
+                      <Textarea
+                        id={`chapter-content-${index}`}
+                        value={chapter.content || ""}
+                        onChange={(e) => updateChapter(index, "content", e.target.value)}
+                        placeholder="Digite o conteúdo do capítulo"
+                        rows={6}
+                        className="min-h-[150px]"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        )}
+      </div>
 
       <div className="flex justify-end space-x-3 pt-4">
         <Button 
