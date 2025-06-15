@@ -432,13 +432,7 @@ export default function Perfil() {
               <BookOpen size={16} className="mr-2" />
               Minha Biblioteca
             </TabsTrigger>
-            <TabsTrigger 
-              value="estatisticas"
-              className="data-[state=active]:bg-golden-amber/20 data-[state=active]:text-golden-amber text-ritualistic-beige"
-            >
-              <Trophy size={16} className="mr-2" />
-              Estatísticas
-            </TabsTrigger>
+
             <TabsTrigger 
               value="compras"
               className="data-[state=active]:bg-golden-amber/20 data-[state=active]:text-golden-amber text-ritualistic-beige"
@@ -453,7 +447,7 @@ export default function Perfil() {
               <Settings size={16} className="mr-2" />
               Configurações
             </TabsTrigger>
-            {user.email === 'admin@templodoabismo.com' && (
+            {user.email === 'admin@templodoabismo.com.br' && (
               <TabsTrigger 
                 value="admin"
                 className="data-[state=active]:bg-golden-amber/20 data-[state=active]:text-golden-amber text-ritualistic-beige"

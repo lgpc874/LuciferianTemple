@@ -62,16 +62,27 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setUser(null);
     localStorage.removeItem("auth_token");
     queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+    // Redirecionar para a página inicial após logout
+    window.location.href = '/';
   };
 
-  // BYPASS COMPLETO - SEMPRE AUTENTICADO
-  const value: AuthContextType = {
-    user: { id: 999, username: 'admin', email: 'admin@templodoabismo.com', isAdmin: true },
-    token: 'always-authenticated-token',
+  // BYPASS PARA AMBIENTE REPLIT - MAS PERMITE LOGOUT
+  const isInReplit = window.location.hostname.includes('replit') || window.location.hostname.includes('repl');
+  
+  const value: AuthContextType = isInReplit && !token ? {
+    user: { id: 999, username: 'magurk', email: 'admin@templodoabismo.com.br', isAdmin: true },
+    token: 'replit-bypass-token',
     isLoading: false,
     login,
     logout,
     isAuthenticated: true,
+  } : {
+    user,
+    token,
+    isLoading: isLoading || false,
+    login,
+    logout,
+    isAuthenticated: !!user && !!token,
   };
 
   return (
