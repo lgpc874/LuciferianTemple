@@ -231,7 +231,7 @@ export default function Perfil() {
   };
 
   // Combinar progresso do usuário com dados dos grimórios
-  const myLibrary = React.useMemo(() => {
+  const userLibraryProgress = React.useMemo(() => {
     if (!userProgress || !allGrimoires) return [];
     
     return userProgress.map((progress: any) => {
@@ -669,7 +669,7 @@ export default function Perfil() {
           {/* Aba Compras */}
           <TabsContent value="compras" className="mt-6">
             <div className="grid gap-4">
-              {myLibrary?.filter(g => g.isPaid).map((grimoire) => (
+              {userLibraryProgress?.filter((g: any) => g.isPaid).map((grimoire: any) => (
                 <Card key={grimoire.id} className="bg-black/40 backdrop-blur-sm border-golden-amber/30">
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">

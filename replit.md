@@ -167,6 +167,7 @@ Changelog:
 - June 15, 2025. Problema na geração de grimórios com IA corrigido - removidas todas as referências ao campo word_count inexistente, melhorado prompt da IA para gerar capítulos completos de 800-1200 palavras, aumentado limite de tokens para 16000, sistema agora gera grimórios completos com conteúdo detalhado ao invés de apenas título e descrição
 - June 15, 2025. Sistema de leitura de grimórios totalmente implementado e funcional - leitor estilo Kindle com paginação inteligente, navegação por cliques laterais e controles de teclado, interface imersiva sem menu, carregamento de capítulos individuais do Supabase, formatação automática preservada, sistema completo de navegação biblioteca → leitor funcionando perfeitamente
 - June 15, 2025. Editor de texto rico implementado - Quill.js integrado no painel administrativo com barra de ferramentas completa estilo Word (formatação, cores, listas, links, etc.), sistema de formatação automática removido completamente, grimórios agora exibem conteúdo HTML formatado exatamente como editado, estilos CSS customizados para renderização adequada no leitor
+- June 15, 2025. Email administrativo alterado para admin@templodoabismo.com.br - usuário "magurk" criado no Supabase com privilégios administrativos, senha admin123, sistema de autenticação e verificações de acesso atualizados em todo o sistema
 ```
 
 ## User Preferences
