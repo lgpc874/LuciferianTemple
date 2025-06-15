@@ -146,6 +146,7 @@ Changelog:
 - June 14, 2025. Verificação completa do painel administrativo - todas as funcionalidades 100% operacionais (Analytics, Grimórios, IA, Stripe, Usuários)
 - June 14, 2025. Símbolos místicos luciferianos implementados - todos os títulos principais das páginas ornamentados com símbolos alquímicos autênticos (⧭, 🜚, ⧨, ⚱, ⚔, 🜔, ⚠)
 - June 14, 2025. Aba "Seções da Biblioteca" implementada - gerenciamento visual completo das 6 seções organizacionais, contagem de grimórios por seção, movimentação entre seções via dropdown
+- June 14, 2025. Personalização de IA individual implementada - cada grimório pode ter configuração única (personalidade, estilo, abordagem, tom, especialização, diretrizes), eliminando dependência de configuração global
 ```
 
 ## User Preferences
