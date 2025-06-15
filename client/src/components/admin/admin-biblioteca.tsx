@@ -449,7 +449,196 @@ export default function AdminBiblioteca() {
           <SettingsTab />
         </TabsContent>
       </Tabs>
+
+      {/* Modal de Edição */}
+      <Dialog open={!!selectedGrimoire} onOpenChange={() => setSelectedGrimoire(null)}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-golden-amber">
+              ✏️ Editar Grimório
+            </DialogTitle>
+            <DialogDescription>
+              Modifique os dados do grimório selecionado
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedGrimoire && (
+            <EditGrimoireForm
+              grimoire={selectedGrimoire}
+              sections={sections}
+              onSubmit={(data: any) => {
+                updateGrimoireMutation.mutate({ 
+                  id: selectedGrimoire.id, 
+                  data 
+                });
+                setSelectedGrimoire(null);
+              }}
+              isLoading={updateGrimoireMutation.isPending}
+              onCancel={() => setSelectedGrimoire(null)}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
+  );
+}
+
+// Componente do formulário de edição
+function EditGrimoireForm({ 
+  grimoire, 
+  sections, 
+  onSubmit, 
+  isLoading,
+  onCancel 
+}: {
+  grimoire: Grimoire;
+  sections: LibrarySection[];
+  onSubmit: (data: any) => void;
+  isLoading: boolean;
+  onCancel: () => void;
+}) {
+  const [formData, setFormData] = useState({
+    title: grimoire.title || "",
+    description: grimoire.description || "",
+    section_id: grimoire.section_id.toString(),
+    is_paid: grimoire.is_paid || false,
+    price: grimoire.price || "",
+    level: grimoire.level || "iniciante",
+    is_published: grimoire.is_published || false,
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const updateData = {
+      ...formData,
+      section_id: parseInt(formData.section_id),
+      price: formData.is_paid ? formData.price : null,
+    };
+
+    onSubmit(updateData);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="edit-title">Título</Label>
+          <Input
+            id="edit-title"
+            value={formData.title}
+            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+            placeholder="Título do grimório"
+            required
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="edit-section">Seção</Label>
+          <Select 
+            value={formData.section_id} 
+            onValueChange={(value) => setFormData({ ...formData, section_id: value })}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Selecione uma seção" />
+            </SelectTrigger>
+            <SelectContent>
+              {sections.map((section) => (
+                <SelectItem key={section.id} value={section.id.toString()}>
+                  {section.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="edit-description">Descrição</Label>
+        <Textarea
+          id="edit-description"
+          value={formData.description}
+          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+          placeholder="Descrição do grimório"
+          rows={3}
+          required
+        />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="edit-level">Nível</Label>
+          <Select 
+            value={formData.level} 
+            onValueChange={(value) => setFormData({ ...formData, level: value })}
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="iniciante">Iniciante</SelectItem>
+              <SelectItem value="intermediario">Intermediário</SelectItem>
+              <SelectItem value="avancado">Avançado</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <input
+            type="checkbox"
+            id="edit-is-paid"
+            checked={formData.is_paid}
+            onChange={(e) => setFormData({ ...formData, is_paid: e.target.checked })}
+            className="rounded"
+          />
+          <Label htmlFor="edit-is-paid">Grimório Pago</Label>
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <input
+            type="checkbox"
+            id="edit-is-published"
+            checked={formData.is_published}
+            onChange={(e) => setFormData({ ...formData, is_published: e.target.checked })}
+            className="rounded"
+          />
+          <Label htmlFor="edit-is-published">Publicado</Label>
+        </div>
+      </div>
+
+      {formData.is_paid && (
+        <div className="space-y-2">
+          <Label htmlFor="edit-price">Preço (R$)</Label>
+          <Input
+            id="edit-price"
+            type="number"
+            step="0.01"
+            value={formData.price}
+            onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+            placeholder="0.00"
+            required
+          />
+        </div>
+      )}
+
+      <div className="flex justify-end space-x-3 pt-4">
+        <Button 
+          type="button" 
+          variant="outline" 
+          onClick={onCancel}
+          disabled={isLoading}
+        >
+          Cancelar
+        </Button>
+        <Button 
+          type="submit" 
+          disabled={isLoading}
+          className="bg-amber-500 hover:bg-amber-600 text-black"
+        >
+          {isLoading ? "Salvando..." : "Salvar Alterações"}
+        </Button>
+      </div>
+    </form>
   );
 }
 
