@@ -66,18 +66,26 @@ export default function GrimoireReader() {
 
   // Preparar conteúdo paginado quando capítulos carregarem
   useEffect(() => {
-    if (chapters && chapters.length > 0) {
+    if (Array.isArray(chapters) && chapters.length > 0) {
+      console.log('Processando capítulos:', chapters);
+      
       // Combinar todos os capítulos em um texto único
-      const fullContent = (chapters as Chapter[])
-        .sort((a: Chapter, b: Chapter) => a.chapter_number - b.chapter_number)
-        .map((chapter: Chapter) => `
+      const fullContent = chapters
+        .sort((a: any, b: any) => a.chapter_number - b.chapter_number)
+        .map((chapter: any) => `
           <div class="chapter-title">${chapter.title}</div>
           <div class="chapter-content">${chapter.content}</div>
         `).join('\n\n');
       
+      console.log('Conteúdo combinado:', fullContent.substring(0, 200) + '...');
+      
       const pages = paginateContent(fullContent);
+      console.log('Páginas criadas:', pages.length);
+      
       setPaginatedContent(pages);
       setTotalPages(pages.length);
+    } else {
+      console.log('Capítulos não disponíveis ou vazios:', chapters);
     }
   }, [chapters]);
 
