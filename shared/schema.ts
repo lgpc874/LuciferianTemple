@@ -117,6 +117,12 @@ export const system_settings = pgTable("system_settings", {
   security_level: text("security_level").default("medium").notNull(),
   enable_content_protection: boolean("enable_content_protection").default(true).notNull(),
   enable_download_protection: boolean("enable_download_protection").default(true).notNull(),
+  auto_publish: boolean("auto_publish").default(false).notNull(),
+  require_approval: boolean("require_approval").default(true).notNull(),
+  default_currency: text("default_currency").default("BRL").notNull(),
+  enable_comment_moderation: boolean("enable_comment_moderation").default(true).notNull(),
+  max_file_size: integer("max_file_size").default(10).notNull(),
+  free_trial_days: integer("free_trial_days").default(7).notNull(),
   updated_at: timestamp("updated_at").defaultNow(),
   created_at: timestamp("created_at").defaultNow(),
 });

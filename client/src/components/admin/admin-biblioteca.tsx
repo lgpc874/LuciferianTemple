@@ -1567,8 +1567,8 @@ function SettingsTab() {
               <input
                 type="checkbox"
                 id="autoPublish"
-                checked={settings.autoPublish}
-                onChange={(e) => setSettings({...settings, autoPublish: e.target.checked})}
+                checked={systemSettings.autoPublish}
+                onChange={(e) => setSystemSettings({...systemSettings, autoPublish: e.target.checked})}
               />
               <Label htmlFor="autoPublish">Publicação Automática</Label>
             </div>
@@ -1577,8 +1577,8 @@ function SettingsTab() {
               <input
                 type="checkbox"
                 id="requireApproval"
-                checked={settings.requireApproval}
-                onChange={(e) => setSettings({...settings, requireApproval: e.target.checked})}
+                checked={systemSettings.requireApproval}
+                onChange={(e) => setSystemSettings({...systemSettings, requireApproval: e.target.checked})}
               />
               <Label htmlFor="requireApproval">Requer Aprovação</Label>
             </div>

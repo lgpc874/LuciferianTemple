@@ -225,7 +225,7 @@ export default function Biblioteca() {
                                       </div>
 
                                       <div className="flex items-center justify-between text-xs text-ritualistic-beige/50">
-                                        <span>Categoria: {grimoire.category}</span>
+                                        <span>Nível: {grimoire.level}</span>
                                         {grimoire.tags && grimoire.tags.length > 0 && (
                                           <div className="flex space-x-1">
                                             {grimoire.tags.slice(0, 2).map((tag, index) => (
