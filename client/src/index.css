@@ -799,6 +799,32 @@ input, textarea {
   margin-top: 1rem;
 }
 
+/* Estados ativos com cor vermelha */
+.menu-item-active {
+  color: #dc2626 !important;
+  border-color: #dc2626 !important;
+  background: rgba(220, 38, 38, 0.1) !important;
+  box-shadow: 0 0 10px rgba(220, 38, 38, 0.3) !important;
+}
+
+.tab-active {
+  color: #dc2626 !important;
+  border-bottom-color: #dc2626 !important;
+  background: rgba(220, 38, 38, 0.1) !important;
+  text-shadow: 0 0 8px rgba(220, 38, 38, 0.5) !important;
+}
+
+.admin-tab-active {
+  color: #dc2626 !important;
+  background: rgba(220, 38, 38, 0.15) !important;
+  border-color: #dc2626 !important;
+}
+
+.nav-link-active {
+  color: #dc2626 !important;
+  background: rgba(220, 38, 38, 0.1) !important;
+}
+
 /* Accessibility */
 @media (prefers-reduced-motion: reduce) {
   .sacred-seal {
