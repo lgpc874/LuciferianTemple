@@ -59,7 +59,7 @@ export default function NavigationMenu() {
 
   return (
     <nav className="navigation-menu relative bg-transparent floating-container my-2">
-      <div className="container mx-auto px-2 sm:px-4 lg:px-8 xl:px-12">
+      <div className="w-full max-w-full px-2 sm:px-4 lg:px-8 xl:px-12 mx-auto">
         
         {/* Desktop Menu - Large screens */}
         <div className="hidden lg:flex items-center justify-center py-0">
