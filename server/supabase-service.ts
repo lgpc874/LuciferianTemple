@@ -118,17 +118,13 @@ export class SupabaseService {
   }
 
   async createGrimoire(grimoire: InsertGrimoire): Promise<Grimoire> {
-    // Usar apenas campos que existem na tabela Supabase (baseado no teste bem-sucedido)
-    const grimoireData = {
-      title: grimoire.title,
-      description: grimoire.description,
-      section_id: grimoire.section_id,
-      category: grimoire.category || 'Grimório'
-    };
-
     const { data, error } = await this.supabase
       .from('grimoires')
-      .insert(grimoireData)
+      .insert({
+        ...grimoire,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      })
       .select()
       .single();
 
