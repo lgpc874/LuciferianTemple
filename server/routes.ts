@@ -271,7 +271,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           title: chapter.title,
           content: chapter.formattedContent,
           chapter_number: i + 1,
-          word_count: chapter.content.split(' ').length
+          estimated_reading_time: Math.max(5, Math.ceil(chapter.content.split(' ').length / 200))
         });
         createdChapters.push(createdChapter);
       }

@@ -157,11 +157,9 @@ function GrimoireViewer({ grimoire }: { grimoire: Grimoire }) {
                 <CardTitle className="text-amber-800 text-lg">
                   Capítulo {chapter.chapter_number || index + 1}: {chapter.title}
                 </CardTitle>
-                {chapter.word_count && (
-                  <CardDescription className="text-amber-600">
-                    {chapter.word_count.toLocaleString()} palavras • ~{Math.ceil(chapter.word_count / 200)} min de leitura
-                  </CardDescription>
-                )}
+                <CardDescription className="text-amber-600">
+                  ~{chapter.estimated_reading_time || 10} min de leitura
+                </CardDescription>
               </CardHeader>
               <CardContent className="pt-6">
                 <div 
