@@ -26,11 +26,9 @@ export default function AdminNavigation() {
   const navigationItems = [
     { id: 'overview', label: 'Visão Geral', icon: BarChart3, path: '/admin' },
     { id: 'users', label: 'Usuários', icon: Users, path: '/admin?tab=users' },
-    { id: 'grimoires', label: 'Grimórios', icon: BookOpen, path: '/admin?tab=grimoires' },
     { id: 'ai', label: 'IA Generator', icon: Bot, path: '/admin?tab=ai' },
     { id: 'content', label: 'Conteúdo', icon: FileText, path: '/admin?tab=content' },
     { id: 'themes', label: 'Temas', icon: Palette, path: '/admin?tab=themes' },
-    { id: 'analytics', label: 'Analytics', icon: BarChart3, path: '/admin?tab=analytics' },
     { id: 'settings', label: 'Configurações', icon: Settings, path: '/admin?tab=settings' }
   ];
 

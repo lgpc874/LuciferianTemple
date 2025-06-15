@@ -265,24 +265,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin route to list all grimoires with section info
+  app.get("/api/admin/grimoires", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const grimoires = grimoireStore.getGrimoires();
+      const sections = [
+        { id: 1, name: 'Porta das Sombras' },
+        { id: 2, name: 'Vestíbulo da Chama' },
+        { id: 3, name: 'Torre dos Selos' },
+        { id: 4, name: 'Sanctum Profundum' },
+        { id: 5, name: 'Textos Filosóficos' },
+        { id: 6, name: 'Meditações Práticas' }
+      ];
+
+      // Enrich grimoires with section names
+      const enrichedGrimoires = grimoires.map(grimoire => ({
+        ...grimoire,
+        sectionName: sections.find(s => s.id === grimoire.sectionId)?.name || 'Sem seção'
+      }));
+
+      res.json(enrichedGrimoires);
+    } catch (error) {
+      console.error("Error fetching admin grimoires:", error);
+      res.status(500).json({ error: "Erro ao buscar grimórios" });
+    }
+  });
+
   // Admin routes for grimoire management
   app.post("/api/admin/grimoires", authenticateToken, requireAdmin, async (req, res) => {
     try {
-      const { title, description, category, difficultyLevel, price, isPaid, coverImageUrl, rawContent, sectionId } = req.body;
+      const { title, description, sectionId, price, isPaid, isActive, coverImageUrl, rawContent } = req.body;
       
       // Gera descrição automática se não fornecida
-      const finalDescription = description || ContentFormatter.generateDescription(title, category);
+      const finalDescription = description || ContentFormatter.generateDescription(title, 'Luciferiano');
       
       const grimoireData = {
         title,
         description: finalDescription,
-        category,
-        sectionId: sectionId || null,
-        difficultyLevel,
+        sectionId: parseInt(sectionId) || 1,
         unlockOrder: (grimoireStore.getGrimoires().length + 1),
-        isActive: true,
+        isActive: isActive === true || isActive === 'true',
         price: isPaid ? price : null,
-        isPaid: isPaid || false,
+        isPaid: isPaid === true || isPaid === 'true',
         coverImageUrl: coverImageUrl || `https://via.placeholder.com/300x400/1a1a1a/d4af37?text=${encodeURIComponent(title)}`
       };
 
