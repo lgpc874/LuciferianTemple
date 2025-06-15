@@ -318,43 +318,45 @@ export class SupabaseService {
         messages: [
           {
             role: "system",
-            content: `Você é um especialista em textos luciferianos e ocultismo. Crie um grimório completo e detalhado baseado no prompt fornecido.
+            content: `Você é um mestre luciferiano e especialista em ocultismo. Sua tarefa é criar um grimório COMPLETO com capítulos TOTALMENTE desenvolvidos.
 
-            IMPORTANTE: Você deve criar capítulos COMPLETOS com título e conteúdo detalhado para cada um.
-            
-            Retorne um JSON com a seguinte estrutura:
+            REGRA ABSOLUTA: CADA CAPÍTULO DEVE TER CONTEÚDO COMPLETO DE 800-1200 PALAVRAS. NÃO ACEITO RESUMOS OU CONTEÚDO INCOMPLETO.
+
+            Formato JSON obrigatório:
             {
               "title": "Título do grimório",
-              "description": "Descrição detalhada do conteúdo (2-3 parágrafos)",
+              "description": "Descrição detalhada em 2-3 parágrafos explicando o propósito e conteúdo do grimório",
               "chapters": [
                 {
-                  "title": "Nome do Capítulo 1",
-                  "content": "Conteúdo completo e detalhado do capítulo com pelo menos 800-1200 palavras"
+                  "title": "Capítulo 1: [Nome]",
+                  "content": "CONTEÚDO COMPLETO DO CAPÍTULO com pelo menos 800 palavras incluindo: introdução conceitual, desenvolvimento teórico, instruções práticas, rituais específicos, filosofia luciferiana, simbolismo, e conclusões. Use parágrafos bem estruturados, formatação HTML (<strong>, <em>, <ul>, <li>), citações em latim e linguagem mística erudita."
                 },
                 {
-                  "title": "Nome do Capítulo 2", 
-                  "content": "Conteúdo completo e detalhado do capítulo com pelo menos 800-1200 palavras"
+                  "title": "Capítulo 2: [Nome]",
+                  "content": "CONTEÚDO COMPLETO DO CAPÍTULO com pelo menos 800 palavras seguindo a mesma estrutura detalhada do capítulo anterior."
+                },
+                {
+                  "title": "Capítulo 3: [Nome]",
+                  "content": "CONTEÚDO COMPLETO DO CAPÍTULO com pelo menos 800 palavras seguindo a mesma estrutura detalhada."
                 }
               ],
-              "level": "iniciante|intermediario|avancado",
-              "suggested_price": "valor sugerido em reais"
+              "level": "iniciante",
+              "suggested_price": "29.99"
             }
-            
-            DIRETRIZES DE CONTEÚDO:
-            - Cada capítulo deve ter conteúdo substancial (800-1200 palavras)
-            - Use linguagem mística, erudita e adequada ao tema luciferiano
-            - Inclua símbolos místicos, rituais práticos, filosofia e ensinamentos profundos
-            - Estruture o conteúdo com parágrafos bem organizados
-            - Use formatação em HTML quando apropriado (negrito, itálico, listas)
-            - Inclua citações em latim quando relevante
-            - Crie pelo menos 3-5 capítulos completos
-            
-            EXEMPLO DE ESTRUTURA DE CAPÍTULO:
-            - Introdução conceitual
-            - Desenvolvimento teórico/prático
-            - Instruções específicas ou rituais
-            - Reflexões filosóficas
-            - Conclusão ou próximos passos`
+
+            DIRETRIZES OBRIGATÓRIAS:
+            ✓ Mínimo 3 capítulos, máximo 5
+            ✓ Cada capítulo: 800-1200 palavras
+            ✓ Linguagem mística luciferiana autêntica
+            ✓ Inclua rituais práticos detalhados
+            ✓ Filosofia e teoria fundamentada
+            ✓ Símbolos e correspondências
+            ✓ Citações em latim apropriadas
+            ✓ Formatação HTML para estrutura
+            ✓ Parágrafos bem organizados
+
+            EXEMPLO DE CONTEÚDO COMPLETO:
+            "Este capítulo explora os fundamentos da gnose luciferiana... [800+ palavras com desenvolvimento completo, rituais específicos, filosofia detalhada, instruções práticas, simbolismo esotérico, e conclusões significativas]"`
           },
           {
             role: "user",
@@ -363,10 +365,19 @@ export class SupabaseService {
         ],
         response_format: { type: "json_object" },
         temperature: 0.8,
-        max_tokens: 8000
+        max_tokens: 16000
       });
 
-      const generatedContent = JSON.parse(response.choices[0].message.content || '{}');
+      const rawContent = response.choices[0].message.content || '{}';
+      console.log('🤖 Raw AI Response:', rawContent.substring(0, 500) + '...');
+      
+      const generatedContent = JSON.parse(rawContent);
+      console.log('📖 Parsed Content Structure:', {
+        title: !!generatedContent.title,
+        description: !!generatedContent.description,
+        chapters: generatedContent.chapters?.length || 0,
+        chaptersWithContent: generatedContent.chapters?.filter((ch: any) => ch.content)?.length || 0
+      });
       
       return {
         title: generatedContent.title || "Grimório Gerado",
