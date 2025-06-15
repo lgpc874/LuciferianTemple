@@ -481,6 +481,8 @@ function CreateGrimoireForm({
     chapters: [
       { title: "Introdução", content: "" }
     ],
+    cover_image_url: "",
+    generate_cover_with_ai: false,
     ai_config: {
       personality: "mystical",
       style: "narrative",
@@ -488,7 +490,8 @@ function CreateGrimoireForm({
       specialization: "luciferian",
       guidelines: "",
       numChapters: 5,
-      chapterTitles: ["Introdução", "Fundamentos", "Prática", "Desenvolvimento", "Conclusão"]
+      chapterTitles: ["Introdução", "Fundamentos", "Prática", "Desenvolvimento", "Conclusão"],
+      coverDescription: ""
     }
   });
 
@@ -529,6 +532,51 @@ function CreateGrimoireForm({
       ai_config: { ...formData.ai_config, chapterTitles: newTitles },
       chapters: newTitles.map(title => ({ title, content: "" }))
     });
+  };
+
+  const [isGeneratingCover, setIsGeneratingCover] = useState(false);
+  const { toast } = useToast();
+
+  const generateAICover = async (title: string, description: string) => {
+    if (!title) {
+      toast({
+        title: "Título Necessário",
+        description: "Digite um título para gerar a capa",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      setIsGeneratingCover(true);
+      const response = await apiRequest("/api/admin/ai/generate-cover", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          title, 
+          description: description || `Capa para grimório luciferiano "${title}"` 
+        })
+      });
+      
+      const result = await response.json();
+      setFormData({
+        ...formData,
+        cover_image_url: result.imageUrl
+      });
+      
+      toast({
+        title: "Capa Gerada",
+        description: "Capa criada com sucesso pela IA"
+      });
+    } catch (error) {
+      toast({
+        title: "Erro na Geração",
+        description: "Erro ao gerar capa com IA",
+        variant: "destructive"
+      });
+    } finally {
+      setIsGeneratingCover(false);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -839,6 +887,122 @@ function CreateGrimoireForm({
           </CardContent>
         </Card>
       )}
+
+      {/* Configuração de Capa */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-golden-amber flex items-center">
+            📸 Capa do Grimório
+          </CardTitle>
+          <CardDescription>
+            Configure a imagem de capa que será exibida na biblioteca
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Preview da Capa */}
+            <div className="space-y-3">
+              <Label>Preview da Capa</Label>
+              <div className="border-2 border-dashed border-amber-500/30 rounded-lg p-4 aspect-[3/4] flex items-center justify-center bg-black/20">
+                {formData.cover_image_url ? (
+                  <img 
+                    src={formData.cover_image_url} 
+                    alt="Preview da capa"
+                    className="max-w-full max-h-full object-contain rounded"
+                    onError={(e) => {
+                      e.currentTarget.src = `https://via.placeholder.com/300x400/1a1a1a/d4af37?text=${encodeURIComponent(formData.title || 'Grimório')}`;
+                    }}
+                  />
+                ) : (
+                  <div className="text-center text-amber-500/60">
+                    <div className="text-4xl mb-2">📖</div>
+                    <p className="text-sm">Preview da capa aparecerá aqui</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Opções de Capa */}
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label>URL da Imagem de Capa</Label>
+                <input
+                  type="url"
+                  className="w-full p-2 border rounded-lg bg-black/20 border-amber-500/30 text-white placeholder-gray-400"
+                  placeholder="https://exemplo.com/imagem-capa.jpg"
+                  value={formData.cover_image_url}
+                  onChange={(e) => setFormData({...formData, cover_image_url: e.target.value})}
+                />
+                <p className="text-xs text-gray-400">
+                  Cole o link direto de uma imagem (JPG, PNG, WebP)
+                </p>
+              </div>
+
+              <div className="border-t border-amber-500/20 pt-4">
+                <div className="flex items-center space-x-2 mb-3">
+                  <input
+                    type="checkbox"
+                    id="generate_cover_ai"
+                    checked={formData.generate_cover_with_ai}
+                    onChange={(e) => setFormData({...formData, generate_cover_with_ai: e.target.checked})}
+                  />
+                  <Label htmlFor="generate_cover_ai">Gerar capa com IA</Label>
+                </div>
+                
+                {formData.generate_cover_with_ai && (
+                  <div className="space-y-3">
+                    <textarea
+                      className="w-full p-3 border rounded-lg bg-black/20 border-amber-500/30 text-white placeholder-gray-400 resize-none"
+                      placeholder="Descreva como você quer a capa: estilo, cores, elementos, atmosfera..."
+                      rows={3}
+                      value={formData.ai_config.coverDescription || ""}
+                      onChange={(e) => setFormData({
+                        ...formData,
+                        ai_config: { ...formData.ai_config, coverDescription: e.target.value }
+                      })}
+                    />
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={() => generateAICover(formData.title, formData.ai_config?.coverDescription || "")}
+                      disabled={isGeneratingCover}
+                      className="w-full bg-amber-500 hover:bg-amber-600 text-black font-semibold"
+                    >
+                      {isGeneratingCover ? (
+                        <>
+                          <Sparkles className="mr-2 h-4 w-4 animate-spin" />
+                          Gerando Capa...
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="mr-2 h-4 w-4" />
+                          Gerar Capa com IA
+                        </>
+                      )}
+                    </Button>
+                    <p className="text-xs text-gray-400">
+                      A IA criará uma capa única baseada na sua descrição
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              <div className="border-t border-amber-500/20 pt-4">
+                <Label className="text-sm text-gray-400">Capa Automática</Label>
+                <p className="text-xs text-gray-500 mb-2">
+                  Se nenhuma imagem for fornecida, uma capa será gerada automaticamente com o título
+                </p>
+                <div className="bg-gradient-to-br from-gray-800 to-black border border-amber-500/30 rounded p-3 text-center">
+                  <div className="text-amber-500 text-sm font-semibold">
+                    {formData.title || "Título do Grimório"}
+                  </div>
+                  <div className="text-xs text-gray-400 mt-1">Capa Automática</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Configurações de Monetização */}
       <Card>
