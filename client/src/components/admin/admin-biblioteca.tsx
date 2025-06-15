@@ -1333,6 +1333,7 @@ function SettingsTab() {
 
   const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   // Carregar configurações reais do Supabase
   const { data: currentAISettings, isLoading: loadingAI } = useQuery({
@@ -1364,9 +1365,13 @@ function SettingsTab() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(aiSettings)
       });
+      
+      // Invalidar cache para recarregar dados
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/ai/settings"] });
+      
       toast({
         title: "Configurações de IA Salvas",
-        description: "Configurações persistidas no Supabase"
+        description: "Dados persistidos no Supabase"
       });
     } catch (error) {
       toast({
@@ -1387,9 +1392,13 @@ function SettingsTab() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(systemSettings)
       });
+      
+      // Invalidar cache para recarregar dados
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/settings"] });
+      
       toast({
         title: "Configurações do Sistema Salvas",
-        description: "Configurações persistidas no Supabase"
+        description: "Dados persistidos no Supabase"
       });
     } catch (error) {
       toast({
