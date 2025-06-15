@@ -245,10 +245,7 @@ export default function GrimoireReader() {
             </Button>
             
             <div className="text-center flex-1 mx-4">
-              <div className="flex items-center justify-center space-x-2">
-                <span className="text-sm text-ritualistic-beige/60 font-cinzel">Grimório:</span>
-                <h1 className="text-base font-cinzel text-golden-amber truncate">{(grimoire as any)?.title || 'Carregando...'}</h1>
-              </div>
+              <h1 className="text-base font-cinzel text-golden-amber truncate">{(grimoire as any)?.title || 'Carregando...'}</h1>
               <div className="flex items-center justify-center space-x-4 text-xs text-ritualistic-beige/60 mt-1">
                 <span className="flex items-center">
                   <Eye className="h-3 w-3 mr-1" />
