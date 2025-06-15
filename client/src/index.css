@@ -1173,7 +1173,7 @@ input, textarea {
   display: none;
 }
 
-/* Headers específicos com melhor espaçamento */
+/* Headers específicos com espaçamento uniforme */
 .grimoire-content h1,
 .grimoire-content h2,
 .grimoire-content h3,
@@ -1182,14 +1182,36 @@ input, textarea {
 .grimoire-content h6 {
   color: #d4af37 !important;
   font-family: 'Cinzel', serif !important;
-  margin: 1.5rem 0 1rem 0 !important;
+  margin: 1rem 0 0.6rem 0 !important;
   line-height: 1.4 !important;
 }
 
-/* Títulos de seção com espaçamento consistente */
-.grimoire-content h3,
-.grimoire-content h4 {
-  margin: 1.2rem 0 0.8rem 0 !important;
+/* Normalização completa de espaçamento - todos os elementos centralizados */
+.grimoire-content [style*="text-align: center"],
+.grimoire-content [style*="text-align:center"],
+.grimoire-content div[style*="text-align"],
+.grimoire-content p[style*="text-align"],
+.grimoire-content h1[style*="text-align"],
+.grimoire-content h2[style*="text-align"],
+.grimoire-content h3[style*="text-align"],
+.grimoire-content h4[style*="text-align"],
+.grimoire-content h5[style*="text-align"],
+.grimoire-content h6[style*="text-align"] {
+  margin: 1rem 0 0.8rem 0 !important;
+  padding: 0 !important;
+}
+
+/* Forçar espaçamento consistente e menor em todos os elementos */
+.grimoire-content div,
+.grimoire-content span,
+.grimoire-content p:not(:first-child) {
+  margin: 0.5rem 0 !important;
+}
+
+/* Espaçamento específico para elementos de seção */
+.grimoire-content div > p,
+.grimoire-content div > div {
+  margin: 0.3rem 0 !important;
 }
 
 .grimoire-content h1 { font-size: 2rem !important; }
@@ -1199,11 +1221,11 @@ input, textarea {
 .grimoire-content h5 { font-size: 1.2rem !important; }
 .grimoire-content h6 { font-size: 1.1rem !important; }
 
-/* Parágrafos e texto com melhor separação */
+/* Parágrafos e texto com espaçamento controlado */
 .grimoire-content p {
   color: #f5f5dc !important;
-  line-height: 1.8 !important;
-  margin: 1.5rem 0 !important;
+  line-height: 1.6 !important;
+  margin: 0.8rem 0 !important;
   text-align: justify !important;
 }
 
@@ -1217,7 +1239,7 @@ input, textarea {
   font-style: italic !important;
 }
 
-/* Seções especiais com melhor separação */
+/* Espaçamento uniformizado para todos os elementos especiais */
 .grimoire-content .myth-revelation,
 .grimoire-content .myth-comparison,
 .grimoire-content .lies-section,
@@ -1234,11 +1256,7 @@ input, textarea {
 .grimoire-content .integration-practices,
 .grimoire-content .temple-invitation,
 .grimoire-content .continued-learning,
-.grimoire-content .conclusion {
-  margin: 2.5rem 0 1.5rem 0;
-}
-
-/* Elementos individuais com espaçamento médio */
+.grimoire-content .conclusion,
 .grimoire-content .false-version,
 .grimoire-content .true-version,
 .grimoire-content .lie-card,
@@ -1248,11 +1266,7 @@ input, textarea {
 .grimoire-content .king-content,
 .grimoire-content .principle-item,
 .grimoire-content .method-description,
-.grimoire-content .assessment-section {
-  margin: 1.5rem 0;
-}
-
-/* Subelementos com espaçamento menor */
+.grimoire-content .assessment-section,
 .grimoire-content .primordial-names,
 .grimoire-content .name-card,
 .grimoire-content .timeline-item,
@@ -1270,7 +1284,7 @@ input, textarea {
 .grimoire-content .method-example,
 .grimoire-content .questions,
 .grimoire-content .daily-structure {
-  margin: 1rem 0;
+  margin: 0.8rem 0 !important;
 }
 
 /* Elementos com ícones específicos */
