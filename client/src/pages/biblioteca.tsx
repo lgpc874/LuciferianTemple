@@ -174,7 +174,7 @@ export default function Biblioteca() {
           {/* Abas */}
           <div className="max-w-6xl mx-auto">
             <Tabs value={activeSection.toString()} onValueChange={(value) => setActiveSection(parseInt(value))}>
-              <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 gap-2 bg-transparent h-auto p-1">
+              <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 gap-2 bg-transparent h-auto p-1">
                 {(sections as LibrarySection[]).map((section: LibrarySection) => {
                   const IconComponent = getSectionIcon(section.id);
                   const grimoireCount = (allGrimoires as Grimoire[]).filter((g: Grimoire) => g.section_id === section.id).length;
