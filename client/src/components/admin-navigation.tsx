@@ -35,11 +35,14 @@ export default function AdminNavigation() {
     window.location.href = '/';
   };
 
-  const isActive = (path: string) => {
-    if (path === '/admin') {
-      return location === '/admin' || location === '/admin?tab=overview';
-    }
-    return location === path;
+  const getCurrentTab = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('tab') || 'overview';
+  };
+
+  const isActive = (itemId: string) => {
+    const currentTab = getCurrentTab();
+    return currentTab === itemId;
   };
 
   return (
@@ -61,17 +64,23 @@ export default function AdminNavigation() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-1">
-            {navigationItems.slice(0, 6).map((item) => (
+            {navigationItems.map((item) => (
               <Button
                 key={item.id}
-                variant={isActive(item.path) ? "secondary" : "ghost"}
+                variant={isActive(item.id) ? "secondary" : "ghost"}
                 size="sm"
                 className={`flex items-center space-x-2 ${
-                  isActive(item.path) 
+                  isActive(item.id) 
                     ? 'bg-golden-amber/10 text-golden-amber border border-golden-amber/30' 
                     : 'hover:bg-golden-amber/5 hover:text-golden-amber'
                 }`}
-                onClick={() => window.location.href = item.path}
+                onClick={() => {
+                  if (item.id === 'overview') {
+                    window.location.href = '/admin';
+                  } else {
+                    window.location.href = `/admin?tab=${item.id}`;
+                  }
+                }}
               >
                 <item.icon className="w-4 h-4" />
                 <span className="hidden lg:inline">{item.label}</span>
@@ -136,14 +145,18 @@ export default function AdminNavigation() {
               {navigationItems.map((item) => (
                 <Button
                   key={item.id}
-                  variant={isActive(item.path) ? "secondary" : "ghost"}
+                  variant={isActive(item.id) ? "secondary" : "ghost"}
                   className={`w-full justify-start ${
-                    isActive(item.path) 
+                    isActive(item.id) 
                       ? 'bg-golden-amber/10 text-golden-amber' 
                       : 'hover:bg-golden-amber/5 hover:text-golden-amber'
                   }`}
                   onClick={() => {
-                    window.location.href = item.path;
+                    if (item.id === 'overview') {
+                      window.location.href = '/admin';
+                    } else {
+                      window.location.href = `/admin?tab=${item.id}`;
+                    }
                     setIsMobileMenuOpen(false);
                   }}
                 >
