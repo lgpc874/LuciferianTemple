@@ -302,12 +302,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const grimoireData = {
         title,
         description: finalDescription,
+        category: 'custom',
+        difficultyLevel: 1,
         sectionId: parseInt(sectionId) || 1,
         unlockOrder: (grimoireStore.getGrimoires().length + 1),
         isActive: isActive === true || isActive === 'true',
         price: isPaid ? price : null,
         isPaid: isPaid === true || isPaid === 'true',
-        coverImageUrl: coverImageUrl || `https://via.placeholder.com/300x400/1a1a1a/d4af37?text=${encodeURIComponent(title)}`
+        coverImageUrl: coverImageUrl || `https://via.placeholder.com/300x400/1a1a1a/d4af37?text=${encodeURIComponent(title)}`,
+        aiPersonality: null,
+        aiBehavior: null,
+        aiPhilosophy: null,
+        aiContentGuidelines: null,
+        aiStyle: null,
+        aiApproach: null,
+        aiTone: null,
+        aiSpecialization: null
       };
 
       const newGrimoire = await grimoireStore.addGrimoire(grimoireData);
@@ -1146,12 +1156,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const savedGrimoire = await grimoireStore.addGrimoire({
         title: grimoireData.title,
         description: grimoireData.description,
+        category: 'ai-generated',
+        difficultyLevel: 1,
         sectionId: 1, // Padrão para primeira seção (Porta das Sombras)
         unlockOrder: grimoireStore.getGrimoires().length + 1,
         isActive: true,
         price: null,
         isPaid: false,
-        coverImageUrl: `https://via.placeholder.com/300x400?text=${encodeURIComponent(grimoireData.title)}`
+        coverImageUrl: `https://via.placeholder.com/300x400?text=${encodeURIComponent(grimoireData.title)}`,
+        aiPersonality: null,
+        aiBehavior: null,
+        aiPhilosophy: null,
+        aiContentGuidelines: null,
+        aiStyle: null,
+        aiApproach: null,
+        aiTone: null,
+        aiSpecialization: null
       });
 
       if (!savedGrimoire) {

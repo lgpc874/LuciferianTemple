@@ -16,12 +16,23 @@ export const grimoires = pgTable("grimoires", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
   description: text("description").notNull(),
+  category: text("category").notNull(),
+  difficultyLevel: integer("difficulty_level").default(1).notNull(),
   coverImageUrl: text("cover_image_url").notNull(),
   sectionId: integer("section_id").references(() => librarySections.id).notNull(),
   unlockOrder: integer("unlock_order").notNull(),
   isActive: boolean("is_active").default(true).notNull(),
   price: text("price"), // null = gratuito, valor = preço em R$
   isPaid: boolean("is_paid").default(false).notNull(),
+  // Configurações de IA
+  aiPersonality: text("ai_personality"),
+  aiBehavior: text("ai_behavior"),
+  aiPhilosophy: text("ai_philosophy"),
+  aiContentGuidelines: text("ai_content_guidelines"),
+  aiStyle: text("ai_style"),
+  aiApproach: text("ai_approach"),
+  aiTone: text("ai_tone"),
+  aiSpecialization: text("ai_specialization"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 

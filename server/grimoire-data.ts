@@ -196,10 +196,19 @@ class GrimoireDataStore {
         coverImageUrl: `svg-${cat.category}`,
         category: cat.category,
         difficultyLevel: cat.difficultyLevel,
+        sectionId: 1, // Porta das Sombras por padrão
         unlockOrder: cat.unlockOrder,
         isActive: true,
         price: cat.price,
         isPaid: cat.isPaid,
+        aiPersonality: null,
+        aiBehavior: null,
+        aiPhilosophy: null,
+        aiContentGuidelines: null,
+        aiStyle: null,
+        aiApproach: null,
+        aiTone: null,
+        aiSpecialization: null,
         createdAt: new Date()
       };
       this.grimoires.set(grimoire.id, grimoire);
@@ -1351,7 +1360,17 @@ class GrimoireDataStore {
               unlockOrder: updatedGrimoire.unlockOrder,
               isActive: updatedGrimoire.isActive,
               price: updatedGrimoire.price,
-              isPaid: updatedGrimoire.isPaid
+              isPaid: updatedGrimoire.isPaid,
+              sectionId: updatedGrimoire.sectionId,
+              // Configurações de IA
+              aiPersonality: updatedGrimoire.aiPersonality,
+              aiBehavior: updatedGrimoire.aiBehavior,
+              aiPhilosophy: updatedGrimoire.aiPhilosophy,
+              aiContentGuidelines: updatedGrimoire.aiContentGuidelines,
+              aiStyle: updatedGrimoire.aiStyle,
+              aiApproach: updatedGrimoire.aiApproach,
+              aiTone: updatedGrimoire.aiTone,
+              aiSpecialization: updatedGrimoire.aiSpecialization
             })
             .eq('id', id)
             .select()
