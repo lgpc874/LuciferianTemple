@@ -469,6 +469,213 @@ export class SupabaseService {
     }
   }
 
+  // GERENCIAR CONFIGURAÇÕES DE IA
+  async getAISettings() {
+    try {
+      const { data, error } = await this.supabase
+        .from('ai_settings')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
+        throw error;
+      }
+
+      // Se não existe configuração, retornar valores padrão
+      if (!data) {
+        return {
+          personality: 'luciferian',
+          complexity: 'beginner',
+          length: 'medium',
+          style: 'mixed',
+          guidelines: '',
+          defaultSection: '',
+          autoPrice: false,
+          priceRange: { min: '9.99', max: '49.99' }
+        };
+      }
+
+      return {
+        personality: data.personality,
+        complexity: data.complexity,
+        length: data.length,
+        style: data.style,
+        guidelines: data.guidelines || '',
+        defaultSection: data.default_section || '',
+        autoPrice: data.auto_price,
+        priceRange: { 
+          min: data.price_range_min?.toString() || '9.99', 
+          max: data.price_range_max?.toString() || '49.99' 
+        }
+      };
+    } catch (error: any) {
+      console.error('Error getting AI settings:', error);
+      throw new Error(`Error getting AI settings: ${error.message}`);
+    }
+  }
+
+  async saveAISettings(settings: any) {
+    try {
+      // Verificar se já existe uma configuração
+      const { data: existing } = await this.supabase
+        .from('ai_settings')
+        .select('id')
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      const settingsData = {
+        personality: settings.personality,
+        complexity: settings.complexity,
+        length: settings.length,
+        style: settings.style,
+        guidelines: settings.guidelines || '',
+        default_section: settings.defaultSection || '',
+        auto_price: settings.autoPrice || false,
+        price_range_min: parseFloat(settings.priceRange?.min || '9.99'),
+        price_range_max: parseFloat(settings.priceRange?.max || '49.99'),
+        updated_at: new Date().toISOString()
+      };
+
+      if (existing) {
+        // Atualizar configuração existente
+        const { data, error } = await this.supabase
+          .from('ai_settings')
+          .update(settingsData)
+          .eq('id', existing.id)
+          .select()
+          .single();
+
+        if (error) throw error;
+        return data;
+      } else {
+        // Criar nova configuração
+        const { data, error } = await this.supabase
+          .from('ai_settings')
+          .insert(settingsData)
+          .select()
+          .single();
+
+        if (error) throw error;
+        return data;
+      }
+    } catch (error: any) {
+      console.error('Error saving AI settings:', error);
+      throw new Error(`Error saving AI settings: ${error.message}`);
+    }
+  }
+
+  // GERENCIAR CONFIGURAÇÕES DO SISTEMA
+  async getSystemSettings() {
+    try {
+      const { data, error } = await this.supabase
+        .from('system_settings')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
+        throw error;
+      }
+
+      // Se não existe configuração, retornar valores padrão
+      if (!data) {
+        return {
+          siteName: 'Templo do Abismo',
+          siteDescription: 'Portal de ensinamentos luciferianos',
+          siteKeywords: 'lucifer, ocultismo, magia, grimórios',
+          adminEmail: 'admin@templodoabismo.com',
+          contentLanguage: 'português',
+          contentTone: 'formal',
+          contentTargetAudience: 'iniciantes',
+          enableUserRegistration: true,
+          enablePaidContent: true,
+          enableAIGeneration: true,
+          securityLevel: 'medium',
+          enableContentProtection: true,
+          enableDownloadProtection: true
+        };
+      }
+
+      return {
+        siteName: data.site_name,
+        siteDescription: data.site_description,
+        siteKeywords: data.site_keywords,
+        adminEmail: data.admin_email,
+        contentLanguage: data.content_language,
+        contentTone: data.content_tone,
+        contentTargetAudience: data.content_target_audience,
+        enableUserRegistration: data.enable_user_registration,
+        enablePaidContent: data.enable_paid_content,
+        enableAIGeneration: data.enable_ai_generation,
+        securityLevel: data.security_level,
+        enableContentProtection: data.enable_content_protection,
+        enableDownloadProtection: data.enable_download_protection
+      };
+    } catch (error: any) {
+      console.error('Error getting system settings:', error);
+      throw new Error(`Error getting system settings: ${error.message}`);
+    }
+  }
+
+  async saveSystemSettings(settings: any) {
+    try {
+      // Verificar se já existe uma configuração
+      const { data: existing } = await this.supabase
+        .from('system_settings')
+        .select('id')
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      const settingsData = {
+        site_name: settings.siteName || 'Templo do Abismo',
+        site_description: settings.siteDescription || 'Portal de ensinamentos luciferianos',
+        site_keywords: settings.siteKeywords || 'lucifer, ocultismo, magia, grimórios',
+        admin_email: settings.adminEmail || 'admin@templodoabismo.com',
+        content_language: settings.contentLanguage || 'português',
+        content_tone: settings.contentTone || 'formal',
+        content_target_audience: settings.contentTargetAudience || 'iniciantes',
+        enable_user_registration: settings.enableUserRegistration !== undefined ? settings.enableUserRegistration : true,
+        enable_paid_content: settings.enablePaidContent !== undefined ? settings.enablePaidContent : true,
+        enable_ai_generation: settings.enableAIGeneration !== undefined ? settings.enableAIGeneration : true,
+        security_level: settings.securityLevel || 'medium',
+        enable_content_protection: settings.enableContentProtection !== undefined ? settings.enableContentProtection : true,
+        enable_download_protection: settings.enableDownloadProtection !== undefined ? settings.enableDownloadProtection : true,
+        updated_at: new Date().toISOString()
+      };
+
+      if (existing) {
+        // Atualizar configuração existente
+        const { data, error } = await this.supabase
+          .from('system_settings')
+          .update(settingsData)
+          .eq('id', existing.id)
+          .select()
+          .single();
+
+        if (error) throw error;
+        return data;
+      } else {
+        // Criar nova configuração
+        const { data, error } = await this.supabase
+          .from('system_settings')
+          .insert(settingsData)
+          .select()
+          .single();
+
+        if (error) throw error;
+        return data;
+      }
+    } catch (error: any) {
+      console.error('Error saving system settings:', error);
+      throw new Error(`Error saving system settings: ${error.message}`);
+    }
+  }
+
   // GERAR IMAGEM COM IA (DALL-E)
   async generateImageWithAI(prompt: string): Promise<{ imageUrl: string }> {
     try {

@@ -518,13 +518,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/admin/ai/settings", authenticateToken, async (req, res) => {
     try {
       const settings = req.body;
-      // Por enquanto apenas simulamos o salvamento
-      // Em produção, salvaríamos no banco de dados
-      console.log("AI Settings saved:", settings);
-      res.json({ success: true, message: "Configurações da IA salvas com sucesso" });
+      const savedSettings = await supabaseService.saveAISettings(settings);
+      res.json({ 
+        success: true, 
+        message: "Configurações da IA salvas no Supabase",
+        data: savedSettings
+      });
     } catch (error: any) {
       console.error("Error saving AI settings:", error);
-      res.status(500).json({ error: "Erro ao salvar configurações da IA" });
+      res.status(500).json({ error: "Erro ao salvar configurações da IA: " + error.message });
+    }
+  });
+
+  // Buscar configurações da IA
+  app.get("/api/admin/ai/settings", authenticateToken, async (req, res) => {
+    try {
+      const settings = await supabaseService.getAISettings();
+      res.json(settings);
+    } catch (error: any) {
+      console.error("Error getting AI settings:", error);
+      res.status(500).json({ error: "Erro ao buscar configurações da IA: " + error.message });
     }
   });
 
@@ -561,13 +574,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/admin/settings", authenticateToken, async (req, res) => {
     try {
       const settings = req.body;
-      // Por enquanto apenas simulamos o salvamento
-      // Em produção, salvaríamos no banco de dados
-      console.log("System Settings saved:", settings);
-      res.json({ success: true, message: "Configurações do sistema salvas com sucesso" });
+      const savedSettings = await supabaseService.saveSystemSettings(settings);
+      res.json({ 
+        success: true, 
+        message: "Configurações do sistema salvas no Supabase",
+        data: savedSettings
+      });
     } catch (error: any) {
       console.error("Error saving system settings:", error);
-      res.status(500).json({ error: "Erro ao salvar configurações do sistema" });
+      res.status(500).json({ error: "Erro ao salvar configurações do sistema: " + error.message });
+    }
+  });
+
+  // Buscar configurações gerais do sistema
+  app.get("/api/admin/settings", authenticateToken, async (req, res) => {
+    try {
+      const settings = await supabaseService.getSystemSettings();
+      res.json(settings);
+    } catch (error: any) {
+      console.error("Error getting system settings:", error);
+      res.status(500).json({ error: "Erro ao buscar configurações do sistema: " + error.message });
     }
   });
 

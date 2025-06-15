@@ -86,6 +86,42 @@ export const grimoire_purchases = pgTable("grimoire_purchases", {
   created_at: timestamp("created_at").defaultNow(),
 });
 
+// Tabela para configurações de IA
+export const ai_settings = pgTable("ai_settings", {
+  id: serial("id").primaryKey(),
+  personality: text("personality").default("luciferian").notNull(),
+  complexity: text("complexity").default("beginner").notNull(),
+  length: text("length").default("medium").notNull(),
+  style: text("style").default("mixed").notNull(),
+  guidelines: text("guidelines").default(""),
+  default_section: text("default_section").default(""),
+  auto_price: boolean("auto_price").default(false).notNull(),
+  price_range_min: decimal("price_range_min", { precision: 10, scale: 2 }).default("9.99"),
+  price_range_max: decimal("price_range_max", { precision: 10, scale: 2 }).default("49.99"),
+  updated_at: timestamp("updated_at").defaultNow(),
+  created_at: timestamp("created_at").defaultNow(),
+});
+
+// Tabela para configurações gerais do sistema
+export const system_settings = pgTable("system_settings", {
+  id: serial("id").primaryKey(),
+  site_name: text("site_name").default("Templo do Abismo").notNull(),
+  site_description: text("site_description").default("Portal de ensinamentos luciferianos").notNull(),
+  site_keywords: text("site_keywords").default("lucifer, ocultismo, magia, grimórios").notNull(),
+  admin_email: text("admin_email").default("admin@templodoabismo.com").notNull(),
+  content_language: text("content_language").default("português").notNull(),
+  content_tone: text("content_tone").default("formal").notNull(),
+  content_target_audience: text("content_target_audience").default("iniciantes").notNull(),
+  enable_user_registration: boolean("enable_user_registration").default(true).notNull(),
+  enable_paid_content: boolean("enable_paid_content").default(true).notNull(),
+  enable_ai_generation: boolean("enable_ai_generation").default(true).notNull(),
+  security_level: text("security_level").default("medium").notNull(),
+  enable_content_protection: boolean("enable_content_protection").default(true).notNull(),
+  enable_download_protection: boolean("enable_download_protection").default(true).notNull(),
+  updated_at: timestamp("updated_at").defaultNow(),
+  created_at: timestamp("created_at").defaultNow(),
+});
+
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   email: true,
