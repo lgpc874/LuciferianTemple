@@ -154,8 +154,8 @@ export default function GrimoireReader() {
           ${chapter.content}
         </div>`;
         
-        // Paginar o conteúdo do capítulo individualmente
-        const chapterPages = paginateContent(chapterContent, isMobile ? 800 : 1200);
+        // Paginar o conteúdo do capítulo individualmente com mais conteúdo por página
+        const chapterPages = paginateContent(chapterContent, isMobile ? 1400 : 2000);
         allPages.push(...chapterPages);
       }
       
