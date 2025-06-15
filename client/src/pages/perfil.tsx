@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
@@ -418,7 +418,7 @@ export default function Perfil() {
           {/* Aba Biblioteca */}
           <TabsContent value="biblioteca" className="mt-6">
             <div className="grid gap-4">
-              {grimoireProgress?.map((grimoire) => (
+              {myLibrary?.map((grimoire) => (
                 <Card key={grimoire.id} className="bg-black/40 backdrop-blur-sm border-golden-amber/30">
                   <CardContent className="p-4">
                     <div className="flex items-center gap-4">
@@ -433,19 +433,25 @@ export default function Perfil() {
                           {grimoire.grimoireTitle}
                         </h3>
                         <p className="text-ritualistic-beige/70 text-sm mb-2">
-                          {grimoire.category}
+                          {grimoire.sectionName}
                         </p>
                         
                         {/* Progresso */}
                         <div className="space-y-2">
                           <div className="flex justify-between text-sm text-ritualistic-beige/80">
-                            <span>{grimoire.completedChapters}/{grimoire.totalChapters} capítulos</span>
-                            <span>{Math.round(grimoire.progress)}%</span>
+                            <span>Página {grimoire.currentPage}/{grimoire.totalPages}</span>
+                            <span>{grimoire.progress}%</span>
                           </div>
                           <Progress 
                             value={grimoire.progress} 
                             className="h-2 bg-black/40"
                           />
+                          {grimoire.readingTime > 0 && (
+                            <div className="text-xs text-ritualistic-beige/60 flex items-center gap-1">
+                              <Clock size={12} />
+                              {formatReadingTime(grimoire.readingTime)} lido
+                            </div>
+                          )}
                         </div>
                       </div>
 
