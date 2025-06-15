@@ -72,7 +72,52 @@ export default function Perfil() {
     confirmPassword: ''
   });
 
-  // Buscar estatísticas do usuário
+  // Buscar progresso dos grimórios do usuário
+  const { data: userProgress } = useQuery({
+    queryKey: ['/api/progress/user'],
+    enabled: !!user
+  });
+
+  // Buscar todos os grimórios para cruzar com o progresso
+  const { data: allGrimoires } = useQuery({
+    queryKey: ['/api/grimoires'],
+    enabled: !!user
+  });
+
+  // Buscar seções da biblioteca
+  const { data: librarySections } = useQuery({
+    queryKey: ['/api/library/sections'],
+    enabled: !!user
+  });
+
+  // Calcular biblioteca pessoal baseada no progresso real
+  const myLibrary = React.useMemo(() => {
+    if (!userProgress || !allGrimoires || !librarySections) return [];
+
+    return userProgress.map((progress: any) => {
+      const grimoire = allGrimoires.find((g: any) => g.id === progress.grimoire_id);
+      if (!grimoire) return null;
+
+      const section = librarySections.find((s: any) => s.id === grimoire.section_id);
+      
+      return {
+        id: grimoire.id,
+        title: grimoire.title,
+        description: grimoire.description,
+        coverImage: grimoire.cover_image_url,
+        sectionName: section?.name || 'Seção Desconhecida',
+        currentPage: progress.current_page || 1,
+        totalPages: progress.total_pages || 1,
+        readingTime: progress.reading_time || 0,
+        lastRead: progress.last_read_at,
+        isPaid: grimoire.is_paid,
+        price: grimoire.price,
+        status: progress.current_page >= progress.total_pages ? 'completed' : 'reading',
+        progress: progress.total_pages > 0 ? Math.round((progress.current_page / progress.total_pages) * 100) : 0
+      };
+    }).filter(Boolean);
+  }, [userProgress, allGrimoires, librarySections]);
+
   // Calcular estatísticas reais baseadas na biblioteca pessoal
   const stats: UserStats = React.useMemo(() => {
     if (!myLibrary) return {
@@ -86,25 +131,13 @@ export default function Perfil() {
 
     return {
       totalGrimoires: myLibrary.length,
-      completedGrimoires: myLibrary.filter(g => g.status === 'completed').length,
-      totalReadingTime: myLibrary.reduce((acc, g) => acc + (g.readingTime || 0), 0),
+      completedGrimoires: myLibrary.filter((g: any) => g.status === 'completed').length,
+      totalReadingTime: myLibrary.reduce((acc: number, g: any) => acc + (g.readingTime || 0), 0),
       currentStreak: 7, // Calculado baseado na atividade de leitura
-      purchasedGrimoires: myLibrary.filter(g => g.isPaid).length,
+      purchasedGrimoires: myLibrary.filter((g: any) => g.isPaid).length,
       averageRating: 4.8 // Baseado nas avaliações dos grimórios lidos
     };
   }, [myLibrary]);
-
-  // Buscar progresso dos grimórios do usuário
-  const { data: userProgress } = useQuery({
-    queryKey: ['/api/progress/user'],
-    enabled: !!user
-  });
-
-  // Buscar todos os grimórios para cruzar com o progresso
-  const { data: allGrimoires } = useQuery({
-    queryKey: ['/api/grimoires'],
-    enabled: !!user
-  });
 
   // Mutation para atualizar perfil
   const updateProfileMutation = useMutation({
@@ -783,8 +816,8 @@ export default function Perfil() {
             </div>
           </TabsContent>
 
-          {/* Aba Admin (apenas para admin@templodoabismo.com) */}
-          {user.email === 'admin@templodoabismo.com' && (
+          {/* Aba Admin (apenas para admin@templodoabismo.com.br) */}
+          {user.email === 'admin@templodoabismo.com.br' && (
             <TabsContent value="admin" className="mt-6">
               <Card className="bg-black/40 backdrop-blur-sm border-golden-amber/30">
                 <CardHeader>
