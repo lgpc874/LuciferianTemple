@@ -994,25 +994,15 @@ input, textarea {
   font-size: 1.4rem !important;
   margin: 2rem 0 1rem 0 !important;
   text-align: center !important;
-  border-bottom: 1px solid rgba(212, 175, 55, 0.3);
-  padding-bottom: 0.5rem !important;
 }
 
 .grimoire-content .mystical-quote {
-  background: rgba(139, 69, 19, 0.15);
-  border-left: 4px solid #d4af37;
-  padding: 1rem 1.5rem;
   margin: 1.5rem 0;
   font-style: italic;
   color: #f5f5dc !important;
-  border-radius: 0 8px 8px 0;
 }
 
 .grimoire-content .warning-section {
-  background: rgba(220, 38, 38, 0.1);
-  border: 1px solid rgba(220, 38, 38, 0.3);
-  border-radius: 6px;
-  padding: 1rem;
   margin: 1.5rem 0;
 }
 
@@ -1107,8 +1097,6 @@ input, textarea {
 
 /* Blockquotes simples */
 .grimoire-content blockquote {
-  border-left: 2px solid #d4af37;
-  padding-left: 1rem;
   margin: 1.5rem 0;
   font-style: italic;
   color: #e6d7a3 !important;
@@ -1170,30 +1158,19 @@ input, textarea {
 .grimoire-content .stage,
 .grimoire-content .fear-level,
 .grimoire-content .fire-aspect {
-  background: rgba(139, 69, 19, 0.1);
-  border-left: 3px solid #d4af37;
-  padding: 1rem;
-  margin: 0.8rem 0;
-  border-radius: 0 6px 6px 0;
+  margin: 1rem 0;
 }
 
 /* Aspecto final */
 .grimoire-content .final-invocation,
 .grimoire-content .pantheon-blessing,
 .grimoire-content .graduation-declaration {
-  background: rgba(139, 69, 19, 0.2);
-  border: 2px solid rgba(212, 175, 55, 0.4);
-  border-radius: 10px;
-  padding: 2rem;
   margin: 2rem 0;
   text-align: center;
 }
 
 .grimoire-content .mystical-seal-final {
-  font-size: 3rem !important;
-  color: #d4af37 !important;
-  text-shadow: 0 0 15px rgba(212, 175, 55, 0.7);
-  margin: 1rem 0 !important;
+  display: none;
 }
 
 /* Headers específicos */
@@ -1356,14 +1333,11 @@ input, textarea {
 }
 
 .grimoire-content .chapter-start .chapter-title {
-  font-family: 'Cinzel Decorative', serif !important;
+  font-family: 'Cinzel', serif !important;
   font-size: 1.8rem !important;
   color: #d4af37 !important;
   text-align: center !important;
   margin-bottom: 2rem !important;
-  text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
-  border-bottom: 2px solid rgba(212, 175, 55, 0.3);
-  padding-bottom: 1rem !important;
 }
 
 /* Responsividade mobile */
