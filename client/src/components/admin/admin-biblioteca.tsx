@@ -39,7 +39,8 @@ import {
   Flame,
   Skull,
   Save,
-  RotateCcw
+  RotateCcw,
+  Image as ImageIcon
 } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
