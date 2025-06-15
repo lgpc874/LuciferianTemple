@@ -1197,8 +1197,19 @@ input, textarea {
 .grimoire-content h4[style*="text-align"],
 .grimoire-content h5[style*="text-align"],
 .grimoire-content h6[style*="text-align"] {
-  margin: 1rem 0 0.8rem 0 !important;
+  margin: 0.8rem 0 0.6rem 0 !important;
   padding: 0 !important;
+}
+
+/* Ajuste específico para símbolos/ícones antes dos títulos */
+.grimoire-content span {
+  margin: 0.4rem 0 !important;
+  display: inline-block;
+}
+
+/* Elementos que contêm símbolos e títulos juntos */
+.grimoire-content div:has(span) {
+  margin: 0.6rem 0 !important;
 }
 
 /* Forçar espaçamento consistente e menor em todos os elementos */
