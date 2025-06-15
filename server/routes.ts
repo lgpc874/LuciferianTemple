@@ -564,29 +564,66 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Gerar conteúdo com IA
       const aiResult = await supabaseService.generateGrimoireWithAI(enhancedPrompt);
       
-      // Criar grimório automaticamente no banco com todos os campos
+      // Validar que a IA retornou capítulos com conteúdo
+      if (!aiResult.chapters || !Array.isArray(aiResult.chapters) || aiResult.chapters.length === 0) {
+        throw new Error("IA não gerou capítulos válidos");
+      }
+
+      // Calcular estatísticas totais
+      const totalWordCount = aiResult.chapters.reduce((total: number, chapter: any) => {
+        return total + (chapter.content ? chapter.content.split(' ').length : 0);
+      }, 0);
+      
+      const estimatedReadingTime = Math.max(5, Math.ceil(totalWordCount / 200));
+      
+      // Criar grimório automaticamente no banco
       const grimoireData: InsertGrimoire = {
         title: aiResult.title || "Grimório Gerado pela IA",
         description: aiResult.description || "Grimório criado automaticamente pela IA",
-        section_id: 1, // Porta das Sombras por padrão
-        content: aiResult.content || "",
-        difficulty_level: settings?.complexity === 'advanced' ? 3 : settings?.complexity === 'intermediate' ? 2 : 1,
-        is_paid: false,
-        price: null,
-        level: settings?.complexity || "iniciante",
+        section_id: settings?.default_section || 1, // Use configuração ou Porta das Sombras por padrão
+        content: `Grimório com ${aiResult.chapters.length} capítulos gerados pela IA`,
+        is_paid: settings?.auto_price === true,
+        price: settings?.auto_price ? (settings?.price_range_min || "29.99") : null,
+        level: aiResult.level || settings?.complexity || "iniciante",
         unlock_order: 0,
-        word_count: aiResult.content ? aiResult.content.split(' ').length : 500,
-        estimated_reading_time: Math.max(5, Math.ceil((aiResult.content ? aiResult.content.split(' ').length : 500) / 200)),
-        is_published: true, // Publicar automaticamente
-        tags: ["ia-gerado", "automático"]
+        word_count: totalWordCount,
+        estimated_reading_time: estimatedReadingTime,
+        is_published: settings?.auto_publish !== false, // Publicar automaticamente por padrão
+        cover_image_url: `https://via.placeholder.com/300x400/1a1a1a/d4af37?text=${encodeURIComponent(aiResult.title || 'Grimório')}`
       };
 
       const newGrimoire = await supabaseService.createGrimoire(grimoireData);
       
+      // Criar capítulos individuais no banco
+      const createdChapters = [];
+      for (let i = 0; i < aiResult.chapters.length; i++) {
+        const chapter = aiResult.chapters[i];
+        
+        if (chapter.title && chapter.content) {
+          const chapterData = {
+            grimoire_id: newGrimoire.id,
+            title: chapter.title,
+            content: chapter.content,
+            chapter_number: i + 1,
+            word_count: chapter.content.split(' ').length
+          };
+          
+          const createdChapter = await supabaseService.createChapter(chapterData);
+          createdChapters.push(createdChapter);
+        }
+      }
+      
       res.json({
-        ...aiResult,
         grimoire: newGrimoire,
-        message: "Grimório gerado e salvo com sucesso!"
+        chapters: createdChapters,
+        aiGenerated: {
+          title: aiResult.title,
+          description: aiResult.description,
+          totalChapters: createdChapters.length,
+          totalWords: totalWordCount,
+          readingTime: estimatedReadingTime
+        },
+        message: `Grimório gerado com ${createdChapters.length} capítulos completos!`
       });
     } catch (error: any) {
       console.error("Error generating quick grimoire:", error);

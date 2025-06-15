@@ -318,19 +318,43 @@ export class SupabaseService {
         messages: [
           {
             role: "system",
-            content: `Você é um especialista em textos luciferianos e ocultismo. Crie um grimório detalhado baseado no prompt fornecido. 
+            content: `Você é um especialista em textos luciferianos e ocultismo. Crie um grimório completo e detalhado baseado no prompt fornecido.
+
+            IMPORTANTE: Você deve criar capítulos COMPLETOS com título e conteúdo detalhado para cada um.
             
             Retorne um JSON com a seguinte estrutura:
             {
               "title": "Título do grimório",
-              "description": "Descrição detalhada do conteúdo",
-              "chapters": ["Nome do Capítulo 1", "Nome do Capítulo 2", ...],
-              "content": "Conteúdo completo do grimório com formatação HTML adequada",
+              "description": "Descrição detalhada do conteúdo (2-3 parágrafos)",
+              "chapters": [
+                {
+                  "title": "Nome do Capítulo 1",
+                  "content": "Conteúdo completo e detalhado do capítulo com pelo menos 800-1200 palavras"
+                },
+                {
+                  "title": "Nome do Capítulo 2", 
+                  "content": "Conteúdo completo e detalhado do capítulo com pelo menos 800-1200 palavras"
+                }
+              ],
               "level": "iniciante|intermediario|avancado",
               "suggested_price": "valor sugerido em reais"
             }
             
-            Use linguagem mística, erudita e adequada ao tema luciferiano. Inclua símbolos, rituais práticos, filosofia e ensinamentos profundos.`
+            DIRETRIZES DE CONTEÚDO:
+            - Cada capítulo deve ter conteúdo substancial (800-1200 palavras)
+            - Use linguagem mística, erudita e adequada ao tema luciferiano
+            - Inclua símbolos místicos, rituais práticos, filosofia e ensinamentos profundos
+            - Estruture o conteúdo com parágrafos bem organizados
+            - Use formatação em HTML quando apropriado (negrito, itálico, listas)
+            - Inclua citações em latim quando relevante
+            - Crie pelo menos 3-5 capítulos completos
+            
+            EXEMPLO DE ESTRUTURA DE CAPÍTULO:
+            - Introdução conceitual
+            - Desenvolvimento teórico/prático
+            - Instruções específicas ou rituais
+            - Reflexões filosóficas
+            - Conclusão ou próximos passos`
           },
           {
             role: "user",
@@ -339,7 +363,7 @@ export class SupabaseService {
         ],
         response_format: { type: "json_object" },
         temperature: 0.8,
-        max_tokens: 4000
+        max_tokens: 8000
       });
 
       const generatedContent = JSON.parse(response.choices[0].message.content || '{}');
@@ -348,7 +372,6 @@ export class SupabaseService {
         title: generatedContent.title || "Grimório Gerado",
         description: generatedContent.description || "Descrição gerada pela IA",
         chapters: generatedContent.chapters || [],
-        content: generatedContent.content || "Conteúdo gerado pela IA",
         level: generatedContent.level || "iniciante",
         suggested_price: generatedContent.suggested_price || "29.99"
       };
