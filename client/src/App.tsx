@@ -12,7 +12,7 @@ import Home from "@/pages/home";
 import NotFound from "@/pages/not-found";
 import AuthPage from "@/pages/auth";
 
-// Páginas de biblioteca e grimórios removidas
+import Biblioteca from "@/pages/biblioteca";
 import AdminDashboard from "@/pages/admin-dashboard";
 import Perfil from "@/pages/perfil";
 
@@ -33,7 +33,7 @@ function Router() {
           <Route path="/" component={Home} />
           <Route path="/auth" component={AuthPage} />
           <Route path="/perfil" component={Perfil} />
-          {/* Rotas de biblioteca e grimórios removidas */}
+          <Route path="/biblioteca" component={Biblioteca} />
           <Route path="/admin-dashboard/:tab?" component={AdminDashboard} />
           <Route component={NotFound} />
         </Switch>

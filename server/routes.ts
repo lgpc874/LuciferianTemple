@@ -1,9 +1,23 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { registerSchema, loginSchema, type RegisterData, type LoginData } from "@shared/schema";
+import { 
+  registerSchema, 
+  loginSchema, 
+  type RegisterData, 
+  type LoginData,
+  insertGrimoireSchema,
+  insertChapterSchema,
+  insertLibrarySectionSchema,
+  insertProgressSchema,
+  type InsertGrimoire,
+  type InsertChapter,
+  type InsertLibrarySection,
+  type InsertProgress
+} from "@shared/schema";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { supabaseService } from "./supabase-service";
 
 const JWT_SECRET = process.env.JWT_SECRET || "templo_abismo_secret_key";
 
@@ -132,6 +146,260 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const requireAdmin = (req: any, res: any, next: any) => {
     next();
   };
+
+  // Inicializar seções padrão da biblioteca
+  try {
+    await supabaseService.initializeDefaultSections();
+    console.log('✓ Default library sections initialized');
+  } catch (error) {
+    console.log('Default sections may already exist');
+  }
+
+  // ==================== ROTAS DA BIBLIOTECA ====================
+
+  // SEÇÕES DA BIBLIOTECA
+  app.get("/api/library/sections", async (req, res) => {
+    try {
+      const sections = await supabaseService.getLibrarySections();
+      res.json(sections);
+    } catch (error: any) {
+      console.error("Error fetching sections:", error);
+      res.status(500).json({ error: "Erro ao buscar seções da biblioteca" });
+    }
+  });
+
+  app.post("/api/admin/library/sections", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const sectionData: InsertLibrarySection = insertLibrarySectionSchema.parse(req.body);
+      const newSection = await supabaseService.createLibrarySection(sectionData);
+      res.status(201).json(newSection);
+    } catch (error: any) {
+      console.error("Error creating section:", error);
+      res.status(400).json({ error: error.message || "Erro ao criar seção" });
+    }
+  });
+
+  // GRIMÓRIOS
+  app.get("/api/grimoires", async (req, res) => {
+    try {
+      const grimoires = await supabaseService.getGrimoires();
+      res.json(grimoires);
+    } catch (error: any) {
+      console.error("Error fetching grimoires:", error);
+      res.status(500).json({ error: "Erro ao buscar grimórios" });
+    }
+  });
+
+  app.get("/api/grimoires/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ error: "ID inválido" });
+      }
+
+      const grimoire = await supabaseService.getGrimoireById(id);
+      if (!grimoire) {
+        return res.status(404).json({ error: "Grimório não encontrado" });
+      }
+
+      res.json(grimoire);
+    } catch (error: any) {
+      console.error("Error fetching grimoire:", error);
+      res.status(500).json({ error: "Erro ao buscar grimório" });
+    }
+  });
+
+  app.get("/api/grimoires/section/:sectionId", async (req, res) => {
+    try {
+      const sectionId = parseInt(req.params.sectionId);
+      if (isNaN(sectionId)) {
+        return res.status(400).json({ error: "ID da seção inválido" });
+      }
+
+      const grimoires = await supabaseService.getGrimoiresBySection(sectionId);
+      res.json(grimoires);
+    } catch (error: any) {
+      console.error("Error fetching grimoires by section:", error);
+      res.status(500).json({ error: "Erro ao buscar grimórios da seção" });
+    }
+  });
+
+  // ADMIN - Gerenciamento de Grimórios
+  app.post("/api/admin/grimoires", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const grimoireData: InsertGrimoire = insertGrimoireSchema.parse(req.body);
+      
+      // Gerar ordem de desbloqueio automática se não fornecida
+      if (!grimoireData.unlock_order) {
+        const existingGrimoires = await supabaseService.getGrimoires();
+        grimoireData.unlock_order = existingGrimoires.length + 1;
+      }
+
+      // Gerar URL de capa padrão se não fornecida
+      if (!grimoireData.cover_image_url) {
+        grimoireData.cover_image_url = `https://via.placeholder.com/300x400/1a1a1a/d4af37?text=${encodeURIComponent(grimoireData.title)}`;
+      }
+
+      const newGrimoire = await supabaseService.createGrimoire(grimoireData);
+      res.status(201).json(newGrimoire);
+    } catch (error: any) {
+      console.error("Error creating grimoire:", error);
+      res.status(400).json({ error: error.message || "Erro ao criar grimório" });
+    }
+  });
+
+  app.put("/api/admin/grimoires/:id", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ error: "ID inválido" });
+      }
+
+      const updates = req.body;
+      const updatedGrimoire = await supabaseService.updateGrimoire(id, updates);
+      res.json(updatedGrimoire);
+    } catch (error: any) {
+      console.error("Error updating grimoire:", error);
+      res.status(400).json({ error: error.message || "Erro ao atualizar grimório" });
+    }
+  });
+
+  app.delete("/api/admin/grimoires/:id", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ error: "ID inválido" });
+      }
+
+      await supabaseService.deleteGrimoire(id);
+      res.json({ message: "Grimório deletado com sucesso" });
+    } catch (error: any) {
+      console.error("Error deleting grimoire:", error);
+      res.status(400).json({ error: error.message || "Erro ao deletar grimório" });
+    }
+  });
+
+  // Mover grimório para outra seção
+  app.put("/api/admin/grimoires/:id/move-section", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { sectionId } = req.body;
+
+      if (isNaN(id) || isNaN(sectionId)) {
+        return res.status(400).json({ error: "IDs inválidos" });
+      }
+
+      const updatedGrimoire = await supabaseService.moveGrimoireToSection(id, sectionId);
+      res.json(updatedGrimoire);
+    } catch (error: any) {
+      console.error("Error moving grimoire:", error);
+      res.status(400).json({ error: error.message || "Erro ao mover grimório" });
+    }
+  });
+
+  // CAPÍTULOS
+  app.get("/api/grimoires/:id/chapters", async (req, res) => {
+    try {
+      const grimoireId = parseInt(req.params.id);
+      if (isNaN(grimoireId)) {
+        return res.status(400).json({ error: "ID do grimório inválido" });
+      }
+
+      const chapters = await supabaseService.getChaptersByGrimoire(grimoireId);
+      res.json(chapters);
+    } catch (error: any) {
+      console.error("Error fetching chapters:", error);
+      res.status(500).json({ error: "Erro ao buscar capítulos" });
+    }
+  });
+
+  app.post("/api/admin/chapters", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const chapterData: InsertChapter = insertChapterSchema.parse(req.body);
+      const newChapter = await supabaseService.createChapter(chapterData);
+      res.status(201).json(newChapter);
+    } catch (error: any) {
+      console.error("Error creating chapter:", error);
+      res.status(400).json({ error: error.message || "Erro ao criar capítulo" });
+    }
+  });
+
+  app.put("/api/admin/chapters/:id", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ error: "ID inválido" });
+      }
+
+      const updates = req.body;
+      const updatedChapter = await supabaseService.updateChapter(id, updates);
+      res.json(updatedChapter);
+    } catch (error: any) {
+      console.error("Error updating chapter:", error);
+      res.status(400).json({ error: error.message || "Erro ao atualizar capítulo" });
+    }
+  });
+
+  app.delete("/api/admin/chapters/:id", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ error: "ID inválido" });
+      }
+
+      await supabaseService.deleteChapter(id);
+      res.json({ message: "Capítulo deletado com sucesso" });
+    } catch (error: any) {
+      console.error("Error deleting chapter:", error);
+      res.status(400).json({ error: error.message || "Erro ao deletar capítulo" });
+    }
+  });
+
+  // PROGRESSO DO USUÁRIO
+  app.get("/api/user/progress", authenticateToken, async (req: any, res) => {
+    try {
+      const userId = req.user.id;
+      const progress = await supabaseService.getUserProgress(userId);
+      res.json(progress);
+    } catch (error: any) {
+      console.error("Error fetching user progress:", error);
+      res.status(500).json({ error: "Erro ao buscar progresso do usuário" });
+    }
+  });
+
+  app.post("/api/user/progress", authenticateToken, async (req: any, res) => {
+    try {
+      const progressData: InsertProgress = {
+        ...insertProgressSchema.parse(req.body),
+        user_id: req.user.id
+      };
+
+      const savedProgress = await supabaseService.saveUserProgress(progressData);
+      res.json(savedProgress);
+    } catch (error: any) {
+      console.error("Error saving user progress:", error);
+      res.status(400).json({ error: error.message || "Erro ao salvar progresso" });
+    }
+  });
+
+  // ESTATÍSTICAS ADMINISTRATIVAS
+  app.get("/api/admin/stats", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const stats = await supabaseService.getAdminStats();
+      res.json({
+        totalUsers: stats.totalUsers,
+        totalGrimoires: stats.totalGrimoires,
+        totalSections: stats.totalSections,
+        newUsersThisMonth: 0, // Pode ser implementado posteriormente
+        todaySessions: 0, // Pode ser implementado posteriormente
+        engagementRate: 75, // Valor exemplo
+        lastUpdated: new Date().toISOString()
+      });
+    } catch (error: any) {
+      console.error("Error fetching admin stats:", error);
+      res.status(500).json({ error: "Erro ao buscar estatísticas" });
+    }
+  });
 
   const httpServer = createServer(app);
   return httpServer;
