@@ -1486,12 +1486,11 @@ function CreateGrimoireForm({
 
                 <div className="space-y-2">
                   <Label>Conteúdo do Capítulo</Label>
-                  <Textarea
+                  <RichTextEditor
                     value={chapter.content}
-                    onChange={(e) => updateChapter(index, 'content', e.target.value)}
-                    placeholder="Digite o conteúdo do capítulo. O texto será automaticamente formatado de acordo com a estética do site..."
-                    rows={8}
-                    className="font-mono text-sm"
+                    onChange={(value) => updateChapter(index, 'content', value)}
+                    placeholder="Digite o conteúdo do capítulo..."
+                    height="250px"
                   />
                 </div>
               </div>

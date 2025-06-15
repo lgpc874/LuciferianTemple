@@ -207,14 +207,15 @@ export default function GrimoireReader() {
               >
                 {paginatedContent[currentPage - 1] ? (
                   <div 
-                    className="prose prose-invert prose-amber max-w-none text-ritualistic-beige leading-relaxed font-garamond text-lg"
-                    dangerouslySetInnerHTML={{ 
-                      __html: paginatedContent[currentPage - 1]
-                        .replace(/<div class="chapter-title">/g, '<h2 class="text-2xl font-cinzel text-golden-amber mb-4 mt-8 first:mt-0">')
-                        .replace(/<div class="chapter-content">/g, '<div class="chapter-content">')
-                        .replace(/<\/div>/g, '</div>')
+                    className="max-w-none text-ritualistic-beige leading-relaxed font-garamond text-lg whitespace-pre-wrap"
+                    style={{
+                      fontFamily: 'Garamond, Georgia, serif',
+                      lineHeight: '1.8',
+                      textAlign: 'justify'
                     }}
-                  />
+                  >
+                    {paginatedContent[currentPage - 1]}
+                  </div>
                 ) : (
                   <div className="flex items-center justify-center h-full">
                     <p className="text-ritualistic-beige/50">Conteúdo não encontrado</p>
