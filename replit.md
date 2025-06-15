@@ -170,7 +170,7 @@ Changelog:
 - June 15, 2025. Email administrativo alterado para admin@templodoabismo.com.br - usuário "magurk" criado no Supabase com privilégios administrativos, senha admin123, sistema de autenticação e verificações de acesso atualizados em todo o sistema
 - June 15, 2025. Aba estatísticas removida do perfil do usuário conforme solicitação - simplificação da interface
 - June 15, 2025. Sistema de logout corrigido - implementado controle de estado manual que sobrepõe o bypass do Replit, logout agora funciona corretamente redirecionando para home
-- June 15, 2025. Leitor de grimórios melhorado - nome do grimório exibido no header com "Grimório: [Nome]", auto-scroll suave para topo ao trocar páginas, navegação por teclado (setas esquerda/direita) implementada
+- June 15, 2025. Leitor de grimórios melhorado - nome do grimório exibido no header sem prefixos, auto-scroll suave para topo ao trocar páginas, navegação por teclado (setas esquerda/direita) implementada, fonte responsiva para mobile (text-sm) e desktop (text-base)
 ```
 
 ## User Preferences
