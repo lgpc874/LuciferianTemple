@@ -18,6 +18,7 @@ import {
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { supabaseService } from "./supabase-service";
+import { formatGrimoireContent } from "./content-formatter";
 
 const JWT_SECRET = process.env.JWT_SECRET || "templo_abismo_secret_key";
 
