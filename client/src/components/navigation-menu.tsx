@@ -170,7 +170,7 @@ export default function NavigationMenu() {
         <div className="bg-black/30 backdrop-blur-sm border border-golden-amber/30 rounded-lg p-3">
           {/* Mobile Header */}
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-1">
               <img 
                 src="https://i.postimg.cc/g20gqmdX/IMG-20250527-182235-1.png" 
                 alt="Logo" 
