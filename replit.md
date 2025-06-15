@@ -171,7 +171,7 @@ Changelog:
 - June 15, 2025. Aba estatísticas removida do perfil do usuário conforme solicitação - simplificação da interface
 - June 15, 2025. Sistema de logout corrigido - implementado controle de estado manual que sobrepõe o bypass do Replit, logout agora funciona corretamente redirecionando para home
 - June 15, 2025. Leitor de grimórios melhorado - nome do grimório exibido no header sem prefixos, auto-scroll suave para topo ao trocar páginas, navegação por teclado (setas esquerda/direita) implementada, fonte responsiva para mobile (text-sm) e desktop (text-base)
-- June 15, 2025. Sistema de fontes responsivas corrigido - implementado CSS inline para garantir aplicação correta: mobile (8px título/14px conteúdo), desktop (18px ambos), solução definitiva para problemas de responsividade
+- June 15, 2025. Sistema de fontes responsivas corrigido definitivamente - implementado CSS media queries puro com classes específicas (.grimoire-header-title e .grimoire-content): mobile (8px título/14px conteúdo), desktop (18px ambos), solução final validada pelo usuário
 ```
 
 ## User Preferences
