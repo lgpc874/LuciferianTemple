@@ -172,6 +172,7 @@ Changelog:
 - June 15, 2025. Sistema de logout corrigido - implementado controle de estado manual que sobrepõe o bypass do Replit, logout agora funciona corretamente redirecionando para home
 - June 15, 2025. Leitor de grimórios melhorado - nome do grimório exibido no header sem prefixos, auto-scroll suave para topo ao trocar páginas, navegação por teclado (setas esquerda/direita) implementada, fonte responsiva para mobile (text-sm) e desktop (text-base)
 - June 15, 2025. Sistema de fontes responsivas corrigido definitivamente - implementado CSS media queries puro com classes específicas (.grimoire-header-title e .grimoire-content): mobile (8px título/14px conteúdo), desktop (18px ambos), solução final validada pelo usuário
+- June 15, 2025. Grimório existente completamente apagado conforme solicitação - removido grimório ID 4 e todos os capítulos, sistema limpo para criação de novo conteúdo personalizado
 ```
 
 ## User Preferences
