@@ -151,6 +151,7 @@ Changelog:
 - June 15, 2025. Sistema de configurações administrativas corrigido - implementada persistência real no backend, feedback visual adequado e indicadores de carregamento
 - June 15, 2025. Problema "acesso não autorizado" resolvido - era causado pela proteção automática de DevTools no componente ContentProtection, proteções desabilitadas para desenvolvimento, bypass completo implementado para ambiente Replit
 - June 15, 2025. Limpeza completa do sistema - removidas todas as páginas de biblioteca, checkout e grimórios conforme solicitado, menu de navegação simplificado para apenas Sanctum (home) e área do usuário
+- June 15, 2025. Sistema de grimórios completamente deletado - removidas todas as tabelas do banco (grimoires, chapters, user_progress, library_sections), arquivos backend (grimoire-data.ts, content-formatter.ts, grimoire-generator.ts), schemas e tipos relacionados, componentes admin, rotas de API limpas mantendo apenas autenticação
 ```
 
 ## User Preferences
