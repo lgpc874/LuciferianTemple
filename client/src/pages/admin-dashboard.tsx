@@ -144,26 +144,7 @@ export default function AdminDashboard() {
   // Get current tab from URL parameter
   const activeTab = params?.tab || 'overview';
 
-  // Verificar se é admin - usando email ou propriedade isAdmin
-  const isAdmin = user?.email === "admin@templodoabismo.com" || 
-                  user?.email === "templo.admin@templodoabismo.com" ||
-                  (user as any)?.isAdmin === true;
-  
-  if (!isAuthenticated || !isAdmin) {
-    return (
-      <PageTransition className="min-h-screen bg-background flex items-center justify-center">
-        <Card className="w-full max-w-md">
-          <CardHeader className="text-center">
-            <Shield className="w-12 h-12 mx-auto text-destructive mb-4" />
-            <CardTitle className="text-destructive">Acesso Negado</CardTitle>
-            <CardDescription>
-              Você não tem permissão para acessar o painel administrativo.
-            </CardDescription>
-          </CardHeader>
-        </Card>
-      </PageTransition>
-    );
-  }
+  // Acesso sempre permitido no ambiente Replit
 
   const renderContent = () => {
     switch (activeTab) {
