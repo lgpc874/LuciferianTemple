@@ -239,6 +239,65 @@ export class SupabaseService {
       totalUsers: totalUsers.count || 0
     };
   }
+
+  // ESTATÍSTICAS COMPLETAS PARA VISÃO GERAL
+  async getOverviewStats() {
+    try {
+      // Contadores principais
+      const [grimoireCount, chapterCount, progressCount, userCount, sectionCount] = await Promise.all([
+        this.supabase.from('grimoires').select('id', { count: 'exact' }),
+        this.supabase.from('chapters').select('id', { count: 'exact' }),
+        this.supabase.from('user_progress').select('id', { count: 'exact' }),
+        this.supabase.from('users').select('id', { count: 'exact' }),
+        this.supabase.from('library_sections').select('id', { count: 'exact' })
+      ]);
+
+      // Usuários recentes (últimos 10)
+      const { data: recentUsers } = await this.supabase
+        .from('users')
+        .select('id, email, created_at')
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+      // Grimórios recentes (últimos 10)
+      const { data: recentGrimoires } = await this.supabase
+        .from('grimoires')
+        .select('id, title, section_id, created_at, is_paid, price')
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+      // Estatísticas por seção (contagem de grimórios)
+      const { data: sectionsData } = await this.supabase
+        .from('library_sections')
+        .select(`
+          id,
+          name,
+          grimoires(count)
+        `)
+        .eq('is_active', true);
+
+      // Processar dados das seções
+      const sectionStats = sectionsData?.map(section => ({
+        id: section.id,
+        name: section.name,
+        grimoire_count: section.grimoires?.[0]?.count || 0
+      })) || [];
+
+      return {
+        totalUsers: userCount.count || 0,
+        totalGrimoires: grimoireCount.count || 0,
+        totalSections: sectionCount.count || 0,
+        totalChapters: chapterCount.count || 0,
+        totalProgress: progressCount.count || 0,
+        recentUsers: recentUsers || [],
+        recentGrimoires: recentGrimoires || [],
+        sectionStats
+      };
+    } catch (error: any) {
+      console.error('Error fetching overview stats:', error);
+      throw new Error(`Error fetching overview stats: ${error.message}`);
+    }
+  }
 }
 
 export const supabaseService = new SupabaseService();

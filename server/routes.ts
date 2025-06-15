@@ -401,6 +401,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Rota para visão geral completa do sistema (dados reais do Supabase)
+  app.get('/api/admin/overview-stats', async (req, res) => {
+    try {
+      const stats = await supabaseService.getOverviewStats();
+      res.json(stats);
+    } catch (error: any) {
+      console.error('Error fetching overview stats:', error);
+      res.status(500).json({ error: 'Erro ao buscar dados da visão geral' });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
