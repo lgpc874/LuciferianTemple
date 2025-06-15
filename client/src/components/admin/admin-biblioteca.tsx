@@ -269,7 +269,7 @@ export default function AdminBiblioteca() {
             
             <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
               <DialogTrigger asChild>
-                <Button className="bg-golden-amber hover:bg-golden-amber/80 text-black">
+                <Button className="bg-amber-500 hover:bg-amber-600 text-black font-semibold">
                   <Plus className="mr-2 h-4 w-4" />
                   Novo Grimório
                 </Button>
@@ -387,6 +387,7 @@ export default function AdminBiblioteca() {
                                 variant="outline"
                                 onClick={() => togglePublished(grimoire)}
                                 disabled={updateGrimoireMutation.isPending}
+                                className="border-amber-500 text-amber-500 hover:bg-amber-500 hover:text-black"
                               >
                                 {grimoire.is_published ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                               </Button>
@@ -394,6 +395,7 @@ export default function AdminBiblioteca() {
                               <Button
                                 size="sm"
                                 variant="outline"
+                                className="border-amber-500 text-amber-500 hover:bg-amber-500 hover:text-black"
                                 onClick={() => setSelectedGrimoire(grimoire)}
                               >
                                 <Edit className="h-4 w-4" />
@@ -403,7 +405,7 @@ export default function AdminBiblioteca() {
                                 <Button
                                   size="sm"
                                   variant="outline"
-                                  className="border-golden-amber text-golden-amber hover:bg-golden-amber hover:text-black"
+                                  className="border-amber-500 text-amber-500 hover:bg-amber-500 hover:text-black"
                                 >
                                   <ShoppingCart className="h-4 w-4" />
                                 </Button>
@@ -414,7 +416,7 @@ export default function AdminBiblioteca() {
                                 variant="outline"
                                 onClick={() => deleteGrimoireMutation.mutate(grimoire.id)}
                                 disabled={deleteGrimoireMutation.isPending}
-                                className="text-red-400 border-red-400 hover:bg-red-400 hover:text-white"
+                                className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
                               >
                                 <Trash2 className="h-4 w-4" />
                               </Button>
@@ -506,6 +508,7 @@ function CreateGrimoireForm({
             variant={mode === "manual" ? "default" : "outline"}
             size="sm"
             onClick={() => onModeChange("manual")}
+            className={mode === "manual" ? "bg-amber-500 hover:bg-amber-600 text-black" : "border-amber-500 text-amber-500 hover:bg-amber-500 hover:text-black"}
           >
             📝 Manual
           </Button>
@@ -514,6 +517,7 @@ function CreateGrimoireForm({
             variant={mode === "ai" ? "default" : "outline"}
             size="sm"
             onClick={() => onModeChange("ai")}
+            className={mode === "ai" ? "bg-amber-500 hover:bg-amber-600 text-black" : "border-amber-500 text-amber-500 hover:bg-amber-500 hover:text-black"}
           >
             🤖 IA Automática
           </Button>
@@ -621,7 +625,7 @@ function CreateGrimoireForm({
               type="button"
               onClick={() => onAIGenerate(`Crie um grimório sobre "${formData.title}" com as seguintes configurações: ${JSON.stringify(formData.ai_config)}`)}
               disabled={isAIGenerating || !formData.title}
-              className="w-full bg-purple-600 hover:bg-purple-700"
+              className="w-full bg-amber-500 hover:bg-amber-600 text-black font-semibold"
             >
               {isAIGenerating ? (
                 <>
@@ -717,10 +721,10 @@ function CreateGrimoireForm({
       </Card>
 
       <div className="flex justify-end space-x-2">
-        <Button type="button" variant="outline">
+        <Button type="button" variant="outline" className="border-gray-500 text-gray-500 hover:bg-gray-500 hover:text-white">
           Cancelar
         </Button>
-        <Button type="submit" disabled={isLoading} className="bg-golden-amber hover:bg-golden-amber/80 text-black">
+        <Button type="submit" disabled={isLoading} className="bg-amber-500 hover:bg-amber-600 text-black font-semibold">
           {isLoading ? "Criando..." : "Criar Grimório"}
         </Button>
       </div>
