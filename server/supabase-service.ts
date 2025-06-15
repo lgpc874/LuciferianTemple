@@ -85,8 +85,8 @@ export class SupabaseService {
     const { data, error } = await this.supabase
       .from('grimoires')
       .select('*')
-      .eq('is_active', true)
-      .order('unlock_order');
+      .eq('is_published', true)
+      .order('id', { ascending: true });
 
     if (error) throw new Error(`Error fetching grimoires: ${error.message}`);
     return data || [];
@@ -110,8 +110,8 @@ export class SupabaseService {
       .from('grimoires')
       .select('*')
       .eq('section_id', sectionId)
-      .eq('is_active', true)
-      .order('unlock_order');
+      .eq('is_published', true)
+      .order('id', { ascending: true });
 
     if (error) throw new Error(`Error fetching grimoires by section: ${error.message}`);
     return data || [];
