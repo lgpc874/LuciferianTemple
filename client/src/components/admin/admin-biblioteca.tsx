@@ -1304,42 +1304,57 @@ function SectionsTab({ sections }: { sections: any[] }) {
 }
 
 function SettingsTab() {
-  const [settings, setSettings] = useState({
-    // Configurações Gerais
-    siteName: "Templo do Abismo",
-    siteDescription: "Portal de Ensinamentos Luciferianos",
-    allowRegistrations: true,
-    moderateComments: true,
-    
-    // Configurações de Pagamento
-    stripeEnabled: true,
-    defaultCurrency: "BRL",
-    freeTrialDays: 7,
-    
-    // Configurações de Conteúdo
-    maxGrimoireSize: 50, // MB
-    allowedFileTypes: ["pdf", "epub", "txt"],
-    autoPublish: false,
-    requireApproval: true,
-    
-    // Configurações de SEO
-    metaTitle: "Templo do Abismo - Biblioteca Luciferiana",
-    metaDescription: "Acesse grimórios e ensinamentos luciferianos autênticos",
-    keywords: ["luciferianismo", "grimórios", "ocultismo", "magia"],
-    
-    // Configurações de Segurança
+  const [aiSettings, setAiSettings] = useState({
+    personality: 'luciferian',
+    complexity: 'beginner',
+    length: 'medium',
+    style: 'mixed',
+    guidelines: '',
+    defaultSection: '',
+    autoPrice: false,
+    priceRange: { min: '9.99', max: '49.99' }
+  });
+
+  const [systemSettings, setSystemSettings] = useState({
+    siteName: 'Templo do Abismo',
+    siteDescription: 'Portal de ensinamentos luciferianos',
+    siteKeywords: 'lucifer, ocultismo, magia, grimórios',
+    adminEmail: 'admin@templodoabismo.com',
+    contentLanguage: 'português',
+    contentTone: 'formal',
+    contentTargetAudience: 'iniciantes',
+    enableUserRegistration: true,
+    enablePaidContent: true,
+    enableAIGeneration: true,
+    securityLevel: 'medium',
     enableContentProtection: true,
-    maxLoginAttempts: 5,
-    sessionTimeout: 24, // horas
-    
-    // Notificações
-    emailNotifications: true,
-    newGrimoireAlert: true,
-    paymentAlerts: true
+    enableDownloadProtection: true
   });
 
   const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
+
+  // Carregar configurações reais do Supabase
+  const { data: currentAISettings, isLoading: loadingAI } = useQuery({
+    queryKey: ["/api/admin/ai/settings"],
+  });
+
+  const { data: currentSystemSettings, isLoading: loadingSystem } = useQuery({
+    queryKey: ["/api/admin/settings"],
+  });
+
+  // Atualizar estados com dados reais do Supabase
+  useEffect(() => {
+    if (currentAISettings) {
+      setAiSettings(currentAISettings);
+    }
+  }, [currentAISettings]);
+
+  useEffect(() => {
+    if (currentSystemSettings) {
+      setSystemSettings(currentSystemSettings);
+    }
+  }, [currentSystemSettings]);
 
   const saveSettings = async () => {
     setIsSaving(true);
