@@ -127,7 +127,7 @@ export default function Biblioteca() {
               {/* Navegação por seções */}
               <div className="mt-8">
                 <Tabs value={activeSection.toString()} onValueChange={(value) => setActiveSection(parseInt(value))}>
-                  <TabsList className="grid w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 bg-transparent h-auto p-1">
+                  <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 gap-2 bg-transparent h-auto p-1">
                     {(sections as LibrarySection[]).map((section: LibrarySection) => {
                       const IconComponent = getSectionIcon(section.id);
                       const grimoireCount = (allGrimoires as Grimoire[]).filter((g: Grimoire) => g.section_id === section.id).length;
