@@ -67,13 +67,11 @@ export default function GrimoireReader() {
   // Preparar conteúdo paginado quando capítulos carregarem
   useEffect(() => {
     if (Array.isArray(chapters) && chapters.length > 0) {
-      // Combinar todos os capítulos em um texto único
+      // Combinar todos os capítulos em um texto único sem formatação
       const fullContent = chapters
         .sort((a: any, b: any) => a.chapter_number - b.chapter_number)
-        .map((chapter: any) => `
-          <div class="chapter-title">${chapter.title}</div>
-          <div class="chapter-content">${chapter.content}</div>
-        `).join('\n\n');
+        .map((chapter: any) => `${chapter.title}\n\n${chapter.content}`)
+        .join('\n\n\n');
       
       const pages = paginateContent(fullContent);
       setPaginatedContent(pages);

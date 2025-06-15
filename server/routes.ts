@@ -297,8 +297,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(201).json({
         ...newGrimoire,
         chapters: createdChapters,
-        metadata: formattedGrimoire.metadata,
-        message: `Grimório criado com ${createdChapters.length} capítulos formatados automaticamente`
+        message: `Grimório criado com ${createdChapters.length} capítulos`
       });
     } catch (error: any) {
       console.error("Error creating grimoire with chapters:", error);
