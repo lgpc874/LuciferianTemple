@@ -12,10 +12,7 @@ import Home from "@/pages/home";
 import NotFound from "@/pages/not-found";
 import AuthPage from "@/pages/auth";
 
-import BibliotecaSections from "@/pages/biblioteca-sections";
-import GrimoireReader from "@/pages/grimoire-kindle";
-import GrimoireSimple from "@/pages/grimoire-simple";
-import Checkout from "@/pages/checkout";
+// Páginas de biblioteca e grimórios removidas
 import AdminDashboard from "@/pages/admin-dashboard";
 import Perfil from "@/pages/perfil";
 
@@ -36,9 +33,7 @@ function Router() {
           <Route path="/" component={Home} />
           <Route path="/auth" component={AuthPage} />
           <Route path="/perfil" component={Perfil} />
-          <Route path="/biblioteca" component={BibliotecaSections} />
-          <Route path="/checkout" component={Checkout} />
-          <Route path="/grimoire/:id" component={GrimoireReader} />
+          {/* Rotas de biblioteca e grimórios removidas */}
           <Route path="/admin-dashboard/:tab?" component={AdminDashboard} />
           <Route component={NotFound} />
         </Switch>

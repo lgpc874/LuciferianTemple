@@ -150,6 +150,7 @@ Changelog:
 - June 15, 2025. Painel administrativo reorganizado - criado módulo único "Biblioteca" que consolida gerenciamento de grimórios, seções e IA Generator, reduzindo navegação de 8 para 4 abas principais
 - June 15, 2025. Sistema de configurações administrativas corrigido - implementada persistência real no backend, feedback visual adequado e indicadores de carregamento
 - June 15, 2025. Problema "acesso não autorizado" resolvido - era causado pela proteção automática de DevTools no componente ContentProtection, proteções desabilitadas para desenvolvimento, bypass completo implementado para ambiente Replit
+- June 15, 2025. Limpeza completa do sistema - removidas todas as páginas de biblioteca, checkout e grimórios conforme solicitado, menu de navegação simplificado para apenas Sanctum (home) e área do usuário
 ```
 
 ## User Preferences
