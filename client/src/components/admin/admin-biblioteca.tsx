@@ -83,6 +83,102 @@ interface CreateGrimoireRequest {
   level: string;
 }
 
+// Componente de visualização de grimórios
+function GrimoireViewer({ grimoire }: { grimoire: Grimoire }) {
+  const { data: chapters = [], isLoading: chaptersLoading } = useQuery({
+    queryKey: [`/api/grimoires/${grimoire.id}/chapters`],
+    enabled: !!grimoire.id,
+  });
+
+  if (chaptersLoading) {
+    return (
+      <div className="space-y-4">
+        <div className="animate-pulse space-y-4">
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className="h-32 bg-muted rounded-lg"></div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Informações do Grimório */}
+      <div className="bg-gradient-to-r from-amber-50 to-yellow-50 p-6 rounded-lg border border-amber-200">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <h3 className="font-semibold text-amber-800 mb-2">Informações Gerais</h3>
+            <div className="space-y-2 text-sm">
+              <div><span className="font-medium">Nível:</span> {grimoire.level}</div>
+              <div><span className="font-medium">Palavras:</span> {(grimoire as any)?.word_count?.toLocaleString() || 'N/A'}</div>
+              <div><span className="font-medium">Tempo de leitura:</span> {(grimoire as any)?.estimated_reading_time || 'N/A'} min</div>
+              <div><span className="font-medium">Status:</span> {grimoire.is_published ? 'Publicado' : 'Rascunho'}</div>
+            </div>
+          </div>
+          <div>
+            <h3 className="font-semibold text-amber-800 mb-2">Monetização</h3>
+            <div className="space-y-2 text-sm">
+              <div><span className="font-medium">Tipo:</span> {grimoire.is_paid ? 'Pago' : 'Gratuito'}</div>
+              {grimoire.is_paid && grimoire.price && (
+                <div><span className="font-medium">Preço:</span> R$ {grimoire.price}</div>
+              )}
+              <div><span className="font-medium">Capítulos:</span> {Array.isArray(chapters) ? chapters.length : 0}</div>
+            </div>
+          </div>
+        </div>
+        
+        <div>
+          <h3 className="font-semibold text-amber-800 mb-2">Descrição</h3>
+          <p className="text-gray-700 text-sm leading-relaxed">{grimoire.description}</p>
+        </div>
+      </div>
+
+      {/* Lista de Capítulos */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-amber-600 flex items-center gap-2">
+          <BookOpen className="h-5 w-5" />
+          Capítulos ({Array.isArray(chapters) ? chapters.length : 0})
+        </h3>
+        
+        {!Array.isArray(chapters) || chapters.length === 0 ? (
+          <Card>
+            <CardContent className="flex flex-col items-center justify-center py-8">
+              <BookOpen className="h-12 w-12 text-muted-foreground mb-4" />
+              <p className="text-muted-foreground text-center">
+                Este grimório ainda não possui capítulos criados.
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          chapters.map((chapter: any, index: number) => (
+            <Card key={chapter.id || index} className="border border-amber-200">
+              <CardHeader className="bg-gradient-to-r from-amber-50 to-yellow-50">
+                <CardTitle className="text-amber-800 text-lg">
+                  Capítulo {chapter.chapter_number || index + 1}: {chapter.title}
+                </CardTitle>
+                {chapter.word_count && (
+                  <CardDescription className="text-amber-600">
+                    {chapter.word_count.toLocaleString()} palavras • ~{Math.ceil(chapter.word_count / 200)} min de leitura
+                  </CardDescription>
+                )}
+              </CardHeader>
+              <CardContent className="pt-6">
+                <div 
+                  className="prose prose-sm max-w-none text-gray-700 leading-relaxed"
+                  dangerouslySetInnerHTML={{ 
+                    __html: chapter.content || '<p class="text-muted-foreground italic">Conteúdo não disponível</p>' 
+                  }}
+                />
+              </CardContent>
+            </Card>
+          ))
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function AdminBiblioteca() {
   const [activeTab, setActiveTab] = useState("grimoires");
   const [selectedGrimoire, setSelectedGrimoire] = useState<Grimoire | null>(null);
