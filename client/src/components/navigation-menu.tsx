@@ -161,28 +161,48 @@ export default function NavigationMenu() {
           </ul>
         </div>
 
-        {/* Mobile Menu - Simplified */}
-        <div className="sm:hidden w-full" ref={menuRef}>
-          {/* Mobile Menu Button */}
+        {/* Mobile Menu - Hamburger Sidebar */}
+        <div className="sm:hidden">
+          {/* Mobile Header */}
           <div className="flex items-center justify-between py-3 px-4">
             <span className="font-cinzel text-golden-amber text-sm tracking-wider">
               ⧭ TEMPLO DO ABISMO
             </span>
             <button
               onClick={toggleMenu}
-              className="p-3 text-golden-amber bg-black/40 rounded-lg border border-golden-amber/30 hover:bg-golden-amber/10 transition-all duration-300"
+              className="p-2 text-golden-amber bg-black/40 rounded border border-golden-amber/30 hover:bg-golden-amber/10 transition-all duration-300"
               aria-label="Menu"
             >
-              {isMenuOpen ? <X size={18} /> : <Menu size={18} />}
+              <Menu size={20} />
             </button>
           </div>
 
-          {/* Mobile Menu Dropdown */}
+          {/* Sidebar Overlay */}
           {isMenuOpen && (
             <>
-              {/* Menu Overlay */}
-              <div className="absolute top-full left-0 right-0 bg-black/95 backdrop-blur-lg border-t border-golden-amber/30 z-50 shadow-2xl">
-                <div className="p-3 space-y-1">
+              {/* Backdrop */}
+              <div 
+                className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
+                onClick={closeMenu}
+              />
+              
+              {/* Sidebar */}
+              <div className="fixed top-0 left-0 h-full w-80 max-w-[85vw] bg-black/95 backdrop-blur-xl border-r border-golden-amber/30 z-50 transform transition-transform duration-300">
+                {/* Sidebar Header */}
+                <div className="flex items-center justify-between p-4 border-b border-golden-amber/30">
+                  <h2 className="font-cinzel text-lg text-golden-amber tracking-wider">
+                    ⧭ Menu Arcano
+                  </h2>
+                  <button
+                    onClick={closeMenu}
+                    className="p-2 text-golden-amber/70 hover:text-golden-amber transition-colors rounded hover:bg-golden-amber/10"
+                  >
+                    <X size={20} />
+                  </button>
+                </div>
+
+                {/* Menu Items */}
+                <div className="p-4 space-y-2">
                   {menuItems.map((item) => {
                     const IconComponent = item.icon;
                     const isActive = location === item.href;
@@ -193,7 +213,7 @@ export default function NavigationMenu() {
                         href={item.href}
                         onClick={() => handleNavClick(item.href)}
                         className={`
-                          flex items-center space-x-3 p-3 rounded-lg transition-all duration-200 w-full
+                          flex items-center space-x-3 p-4 rounded-lg transition-all duration-200 w-full
                           ${isActive 
                             ? 'text-golden-amber bg-golden-amber/20 border border-golden-amber/30' 
                             : 'text-ritualistic-beige hover:text-golden-amber hover:bg-golden-amber/10'
@@ -201,30 +221,39 @@ export default function NavigationMenu() {
                         `}>
                         
                         <IconComponent 
-                          size={18} 
+                          size={20} 
                           className={`${isActive ? 'text-golden-amber' : 'text-golden-amber/60'}`} 
                         />
                         
                         <div className="flex-1">
-                          <div className="font-cinzel text-sm tracking-wide uppercase font-medium">
+                          <div className="font-cinzel text-base tracking-wide uppercase font-medium">
                             {item.label}
                           </div>
-                          <div className="text-xs text-ritualistic-beige/60 mt-0.5">
+                          <div className="text-xs text-ritualistic-beige/60 mt-1">
                             {item.subtitle}
                           </div>
                         </div>
+                        
+                        {isActive && (
+                          <div className="w-2 h-2 bg-golden-amber rounded-full"></div>
+                        )}
                       </Link>
                     );
                   })}
                 </div>
+
+                {/* Sidebar Footer */}
+                <div className="absolute bottom-6 left-0 right-0 px-4">
+                  <div className="text-center">
+                    <div className="text-golden-amber/70 text-sm font-cinzel mb-1">
+                      Templo do Abismo
+                    </div>
+                    <div className="text-ritualistic-beige/40 text-xs">
+                      Portal dos Mistérios Arcanos
+                    </div>
+                  </div>
+                </div>
               </div>
-              
-              {/* Backdrop to close menu */}
-              <div 
-                className="fixed inset-0 bg-transparent z-40" 
-                onClick={closeMenu}
-                style={{ top: '100%' }}
-              />
             </>
           )}
         </div>
