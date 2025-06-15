@@ -68,30 +68,77 @@ export default function GrimoireReader() {
     },
   });
 
-  // Função para paginar o conteúdo
+  // Função para paginar o conteúdo preservando HTML
   const paginateContent = (content: string, charsPerPage: number = 1200) => {
     if (!content) return [];
     
-    const words = content.split(' ');
-    const pages = [];
-    let currentPageContent = '';
+    // Dividir conteúdo em blocos lógicos preservando a estrutura HTML
+    const blocks = [];
+    let currentBlock = '';
+    let tagStack = [];
+    let i = 0;
     
-    for (const word of words) {
-      const testContent = currentPageContent + (currentPageContent ? ' ' : '') + word;
+    while (i < content.length) {
+      const char = content[i];
       
-      if (testContent.length > charsPerPage && currentPageContent) {
-        pages.push(currentPageContent);
-        currentPageContent = word;
+      if (char === '<') {
+        // Encontrou uma tag
+        let tag = '<';
+        i++;
+        
+        while (i < content.length && content[i] !== '>') {
+          tag += content[i];
+          i++;
+        }
+        
+        if (i < content.length) {
+          tag += '>';
+          i++;
+        }
+        
+        currentBlock += tag;
+        
+        // Verificar se é uma tag de fechamento de bloco
+        if (tag.includes('</div>') || tag.includes('</section>') || 
+            tag.includes('</h') || tag.includes('</blockquote>') ||
+            tag.includes('</p>')) {
+          
+          // Se o bloco atual está muito grande, finalize-o
+          if (currentBlock.length > charsPerPage / 2) {
+            blocks.push(currentBlock);
+            currentBlock = '';
+          }
+        }
       } else {
-        currentPageContent = testContent;
+        currentBlock += char;
+        i++;
       }
     }
     
-    if (currentPageContent) {
-      pages.push(currentPageContent);
+    if (currentBlock.trim()) {
+      blocks.push(currentBlock);
     }
     
-    return pages;
+    // Agrupar blocos em páginas
+    const pages = [];
+    let currentPage = '';
+    
+    for (const block of blocks) {
+      const testPage = currentPage + block;
+      
+      if (testPage.length > charsPerPage && currentPage) {
+        pages.push(currentPage);
+        currentPage = block;
+      } else {
+        currentPage = testPage;
+      }
+    }
+    
+    if (currentPage) {
+      pages.push(currentPage);
+    }
+    
+    return pages.length > 0 ? pages : [content];
   };
 
   // Preparar conteúdo paginado quando capítulos carregarem
