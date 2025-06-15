@@ -157,6 +157,24 @@ export default function GrimoireReader() {
     }
   }, [readingTime]);
 
+  // Navegação por teclado
+  useEffect(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        goToPrevPage();
+      } else if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        goToNextPage();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyPress);
+    return () => {
+      document.removeEventListener('keydown', handleKeyPress);
+    };
+  }, [currentPage, totalPages]);
+
   // Limpar timeout ao desmontar
   useEffect(() => {
     return () => {
@@ -170,6 +188,8 @@ export default function GrimoireReader() {
   const goToPage = (page: number) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
+      // Auto-scroll para o topo ao trocar de página
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -225,7 +245,10 @@ export default function GrimoireReader() {
             </Button>
             
             <div className="text-center flex-1 mx-4">
-              <h1 className="text-lg font-cinzel text-golden-amber truncate">{(grimoire as any)?.title || 'Grimório'}</h1>
+              <div className="flex items-center justify-center space-x-2">
+                <span className="text-sm text-ritualistic-beige/60 font-cinzel">Grimório:</span>
+                <h1 className="text-base font-cinzel text-golden-amber truncate">{(grimoire as any)?.title || 'Carregando...'}</h1>
+              </div>
               <div className="flex items-center justify-center space-x-4 text-xs text-ritualistic-beige/60 mt-1">
                 <span className="flex items-center">
                   <Eye className="h-3 w-3 mr-1" />

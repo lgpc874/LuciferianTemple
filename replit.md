@@ -168,6 +168,9 @@ Changelog:
 - June 15, 2025. Sistema de leitura de grimórios totalmente implementado e funcional - leitor estilo Kindle com paginação inteligente, navegação por cliques laterais e controles de teclado, interface imersiva sem menu, carregamento de capítulos individuais do Supabase, formatação automática preservada, sistema completo de navegação biblioteca → leitor funcionando perfeitamente
 - June 15, 2025. Editor de texto rico implementado - Quill.js integrado no painel administrativo com barra de ferramentas completa estilo Word (formatação, cores, listas, links, etc.), sistema de formatação automática removido completamente, grimórios agora exibem conteúdo HTML formatado exatamente como editado, estilos CSS customizados para renderização adequada no leitor
 - June 15, 2025. Email administrativo alterado para admin@templodoabismo.com.br - usuário "magurk" criado no Supabase com privilégios administrativos, senha admin123, sistema de autenticação e verificações de acesso atualizados em todo o sistema
+- June 15, 2025. Aba estatísticas removida do perfil do usuário conforme solicitação - simplificação da interface
+- June 15, 2025. Sistema de logout corrigido - implementado controle de estado manual que sobrepõe o bypass do Replit, logout agora funciona corretamente redirecionando para home
+- June 15, 2025. Leitor de grimórios melhorado - nome do grimório exibido no header com "Grimório: [Nome]", auto-scroll suave para topo ao trocar páginas, navegação por teclado (setas esquerda/direita) implementada
 ```
 
 ## User Preferences
