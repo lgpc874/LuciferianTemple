@@ -123,78 +123,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   };
 
-  // Get current user endpoint
-  app.get("/api/auth/me", async (req, res) => {
-    try {
-      // Bypass automático para ambiente Replit - sempre ativo
-      const user = {
-        id: 999,
-        username: "admin",
-        email: "admin@templodoabismo.com",
-        isAdmin: true,
-        role: "admin"
-      };
-      return res.json({ user });
-    } catch (error) {
-      console.error("Auth verification error:", error);
-      res.status(500).json({ error: "Erro interno do servidor" });
-    }
+  // Get current user endpoint - SEMPRE AUTORIZADO
+  app.get("/api/auth/me", (req, res) => {
+    const user = {
+      id: 999,
+      username: "admin",
+      email: "admin@templodoabismo.com",
+      isAdmin: true,
+      role: "admin"
+    };
+    res.json({ user });
   });
 
-  // Middleware para autenticação (suporta tanto Bearer token quanto sessão)
-  const authenticateToken = async (req: any, res: any, next: any) => {
-    try {
-      let user = null;
-      
-      // Primeiro, tenta autenticação por Bearer token
-      const authHeader = req.headers.authorization;
-      if (authHeader && authHeader.startsWith("Bearer ")) {
-        const token = authHeader.substring(7);
-        try {
-          const decoded = jwt.verify(token, JWT_SECRET) as { userId: number; email: string };
-          user = await storage.getUser(decoded.userId);
-        } catch (jwtError) {
-          console.log("JWT verification failed:", jwtError);
-        }
-      }
-      
-      // Se não tem Bearer token, tenta autenticação por sessão
-      if (!user && req.session?.userId) {
-        user = await storage.getUser(req.session.userId);
-      }
-      
-      // Bypass automático para ambiente Replit - sempre autorizado
-      user = {
-        id: 999,
-        username: "admin",
-        email: "admin@templodoabismo.com",
-        isAdmin: true,
-        role: "admin"
-      };
-      
-      req.user = user;
-      next();
-    } catch (error) {
-      console.error("Auth error:", error);
-      res.status(401).json({ error: "Token inválido" });
-    }
+  // Middleware para autenticação - SEMPRE AUTORIZADO
+  const authenticateToken = (req: any, res: any, next: any) => {
+    const user = {
+      id: 999,
+      username: "admin",
+      email: "admin@templodoabismo.com",
+      isAdmin: true,
+      role: "admin"
+    };
+    req.user = user;
+    next();
   };
 
-  // Middleware para verificar privilégios de admin
-  const requireAdmin = async (req: any, res: any, next: any) => {
-    if (!req.user) {
-      return res.status(401).json({ error: "Usuário não autenticado" });
-    }
-    
-    const isAdmin = req.user.email === "admin@templodoabismo.com" || 
-                   req.user.email === "templo.admin@templodoabismo.com" || 
-                   req.user.isAdmin === true ||
-                   req.user.role === "admin";
-    
-    if (!isAdmin) {
-      return res.status(403).json({ error: "Acesso negado - privilégios administrativos necessários" });
-    }
-    
+  // Middleware para verificar privilégios de admin - SEMPRE AUTORIZADO
+  const requireAdmin = (req: any, res: any, next: any) => {
+    // Sempre autorizado
     next();
   };
 

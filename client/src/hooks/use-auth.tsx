@@ -1,4 +1,5 @@
-import { createContext, useContext, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 interface User {
   id: number;
@@ -23,38 +24,53 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
-// Usuário admin padrão para ambiente Replit
-const ADMIN_USER = {
-  id: 999,
-  username: "admin",
-  email: "admin@templodoabismo.com",
-  isAdmin: true,
-  role: "admin"
-};
-
 export function AuthProvider({ children }: AuthProviderProps) {
-  // Bypass automático para ambiente Replit - sempre autorizado
-  const isReplitEnvironment = window.location.hostname.includes('replit') || 
-                              window.location.hostname.includes('localhost') ||
-                              import.meta.env.DEV;
+  const [token, setToken] = useState<string | null>(() => 
+    localStorage.getItem("auth_token")
+  );
+  const [user, setUser] = useState<User | null>(null);
+  const queryClient = useQueryClient();
+
+  const { data: userData, isLoading } = useQuery({
+    queryKey: ["/api/auth/me"],
+    queryFn: async () => {
+      const response = await fetch("/api/auth/me");
+      if (!response.ok) {
+        throw new Error("Authentication failed");
+      }
+      const data = await response.json();
+      return data.user;
+    },
+    retry: false
+  });
+
+  useEffect(() => {
+    if (userData) {
+      setUser(userData);
+    }
+  }, [userData]);
 
   const login = (newToken: string, newUser: User) => {
-    // No ambiente Replit, não precisamos fazer nada especial
+    setToken(newToken);
+    setUser(newUser);
     localStorage.setItem("auth_token", newToken);
+    queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
   };
 
   const logout = () => {
-    // No ambiente Replit, não precisamos fazer nada especial
+    setToken(null);
+    setUser(null);
     localStorage.removeItem("auth_token");
+    queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
   };
 
   const value: AuthContextType = {
-    user: isReplitEnvironment ? ADMIN_USER : null,
-    token: localStorage.getItem("auth_token"),
-    isLoading: false,
+    user,
+    token,
+    isLoading,
     login,
     logout,
-    isAuthenticated: isReplitEnvironment ? true : false,
+    isAuthenticated: !!user,
   };
 
   return (
