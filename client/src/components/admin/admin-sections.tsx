@@ -136,10 +136,14 @@ export default function AdminSections() {
 
   const moveGrimoireMutation = useMutation({
     mutationFn: async ({ grimoireId, newCategory }: { grimoireId: number, newCategory: string }) => {
-      return await apiRequest(`/api/admin/grimoires/${grimoireId}`, {
+      const response = await apiRequest(`/api/admin/grimoires/${grimoireId}`, {
         method: 'PATCH',
-        body: { category: newCategory }
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ category: newCategory })
       });
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/grimoires'] });
