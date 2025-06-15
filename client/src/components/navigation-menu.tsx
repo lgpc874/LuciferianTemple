@@ -58,179 +58,182 @@ export default function NavigationMenu() {
   }, [isMenuOpen]);
 
   return (
-    <nav className="navigation-menu relative bg-transparent">
-      <div className="hidden sm:block w-full max-w-full px-2 sm:px-4 lg:px-8 xl:px-12 mx-auto floating-container my-2">
-        
-        {/* Desktop Menu - Large screens */}
-        <div className="hidden lg:flex items-center justify-center py-0">
-          <ul className="flex items-center space-x-8">
-            {menuItems.map((item, index) => {
-              const IconComponent = item.icon;
-              const isActive = location === item.href;
-              
-              return (
-                <li key={item.href + item.label} className="relative group">
-                  <Link 
-                    href={item.href} 
-                    onClick={() => handleNavClick(item.href)}
-                    className={`
-                      flex flex-col items-center space-y-1 px-2 py-1 transition-all duration-300
-                      ${isActive 
-                        ? 'text-golden-amber' 
-                        : 'text-ritualistic-beige hover:text-golden-amber'
-                      }
-                    `}>
-                    <IconComponent 
-                      size={16} 
-                      className={`transition-all duration-300 ${isActive ? 'text-golden-amber' : 'text-golden-amber/60 group-hover:text-golden-amber'}`} 
-                    />
-                    <span className="font-cinzel text-xs tracking-wider uppercase">
-                      {item.label}
-                    </span>
-                  </Link>
-                  
-                  {/* Separador místico entre itens */}
-                  {index < menuItems.length - 1 && (
-                    <div className="absolute -right-4 top-1/2 transform -translate-y-1/2 text-golden-amber/20 text-xs">
-                      ◆
-                    </div>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-
-        {/* Tablet Menu - Medium screens */}
-        <div className="hidden md:flex lg:hidden items-center justify-center py-0">
-          <ul className="flex items-center space-x-6">
-            {menuItems.map((item) => {
-              const IconComponent = item.icon;
-              const isActive = location === item.href;
-              
-              return (
-                <li key={item.href + item.label}>
-                  <Link 
-                    href={item.href}
-                    onClick={() => handleNavClick(item.href)}
-                    className={`
-                      flex flex-col items-center space-y-1 px-1 py-1 transition-all duration-300
-                      ${isActive 
-                        ? 'text-golden-amber' 
-                        : 'text-ritualistic-beige hover:text-golden-amber'
-                      }
-                    `}>
-                    <IconComponent size={14} className={`${isActive ? 'text-golden-amber' : 'text-golden-amber/60'}`} />
-                    <span className="font-cinzel text-xs tracking-wide uppercase">
-                      {item.label}
-                    </span>
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-
-        {/* Small Tablet Menu */}
-        <div className="hidden sm:flex md:hidden items-center justify-center py-0">
-          <ul className="flex items-center space-x-4">
-            {menuItems.map((item) => {
-              const IconComponent = item.icon;
-              const isActive = location === item.href;
-              
-              return (
-                <li key={item.href}>
-                  <Link 
-                    href={item.href}
-                    onClick={() => handleNavClick(item.href)}
-                    className={`
-                      flex flex-col items-center space-y-1 px-1 py-1 transition-all duration-300
-                      ${isActive 
-                        ? 'text-golden-amber' 
-                        : 'text-ritualistic-beige hover:text-golden-amber'
-                      }
-                    `}>
-                    <IconComponent size={12} className={`${isActive ? 'text-golden-amber' : 'text-golden-amber/60'}`} />
-                    <span className="font-cinzel text-xs tracking-wide uppercase">
-                      {item.label.substring(0, 5)}
-                    </span>
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-
-        {/* Mobile Menu - Simple Hamburger */}
-        <div className="sm:hidden">
-          {/* Hamburger Button - Fixed Position */}
-          <button
-            onClick={toggleMenu}
-            className="fixed top-4 right-4 z-[60] p-3 text-golden-amber bg-black/80 rounded-lg border border-golden-amber/30 hover:bg-golden-amber/10 transition-all duration-300"
-            aria-label="Menu"
-          >
-            {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
-
-          {/* Sidebar Overlay */}
-          {isMenuOpen && (
-            <>
-              {/* Backdrop */}
-              <div 
-                className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
-                onClick={closeMenu}
-              />
-              
-              {/* Sidebar */}
-              <div className="fixed top-0 left-0 h-full w-72 bg-black/95 backdrop-blur-xl border-r border-golden-amber/30 z-50 transform transition-transform duration-300">
-                {/* Sidebar Header */}
-                <div className="p-4 border-b border-golden-amber/30">
-                  <h2 className="font-cinzel text-lg text-golden-amber tracking-wider">
-                    ⧭ Menu
-                  </h2>
-                </div>
-
-                {/* Menu Items */}
-                <div className="p-4 space-y-2">
-                  {menuItems.map((item) => {
-                    const IconComponent = item.icon;
-                    const isActive = location === item.href;
+    <>
+      {/* Desktop Navigation */}
+      <nav className="hidden sm:block navigation-menu relative bg-transparent">
+        <div className="w-full max-w-full px-2 sm:px-4 lg:px-8 xl:px-12 mx-auto floating-container my-2">
+          
+          {/* Desktop Menu - Large screens */}
+          <div className="hidden lg:flex items-center justify-center py-0">
+            <ul className="flex items-center space-x-8">
+              {menuItems.map((item, index) => {
+                const IconComponent = item.icon;
+                const isActive = location === item.href;
+                
+                return (
+                  <li key={item.href + item.label} className="relative group">
+                    <Link 
+                      href={item.href} 
+                      onClick={() => handleNavClick(item.href)}
+                      className={`
+                        flex flex-col items-center space-y-1 px-2 py-1 transition-all duration-300
+                        ${isActive 
+                          ? 'text-golden-amber' 
+                          : 'text-ritualistic-beige hover:text-golden-amber'
+                        }
+                      `}>
+                      <IconComponent 
+                        size={16} 
+                        className={`transition-all duration-300 ${isActive ? 'text-golden-amber' : 'text-golden-amber/60 group-hover:text-golden-amber'}`} 
+                      />
+                      <span className="font-cinzel text-xs tracking-wider uppercase">
+                        {item.label}
+                      </span>
+                    </Link>
                     
-                    return (
-                      <Link 
-                        key={item.href}
-                        href={item.href}
-                        onClick={() => handleNavClick(item.href)}
-                        className={`
-                          flex items-center space-x-3 p-3 rounded-lg transition-all duration-200 w-full
-                          ${isActive 
-                            ? 'text-golden-amber bg-golden-amber/20 border border-golden-amber/30' 
-                            : 'text-ritualistic-beige hover:text-golden-amber hover:bg-golden-amber/10'
-                          }
-                        `}>
-                        
-                        <IconComponent 
-                          size={18} 
-                          className={`${isActive ? 'text-golden-amber' : 'text-golden-amber/60'}`} 
-                        />
-                        
-                        <div className="flex-1">
-                          <div className="font-cinzel text-sm tracking-wide uppercase font-medium">
-                            {item.label}
-                          </div>
-                          <div className="text-xs text-ritualistic-beige/60 mt-0.5">
-                            {item.subtitle}
-                          </div>
-                        </div>
-                      </Link>
-                    );
-                  })}
-                </div>
-              </div>
-            </>
-          )}
+                    {/* Separador místico entre itens */}
+                    {index < menuItems.length - 1 && (
+                      <div className="absolute -right-4 top-1/2 transform -translate-y-1/2 text-golden-amber/20 text-xs">
+                        ◆
+                      </div>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+
+          {/* Tablet Menu - Medium screens */}
+          <div className="hidden md:flex lg:hidden items-center justify-center py-0">
+            <ul className="flex items-center space-x-6">
+              {menuItems.map((item) => {
+                const IconComponent = item.icon;
+                const isActive = location === item.href;
+                
+                return (
+                  <li key={item.href + item.label}>
+                    <Link 
+                      href={item.href}
+                      onClick={() => handleNavClick(item.href)}
+                      className={`
+                        flex flex-col items-center space-y-1 px-1 py-1 transition-all duration-300
+                        ${isActive 
+                          ? 'text-golden-amber' 
+                          : 'text-ritualistic-beige hover:text-golden-amber'
+                        }
+                      `}>
+                      <IconComponent size={14} className={`${isActive ? 'text-golden-amber' : 'text-golden-amber/60'}`} />
+                      <span className="font-cinzel text-xs tracking-wide uppercase">
+                        {item.label}
+                      </span>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+
+          {/* Small Tablet Menu */}
+          <div className="hidden sm:flex md:hidden items-center justify-center py-0">
+            <ul className="flex items-center space-x-4">
+              {menuItems.map((item) => {
+                const IconComponent = item.icon;
+                const isActive = location === item.href;
+                
+                return (
+                  <li key={item.href}>
+                    <Link 
+                      href={item.href}
+                      onClick={() => handleNavClick(item.href)}
+                      className={`
+                        flex flex-col items-center space-y-1 px-1 py-1 transition-all duration-300
+                        ${isActive 
+                          ? 'text-golden-amber' 
+                          : 'text-ritualistic-beige hover:text-golden-amber'
+                        }
+                      `}>
+                      <IconComponent size={12} className={`${isActive ? 'text-golden-amber' : 'text-golden-amber/60'}`} />
+                      <span className="font-cinzel text-xs tracking-wide uppercase">
+                        {item.label.substring(0, 5)}
+                      </span>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
         </div>
+      </nav>
+
+      {/* Mobile Menu - Simple Hamburger */}
+      <div className="sm:hidden" ref={menuRef}>
+        {/* Hamburger Button - Fixed Position */}
+        <button
+          onClick={toggleMenu}
+          className="fixed top-4 right-4 z-[9999] p-3 text-golden-amber bg-black/90 rounded-lg border border-golden-amber/50 shadow-xl hover:bg-golden-amber/10 transition-all duration-300"
+          aria-label="Menu"
+        >
+          {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
+        </button>
+
+        {/* Sidebar Overlay */}
+        {isMenuOpen && (
+          <>
+            {/* Backdrop */}
+            <div 
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[8000]"
+              onClick={closeMenu}
+            />
+            
+            {/* Sidebar */}
+            <div className="fixed top-0 left-0 h-full w-72 bg-black/95 backdrop-blur-xl border-r border-golden-amber/30 z-[8500] transform transition-transform duration-300">
+              {/* Sidebar Header */}
+              <div className="p-4 border-b border-golden-amber/30">
+                <h2 className="font-cinzel text-lg text-golden-amber tracking-wider">
+                  ⧭ Menu
+                </h2>
+              </div>
+
+              {/* Menu Items */}
+              <div className="p-4 space-y-2">
+                {menuItems.map((item) => {
+                  const IconComponent = item.icon;
+                  const isActive = location === item.href;
+                  
+                  return (
+                    <Link 
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => handleNavClick(item.href)}
+                      className={`
+                        flex items-center space-x-3 p-3 rounded-lg transition-all duration-200 w-full
+                        ${isActive 
+                          ? 'text-golden-amber bg-golden-amber/20 border border-golden-amber/30' 
+                          : 'text-ritualistic-beige hover:text-golden-amber hover:bg-golden-amber/10'
+                        }
+                      `}>
+                      
+                      <IconComponent 
+                        size={18} 
+                        className={`${isActive ? 'text-golden-amber' : 'text-golden-amber/60'}`} 
+                      />
+                      
+                      <div className="flex-1">
+                        <div className="font-cinzel text-sm tracking-wide uppercase font-medium">
+                          {item.label}
+                        </div>
+                        <div className="text-xs text-ritualistic-beige/60 mt-0.5">
+                          {item.subtitle}
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          </>
+        )}
       </div>
-    </nav>
+    </>
   );
 }
