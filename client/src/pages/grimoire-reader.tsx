@@ -342,7 +342,7 @@ export default function GrimoireReader() {
               >
                 {paginatedContent[currentPage - 1] ? (
                   <div 
-                    className="prose-grimoire max-w-none text-ritualistic-beige leading-relaxed font-garamond text-lg"
+                    className={`prose-grimoire max-w-none text-ritualistic-beige leading-relaxed font-garamond ${isMobile ? 'text-sm' : 'text-lg'}`}
                     style={{
                       fontFamily: 'Garamond, Georgia, serif',
                       lineHeight: '1.8',
