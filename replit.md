@@ -155,6 +155,7 @@ Changelog:
 - June 15, 2025. Sistema de biblioteca Supabase implementado - tabelas criadas com sucesso (library_sections, grimoires, chapters, user_progress), 6 seções padrão inseridas, painel administrativo com CRUD completo funcional, layout da biblioteca ajustado seguindo padrão da home com texto ritualístico
 - June 15, 2025. Biblioteca configurada com 4 seções finais - removidas seções "Textos Filosóficos" e "Meditações Práticas", mantidas apenas: Porta das Sombras, Vestíbulo da Chama, Torre dos Selos, Sanctum Profundum. Layout ajustado para grid 2x4 responsivo
 - June 15, 2025. Painel administrativo resetado completamente - removidos todos os componentes admin antigos, estrutura limpa criada conectada 100% ao Supabase sem dados mock, pronto para desenvolvimento modular
+- June 15, 2025. Primeiro módulo administrativo "Visão Geral" implementado - dashboard completo com dados reais do Supabase: estatísticas principais (usuários, grimórios, capítulos, progresso), distribuição por seções com ícones específicos, atividade recente (usuários e grimórios), status do sistema em tempo real, interface responsiva com design místico
 ```
 
 ## User Preferences
