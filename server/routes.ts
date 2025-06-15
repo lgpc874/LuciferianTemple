@@ -18,7 +18,7 @@ import {
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { supabaseService } from "./supabase-service";
-import { formatGrimoireContent } from "./content-formatter";
+
 
 const JWT_SECRET = process.env.JWT_SECRET || "templo_abismo_secret_key";
 
@@ -250,8 +250,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Dados obrigatórios: título, descrição, seção e pelo menos um capítulo" });
       }
 
-      // Aplicar formatação automática ao conteúdo
-      const formattedGrimoire = formatGrimoireContent(title, description, chapters);
+      // Calcular tempo de leitura total
+      const totalWords = chapters.reduce((acc: number, chapter: any) => 
+        acc + chapter.content.split(' ').length, 0
+      );
+      const estimatedReadingTime = Math.ceil(totalWords / 200);
       
       // Gerar ordem de desbloqueio automática
       const existingGrimoires = await supabaseService.getGrimoires();
@@ -262,29 +265,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Criar grimório no banco
       const grimoireData: InsertGrimoire = {
-        title: formattedGrimoire.title,
-        description: formattedGrimoire.description,
+        title: title,
+        description: description,
         section_id: parseInt(section_id),
-        content: `${formattedGrimoire.chapters.length} capítulos criados automaticamente`,
+        content: `${chapters.length} capítulos criados`,
         is_paid: is_paid || false,
         price: is_paid ? price : null,
         level: level || "iniciante",
         unlock_order: unlockOrder,
         cover_image_url: coverImageUrl,
-        estimated_reading_time: formattedGrimoire.metadata.estimatedReadingTime,
+        estimated_reading_time: estimatedReadingTime,
         is_published: false
       };
 
       const newGrimoire = await supabaseService.createGrimoire(grimoireData);
       
-      // Criar capítulos individuais com formatação automática
+      // Criar capítulos individuais sem formatação
       const createdChapters = [];
-      for (let i = 0; i < formattedGrimoire.chapters.length; i++) {
-        const chapter = formattedGrimoire.chapters[i];
+      for (let i = 0; i < chapters.length; i++) {
+        const chapter = chapters[i];
         const createdChapter = await supabaseService.createChapter({
           grimoire_id: newGrimoire.id,
           title: chapter.title,
-          content: chapter.formattedContent,
+          content: chapter.content,
           chapter_number: i + 1,
           estimated_reading_time: Math.max(5, Math.ceil(chapter.content.split(' ').length / 200))
         });
