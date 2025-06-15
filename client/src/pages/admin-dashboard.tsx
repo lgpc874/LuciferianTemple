@@ -2,9 +2,6 @@ import { useAuth } from '@/hooks/use-auth';
 import { useQuery } from '@tanstack/react-query';
 import { PageTransition } from '@/components/page-transition';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import AdminUsers from '@/components/admin/admin-users';
-import AdminBiblioteca from '@/components/admin/admin-biblioteca';
-import AdminSettings from '@/components/admin/admin-settings';
 import AdminNavigation from '@/components/admin-navigation';
 import { useRoute } from 'wouter';
 import { 
