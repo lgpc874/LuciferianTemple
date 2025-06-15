@@ -107,6 +107,17 @@ export default function AdminAIComplete() {
   const [coverOption, setCoverOption] = useState<'ai' | 'url' | 'none'>('ai');
   const [coverUrl, setCoverUrl] = useState('');
   
+  // Configuração personalizada da IA para este grimório
+  const [customAIConfig, setCustomAIConfig] = useState({
+    personality: 'Mestre Abyssal - Guardião dos Segredos Ocultos',
+    writingStyle: 'Eloquente e misterioso, com conhecimento profundo dos mistérios',
+    approach: 'Didático mas preservando o mistério, revelando conhecimentos gradualmente',
+    tone: 'Respeitoso mas autoritativo, como um mentor sábio',
+    specialization: '',
+    guidelines: 'Manter sempre a atmosfera mística e usar linguagem elevada'
+  });
+  const [useCustomAI, setUseCustomAI] = useState(false);
+  
   const predefinedCategories = [
     'Introdução ao Ocultismo',
     'Magia Cerimonial',
@@ -138,7 +149,9 @@ export default function AdminAIComplete() {
       category: formData.get('category') as string,
       difficultyLevel: parseInt(formData.get('difficultyLevel') as string),
       chapterCount: parseInt(formData.get('chapterCount') as string),
-      style: formData.get('style') as string
+      style: formData.get('style') as string,
+      // Configuração personalizada da IA
+      customAI: useCustomAI ? customAIConfig : null
     };
 
     generateGrimoireMutation.mutate(requestData);
@@ -178,7 +191,7 @@ export default function AdminAIComplete() {
                     <SelectValue placeholder="Selecione uma categoria" />
                   </SelectTrigger>
                   <SelectContent>
-                    {categories.map((category) => (
+                    {predefinedCategories.map((category) => (
                       <SelectItem key={category} value={category}>
                         {category}
                       </SelectItem>
@@ -247,6 +260,98 @@ export default function AdminAIComplete() {
                   </SelectContent>
                 </Select>
               </div>
+            </div>
+
+            {/* Personalização da IA para este Grimório */}
+            <div className="border-t pt-6">
+              <div className="flex items-center space-x-2 mb-4">
+                <input
+                  type="checkbox"
+                  id="useCustomAI"
+                  checked={useCustomAI}
+                  onChange={(e) => setUseCustomAI(e.target.checked)}
+                  className="rounded border-golden-amber/30"
+                />
+                <Label htmlFor="useCustomAI" className="text-golden-amber font-medium">
+                  Personalizar IA específica para este grimório
+                </Label>
+              </div>
+
+              {useCustomAI && (
+                <div className="bg-muted/30 p-4 rounded-lg space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="aiPersonality">Personalidade da IA</Label>
+                      <Input
+                        id="aiPersonality"
+                        value={customAIConfig.personality}
+                        onChange={(e) => setCustomAIConfig({...customAIConfig, personality: e.target.value})}
+                        placeholder="Ex: Sábio Alquimista Medieval"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="aiTone">Tom de Escrita</Label>
+                      <Input
+                        id="aiTone"
+                        value={customAIConfig.tone}
+                        onChange={(e) => setCustomAIConfig({...customAIConfig, tone: e.target.value})}
+                        placeholder="Ex: Formal e respeitoso"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="aiWritingStyle">Estilo de Escrita</Label>
+                    <Textarea
+                      id="aiWritingStyle"
+                      value={customAIConfig.writingStyle}
+                      onChange={(e) => setCustomAIConfig({...customAIConfig, writingStyle: e.target.value})}
+                      placeholder="Descreva como a IA deve escrever este grimório específico"
+                      rows={2}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="aiApproach">Abordagem Pedagógica</Label>
+                    <Textarea
+                      id="aiApproach"
+                      value={customAIConfig.approach}
+                      onChange={(e) => setCustomAIConfig({...customAIConfig, approach: e.target.value})}
+                      placeholder="Como a IA deve ensinar este conteúdo específico"
+                      rows={2}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="aiSpecialization">Especialização/Foco</Label>
+                    <Input
+                      id="aiSpecialization"
+                      value={customAIConfig.specialization}
+                      onChange={(e) => setCustomAIConfig({...customAIConfig, specialization: e.target.value})}
+                      placeholder="Ex: Rituais práticos, Teoria avançada, História"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="aiGuidelines">Diretrizes Específicas</Label>
+                    <Textarea
+                      id="aiGuidelines"
+                      value={customAIConfig.guidelines}
+                      onChange={(e) => setCustomAIConfig({...customAIConfig, guidelines: e.target.value})}
+                      placeholder="Instruções específicas para este grimório"
+                      rows={3}
+                    />
+                  </div>
+
+                  <div className="bg-blue-500/10 border border-blue-500/20 rounded p-3">
+                    <p className="text-sm text-blue-300">
+                      <strong>Dica:</strong> Esta configuração será usada apenas para este grimório específico. 
+                      Cada grimório pode ter sua própria IA personalizada com estilo e abordagem únicos.
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
 
             <Button 

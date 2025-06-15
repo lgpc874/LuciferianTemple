@@ -1024,7 +1024,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // AI Grimoire Generation
   app.post("/api/admin/ai/generate-grimoire", authenticateToken, requireAdmin, async (req: any, res) => {
     try {
-      const { title, summary, category, difficultyLevel, chapterCount, style } = req.body;
+      const { title, summary, category, difficultyLevel, chapterCount, style, customAI } = req.body;
 
       // Generate grimoire with OpenAI
       const openaiKey = process.env.OPENAI_API_KEY;
@@ -1043,7 +1043,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
           messages: [
             {
               role: "system",
-              content: `Você é um especialista em ocultismo e filosofia luciferiana. Crie um grimório completo em português brasileiro com base nas especificações fornecidas. 
+              content: `${customAI ? 
+                `CONFIGURAÇÃO PERSONALIZADA DA IA:
+                - Personalidade: ${customAI.personality}
+                - Estilo de Escrita: ${customAI.writingStyle}
+                - Abordagem Pedagógica: ${customAI.approach}
+                - Tom: ${customAI.tone}
+                - Especialização: ${customAI.specialization || 'Geral'}
+                - Diretrizes Específicas: ${customAI.guidelines}
+                
+                Use esta configuração personalizada para criar o grimório.` 
+                : 
+                'Você é um especialista em ocultismo e filosofia luciferiana.'
+              }
+              
+              Crie um grimório completo em português brasileiro com base nas especificações fornecidas. 
 
               Estruture o grimório com:
               1. Título e descrição detalhada
