@@ -32,50 +32,7 @@ export default function Biblioteca() {
     }
   };
 
-  // Se não estiver autenticado, mostrar tela de login
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen mystical-bg pt-24 fade-in">
-        <div className="relative py-16 bg-gradient-to-b from-red-950/20 to-transparent">
-          <div className="relative text-center">
-            <h1 className="font-cinzel text-4xl sm:text-5xl md:text-6xl text-golden-amber mb-6 tracking-wider biblioteca-title">
-              ⸸ ACESSO RESTRITO ⸸
-            </h1>
-            <div className="w-32 h-1 bg-golden-amber mx-auto mb-6"></div>
-            <p className="font-garamond text-xl text-ritualistic-beige max-w-3xl mx-auto leading-relaxed px-4 italic mb-8 biblioteca-subtitle">
-              Os segredos da Bibliotheca Arcana são reservados apenas aos que já têm seu nome registrado no abismo.
-              Identifique-se para adentrar os corredores do conhecimento proibido.
-            </p>
-          </div>
-        </div>
-
-        <div className="max-w-md mx-auto px-4">
-          <div className="content-section border border-golden-amber/50 rounded-xl p-8">
-            <div className="text-center mb-6">
-              <h2 className="font-cinzel text-2xl text-golden-amber mb-2">
-                Portal dos Iniciados
-              </h2>
-              <p className="font-garamond text-ritualistic-beige text-sm">
-                Faça login ou registre-se para acessar a biblioteca
-              </p>
-            </div>
-            
-            <AuthForm onSuccess={(token, userData) => {
-              login(token, userData);
-            }} />
-          </div>
-
-          <div className="text-center mt-8">
-            <a href="/bibliotheca-arcana">
-              <button className="veil-button bg-gradient-to-r from-ritualistic-beige/10 to-ritualistic-beige/5 hover:from-ritualistic-beige/20 hover:to-ritualistic-beige/10 text-ritualistic-beige font-cinzel py-3 px-6 rounded-lg transition-all duration-300 border border-ritualistic-beige/50 hover:border-golden-amber/50 hover:text-golden-amber tracking-wide">
-                ← Voltar ao Portal Principal
-              </button>
-            </a>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // Acesso sempre permitido no ambiente Replit
 
   if (loadingGrimoires) {
     return (
