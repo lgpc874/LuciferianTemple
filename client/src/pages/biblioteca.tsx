@@ -31,12 +31,6 @@ export default function Biblioteca() {
     queryKey: ['/api/grimoires'],
   });
 
-  // Simular progresso do usuário (depois conectar com API real)
-  const { data: userProgress = [] } = useQuery({
-    queryKey: ['/api/user/progress'],
-    enabled: false, // Desabilitado por enquanto
-  });
-
   // Função para determinar o estado do botão
   const getButtonState = (grimoire: any) => {
     // Verificar se é pago e se foi comprado
@@ -48,11 +42,11 @@ export default function Biblioteca() {
       }
     }
 
-    // Verificar progresso de leitura
-    const progress = userProgress.find((p: any) => p.grimoire_id === grimoire.id);
-    if (progress && progress.progress_percentage > 0) {
-      return { text: 'Continuar', action: 'continue' };
-    }
+    // Verificar progresso de leitura (implementar depois)
+    // const progress = userProgress.find((p: any) => p.grimoire_id === grimoire.id);
+    // if (progress && progress.progress_percentage > 0) {
+    //   return { text: 'Continuar', action: 'continue' };
+    // }
 
     return { text: 'Ler', action: 'read' };
   };
@@ -154,7 +148,7 @@ export default function Biblioteca() {
                     </div>
                     
                     {sectionGrimoires.length > 0 ? (
-                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
+                      <div className="space-y-3">
                         {sectionGrimoires.map((grimoire) => (
                           <motion.div
                             key={grimoire.id}
@@ -163,51 +157,68 @@ export default function Biblioteca() {
                             transition={{ duration: 0.3 }}
                             className="group"
                           >
-                            <Card className="bg-black/40 border-golden-amber/20 backdrop-blur-sm hover:border-golden-amber/40 transition-all duration-300 transform hover:scale-105 cursor-pointer h-full flex flex-col">
-                              {/* Capa */}
-                              <div className="relative overflow-hidden">
-                                {grimoire.cover_image_url ? (
-                                  <div className="w-full h-32 sm:h-36 bg-gradient-to-b from-red-900/20 to-black/60">
-                                    <img 
-                                      src={grimoire.cover_image_url} 
-                                      alt={grimoire.title}
-                                      className="w-full h-full object-cover opacity-80"
-                                    />
-                                  </div>
-                                ) : (
-                                  <div className="w-full h-32 sm:h-36 bg-gradient-to-b from-red-900/20 to-black/60 flex items-center justify-center">
-                                    <BookOpen className="h-8 w-8 text-golden-amber/50" />
-                                  </div>
-                                )}
+                            <Card className="bg-black/40 border-golden-amber/20 backdrop-blur-sm hover:border-golden-amber/40 transition-all duration-300 hover:scale-[1.02] cursor-pointer">
+                              <div className="flex p-4">
+                                {/* Capa à esquerda */}
+                                <div className="relative overflow-hidden rounded-lg mr-4 flex-shrink-0">
+                                  {grimoire.cover_image_url ? (
+                                    <div className="w-20 h-28 bg-gradient-to-b from-red-900/20 to-black/60">
+                                      <img 
+                                        src={grimoire.cover_image_url} 
+                                        alt={grimoire.title}
+                                        className="w-full h-full object-cover opacity-80 rounded-lg"
+                                      />
+                                    </div>
+                                  ) : (
+                                    <div className="w-20 h-28 bg-gradient-to-b from-red-900/20 to-black/60 flex items-center justify-center rounded-lg">
+                                      <BookOpen className="h-6 w-6 text-golden-amber/50" />
+                                    </div>
+                                  )}
+                                </div>
                                 
-                                {/* Preço sobreposto para grimórios pagos */}
-                                {grimoire.is_paid && grimoire.price && (
-                                  <div className="absolute top-2 right-2">
-                                    <Badge className="bg-golden-amber/90 text-black font-semibold text-xs">
-                                      R$ {grimoire.price}
-                                    </Badge>
+                                {/* Conteúdo à direita */}
+                                <div className="flex-1 flex flex-col justify-between">
+                                  <div>
+                                    <div className="flex items-start justify-between mb-2">
+                                      <h3 className="font-cinzel text-golden-amber text-lg font-semibold line-clamp-2 flex-1 mr-2">
+                                        {grimoire.title}
+                                      </h3>
+                                      {grimoire.is_paid && grimoire.price && (
+                                        <Badge className="bg-golden-amber/90 text-black font-semibold text-sm">
+                                          R$ {grimoire.price}
+                                        </Badge>
+                                      )}
+                                    </div>
+                                    
+                                    <p className="text-ritualistic-beige/70 text-sm line-clamp-2 mb-3">
+                                      {grimoire.description}
+                                    </p>
+                                    
+                                    <div className="flex items-center space-x-4 text-xs text-ritualistic-beige/60 mb-3">
+                                      <div className="flex items-center space-x-1">
+                                        <Clock size={12} />
+                                        <span>{grimoire.estimated_reading_time || 0} min</span>
+                                      </div>
+                                      <Badge className={`text-xs ${getDifficultyColor(parseInt(grimoire.level))}`}>
+                                        {getDifficultyText(parseInt(grimoire.level))}
+                                      </Badge>
+                                    </div>
                                   </div>
-                                )}
-                              </div>
-                              
-                              {/* Conteúdo */}
-                              <div className="p-3 flex-1 flex flex-col">
-                                <h3 className="font-cinzel text-golden-amber text-sm font-semibold line-clamp-2 mb-2 flex-1">
-                                  {grimoire.title}
-                                </h3>
-                                
-                                {/* Botão dinâmico */}
-                                <Button 
-                                  size="sm" 
-                                  className="w-full text-xs bg-red-900/50 hover:bg-red-900/70 text-golden-amber border border-golden-amber/20 hover:border-golden-amber/40 h-8"
-                                  onClick={() => {
-                                    const buttonState = getButtonState(grimoire);
-                                    // Implementar ações específicas depois
-                                    console.log(`Ação: ${buttonState.action} para grimório ${grimoire.title}`);
-                                  }}
-                                >
-                                  {getButtonState(grimoire).text}
-                                </Button>
+                                  
+                                  {/* Botão dinâmico */}
+                                  <div className="flex justify-end">
+                                    <Button 
+                                      size="sm" 
+                                      className="bg-red-900/50 hover:bg-red-900/70 text-golden-amber border border-golden-amber/20 hover:border-golden-amber/40 px-6"
+                                      onClick={() => {
+                                        const buttonState = getButtonState(grimoire);
+                                        console.log(`Ação: ${buttonState.action} para grimório ${grimoire.title}`);
+                                      }}
+                                    >
+                                      {getButtonState(grimoire).text}
+                                    </Button>
+                                  </div>
+                                </div>
                               </div>
                             </Card>
                           </motion.div>
