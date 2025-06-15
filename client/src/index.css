@@ -1352,7 +1352,8 @@ input, textarea {
 .grimoire-content .temple-invitation,
 .grimoire-content .temple-resources,
 .grimoire-content .continued-learning,
-.grimoire-content .conclusion {
+.grimoire-content .conclusion,
+.grimoire-content .ancient-names {
   background: rgba(139, 69, 19, 0.08);
   border: 1px solid rgba(212, 175, 55, 0.2);
   border-radius: 6px;
