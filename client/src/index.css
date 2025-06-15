@@ -1173,7 +1173,7 @@ input, textarea {
   display: none;
 }
 
-/* Headers específicos */
+/* Headers específicos com melhor espaçamento */
 .grimoire-content h1,
 .grimoire-content h2,
 .grimoire-content h3,
@@ -1182,7 +1182,8 @@ input, textarea {
 .grimoire-content h6 {
   color: #d4af37 !important;
   font-family: 'Cinzel', serif !important;
-  margin: 1.5rem 0 1rem 0 !important;
+  margin: 2rem 0 1.5rem 0 !important;
+  line-height: 1.4 !important;
 }
 
 .grimoire-content h1 { font-size: 2rem !important; }
@@ -1192,11 +1193,11 @@ input, textarea {
 .grimoire-content h5 { font-size: 1.2rem !important; }
 .grimoire-content h6 { font-size: 1.1rem !important; }
 
-/* Parágrafos e texto */
+/* Parágrafos e texto com melhor separação */
 .grimoire-content p {
   color: #f5f5dc !important;
-  line-height: 1.7 !important;
-  margin: 1rem 0 !important;
+  line-height: 1.8 !important;
+  margin: 1.5rem 0 !important;
   text-align: justify !important;
 }
 
@@ -1210,79 +1211,60 @@ input, textarea {
   font-style: italic !important;
 }
 
-/* Divs especiais agora com formatação simples de livro */
+/* Seções especiais com melhor separação */
 .grimoire-content .myth-revelation,
 .grimoire-content .myth-comparison,
-.grimoire-content .false-version,
-.grimoire-content .true-version,
-.grimoire-content .primordial-names,
-.grimoire-content .name-card,
-.grimoire-content .corruption-timeline,
-.grimoire-content .timeline-item,
-.grimoire-content .stellar-aspects,
-.grimoire-content .eden-truth,
-.grimoire-content .eden-analysis,
-.grimoire-content .promethean-fire,
 .grimoire-content .lies-section,
-.grimoire-content .lie-card,
-.grimoire-content .lie-header,
-.grimoire-content .lie-content,
-.grimoire-content .danger-symbol,
-.grimoire-content .mechanism,
-.grimoire-content .effect,
-.grimoire-content .prison-analysis,
-.grimoire-content .prison-type,
-.grimoire-content .prison-description,
-.grimoire-content .egregore-section,
-.grimoire-content .egregore-card,
-.grimoire-content .pact-breaking-ritual,
-.grimoire-content .ritual-steps,
-.grimoire-content .ritual-text,
-.grimoire-content .liberation-signs,
-.grimoire-content .sign,
-.grimoire-content .daily-liberation,
-.grimoire-content .liberation-schedule,
-.grimoire-content .liberation-invocation,
 .grimoire-content .queens-section,
-.grimoire-content .queen-header,
-.grimoire-content .queen-content,
-.grimoire-content .queen-symbol,
-.grimoire-content .queen-domains,
-.grimoire-content .lilith-aspects,
-.grimoire-content .aspect,
-.grimoire-content .lilith-invocation,
-.grimoire-content .hecate-powers,
 .grimoire-content .kings-section,
-.grimoire-content .king-header,
-.grimoire-content .king-content,
-.grimoire-content .king-symbol,
-.grimoire-content .belial-teachings,
-.grimoire-content .belial-invocation,
-.grimoire-content .leviathan-powers,
-.grimoire-content .asmodeus-teachings,
 .grimoire-content .alliance-principles,
-.grimoire-content .principle-item,
 .grimoire-content .working-methods,
-.grimoire-content .method-description,
-.grimoire-content .method-example,
 .grimoire-content .safety-guidelines,
 .grimoire-content .development-stages,
 .grimoire-content .readiness-assessment,
-.grimoire-content .assessment-section,
-.grimoire-content .questions,
-.grimoire-content .readiness-verdict,
 .grimoire-content .ritual-preparation,
 .grimoire-content .ritual-execution,
 .grimoire-content .post-initiation-guidance,
 .grimoire-content .integration-practices,
-.grimoire-content .daily-structure,
 .grimoire-content .temple-invitation,
-.grimoire-content .temple-resources,
 .grimoire-content .continued-learning,
-.grimoire-content .conclusion,
-.grimoire-content .ancient-names {
+.grimoire-content .conclusion {
+  margin: 2.5rem 0 1.5rem 0;
+}
+
+/* Elementos individuais com espaçamento médio */
+.grimoire-content .false-version,
+.grimoire-content .true-version,
+.grimoire-content .lie-card,
+.grimoire-content .queen-header,
+.grimoire-content .queen-content,
+.grimoire-content .king-header,
+.grimoire-content .king-content,
+.grimoire-content .principle-item,
+.grimoire-content .method-description,
+.grimoire-content .assessment-section {
+  margin: 1.5rem 0;
+}
+
+/* Subelementos com espaçamento menor */
+.grimoire-content .primordial-names,
+.grimoire-content .name-card,
+.grimoire-content .timeline-item,
+.grimoire-content .stellar-aspects,
+.grimoire-content .lie-header,
+.grimoire-content .lie-content,
+.grimoire-content .mechanism,
+.grimoire-content .effect,
+.grimoire-content .prison-type,
+.grimoire-content .prison-description,
+.grimoire-content .aspect,
+.grimoire-content .ritual-steps,
+.grimoire-content .ritual-text,
+.grimoire-content .sign,
+.grimoire-content .method-example,
+.grimoire-content .questions,
+.grimoire-content .daily-structure {
   margin: 1rem 0;
-  padding: 0;
 }
 
 /* Elementos com ícones específicos */
