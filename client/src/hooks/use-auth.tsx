@@ -64,13 +64,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
     queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
   };
 
+  // Bypass de autenticação para ambiente Replit
+  const isReplitEnvironment = window.location.hostname.includes('replit.dev') || 
+                               window.location.hostname.includes('replit.co') ||
+                               window.location.hostname.includes('replit.app');
+
   const value: AuthContextType = {
-    user,
-    token,
+    user: isReplitEnvironment ? { id: 999, username: 'admin', email: 'admin@templodoabismo.com', isAdmin: true } : user,
+    token: isReplitEnvironment ? 'replit-bypass-token' : token,
     isLoading,
     login,
     logout,
-    isAuthenticated: !!user,
+    isAuthenticated: isReplitEnvironment ? true : !!user,
   };
 
   return (

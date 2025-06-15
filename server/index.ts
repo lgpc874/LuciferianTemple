@@ -4,6 +4,25 @@ import { setupVite, serveStatic, log } from "./vite";
 import { storage } from "./storage";
 
 const app = express();
+
+// Configurações específicas para Replit
+app.use((req, res, next) => {
+  // Permitir acesso através de qualquer domínio do Replit
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+  
+  // Permitir iframes para preview do Replit
+  res.header('X-Frame-Options', 'ALLOWALL');
+  res.header('Content-Security-Policy', 'frame-ancestors *');
+  
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(200);
+  } else {
+    next();
+  }
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
