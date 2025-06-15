@@ -225,6 +225,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Buscar capítulos de um grimório específico
+  app.get("/api/chapters/:grimoireId", async (req, res) => {
+    try {
+      const grimoireId = parseInt(req.params.grimoireId);
+      if (isNaN(grimoireId)) {
+        return res.status(400).json({ error: "ID do grimório inválido" });
+      }
+
+      const chapters = await supabaseService.getChaptersByGrimoire(grimoireId);
+      res.json(chapters);
+    } catch (error: any) {
+      console.error("Error fetching chapters:", error);
+      res.status(500).json({ error: "Erro ao buscar capítulos: " + error.message });
+    }
+  });
+
   // ADMIN - Gerenciamento de Grimórios com Capítulos Individuais
   app.post("/api/admin/grimoires", authenticateToken, requireAdmin, async (req, res) => {
     try {

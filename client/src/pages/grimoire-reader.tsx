@@ -140,16 +140,16 @@ export default function GrimoireReader() {
             </Button>
             
             <div className="text-center flex-1 mx-4">
-              <h1 className="text-lg font-cinzel text-golden-amber truncate">{grimoire.title}</h1>
+              <h1 className="text-lg font-cinzel text-golden-amber truncate">{(grimoire as any)?.title || 'Grimório'}</h1>
               <div className="flex items-center justify-center space-x-4 text-xs text-ritualistic-beige/60 mt-1">
                 <span className="flex items-center">
                   <Eye className="h-3 w-3 mr-1" />
                   Página {currentPage} de {totalPages}
                 </span>
-                {grimoire.estimated_reading_time && (
+                {(grimoire as any)?.estimated_reading_time && (
                   <span className="flex items-center">
                     <Clock className="h-3 w-3 mr-1" />
-                    {grimoire.estimated_reading_time} min
+                    {(grimoire as any).estimated_reading_time} min
                   </span>
                 )}
               </div>
