@@ -177,6 +177,7 @@ Changelog:
 - June 15, 2025. Sistema de paginação aprimorado - cada capítulo sempre inicia em nova página, CSS específico implementado para renderização correta de elementos HTML no leitor, formatação luciferiana completamente funcional
 - June 15, 2025. Grimório "Introdução ao Luciferianismo" reescrito com abordagem introdutória - removido conteúdo avançado, criada versão para buscadores iniciantes focada em filosofia e questionamento racional ao invés de práticas místicas
 - June 15, 2025. Seções da biblioteca renomeadas - "Porta das Sombras" → "Atrium Ignis", "Vestíbulo da Chama" → "Porta Umbrae", "Torre dos Selos" → "Arcana Noctis", "Sanctum Profundum" → "Via Tenebris" com descrições místicas atualizadas
+- June 15, 2025. Ícones customizados das seções implementados - criados 4 símbolos SVG únicos: cruz invertida (Atrium Ignis), estrela invertida (Porta Umbrae), chama mística multicamadas (Arcana Noctis), coroa sombria com gemas (Via Tenebris), substituindo ícones genéricos por símbolos autenticamente luciferianos
 ```
 
 ## User Preferences

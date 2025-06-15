@@ -32,6 +32,34 @@ const InvertedStar = ({ size = 20, className = "" }) => (
     <path d="M12 20l-2.5-7.5H2l6.5-4.5L6 0l6 4.5L18 0l-2.5 8.5L22 12.5h-7.5L12 20z"/>
   </svg>
 );
+
+const MysticalFlame = ({ size = 20, className = "" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M12 2c-1 3-3 5-3 8s2 5 3 5 3-2 3-5-2-5-3-8z"/>
+    <path d="M9 8c0 2 1 3 2 3s2-1 2-3c0-1-1-2-2-2s-2 1-2 2z"/>
+    <path d="M6 15c0 2 2 4 6 4s6-2 6-4c0-1-1-2-2-2H8c-1 0-2 1-2 2z"/>
+  </svg>
+);
+
+const DarkCrown = ({ size = 20, className = "" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M3 18h18l-2-8-4 3-3-6-3 6-4-3-2 8z"/>
+    <circle cx="7" cy="10" r="1"/>
+    <circle cx="12" cy="4" r="1"/>
+    <circle cx="17" cy="10" r="1"/>
+  </svg>
+);
+
+const TemploLogo = ({ size = 20, className = "" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M12 2L4 8h16l-8-6z" fill="#DC2626" fillOpacity="0.3"/>
+    <path d="M4 8v12h16V8"/>
+    <path d="M8 12h8"/>
+    <path d="M10 16h4"/>
+    <circle cx="12" cy="14" r="1" fill="#DC2626"/>
+    <path d="M6 20l12-8M18 20L6 12" stroke="#DC2626" strokeWidth="1"/>
+  </svg>
+);
 import type { Grimoire, LibrarySection } from "@shared/schema";
 
 export default function Biblioteca() {
@@ -89,9 +117,9 @@ export default function Biblioteca() {
     switch (sectionId) {
       case 1: return InvertedCross; // Atrium Ignis - Cruz invertida
       case 2: return InvertedStar;  // Porta Umbrae - Estrela invertida
-      case 3: return Flame; // Arcana Noctis - Chama
-      case 4: return Crown; // Via Tenebris - Coroa
-      case 5: return FileText;
+      case 3: return MysticalFlame; // Arcana Noctis - Chama mística
+      case 4: return DarkCrown; // Via Tenebris - Coroa sombria
+      case 5: return TemploLogo; // Templo do Abismo - Logo em vermelho
       case 6: return Brain;
       default: return BookOpen;
     }
