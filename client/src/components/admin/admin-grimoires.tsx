@@ -120,23 +120,17 @@ export default function AdminGrimoires() {
     }
   });
 
-  const categories = [
-    'Introdução ao Ocultismo',
-    'Magia Cerimonial',
-    'Demonologia',
-    'Alquimia Espiritual',
-    'Rituais Avançados',
-    'Filosofia Luciferiana'
-  ];
-
   const handleCreateGrimoire = (formData: FormData) => {
     const grimoireData = {
       title: formData.get('title'),
       description: formData.get('description'),
-      category: formData.get('category'),
-      difficultyLevel: parseInt(formData.get('difficultyLevel') as string)
+      sectionId: parseInt(formData.get('sectionId') as string),
+      isPaid: formData.get('isPaid') === 'true',
+      price: formData.get('price') || null,
+      isActive: formData.get('isActive') === 'true'
     };
     createGrimoireMutation.mutate(grimoireData);
+    setIsCreateDialogOpen(false);
   };
 
   const handleUpdateGrimoire = (formData: FormData) => {
@@ -146,21 +140,12 @@ export default function AdminGrimoires() {
       id: editingGrimoire.id,
       title: formData.get('title'),
       description: formData.get('description'),
-      category: formData.get('category'),
-      difficultyLevel: parseInt(formData.get('difficultyLevel') as string)
+      sectionId: parseInt(formData.get('sectionId') as string),
+      isPaid: formData.get('isPaid') === 'true',
+      price: formData.get('price') || null,
+      isActive: formData.get('isActive') === 'true'
     };
     updateGrimoireMutation.mutate(grimoireData);
-  };
-
-  const getDifficultyColor = (level: number) => {
-    switch (level) {
-      case 1: return 'bg-green-500';
-      case 2: return 'bg-yellow-500';
-      case 3: return 'bg-orange-500';
-      case 4: return 'bg-red-500';
-      case 5: return 'bg-purple-500';
-      default: return 'bg-gray-500';
-    }
   };
 
   return (
@@ -192,22 +177,26 @@ export default function AdminGrimoires() {
                     Adicione um novo grimório à biblioteca
                   </DialogDescription>
                 </DialogHeader>
-                <form action={handleCreateGrimoire} className="space-y-4">
+                <form onSubmit={(e) => {
+                  e.preventDefault();
+                  const formData = new FormData(e.currentTarget);
+                  handleCreateGrimoire(formData);
+                }} className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="title">Título</Label>
                       <Input id="title" name="title" placeholder="Nome do Grimório" required />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="category">Categoria</Label>
-                      <Select name="category" required>
+                      <Label htmlFor="sectionId">Seção</Label>
+                      <Select name="sectionId" required>
                         <SelectTrigger>
-                          <SelectValue placeholder="Selecione uma categoria" />
+                          <SelectValue placeholder="Selecione uma seção" />
                         </SelectTrigger>
                         <SelectContent>
-                          {categories.map((category) => (
-                            <SelectItem key={category} value={category}>
-                              {category}
+                          {sections.map((section: any) => (
+                            <SelectItem key={section.id} value={section.id.toString()}>
+                              {section.name}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -224,20 +213,41 @@ export default function AdminGrimoires() {
                       required 
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="difficultyLevel">Nível de Dificuldade</Label>
-                    <Select name="difficultyLevel" required>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione o nível" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="1">1 - Iniciante</SelectItem>
-                        <SelectItem value="2">2 - Básico</SelectItem>
-                        <SelectItem value="3">3 - Intermediário</SelectItem>
-                        <SelectItem value="4">4 - Avançado</SelectItem>
-                        <SelectItem value="5">5 - Mestre</SelectItem>
-                      </SelectContent>
-                    </Select>
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="isPaid">Tipo</Label>
+                      <Select name="isPaid" defaultValue="false">
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="false">Gratuito</SelectItem>
+                          <SelectItem value="true">Pago</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="price">Preço (R$)</Label>
+                      <Input 
+                        id="price" 
+                        name="price" 
+                        type="number"
+                        step="0.01"
+                        placeholder="0.00"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="isActive">Status</Label>
+                      <Select name="isActive" defaultValue="true">
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="true">Ativo</SelectItem>
+                          <SelectItem value="false">Inativo</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
                   <Button 
                     type="submit" 
@@ -348,7 +358,11 @@ export default function AdminGrimoires() {
             </DialogDescription>
           </DialogHeader>
           {editingGrimoire && (
-            <form action={handleUpdateGrimoire} className="space-y-4">
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.currentTarget);
+              handleUpdateGrimoire(formData);
+            }} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="edit-title">Título</Label>
@@ -385,20 +399,42 @@ export default function AdminGrimoires() {
                   required 
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="edit-difficultyLevel">Nível de Dificuldade</Label>
-                <Select name="difficultyLevel" defaultValue={editingGrimoire.difficultyLevel.toString()}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="1">1 - Iniciante</SelectItem>
-                    <SelectItem value="2">2 - Básico</SelectItem>
-                    <SelectItem value="3">3 - Intermediário</SelectItem>
-                    <SelectItem value="4">4 - Avançado</SelectItem>
-                    <SelectItem value="5">5 - Mestre</SelectItem>
-                  </SelectContent>
-                </Select>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="edit-isPaid">Tipo</Label>
+                  <Select name="isPaid" defaultValue={editingGrimoire.isPaid ? "true" : "false"}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="false">Gratuito</SelectItem>
+                      <SelectItem value="true">Pago</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-price">Preço (R$)</Label>
+                  <Input 
+                    id="edit-price" 
+                    name="price" 
+                    type="number"
+                    step="0.01"
+                    defaultValue={editingGrimoire.price || ""}
+                    disabled={!editingGrimoire.isPaid}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-isActive">Status</Label>
+                  <Select name="isActive" defaultValue={editingGrimoire.isActive ? "true" : "false"}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="true">Ativo</SelectItem>
+                      <SelectItem value="false">Inativo</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
               <Button 
                 type="submit" 
