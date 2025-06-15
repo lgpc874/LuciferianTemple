@@ -46,7 +46,7 @@ export default function Home() {
           
           {/* Header */}
           <div className="text-center mb-4 sm:mb-6">
-            <div className="flex items-center justify-center space-x-2 mb-2">
+            <div className="flex items-center justify-center space-x-1 mb-2">
               <img 
                 src="https://i.postimg.cc/g20gqmdX/IMG-20250527-182235-1.png" 
                 alt="Logo" 
