@@ -1,8 +1,9 @@
 -- Script completo para criar/corrigir tabelas de grimórios no Supabase
 -- Execute este SQL no editor SQL do Supabase Dashboard
 
--- 1. CRIAR TABELA LIBRARY_SECTIONS (se não existir)
-CREATE TABLE IF NOT EXISTS library_sections (
+-- 1. CRIAR TABELA LIBRARY_SECTIONS (com coluna icon)
+DROP TABLE IF EXISTS library_sections CASCADE;
+CREATE TABLE library_sections (
   id SERIAL PRIMARY KEY,
   name VARCHAR(255) NOT NULL UNIQUE,
   description TEXT,

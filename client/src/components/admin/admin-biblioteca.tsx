@@ -1347,13 +1347,45 @@ function SettingsTab() {
   // Atualizar estados com dados reais do Supabase
   React.useEffect(() => {
     if (currentAISettings) {
-      setAiSettings(currentAISettings);
+      setAiSettings({
+        personality: currentAISettings.personality || "luciferian",
+        complexity: currentAISettings.complexity || "beginner", 
+        length: currentAISettings.length || "medium",
+        style: currentAISettings.style || "mixed",
+        guidelines: currentAISettings.guidelines || "",
+        defaultSection: currentAISettings.default_section || "",
+        autoPrice: currentAISettings.auto_price || false,
+        priceRange: {
+          min: String(currentAISettings.price_range_min || "9.99"),
+          max: String(currentAISettings.price_range_max || "49.99")
+        }
+      });
     }
   }, [currentAISettings]);
 
   React.useEffect(() => {
     if (currentSystemSettings) {
-      setSystemSettings(currentSystemSettings);
+      setSystemSettings({
+        siteName: currentSystemSettings.site_name || "Templo do Abismo",
+        siteDescription: currentSystemSettings.site_description || "Portal de ensinamentos luciferianos",
+        siteKeywords: currentSystemSettings.site_keywords || "luciferianismo,ocultismo,grimórios",
+        adminEmail: currentSystemSettings.admin_email || "admin@templodoabismo.com",
+        contentLanguage: currentSystemSettings.content_language || "português",
+        contentTone: currentSystemSettings.content_tone || "formal",
+        contentTargetAudience: currentSystemSettings.content_target_audience || "iniciantes",
+        enableUserRegistration: currentSystemSettings.enable_user_registration || true,
+        enablePaidContent: currentSystemSettings.enable_paid_content || true,
+        enableAiGeneration: currentSystemSettings.enable_ai_generation || true,
+        securityLevel: currentSystemSettings.security_level || "medium",
+        enableContentProtection: currentSystemSettings.enable_content_protection || true,
+        enableDownloadProtection: currentSystemSettings.enable_download_protection || true,
+        autoPublish: currentSystemSettings.auto_publish || false,
+        requireApproval: currentSystemSettings.require_approval || true,
+        defaultCurrency: currentSystemSettings.default_currency || "BRL",
+        enableCommentModeration: currentSystemSettings.enable_comment_moderation || true,
+        maxFileSize: currentSystemSettings.max_file_size || 10,
+        freeTrialDays: currentSystemSettings.free_trial_days || 7
+      });
     }
   }, [currentSystemSettings]);
 
@@ -1599,8 +1631,8 @@ function SettingsTab() {
               <input
                 type="number"
                 className="w-full p-2 border rounded-lg"
-                value={settings.maxLoginAttempts}
-                onChange={(e) => setSettings({...settings, maxLoginAttempts: parseInt(e.target.value)})}
+                value={systemSettings.maxLoginAttempts || 5}
+                onChange={(e) => setSystemSettings({...systemSettings, maxLoginAttempts: parseInt(e.target.value)})}
               />
             </div>
 
@@ -1609,8 +1641,8 @@ function SettingsTab() {
               <input
                 type="number"
                 className="w-full p-2 border rounded-lg"
-                value={settings.sessionTimeout}
-                onChange={(e) => setSettings({...settings, sessionTimeout: parseInt(e.target.value)})}
+                value={systemSettings.sessionTimeout || 24}
+                onChange={(e) => setSystemSettings({...systemSettings, sessionTimeout: parseInt(e.target.value)})}
               />
             </div>
           </div>
@@ -1619,8 +1651,8 @@ function SettingsTab() {
             <input
               type="checkbox"
               id="enableContentProtection"
-              checked={settings.enableContentProtection}
-              onChange={(e) => setSettings({...settings, enableContentProtection: e.target.checked})}
+              checked={systemSettings.enableContentProtection}
+              onChange={(e) => setSystemSettings({...systemSettings, enableContentProtection: e.target.checked})}
             />
             <Label htmlFor="enableContentProtection">Ativar Proteção de Conteúdo</Label>
           </div>
