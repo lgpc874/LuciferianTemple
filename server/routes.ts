@@ -324,7 +324,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const content = chapterContents[i].trim();
           if (content.length > 50) { // Apenas capítulos com conteúdo substancial
             const formattedContent = ContentFormatter.formatContent(content);
-            const chapterTitle = ContentFormatter.generateChapterTitle(content, i + 1, category);
+            const chapterTitle = ContentFormatter.generateChapterTitle(content, i + 1, 'Luciferiano');
             const readingTime = ContentFormatter.estimateReadingTime(formattedContent);
             
             await grimoireStore.addChapter({
@@ -1182,6 +1182,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
         error: "Falha ao gerar grimório",
         details: error instanceof Error ? error.message : "Erro desconhecido"
       });
+    }
+  });
+
+  // Settings management
+  let systemSettings = {
+    siteName: 'Templo do Abismo',
+    siteDescription: 'Portal de ensinamentos luciferianos e conhecimento esotérico',
+    enableRegistration: true,
+    enableContentProtection: true,
+    enableScreenshotProtection: true,
+    maintenanceMode: false,
+    emailNotifications: true,
+    autoBackup: true,
+    sessionTimeout: 30
+  };
+
+  app.get("/api/admin/settings", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      res.json(systemSettings);
+    } catch (error) {
+      console.error("Error fetching settings:", error);
+      res.status(500).json({ error: "Erro ao buscar configurações" });
+    }
+  });
+
+  app.post("/api/admin/settings", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const newSettings = req.body;
+      systemSettings = { ...systemSettings, ...newSettings };
+      
+      res.json({
+        success: true,
+        settings: systemSettings,
+        message: "Configurações salvas com sucesso"
+      });
+    } catch (error) {
+      console.error("Error saving settings:", error);
+      res.status(500).json({ error: "Erro ao salvar configurações" });
     }
   });
 

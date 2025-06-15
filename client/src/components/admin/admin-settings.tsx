@@ -1,10 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/hooks/use-toast';
+import { apiRequest } from '@/lib/queryClient';
 import { 
   Settings, 
   Shield, 
@@ -12,11 +15,15 @@ import {
   Bell,
   Mail,
   Save,
-  RotateCcw
+  RotateCcw,
+  Loader2
 } from 'lucide-react';
 
 export default function AdminSettings() {
-  const [settings, setSettings] = useState({
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  
+  const defaultSettings = {
     siteName: 'Templo do Abismo',
     siteDescription: 'Portal de ensinamentos luciferianos e conhecimento esotérico',
     enableRegistration: true,
@@ -26,27 +33,63 @@ export default function AdminSettings() {
     emailNotifications: true,
     autoBackup: true,
     sessionTimeout: 30
+  };
+
+  const [settings, setSettings] = useState(defaultSettings);
+
+  // Fetch current settings
+  const { data: currentSettings, isLoading } = useQuery({
+    queryKey: ['/api/admin/settings'],
+    queryFn: async () => {
+      const response = await apiRequest('/api/admin/settings');
+      return response.json();
+    }
+  });
+
+  // Save settings mutation
+  const saveSettingsMutation = useMutation({
+    mutationFn: async (settingsData: typeof settings) => {
+      const response = await apiRequest('/api/admin/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(settingsData)
+      });
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/settings'] });
+      toast({
+        title: "Configurações salvas",
+        description: "Todas as configurações foram salvas com sucesso."
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Erro ao salvar",
+        description: "Não foi possível salvar as configurações. Tente novamente.",
+        variant: "destructive"
+      });
+    }
   });
 
   const handleSave = () => {
-    // Save settings logic here
-    console.log('Saving settings:', settings);
+    saveSettingsMutation.mutate(settings);
   };
 
   const handleReset = () => {
-    // Reset to defaults
-    setSettings({
-      siteName: 'Templo do Abismo',
-      siteDescription: 'Portal de ensinamentos luciferianos e conhecimento esotérico',
-      enableRegistration: true,
-      enableContentProtection: true,
-      enableScreenshotProtection: true,
-      maintenanceMode: false,
-      emailNotifications: true,
-      autoBackup: true,
-      sessionTimeout: 30
+    setSettings(defaultSettings);
+    toast({
+      title: "Configurações restauradas",
+      description: "Todas as configurações foram restauradas aos valores padrão."
     });
   };
+
+  // Load settings when component mounts
+  useEffect(() => {
+    if (currentSettings) {
+      setSettings({ ...defaultSettings, ...currentSettings });
+    }
+  }, [currentSettings]);
 
   return (
     <div className="space-y-6">
@@ -222,12 +265,17 @@ export default function AdminSettings() {
       <div className="flex gap-2">
         <Button 
           onClick={handleSave}
+          disabled={saveSettingsMutation.isPending || isLoading}
           className="bg-golden-amber hover:bg-golden-amber/90 text-background"
         >
-          <Save className="w-4 h-4 mr-2" />
-          Salvar Configurações
+          {saveSettingsMutation.isPending ? (
+            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+          ) : (
+            <Save className="w-4 h-4 mr-2" />
+          )}
+          {saveSettingsMutation.isPending ? 'Salvando...' : 'Salvar Configurações'}
         </Button>
-        <Button variant="outline" onClick={handleReset}>
+        <Button variant="outline" onClick={handleReset} disabled={saveSettingsMutation.isPending}>
           <RotateCcw className="w-4 h-4 mr-2" />
           Restaurar Padrões
         </Button>
