@@ -17,9 +17,7 @@ export const grimoires = pgTable("grimoires", {
   title: text("title").notNull(),
   description: text("description").notNull(),
   coverImageUrl: text("cover_image_url").notNull(),
-  category: text("category").notNull(),
-  sectionId: integer("section_id").references(() => librarySections.id),
-  difficultyLevel: integer("difficulty_level").notNull(),
+  sectionId: integer("section_id").references(() => librarySections.id).notNull(),
   unlockOrder: integer("unlock_order").notNull(),
   isActive: boolean("is_active").default(true).notNull(),
   price: text("price"), // null = gratuito, valor = preço em R$
@@ -82,17 +80,9 @@ export const registerSchema = insertUserSchema.extend({
 });
 
 // Schemas para grimórios
-export const insertGrimoireSchema = createInsertSchema(grimoires).pick({
-  title: true,
-  description: true,
-  coverImageUrl: true,
-  category: true,
-  sectionId: true,
-  difficultyLevel: true,
-  unlockOrder: true,
-  isActive: true,
-  price: true,
-  isPaid: true,
+export const insertGrimoireSchema = createInsertSchema(grimoires).omit({
+  id: true,
+  createdAt: true
 });
 
 export const insertChapterSchema = createInsertSchema(chapters).pick({

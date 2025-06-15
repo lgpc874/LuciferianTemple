@@ -235,19 +235,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Admin routes for categories
-  app.get("/api/admin/categories", authenticateToken, requireAdmin, async (req, res) => {
+  // Admin routes for sections
+  app.get("/api/admin/sections", authenticateToken, requireAdmin, async (req, res) => {
     try {
-      const grimoires = grimoireStore.getGrimoires();
-      const categories = Array.from(new Set(grimoires.map(g => g.category)));
-      res.json(categories);
+      // Retorna as seções da biblioteca configuradas
+      const sections = [
+        { id: 1, name: 'Porta das Sombras', slug: 'porta-das-sombras' },
+        { id: 2, name: 'Vestíbulo da Chama', slug: 'vestibulo-da-chama' },
+        { id: 3, name: 'Torre dos Selos', slug: 'torre-dos-selos' },
+        { id: 4, name: 'Sanctum Profundum', slug: 'sanctum-profundum' },
+        { id: 5, name: 'Textos Filosóficos', slug: 'textos-filosoficos' },
+        { id: 6, name: 'Meditações Práticas', slug: 'meditacoes-praticas' }
+      ];
+      res.json(sections);
     } catch (error) {
-      console.error("Error fetching categories:", error);
-      res.status(500).json({ error: "Erro ao buscar categorias" });
+      console.error("Error fetching sections:", error);
+      res.status(500).json({ error: "Erro ao buscar seções" });
     }
   });
 
-  app.post("/api/admin/categories", authenticateToken, requireAdmin, async (req, res) => {
+  app.post("/api/admin/sections", authenticateToken, requireAdmin, async (req, res) => {
     try {
       const { name } = req.body;
       // Categories are created implicitly when grimoires are created
@@ -1115,8 +1122,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const savedGrimoire = await grimoireStore.addGrimoire({
         title: grimoireData.title,
         description: grimoireData.description,
-        category: grimoireData.category,
-        difficultyLevel: grimoireData.difficultyLevel,
+        sectionId: 1, // Padrão para primeira seção
         unlockOrder: grimoireStore.getGrimoires().length + 1,
         isActive: true,
         price: null,
