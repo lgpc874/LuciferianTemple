@@ -87,31 +87,11 @@ export default function Biblioteca() {
     enabled: isAuthenticated,
   });
 
-  // Buscar grimórios desbloqueados para a seção ativa
-  const { data: unlockedData } = useQuery({
-    queryKey: ['/api/unlocked-grimoires', activeSection],
-    enabled: isAuthenticated && !!activeSection,
-  });
-
-  const unlockedGrimoires = (unlockedData as any)?.unlockedGrimoires || [];
-
   // Função para determinar o estado do grimório e botão
   const getGrimoireState = (grimoire: any) => {
-    const isUnlocked = unlockedGrimoires.includes(grimoire.id);
-    const progress = userProgress.find((p: any) => p.grimoire_id === grimoire.id);
+    const progress = (userProgress as any)?.find((p: any) => p.grimoire_id === grimoire.id);
     const progressPercentage = progress ? parseFloat(progress.progress_percentage || '0') : 0;
     
-    // Verificar se está bloqueado
-    if (!isUnlocked) {
-      return { 
-        text: 'Bloqueado', 
-        action: 'locked', 
-        isLocked: true,
-        progress: 0,
-        icon: Lock
-      };
-    }
-
     // Verificar se foi completado (>=80%)
     if (progressPercentage >= 80) {
       return { 
@@ -154,10 +134,6 @@ export default function Biblioteca() {
       case 'completed':
         // Navegar para o leitor do grimório
         setLocation(`/grimoire/${grimoire.id}`);
-        break;
-      case 'locked':
-        // Grimório bloqueado - não fazer nada ou mostrar mensagem
-        console.log(`Grimório bloqueado: ${grimoire.title}`);
         break;
       default:
         console.log(`Ação não reconhecida: ${grimoireState.action}`);
