@@ -55,11 +55,14 @@ export default function Biblioteca() {
 
   // Função para lidar com ações do grimório
   const handleGrimoireAction = (grimoire: any) => {
+    console.log('Clique no grimório:', grimoire);
     const buttonState = getButtonState(grimoire);
+    console.log('Estado do botão:', buttonState);
     
     switch (buttonState.action) {
       case 'read':
       case 'continue':
+        console.log(`Navegando para: /grimoire/${grimoire.id}`);
         // Navegar para o leitor do grimório
         setLocation(`/grimoire/${grimoire.id}`);
         break;
