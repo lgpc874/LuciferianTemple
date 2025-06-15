@@ -17,10 +17,12 @@ import {
 } from "lucide-react";
 import type { Grimoire, Chapter } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export default function GrimoireReader() {
   const [, params] = useRoute("/grimoire/:id");
   const [, setLocation] = useLocation();
+  const isMobile = useIsMobile();
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [paginatedContent, setPaginatedContent] = useState<string[]>([]);
@@ -245,7 +247,7 @@ export default function GrimoireReader() {
             </Button>
             
             <div className="text-center flex-1 mx-4">
-              <h1 className="text-[10px] sm:text-xs md:text-lg font-cinzel text-golden-amber truncate">
+              <h1 className={`font-cinzel text-golden-amber truncate ${isMobile ? 'text-[8px]' : 'text-lg'}`}>
                 {grimoireLoading ? 'Carregando...' : grimoire?.title || 'Grimório'}
               </h1>
               <div className="flex items-center justify-center space-x-4 text-xs text-ritualistic-beige/60 mt-1">
