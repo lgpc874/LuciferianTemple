@@ -1,112 +1,88 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_ANON_KEY
+);
 
 async function cleanGrimoireFormatting() {
-  console.log('🧹 Limpando formatação dos grimórios - removendo símbolos e aplicando tipografia profissional...');
-  
   try {
-    // Buscar todos os capítulos dos grimórios
-    const { data: chapters, error: fetchError } = await supabase
+    console.log('🧹 Removendo títulos mystical das citações de abertura...');
+
+    // Buscar todos os capítulos dos grimórios existentes (exceto o ID 30 que já está correto)
+    const { data: chapters, error } = await supabase
       .from('chapters')
       .select('*')
+      .neq('grimoire_id', 30) // Excluir o último criado
       .order('grimoire_id', { ascending: true })
       .order('chapter_number', { ascending: true });
-    
-    if (fetchError) {
-      console.error('❌ Erro ao buscar capítulos:', fetchError);
+
+    if (error) {
+      console.error('Erro ao buscar capítulos:', error);
       return;
     }
-    
-    console.log(`📖 Encontrados ${chapters.length} capítulos para limpar`);
-    
+
+    console.log(`📚 Encontrados ${chapters.length} capítulos para limpar`);
+
+    // Mapeamento de títulos místicos que devem ser removidos
+    const mysticalTitles = [
+      'Invocação do Primeiro Fogo',
+      'Selo do Véu Rachado',
+      'Despertar da Chama Oculta',
+      'Portal das Profundezas Ocultas',
+      'Incêndio da Chama Natural',
+      'Abertura do Tribunal Silencioso',
+      'Chamado Ancestral',
+      'Herança Roubada', 
+      'Fogo Interior',
+      'Sombra Sagrada',
+      'Reino Dentro de Ti'
+    ];
+
+    let updatedCount = 0;
+
+    // Limpar formatação de cada capítulo
     for (const chapter of chapters) {
-      console.log(`\n🔄 Processando: ${chapter.title} (ID: ${chapter.id})`);
-      
-      let cleanContent = chapter.content;
-      
-      // Remover divs com ornamentos específicos
-      cleanContent = cleanContent.replace(/<div class="mystical-ornament">.*?<\/div>/g, '');
-      
-      // Remover spans e divs que contêm apenas símbolos/emojis
-      cleanContent = cleanContent.replace(/<div class="mystical-ornament">🜏<\/div>/g, '');
-      cleanContent = cleanContent.replace(/<div class="mystical-ornament">🕯️<\/div>/g, '');
-      cleanContent = cleanContent.replace(/<div class="mystical-ornament">⭐<\/div>/g, '');
-      cleanContent = cleanContent.replace(/<div class="mystical-ornament">🔥<\/div>/g, '');
-      cleanContent = cleanContent.replace(/<div class="mystical-ornament">✨<\/div>/g, '');
-      cleanContent = cleanContent.replace(/<div class="mystical-ornament">👁️<\/div>/g, '');
-      cleanContent = cleanContent.replace(/<div class="mystical-ornament">🔱<\/div>/g, '');
-      cleanContent = cleanContent.replace(/<div class="mystical-ornament">🎭<\/div>/g, '');
-      cleanContent = cleanContent.replace(/<div class="mystical-ornament">🌟<\/div>/g, '');
-      cleanContent = cleanContent.replace(/<div class="mystical-ornament">📘<\/div>/g, '');
-      
-      // Remover outros padrões de ornamentos
-      cleanContent = cleanContent.replace(/🜏/g, '');
-      cleanContent = cleanContent.replace(/🕯️/g, '');
-      cleanContent = cleanContent.replace(/⭐/g, '');
-      cleanContent = cleanContent.replace(/🔥/g, '');
-      cleanContent = cleanContent.replace(/✨/g, '');
-      cleanContent = cleanContent.replace(/👁️/g, '');
-      cleanContent = cleanContent.replace(/🔱/g, '');
-      cleanContent = cleanContent.replace(/🎭/g, '');
-      cleanContent = cleanContent.replace(/🌟/g, '');
-      cleanContent = cleanContent.replace(/📘/g, '');
-      cleanContent = cleanContent.replace(/📗/g, '');
-      
-      // Remover divs vazias resultantes
-      cleanContent = cleanContent.replace(/<div class="mystical-ornament"><\/div>/g, '');
-      cleanContent = cleanContent.replace(/<div class="mystical-ornament">\s*<\/div>/g, '');
-      
-      // Melhorar formatação de citações mantendo estrutura
-      cleanContent = cleanContent.replace(
-        /<div class="mystical-quote">/g, 
-        '<blockquote class="mystical-quote">'
-      );
-      cleanContent = cleanContent.replace(/<\/div>(\s*<\/div>)?$/g, '</blockquote>');
-      
-      // Limpar espaços extras e quebras de linha desnecessárias
-      cleanContent = cleanContent.replace(/\n\s*\n\s*\n/g, '\n\n');
-      cleanContent = cleanContent.replace(/>\s+</g, '><');
-      
-      // Garantir que parágrafos importantes tenham classes apropriadas
-      if (cleanContent.includes('class="opening-invocation"')) {
-        console.log('  ✓ Mantendo formatação de invocação de abertura');
+      let cleanedContent = chapter.content;
+      let wasModified = false;
+
+      // Remover qualquer título dentro de opening-invocation que corresponda aos padrões místicos
+      mysticalTitles.forEach(title => {
+        const regex = new RegExp(`<h3[^>]*>${title}<\/h3>\\s*`, 'g');
+        if (cleanedContent.includes(title)) {
+          cleanedContent = cleanedContent.replace(regex, '');
+          wasModified = true;
+        }
+      });
+
+      // Remover qualquer h3 genérico dentro de opening-invocation
+      const h3Pattern = /<div class="opening-invocation">[^<]*<h3[^>]*>[^<]*<\/h3>\s*/g;
+      if (h3Pattern.test(cleanedContent)) {
+        cleanedContent = cleanedContent.replace(h3Pattern, '<div class="opening-invocation">');
+        wasModified = true;
       }
-      
-      if (cleanContent.includes('class="mystical-emphasis"')) {
-        console.log('  ✓ Mantendo formatação de ênfases místicas');
+
+      // Atualizar no banco se houve modificação
+      if (wasModified) {
+        const { error: updateError } = await supabase
+          .from('chapters')
+          .update({ content: cleanedContent })
+          .eq('id', chapter.id);
+
+        if (updateError) {
+          console.error(`Erro ao atualizar capítulo ${chapter.title}:`, updateError);
+        } else {
+          console.log(`✅ Capítulo "${chapter.title}" limpo (Grimório ID: ${chapter.grimoire_id})`);
+          updatedCount++;
+        }
       }
-      
-      if (cleanContent.includes('class="revelation-text"')) {
-        console.log('  ✓ Mantendo formatação de texto revelação');
-      }
-      
-      // Atualizar o capítulo no banco
-      const { error: updateError } = await supabase
-        .from('chapters')
-        .update({ content: cleanContent })
-        .eq('id', chapter.id);
-      
-      if (updateError) {
-        console.error(`❌ Erro ao atualizar capítulo ${chapter.id}:`, updateError);
-      } else {
-        console.log(`  ✅ Capítulo ${chapter.id} atualizado`);
-      }
-      
-      // Pequena pausa para não sobrecarregar o servidor
-      await new Promise(resolve => setTimeout(resolve, 100));
     }
-    
-    console.log('\n🎉 Formatação limpa aplicada a todos os grimórios!');
-    console.log('📋 Alterações realizadas:');
-    console.log('  • Removidos todos os símbolos e emojis decorativos');
-    console.log('  • Mantida formatação tipográfica profissional');
-    console.log('  • Preservadas classes CSS para citações e ênfases');
-    console.log('  • Aplicada estrutura limpa e legível');
-    
+
+    console.log(`🔥 Limpeza concluída! ${updatedCount} capítulos atualizados para ter apenas nomes dos capítulos.`);
+
   } catch (error) {
-    console.error('❌ Erro geral:', error);
+    console.error('Erro durante limpeza:', error);
   }
 }
 
-cleanGrimoireFormatting().catch(console.error);
+cleanGrimoireFormatting();

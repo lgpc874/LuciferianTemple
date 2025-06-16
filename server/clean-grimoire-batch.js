@@ -1,62 +1,77 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_ANON_KEY
+);
 
 async function cleanGrimorieBatch() {
-  console.log('🧹 Limpando formatação dos grimórios em lotes...');
-  
   try {
-    // Buscar apenas os capítulos dos 3 grimórios principais (IDs 26, 27, 29)
-    const { data: chapters, error: fetchError } = await supabase
+    console.log('🧹 Limpando todos os títulos das citações de abertura...');
+
+    // Buscar todos os capítulos dos grimórios existentes (exceto o ID 30)
+    const { data: chapters, error } = await supabase
       .from('chapters')
       .select('*')
-      .in('grimoire_id', [26, 27, 29])
+      .neq('grimoire_id', 30) // Excluir o último criado que já está correto
       .order('grimoire_id', { ascending: true })
       .order('chapter_number', { ascending: true });
-    
-    if (fetchError) {
-      console.error('❌ Erro ao buscar capítulos:', fetchError);
+
+    if (error) {
+      console.error('Erro ao buscar capítulos:', error);
       return;
     }
-    
-    console.log(`📖 Encontrados ${chapters.length} capítulos para limpar`);
-    
-    const cleaningFunctions = [
-      (content) => content.replace(/<div class="mystical-ornament">.*?<\/div>/g, ''),
-      (content) => content.replace(/🜏|🕯️|⭐|🔥|✨|👁️|🔱|🎭|🌟|📘|📗/g, ''),
-      (content) => content.replace(/<div class="mystical-ornament">\s*<\/div>/g, ''),
-      (content) => content.replace(/\n\s*\n\s*\n/g, '\n\n'),
-      (content) => content.replace(/>\s+</g, '><')
-    ];
-    
+
+    console.log(`📚 Processando ${chapters.length} capítulos...`);
+
+    let updatedCount = 0;
+
+    // Limpar formatação de cada capítulo
     for (const chapter of chapters) {
-      console.log(`🔄 ${chapter.title}`);
-      
-      let cleanContent = chapter.content;
-      
-      // Aplicar todas as funções de limpeza
-      for (const cleanFn of cleaningFunctions) {
-        cleanContent = cleanFn(cleanContent);
+      let cleanedContent = chapter.content;
+      let wasModified = false;
+
+      // Padrão mais amplo para remover qualquer h3 dentro de opening-invocation
+      if (cleanedContent.includes('<div class="opening-invocation">') && cleanedContent.includes('<h3')) {
+        // Extrair e limpar a seção opening-invocation
+        const openingMatch = cleanedContent.match(/<div class="opening-invocation">(.*?)<\/div>/s);
+        if (openingMatch) {
+          let openingContent = openingMatch[1];
+          // Remover todos os h3 dentro desta seção
+          const originalOpening = openingContent;
+          openingContent = openingContent.replace(/<h3[^>]*>.*?<\/h3>\s*/gs, '');
+          
+          if (originalOpening !== openingContent) {
+            cleanedContent = cleanedContent.replace(
+              /<div class="opening-invocation">(.*?)<\/div>/s,
+              `<div class="opening-invocation">${openingContent}</div>`
+            );
+            wasModified = true;
+          }
+        }
       }
-      
-      // Atualizar o capítulo no banco
-      const { error: updateError } = await supabase
-        .from('chapters')
-        .update({ content: cleanContent })
-        .eq('id', chapter.id);
-      
-      if (updateError) {
-        console.error(`❌ Erro ao atualizar capítulo ${chapter.id}:`, updateError);
-      } else {
-        console.log(`  ✅ Atualizado`);
+
+      // Atualizar no banco se houve modificação
+      if (wasModified) {
+        const { error: updateError } = await supabase
+          .from('chapters')
+          .update({ content: cleanedContent })
+          .eq('id', chapter.id);
+
+        if (updateError) {
+          console.error(`Erro ao atualizar capítulo ${chapter.title}:`, updateError);
+        } else {
+          console.log(`✅ Capítulo "${chapter.title}" limpo (Grimório: ${chapter.grimoire_id})`);
+          updatedCount++;
+        }
       }
     }
-    
-    console.log('\n🎉 Formatação limpa aplicada aos grimórios principais!');
-    
+
+    console.log(`🔥 Limpeza concluída! ${updatedCount} capítulos atualizados.`);
+
   } catch (error) {
-    console.error('❌ Erro geral:', error);
+    console.error('Erro durante limpeza:', error);
   }
 }
 
-cleanGrimorieBatch().catch(console.error);
+cleanGrimorieBatch();
