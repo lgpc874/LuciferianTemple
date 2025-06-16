@@ -853,9 +853,18 @@ input, textarea {
 .prose-grimoire h4,
 .prose-grimoire h5,
 .prose-grimoire h6 {
-  color: #d4af37 !important;
   font-family: 'Cinzel', serif !important;
   margin: 1.5rem 0 1rem 0 !important;
+}
+
+/* Apenas títulos sem cor inline recebem cor padrão */
+.prose-grimoire h1:not([style*="color"]),
+.prose-grimoire h2:not([style*="color"]),
+.prose-grimoire h3:not([style*="color"]),
+.prose-grimoire h4:not([style*="color"]),
+.prose-grimoire h5:not([style*="color"]),
+.prose-grimoire h6:not([style*="color"]) {
+  color: #d4af37 !important;
 }
 
 .prose-grimoire strong {
@@ -1111,9 +1120,13 @@ input, textarea {
 
 .grimoire-content .ritual-warning h4,
 .grimoire-content .safety-warning h4 {
-  color: #d4af37 !important;
   font-size: 1.2rem !important;
   margin-bottom: 1rem !important;
+}
+
+.grimoire-content .ritual-warning h4:not([style*="color"]),
+.grimoire-content .safety-warning h4:not([style*="color"]) {
+  color: #d4af37 !important;
 }
 
 /* Seções simples */
@@ -1203,10 +1216,19 @@ input, textarea {
 .grimoire-content h4,
 .grimoire-content h5,
 .grimoire-content h6 {
-  color: #d4af37 !important;
   font-family: 'Cinzel', serif !important;
   margin: 1rem 0 0.6rem 0 !important;
   line-height: 1.4 !important;
+}
+
+/* Apenas títulos sem cor inline recebem cor padrão */
+.grimoire-content h1:not([style*="color"]),
+.grimoire-content h2:not([style*="color"]),
+.grimoire-content h3:not([style*="color"]),
+.grimoire-content h4:not([style*="color"]),
+.grimoire-content h5:not([style*="color"]),
+.grimoire-content h6:not([style*="color"]) {
+  color: #d4af37 !important;
 }
 
 /* Normalização completa de espaçamento - todos os elementos centralizados */
