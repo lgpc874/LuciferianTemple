@@ -1760,9 +1760,11 @@ input, textarea {
   }
 }
 
-/* Estilos personalizados para criação de grimórios - Com alta prioridade */
+/* Estilos personalizados para criação de grimórios - Ultra alta prioridade */
 
-/* Corpo geral do grimório */
+/* Corpo geral do grimório - SmartGrimoireReader específico */
+.smart-grimoire-reader .grimoire-content .grimorio-conteudo,
+.smart-grimoire-reader .grimorio-conteudo,
 .grimoire-content .grimorio-conteudo,
 .grimorio-conteudo {
   font-family: 'EB Garamond', serif !important;
@@ -1773,7 +1775,9 @@ input, textarea {
   padding: 2rem 1rem !important;
 }
 
-/* Título do grimório */
+/* Título do grimório - SmartGrimoireReader específico */
+.smart-grimoire-reader .grimoire-content .grimorio-titulo,
+.smart-grimoire-reader .grimorio-titulo,
 .grimoire-content .grimorio-titulo,
 .grimorio-titulo {
   font-family: 'Cinzel Decorative', serif !important;
@@ -1783,7 +1787,9 @@ input, textarea {
   margin-bottom: 0.5rem !important;
 }
 
-/* Subtítulo / Volume */
+/* Subtítulo / Volume - SmartGrimoireReader específico */
+.smart-grimoire-reader .grimoire-content .grimorio-subtitulo,
+.smart-grimoire-reader .grimorio-subtitulo,
 .grimoire-content .grimorio-subtitulo,
 .grimorio-subtitulo {
   font-style: italic !important;
@@ -1792,7 +1798,9 @@ input, textarea {
   margin-bottom: 2rem !important;
 }
 
-/* Citação destacada */
+/* Citação destacada - SmartGrimoireReader específico */
+.smart-grimoire-reader .grimoire-content .grimorio-citacao,
+.smart-grimoire-reader .grimorio-citacao,
 .grimoire-content .grimorio-citacao,
 .grimorio-citacao {
   font-style: italic !important;
@@ -1803,7 +1811,9 @@ input, textarea {
   margin: 2rem 0 !important;
 }
 
-/* Fonte da citação */
+/* Fonte da citação - SmartGrimoireReader específico */
+.smart-grimoire-reader .grimoire-content .grimorio-citacao small,
+.smart-grimoire-reader .grimorio-citacao small,
 .grimoire-content .grimorio-citacao small,
 .grimorio-citacao small {
   display: block !important;
@@ -1813,7 +1823,9 @@ input, textarea {
   color: #999999 !important;
 }
 
-/* Título de capítulo */
+/* Título de capítulo - SmartGrimoireReader específico */
+.smart-grimoire-reader .grimoire-content .capitulo-titulo,
+.smart-grimoire-reader .capitulo-titulo,
 .grimoire-content .capitulo-titulo,
 .capitulo-titulo {
   font-family: 'Cinzel Decorative', serif !important;
@@ -1824,7 +1836,9 @@ input, textarea {
   text-align: center !important;
 }
 
-/* Parágrafo com indentação ritualística */
+/* Parágrafo com indentação ritualística - SmartGrimoireReader específico */
+.smart-grimoire-reader .grimoire-content .grimorio-conteudo p,
+.smart-grimoire-reader .grimorio-conteudo p,
 .grimoire-content .grimorio-conteudo p,
 .grimorio-conteudo p {
   text-indent: 3rem !important;
@@ -1832,21 +1846,27 @@ input, textarea {
   color: #CCCCCC !important;
 }
 
-/* Destaques importantes */
+/* Destaques importantes - SmartGrimoireReader específico */
+.smart-grimoire-reader .grimoire-content .destaque,
+.smart-grimoire-reader .destaque,
 .grimoire-content .destaque,
 .destaque {
   color: #D6342C !important;
   font-weight: bold !important;
 }
 
-/* Separadores ritualísticos */
+/* Separadores ritualísticos - SmartGrimoireReader específico */
+.smart-grimoire-reader .grimoire-content .separador,
+.smart-grimoire-reader .separador,
 .grimoire-content .separador,
 .separador {
   border-top: 1px solid #D6342C !important;
   margin: 3rem 0 !important;
 }
 
-/* Lista específica para grimórios */
+/* Lista específica para grimórios - SmartGrimoireReader específico */
+.smart-grimoire-reader .grimoire-content .grimorio-lista,
+.smart-grimoire-reader .grimorio-lista,
 .grimoire-content .grimorio-lista,
 .grimorio-lista {
   color: #D6342C !important;
@@ -1855,8 +1875,40 @@ input, textarea {
   padding-left: 2rem !important;
 }
 
+.smart-grimoire-reader .grimoire-content .grimorio-lista li,
+.smart-grimoire-reader .grimorio-lista li,
 .grimoire-content .grimorio-lista li,
 .grimorio-lista li {
   color: #D6342C !important;
   margin-bottom: 0.5rem !important;
+}
+
+/* Estilos específicos para H2 e H3 no Smart Reader */
+.smart-grimoire-reader .grimoire-content h2.grimorio-titulo,
+.smart-grimoire-reader h2.grimorio-titulo {
+  font-family: 'Cinzel Decorative', serif !important;
+  font-size: 1.7rem !important;
+  color: #D6342C !important;
+  text-align: center !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.smart-grimoire-reader .grimoire-content p.grimorio-subtitulo,
+.smart-grimoire-reader p.grimorio-subtitulo {
+  font-style: italic !important;
+  color: #D6342C !important;
+  text-align: center !important;
+  margin-bottom: 2rem !important;
+}
+
+.smart-grimoire-reader .grimoire-content blockquote.grimorio-citacao,
+.smart-grimoire-reader blockquote.grimorio-citacao {
+  font-style: italic !important;
+  font-size: 1.1rem !important;
+  color: #CCCCCC !important;
+  border-left: 3px solid #D6342C !important;
+  padding-left: 1rem !important;
+  margin: 2rem 0 !important;
+  background: none !important;
+  border-radius: 0 !important;
 }
