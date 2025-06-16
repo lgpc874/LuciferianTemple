@@ -24,6 +24,7 @@ export default function GrimoireReader() {
   const [paginatedContent, setPaginatedContent] = useState<string[]>([]);
   const [readingTime, setReadingTime] = useState(0);
   const [saveStatus, setSaveStatus] = useState<'saving' | 'saved' | 'error' | null>(null);
+  const [currentBackgroundColor, setCurrentBackgroundColor] = useState<string | null>(null);
 
   const grimoireId = params?.id ? parseInt(params.id) : null;
 
@@ -62,6 +63,59 @@ export default function GrimoireReader() {
       setTimeout(() => setSaveStatus(null), 3000);
     },
   });
+
+  // Função para extrair cor de fundo de uma seção HTML
+  const extractBackgroundColor = (content: string): string | null => {
+    // Procurar por elementos com background-color definido
+    const bgColorMatch = content.match(/background-color:\s*([^;"\)]+)/i);
+    if (bgColorMatch) {
+      return bgColorMatch[1].trim();
+    }
+    
+    // Procurar por data attributes para cor de fundo
+    const dataColorMatch = content.match(/data-bg-color="([^"]+)"/i);
+    if (dataColorMatch) {
+      return dataColorMatch[1];
+    }
+    
+    // Procurar por classes especiais de fundo
+    const sectionClassMatch = content.match(/class="[^"]*section-([^"\s]+)/i);
+    if (sectionClassMatch) {
+      const sectionType = sectionClassMatch[1];
+      const bgColors: Record<string, string> = {
+        'fire': 'linear-gradient(135deg, #8B0000 0%, #2D0B00 100%)',
+        'shadow': 'linear-gradient(135deg, #2D0B2D 0%, #0B0B0B 100%)',
+        'abyss': 'linear-gradient(135deg, #000000 0%, #1A0000 100%)',
+        'crimson': 'linear-gradient(135deg, #8B0000 0%, #000000 100%)',
+        'purple': 'linear-gradient(135deg, #4A0E4E 0%, #2D0B2D 100%)',
+        'dark': 'linear-gradient(135deg, #1a1a1a 0%, #000000 100%)',
+        'emerald': 'linear-gradient(135deg, #0D4F3C 0%, #001F1A 100%)',
+        'amber': 'linear-gradient(135deg, #B45309 0%, #451A03 100%)',
+        'blue': 'linear-gradient(135deg, #1E3A8A 0%, #0F172A 100%)'
+      };
+      return bgColors[sectionType] || null;
+    }
+    
+    // Procurar por marcadores de background no texto
+    const bgMarkerMatch = content.match(/\[bg:(fire|shadow|abyss|crimson|purple|dark|emerald|amber|blue)\]/i);
+    if (bgMarkerMatch) {
+      const bgType = bgMarkerMatch[1].toLowerCase();
+      const bgColors: Record<string, string> = {
+        'fire': 'linear-gradient(135deg, #8B0000 0%, #2D0B00 100%)',
+        'shadow': 'linear-gradient(135deg, #2D0B2D 0%, #0B0B0B 100%)',
+        'abyss': 'linear-gradient(135deg, #000000 0%, #1A0000 100%)',
+        'crimson': 'linear-gradient(135deg, #8B0000 0%, #000000 100%)',
+        'purple': 'linear-gradient(135deg, #4A0E4E 0%, #2D0B2D 100%)',
+        'dark': 'linear-gradient(135deg, #1a1a1a 0%, #000000 100%)',
+        'emerald': 'linear-gradient(135deg, #0D4F3C 0%, #001F1A 100%)',
+        'amber': 'linear-gradient(135deg, #B45309 0%, #451A03 100%)',
+        'blue': 'linear-gradient(135deg, #1E3A8A 0%, #0F172A 100%)'
+      };
+      return bgColors[bgType] || null;
+    }
+    
+    return null;
+  };
 
   // Função para paginar o conteúdo do grimório
   const paginateContent = (content: string) => {
@@ -162,10 +216,16 @@ export default function GrimoireReader() {
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [currentPage, totalPages]);
 
-  // Scroll para o topo ao trocar páginas
+  // Scroll para o topo ao trocar páginas e detectar cor de fundo
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [currentPage]);
+    
+    // Detectar cor de fundo da página atual
+    if (paginatedContent[currentPage - 1]) {
+      const backgroundColor = extractBackgroundColor(paginatedContent[currentPage - 1]);
+      setCurrentBackgroundColor(backgroundColor);
+    }
+  }, [currentPage, paginatedContent]);
 
   const nextPage = () => {
     if (currentPage < totalPages) {
@@ -206,10 +266,21 @@ export default function GrimoireReader() {
 
   const currentContent = paginatedContent[currentPage - 1] || '';
 
+  // Determinar o fundo dinâmico
+  const dynamicBackground = currentBackgroundColor 
+    ? { background: currentBackgroundColor }
+    : {};
+
   return (
     <PageTransition>
       <ContentProtection>
-        <div className="min-h-screen bg-gradient-to-br from-red-950 via-black to-red-900 relative overflow-hidden">
+        <div 
+          className="min-h-screen transition-all duration-1000 ease-in-out relative overflow-hidden"
+          style={{
+            background: currentBackgroundColor || 'linear-gradient(135deg, #8B0000 0%, #000000 50%, #8B0000 100%)',
+            ...dynamicBackground
+          }}
+        >
           {/* Header discreto */}
           <div className="absolute top-4 left-4 z-10">
             <Button

@@ -1438,6 +1438,43 @@ input, textarea {
   margin-top: 0;
 }
 
+/* Classes para fundos personalizados por seção */
+.grimoire-reader-fire {
+  background: linear-gradient(135deg, #8B0000 0%, #2D0B00 100%) !important;
+}
+
+.grimoire-reader-shadow {
+  background: linear-gradient(135deg, #2D0B2D 0%, #0B0B0B 100%) !important;
+}
+
+.grimoire-reader-abyss {
+  background: linear-gradient(135deg, #000000 0%, #1A0000 100%) !important;
+}
+
+.grimoire-reader-crimson {
+  background: linear-gradient(135deg, #8B0000 0%, #000000 100%) !important;
+}
+
+.grimoire-reader-purple {
+  background: linear-gradient(135deg, #4A0E4E 0%, #2D0B2D 100%) !important;
+}
+
+.grimoire-reader-dark {
+  background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%) !important;
+}
+
+.grimoire-reader-emerald {
+  background: linear-gradient(135deg, #0D4F3C 0%, #001F1A 100%) !important;
+}
+
+.grimoire-reader-amber {
+  background: linear-gradient(135deg, #B45309 0%, #451A03 100%) !important;
+}
+
+.grimoire-reader-blue {
+  background: linear-gradient(135deg, #1E3A8A 0%, #0F172A 100%) !important;
+}
+
 .grimoire-content .chapter-start .chapter-title {
   font-family: 'Cinzel', serif !important;
   font-size: 1.8rem !important;
