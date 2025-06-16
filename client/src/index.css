@@ -362,14 +362,14 @@ input, textarea {
   font-weight: bold !important;
 }
 
-/* Responsivo para mobile */
+/* Responsivo para mobile - EXCETO para elementos com classes grimório */
 @media (max-width: 767px) {
-  .grimoire-content h1 { font-size: 1.4rem !important; }
-  .grimoire-content h2 { font-size: 1.2rem !important; }
-  .grimoire-content h3 { font-size: 1.1rem !important; }
-  .grimoire-content h4 { font-size: 1rem !important; }
+  .grimoire-content h1:not(.grimorio-titulo):not(.capitulo-titulo) { font-size: 1.4rem !important; }
+  .grimoire-content h2:not(.grimorio-titulo):not(.capitulo-titulo) { font-size: 1.2rem !important; }
+  .grimoire-content h3:not(.grimorio-titulo):not(.capitulo-titulo) { font-size: 1.1rem !important; }
+  .grimoire-content h4:not(.grimorio-titulo):not(.capitulo-titulo) { font-size: 1rem !important; }
   
-  .grimoire-content p {
+  .grimoire-content p:not(.grimorio-subtitulo):not(.grimorio-conteudo p) {
     text-indent: 1rem !important;
     margin: 0.8rem 0 !important;
   }
@@ -1911,4 +1911,208 @@ input, textarea {
   margin: 2rem 0 !important;
   background: none !important;
   border-radius: 0 !important;
+}
+
+/* Suporte adicional para classe prose no painel admin */
+.prose .grimorio-conteudo,
+.prose.prose-sm .grimorio-conteudo {
+  font-family: 'EB Garamond', serif !important;
+  color: #CCCCCC !important;
+  font-size: 1.1rem !important;
+  line-height: 1.8 !important;
+  text-align: justify !important;
+  padding: 2rem 1rem !important;
+}
+
+.prose .grimorio-titulo,
+.prose.prose-sm .grimorio-titulo {
+  font-family: 'Cinzel Decorative', serif !important;
+  font-size: 1.7rem !important;
+  color: #D6342C !important;
+  text-align: center !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.prose .grimorio-subtitulo,
+.prose.prose-sm .grimorio-subtitulo {
+  font-style: italic !important;
+  color: #D6342C !important;
+  text-align: center !important;
+  margin-bottom: 2rem !important;
+}
+
+.prose .grimorio-citacao,
+.prose.prose-sm .grimorio-citacao {
+  font-style: italic !important;
+  font-size: 1.1rem !important;
+  color: #CCCCCC !important;
+  border-left: 3px solid #D6342C !important;
+  padding-left: 1rem !important;
+  margin: 2rem 0 !important;
+}
+
+.prose .grimorio-citacao small,
+.prose.prose-sm .grimorio-citacao small {
+  display: block !important;
+  font-style: normal !important;
+  font-size: 0.9rem !important;
+  margin-top: 0.5rem !important;
+  color: #999999 !important;
+}
+
+.prose .capitulo-titulo,
+.prose.prose-sm .capitulo-titulo {
+  font-family: 'Cinzel Decorative', serif !important;
+  font-size: 1.5rem !important;
+  color: #D6342C !important;
+  margin-top: 3rem !important;
+  margin-bottom: 1rem !important;
+  text-align: center !important;
+}
+
+.prose .grimorio-conteudo p,
+.prose.prose-sm .grimorio-conteudo p {
+  text-indent: 3rem !important;
+  margin-bottom: 1.5rem !important;
+  color: #CCCCCC !important;
+}
+
+.prose .destaque,
+.prose.prose-sm .destaque {
+  color: #D6342C !important;
+  font-weight: bold !important;
+}
+
+.prose .separador,
+.prose.prose-sm .separador {
+  border-top: 1px solid #D6342C !important;
+  margin: 3rem 0 !important;
+}
+
+.prose .grimorio-lista,
+.prose.prose-sm .grimorio-lista {
+  color: #D6342C !important;
+  font-weight: bold !important;
+  margin: 1.5rem 0 !important;
+  padding-left: 2rem !important;
+}
+
+.prose .grimorio-lista li,
+.prose.prose-sm .grimorio-lista li {
+  color: #D6342C !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.prose h2.grimorio-titulo,
+.prose.prose-sm h2.grimorio-titulo {
+  font-family: 'Cinzel Decorative', serif !important;
+  font-size: 1.7rem !important;
+  color: #D6342C !important;
+  text-align: center !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.prose p.grimorio-subtitulo,
+.prose.prose-sm p.grimorio-subtitulo {
+  font-style: italic !important;
+  color: #D6342C !important;
+  text-align: center !important;
+  margin-bottom: 2rem !important;
+}
+
+.prose blockquote.grimorio-citacao,
+.prose.prose-sm blockquote.grimorio-citacao {
+  font-style: italic !important;
+  font-size: 1.1rem !important;
+  color: #CCCCCC !important;
+  border-left: 3px solid #D6342C !important;
+  padding-left: 1rem !important;
+  margin: 2rem 0 !important;
+  background: none !important;
+  border-radius: 0 !important;
+}
+
+/* Overrides críticos para garantir que estilos grimório funcionem no Smart Reader */
+.smart-grimoire-reader .grimoire-content * {
+  all: unset !important;
+  display: revert !important;
+  box-sizing: border-box !important;
+}
+
+/* Reaplica estilos específicos após reset */
+.smart-grimoire-reader .grimoire-content .grimorio-conteudo {
+  font-family: 'EB Garamond', serif !important;
+  color: #CCCCCC !important;
+  font-size: 1.1rem !important;
+  line-height: 1.8 !important;
+  text-align: justify !important;
+  padding: 2rem 1rem !important;
+  display: block !important;
+}
+
+.smart-grimoire-reader .grimoire-content h2.grimorio-titulo {
+  font-family: 'Cinzel Decorative', serif !important;
+  font-size: 1.7rem !important;
+  color: #D6342C !important;
+  text-align: center !important;
+  margin-bottom: 0.5rem !important;
+  display: block !important;
+  font-weight: normal !important;
+}
+
+.smart-grimoire-reader .grimoire-content p.grimorio-subtitulo {
+  font-style: italic !important;
+  color: #D6342C !important;
+  text-align: center !important;
+  margin-bottom: 2rem !important;
+  display: block !important;
+}
+
+.smart-grimoire-reader .grimoire-content blockquote.grimorio-citacao {
+  font-style: italic !important;
+  font-size: 1.1rem !important;
+  color: #CCCCCC !important;
+  border-left: 3px solid #D6342C !important;
+  padding-left: 1rem !important;
+  margin: 2rem 0 !important;
+  background: none !important;
+  border-radius: 0 !important;
+  display: block !important;
+}
+
+.smart-grimoire-reader .grimoire-content .grimorio-citacao small {
+  display: block !important;
+  font-style: normal !important;
+  font-size: 0.9rem !important;
+  margin-top: 0.5rem !important;
+  color: #999999 !important;
+}
+
+.smart-grimoire-reader .grimoire-content .grimorio-conteudo p {
+  text-indent: 3rem !important;
+  margin-bottom: 1.5rem !important;
+  color: #CCCCCC !important;
+  display: block !important;
+  font-family: 'EB Garamond', serif !important;
+}
+
+.smart-grimoire-reader .grimoire-content .destaque {
+  color: #D6342C !important;
+  font-weight: bold !important;
+  display: inline !important;
+}
+
+.smart-grimoire-reader .grimoire-content ul.grimorio-lista {
+  color: #D6342C !important;
+  font-weight: bold !important;
+  margin: 1.5rem 0 !important;
+  padding-left: 2rem !important;
+  display: block !important;
+  list-style: disc !important;
+}
+
+.smart-grimoire-reader .grimoire-content ul.grimorio-lista li {
+  color: #D6342C !important;
+  margin-bottom: 0.5rem !important;
+  display: list-item !important;
 }
