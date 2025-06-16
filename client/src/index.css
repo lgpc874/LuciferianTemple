@@ -1445,6 +1445,119 @@ input, textarea {
   }
 }
 
+/* Formatação limpa e profissional para grimórios */
+.grimoire-content .mystical-quote {
+  background: rgba(45, 30, 0, 0.2);
+  border-left: 4px solid #d4af37;
+  padding: 1.5rem;
+  margin: 2rem 0;
+  border-radius: 0 6px 6px 0;
+  font-style: italic;
+  color: #f0e6d2 !important;
+  text-align: center;
+}
+
+.grimoire-content .mystical-emphasis {
+  font-weight: 600;
+  color: #d4af37 !important;
+  font-style: italic;
+  display: block;
+  margin: 1.5rem 0;
+  text-align: center;
+  font-size: 1.1em;
+}
+
+.grimoire-content .opening-invocation {
+  font-size: 1.15em;
+  font-weight: 500;
+  margin: 2rem 0;
+  text-align: center;
+  font-style: italic;
+  color: #e6d7a3 !important;
+  border-left: 3px solid #d4af37;
+  padding-left: 1.5rem;
+  background: rgba(212, 175, 55, 0.05);
+}
+
+.grimoire-content .revelation-text {
+  font-size: 1.4em;
+  font-weight: 700;
+  color: #d4af37 !important;
+  text-align: center;
+  margin: 2rem 0;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  padding: 1rem;
+  border: 2px solid #d4af37;
+  background: rgba(212, 175, 55, 0.1);
+}
+
+.grimoire-content .mystical-list {
+  list-style: none;
+  padding-left: 0;
+  margin: 1.5rem 0;
+}
+
+.grimoire-content .mystical-list li {
+  margin: 1rem 0;
+  padding-left: 2rem;
+  position: relative;
+  color: #f5f5dc !important;
+}
+
+.grimoire-content .mystical-list li:before {
+  content: "•";
+  color: #d4af37;
+  font-weight: bold;
+  position: absolute;
+  left: 0;
+  font-size: 1.2em;
+}
+
+.grimoire-content .final-blessing {
+  font-style: italic;
+  text-align: center;
+  color: #d4af37 !important;
+  margin: 1.5rem 0;
+  font-size: 1.1em;
+}
+
+.grimoire-content .mystical-seal {
+  font-size: 1.1em;
+  font-weight: 600;
+  text-align: center;
+  color: #d4af37 !important;
+  margin-top: 2rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+/* Remover todos os ornamentos decorativos */
+.grimoire-content .mystical-ornament {
+  display: none !important;
+}
+
+/* Ocultar emojis e símbolos específicos */
+.grimoire-content div:has-text("🜏"),
+.grimoire-content div:has-text("🕯️"),
+.grimoire-content div:has-text("⭐"),
+.grimoire-content div:has-text("🔥"),
+.grimoire-content div:has-text("✨"),
+.grimoire-content div:has-text("👁️"),
+.grimoire-content div:has-text("🔱"),
+.grimoire-content div:has-text("🎭"),
+.grimoire-content div:has-text("🌟"),
+.grimoire-content div:has-text("📘") {
+  display: none !important;
+}
+
+/* Seletores mais específicos para remover ornamentos */
+.grimoire-content [class*="ornament"],
+.grimoire-content [class*="symbol"],
+.grimoire-content [class*="emoji"] {
+  display: none !important;
+}
+
 /* Accessibility */
 @media (prefers-reduced-motion: reduce) {
   .sacred-seal {
