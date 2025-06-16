@@ -231,96 +231,29 @@ export class SupabaseService {
   async saveUserProgress(progress: InsertProgress): Promise<UserProgress> {
     console.log("💾 Salvando progresso no Supabase:", progress);
     
-    try {
-      // Estratégia simplificada: usar upsert direto no user_progress sem depender da FK
-      // Se o usuario não existir, o PostgreSQL vai retornar erro e podemos capturar
-      
-      const progressData = {
+    const { data, error } = await this.supabase
+      .from('user_progress')
+      .upsert({
         user_id: progress.user_id,
         grimoire_id: progress.grimoire_id,
         current_page: progress.current_page || 1,
-        total_reading_time: progress.reading_time_minutes || 0,
-        progress_percentage: Math.round((progress.current_page || 1) / (progress.total_pages || 1) * 100).toString(),
-        last_read_at: new Date(progress.last_read_at || new Date()),
-        updated_at: new Date()
-      };
+        total_pages: progress.total_pages || 1,
+        reading_time_minutes: progress.reading_time_minutes || 0,
+        last_read_at: progress.last_read_at || new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }, {
+        onConflict: 'user_id,grimoire_id'
+      })
+      .select()
+      .single();
 
-      // Tentar fazer upsert direto no progresso
-      console.log("🔄 Fazendo upsert do progresso...");
-      const { data, error } = await this.supabase
-        .from('user_progress')
-        .upsert(progressData, {
-          onConflict: 'user_id,grimoire_id'
-        })
-        .select()
-        .single();
-
-      if (error) {
-        // Se der erro de FK, tentar criar o usuário e tentar novamente
-        if (error.code === '23503') {
-          console.log("🆕 Erro de FK - criando usuário admin...");
-          await this.createAdminUserDirectly(progress.user_id);
-          
-          // Tentar novamente após criar o usuário
-          const { data: retryData, error: retryError } = await this.supabase
-            .from('user_progress')
-            .upsert(progressData, {
-              onConflict: 'user_id,grimoire_id'
-            })
-            .select()
-            .single();
-
-          if (retryError) {
-            console.error("❌ Erro na segunda tentativa:", retryError);
-            throw new Error(`Error on retry: ${retryError.message}`);
-          }
-          
-          console.log("✅ Progresso salvo após criar usuário:", retryData);
-          return retryData;
-        } else {
-          console.error("❌ Erro ao fazer upsert:", error);
-          throw new Error(`Error upserting progress: ${error.message}`);
-        }
-      }
-      
-      console.log("✅ Progresso salvo com sucesso:", data);
-      return data;
-      
-    } catch (err: any) {
-      console.error("❌ Erro geral ao salvar progresso:", err);
-      throw new Error(`Error saving user progress: ${err.message}`);
+    if (error) {
+      console.error("❌ Erro ao salvar progresso:", error);
+      throw new Error(`Error saving user progress: ${error.message}`);
     }
-  }
-
-  private async createAdminUserDirectly(userId: number): Promise<void> {
-    try {
-      console.log("🆕 Criando usuário admin diretamente...");
-      
-      const { error: userError } = await this.supabase
-        .from('users')
-        .upsert({
-          id: userId,
-          username: 'admin',
-          email: 'admin@templodoabismo.com.br',
-          password_hash: '$2b$10$dummy.hash.for.admin.user',
-          role: 'admin',
-          is_active: true,
-          created_at: new Date(),
-          updated_at: new Date()
-        }, {
-          onConflict: 'id'
-        });
-
-      if (userError) {
-        console.error("❌ Erro ao criar usuário admin:", userError);
-        throw new Error(`Failed to create admin user: ${userError.message}`);
-      }
-      
-      console.log("✅ Usuário admin criado com sucesso");
-    } catch (err: any) {
-      console.error("❌ Erro ao criar usuário admin diretamente:", err);
-      throw new Error(`Failed to create admin user directly: ${err.message}`);
-    }
+    
+    console.log("✅ Progresso salvo com sucesso:", data);
+    return data;
   }
 
   // ESTATÍSTICAS ADMINISTRATIVAS
