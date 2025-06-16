@@ -213,9 +213,11 @@ export default function SmartGrimoireReader() {
       } else if (e.key === 'Home') {
         e.preventDefault();
         setCurrentPage(1);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       } else if (e.key === 'End') {
         e.preventDefault();
         setCurrentPage(pages.length);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     };
 
@@ -232,11 +234,21 @@ export default function SmartGrimoireReader() {
 
   // Funções de navegação
   const goToPreviousPage = () => {
-    setCurrentPage(prev => Math.max(1, prev - 1));
+    setCurrentPage(prev => {
+      const newPage = Math.max(1, prev - 1);
+      // Scroll suave para o topo quando trocar de página
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return newPage;
+    });
   };
 
   const goToNextPage = () => {
-    setCurrentPage(prev => Math.min(pages.length, prev + 1));
+    setCurrentPage(prev => {
+      const newPage = Math.min(pages.length, prev + 1);
+      // Scroll suave para o topo quando trocar de página
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return newPage;
+    });
   };
 
   // Verificar se páginas podem navegar
