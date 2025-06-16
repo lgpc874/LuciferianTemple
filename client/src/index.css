@@ -1457,6 +1457,14 @@ input, textarea {
   text-align: center;
 }
 
+.grimoire-content .citation-author {
+  font-size: 0.9em !important;
+  color: #d4af37 !important;
+  margin-top: 1rem !important;
+  text-align: center !important;
+  font-style: normal !important;
+}
+
 .grimoire-content .mystical-emphasis {
   font-weight: 600;
   color: #d4af37 !important;

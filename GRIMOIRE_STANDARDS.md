@@ -1,115 +1,78 @@
-# Padrões de Grimórios - Templo do Abismo
+# Padrões dos Grimórios - Templo do Abismo
 
-Este documento define os padrões obrigatórios para todos os grimórios implementados no site.
+## Estrutura de Títulos Luciferianos
 
-## Interface de Leitura Kindle
+### Citações de Abertura
+**Nunca usar:** "Citação de Abertura" ou títulos genéricos
 
-### Características Obrigatórias
+**Usar sempre:** Títulos místicos relacionados ao conteúdo específico do grimório:
 
-1. **Formato A5 Responsivo**
-   - Desktop: 380x540px máximo
-   - Mobile: 85vw x 80vh
-   - Container centralizado na tela
+**Exemplos estabelecidos:**
+- "Invocação do Primeiro Fogo" (Vozes do Fogo)
+- "Selo do Véu Rachado" (O Véu Rachado) 
+- "Despertar da Chama Oculta" (A Chama Oculta)
 
-2. **Paginação Inteligente**
-   - Baseada em parágrafos HTML completos
-   - Limites: 800 chars (mobile) / 1200 chars (desktop)
-   - Quebras apenas em finais de elementos HTML
-   - Preservação total da formatação
+**Padrões sugeridos para futuros grimórios:**
+- "Invocação de [Elemento Principal]"
+- "Selo de [Conceito Místico]" 
+- "Despertar de [Poder/Energia]"
+- "Portal de [Domínio]"
+- "Chamado do/da [Entidade/Força]"
+- "Abertura do [Local Sagrado]"
 
-3. **Navegação**
-   - Botão voltar (canto superior esquerdo)
-   - Áreas invisíveis de clique nas laterais
-   - Botões discretos que aparecem no hover
-   - Navegação contínua entre capítulos
+### Formatação de Conteúdo
 
-4. **Visual**
-   - Fundo com textura do site
-   - Container semi-transparente com backdrop-blur
-   - Bordas douradas (border-burned-amber)
-   - Fontes: Cinzel (títulos) / Garamond (texto)
-   - Paleta de cores completa do site
+#### Citações e Invocações
+- Usar classe `opening-invocation` para citações de abertura rituais
+- Usar classe `mystical-quote` para citações dentro dos capítulos
+- Usar classe `citation-author` para autoria das citações
+- Nunca usar estilos inline - sempre classes CSS
 
-5. **Elementos da Interface**
-   - Apenas botão de voltar visível
-   - Barra de progresso inferior
-   - Sem header, menu ou sidebar
-   - Transições suaves entre páginas
+#### Estrutura Visual
+- Tipografia limpa sem símbolos decorativos ou emojis
+- Ênfases importantes com classe `mystical-emphasis`
+- Revelações com classe `revelation-text`
+- Texto de bênção final com classe `final-blessing`
 
-### Implementação Técnica
+#### Linguagem
+- Tom ritualístico e filosófico luciferiano
+- Evitar cristianismo ou referências religiosas tradicionais
+- Foco na soberania individual e questionamento de autoridades
+- Linguagem simbólica e provocativa
 
-```typescript
-// Estados obrigatórios
-const [selectedChapter, setSelectedChapter] = useState<number>(1);
-const [currentPage, setCurrentPage] = useState<number>(1);
-const [totalPages, setTotalPages] = useState<number>(1);
-const [currentPageContent, setCurrentPageContent] = useState<string>('');
+### Seções da Biblioteca
 
-// Hook obrigatório
-const isMobile = useIsMobile();
+#### Atrium Ignis
+Para iniciantes - filosofia e questionamento básico
 
-// Paginação baseada em parágrafos
-const tempContent = content.replace(/\n/g, ' ');
-const paragraphs = tempContent.match(/<p[^>]*>.*?<\/p>|<h[3-4][^>]*>.*?<\/h[3-4]>|<blockquote[^>]*>.*?<\/blockquote>|<ul[^>]*>.*?<\/ul>/g) || [];
-```
+#### Porta Umbrae  
+Nível intermediário - práticas e rituais introdutórios
 
-### Classes CSS Obrigatórias
+#### Arcana Noctis
+Nível avançado - mistérios profundos e magia aplicada
 
-```css
-.grimoire-content {
-  font-family: 'EB Garamond', serif;
-  color: hsl(40, 25%, 85%); /* ritualistic-beige */
-  line-height: 1.6;
-}
+#### Via Tenebris
+Nível expert - caminhos sombrios e transformação completa
 
-.grimoire-content h3 {
-  color: hsl(43, 74%, 49%); /* golden-amber */
-  font-family: 'Cinzel', serif;
-}
+#### Templo do Abismo
+Conteúdo exclusivo e reservado - mistérios mais vedados
 
-.grimoire-content strong {
-  color: hsl(43, 74%, 49%); /* golden-amber */
-}
-```
+### Preços Sugeridos
+- Atrium Ignis: R$ 22,22 - R$ 33,33
+- Porta Umbrae: R$ 44,44 - R$ 55,55  
+- Arcana Noctis: R$ 66,66 - R$ 77,77
+- Via Tenebris: R$ 88,88 - R$ 99,99
+- Templo do Abismo: R$ 111,11+
 
-### Estrutura de Arquivo
+### Extensão de Conteúdo
+- Mínimo: 8.000 palavras
+- Máximo: 15.000 palavras
+- Capítulos: 6-12 por grimório
+- Cada capítulo: 800-1.500 palavras
 
-Todos os grimórios devem usar esta estrutura base:
-
-```typescript
-import { useParams, useLocation } from "wouter";
-import { useQuery } from "@tanstack/react-query";
-import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useAuth } from "@/hooks/use-auth";
-import { useState, useEffect, useRef } from "react";
-import { useIsMobile } from "@/hooks/use-mobile";
-
-export default function GrimoireReader() {
-  // Implementação padrão conforme grimoire-kindle.tsx
-}
-```
-
-### Rotas
-
-- Todas as rotas `/grimoire/*` automaticamente removem header/menu
-- Configuração no App.tsx: `isGrimoireReader = location.startsWith('/grimoire/')`
-
-## Checklist de Implementação
-
-- [ ] Container A5 responsivo
-- [ ] Paginação preservando parágrafos
-- [ ] Navegação contínua entre capítulos
-- [ ] Visual idêntico ao site (cores, fontes, texturas)
-- [ ] Sem elementos de interface exceto botão voltar
-- [ ] Barra de progresso funcional
-- [ ] Transições suaves
-- [ ] Compatibilidade mobile/desktop
-
-## Arquivos de Referência
-
-- `client/src/pages/grimoire-kindle.tsx` - Implementação padrão
-- `client/src/App.tsx` - Configuração de rotas
-- `client/src/index.css` - Classes CSS grimoire-content
-
-**Importante:** Qualquer novo grimório deve seguir exatamente este padrão para manter a consistência da experiência de leitura no site.
+### Metadados Obrigatórios
+- Capa gerada por IA (DALL-E 3) com estética luciferiana
+- Descrição envolvente de 150-300 palavras
+- Nível de dificuldade definido
+- Tempo estimado de leitura calculado
+- Tags apropriadas para a seção
