@@ -2116,3 +2116,48 @@ input, textarea {
   margin-bottom: 0.5rem !important;
   display: list-item !important;
 }
+
+/* Suporte específico para spans com classes grimório */
+.smart-grimoire-reader .grimoire-content span.destaque {
+  color: #D6342C !important;
+  font-weight: bold !important;
+  display: inline !important;
+  font-family: inherit !important;
+}
+
+.smart-grimoire-reader .grimoire-content span.grimorio-titulo {
+  font-family: 'Cinzel Decorative', serif !important;
+  font-size: 1.7rem !important;
+  color: #D6342C !important;
+  text-align: center !important;
+  display: inline !important;
+}
+
+.smart-grimoire-reader .grimoire-content span.grimorio-subtitulo {
+  font-style: italic !important;
+  color: #D6342C !important;
+  display: inline !important;
+}
+
+/* Suporte para prose também */
+.prose span.destaque,
+.prose.prose-sm span.destaque {
+  color: #D6342C !important;
+  font-weight: bold !important;
+  display: inline !important;
+}
+
+.prose span.grimorio-titulo,
+.prose.prose-sm span.grimorio-titulo {
+  font-family: 'Cinzel Decorative', serif !important;
+  font-size: 1.7rem !important;
+  color: #D6342C !important;
+  display: inline !important;
+}
+
+.prose span.grimorio-subtitulo,
+.prose.prose-sm span.grimorio-subtitulo {
+  font-style: italic !important;
+  color: #D6342C !important;
+  display: inline !important;
+}
