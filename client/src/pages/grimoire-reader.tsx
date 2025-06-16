@@ -84,102 +84,61 @@ export default function GrimoireReader() {
     return null;
   };
 
-  // Função para paginar o conteúdo com 900-1100 caracteres por página
+  // Função para paginar o conteúdo
   const paginateContent = (content: string): string[] => {
     if (!content) return [];
 
+    // Dividir por capítulos primeiro
+    const chapterRegex = /<h[1-6][^>]*>.*?<\/h[1-6]>/gi;
+    const chapters = content.split(chapterRegex);
+    const chapterTitles = content.match(chapterRegex) || [];
+
     const pages: string[] = [];
-    const targetCharsPerPage = isMobile ? 950 : 1000; // Alvo no meio do range
-    const minCharsPerPage = 900;
-    const maxCharsPerPage = 1100;
+    const maxCharsPerPage = isMobile ? 900 : 1100;
+    const minCharsPerPage = 800;
 
-    // Remover tags HTML para contar apenas o texto visível
-    const getTextLength = (html: string): number => {
-      return html.replace(/<[^>]*>/g, '').length;
-    };
-
-    // Dividir o conteúdo em blocos HTML (preservando formatação)
-    const htmlBlocks = content.split(/(<h[1-6][^>]*>.*?<\/h[1-6]>|<p[^>]*>.*?<\/p>|<div[^>]*>.*?<\/div>|<blockquote[^>]*>.*?<\/blockquote>|<ul[^>]*>.*?<\/ul>|<ol[^>]*>.*?<\/ol>)/gi)
-      .filter(block => block.trim().length > 0);
-
-    let currentPageContent = '';
-    let currentPageTextLength = 0;
-
-    for (const block of htmlBlocks) {
-      const blockTextLength = getTextLength(block);
-      const testPageTextLength = currentPageTextLength + blockTextLength;
-
-      // Se adicionar este bloco ultrapassar o limite máximo
-      if (testPageTextLength > maxCharsPerPage && currentPageTextLength >= minCharsPerPage) {
-        // Finalizar página atual
-        pages.push(currentPageContent.trim());
-        currentPageContent = block;
-        currentPageTextLength = blockTextLength;
+    for (let i = 0; i < chapters.length; i++) {
+      let chapterContent = chapters[i];
+      
+      // Adicionar título do capítulo se existir
+      if (chapterTitles[i - 1]) {
+        chapterContent = chapterTitles[i - 1] + chapterContent;
       }
-      // Se ainda não atingiu o mínimo ou está dentro do limite
-      else if (testPageTextLength <= maxCharsPerPage) {
-        currentPageContent += block;
-        currentPageTextLength = testPageTextLength;
-      }
-      // Se o bloco sozinho é maior que o limite máximo, dividir por palavras
-      else if (blockTextLength > maxCharsPerPage) {
-        // Finalizar página atual se tiver conteúdo
-        if (currentPageContent.trim()) {
-          pages.push(currentPageContent.trim());
-          currentPageContent = '';
-          currentPageTextLength = 0;
-        }
 
-        // Dividir bloco grande por palavras
-        const words = block.split(/(\s+)/);
-        let tempContent = '';
-        let tempLength = 0;
-
-        for (const word of words) {
-          const wordLength = getTextLength(word);
+      if (chapterContent.trim()) {
+        // Se o capítulo inteiro for menor que uma página, adicionar como página única
+        if (chapterContent.length <= maxCharsPerPage) {
+          pages.push(chapterContent);
+        } else {
+          // Dividir capítulo em páginas
+          const paragraphs = chapterContent.split(/(<p[^>]*>.*?<\/p>|<h[1-6][^>]*>.*?<\/h[1-6]>|<div[^>]*>.*?<\/div>|<blockquote[^>]*>.*?<\/blockquote>|<ul[^>]*>.*?<\/ul>|<ol[^>]*>.*?<\/ol>)/gi).filter(p => p.trim());
           
-          if (tempLength + wordLength <= maxCharsPerPage) {
-            tempContent += word;
-            tempLength += wordLength;
-          } else {
-            if (tempLength >= minCharsPerPage) {
-              pages.push(tempContent.trim());
-              tempContent = word;
-              tempLength = wordLength;
+          let currentPageContent = '';
+          
+          for (const paragraph of paragraphs) {
+            const testContent = currentPageContent + paragraph;
+            
+            if (testContent.length <= maxCharsPerPage) {
+              currentPageContent = testContent;
             } else {
-              tempContent += word;
-              tempLength += wordLength;
+              // Se a página atual tem conteúdo suficiente, finalizar
+              if (currentPageContent.length >= minCharsPerPage) {
+                pages.push(currentPageContent);
+                currentPageContent = paragraph;
+              } else {
+                // Se ainda não tem conteúdo suficiente, adicionar mesmo ultrapassando o limite
+                currentPageContent = testContent;
+              }
             }
           }
+          
+          // Adicionar última página se tiver conteúdo
+          if (currentPageContent.trim()) {
+            pages.push(currentPageContent);
+          }
         }
-
-        currentPageContent = tempContent;
-        currentPageTextLength = tempLength;
-      }
-      // Se atingiu o alvo ideal, finalizar página
-      else if (currentPageTextLength >= targetCharsPerPage) {
-        pages.push(currentPageContent.trim());
-        currentPageContent = block;
-        currentPageTextLength = blockTextLength;
-      }
-      // Caso contrário, adicionar ao conteúdo atual
-      else {
-        currentPageContent += block;
-        currentPageTextLength = testPageTextLength;
       }
     }
-
-    // Adicionar última página se tiver conteúdo
-    if (currentPageContent.trim()) {
-      pages.push(currentPageContent.trim());
-    }
-
-    // Verificar se todas as páginas estão no range correto
-    console.log('📖 Páginas criadas:', pages.length);
-    pages.forEach((page, index) => {
-      const textLength = getTextLength(page);
-      console.log(`Página ${index + 1}: ${textLength} caracteres`);
-    });
 
     return pages.filter(page => page.trim().length > 0);
   };
