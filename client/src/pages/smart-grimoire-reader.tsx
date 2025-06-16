@@ -25,9 +25,52 @@ export default function SmartGrimoireReader() {
   const [readingTime, setReadingTime] = useState(0);
   const [saveStatus, setSaveStatus] = useState<'saving' | 'saved' | 'error' | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [primaryColor, setPrimaryColor] = useState('#D97706'); // amber-600 padrão
 
   const grimoireId = params?.id ? parseInt(params.id) : null;
   const measureRef = useRef<HTMLDivElement>(null);
+
+  // Função para extrair cor principal do grimório
+  const extractPrimaryColor = (content: string): string => {
+    if (!content) return '#D97706'; // amber padrão
+    
+    // Procurar por cores hex específicas primeiro
+    const hexColors = content.match(/#[0-9A-Fa-f]{6}/g) || [];
+    
+    // Procurar por cores RGB
+    const rgbColors = content.match(/rgb\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*\)/g) || [];
+    
+    // Procurar por propriedades de cor em styles
+    const styleColors = content.match(/color:\s*#[0-9A-Fa-f]{6}/g) || [];
+    
+    // Combinar todas as cores encontradas
+    const allColors = [...hexColors, ...styleColors.map(s => s.replace('color:', '').trim())];
+    
+    // Filtrar cores significativas (não preto, branco, cinza)
+    const significantColors = allColors.filter(color => {
+      const cleanColor = color.toLowerCase();
+      return !cleanColor.match(/#(000|fff|[0-9a-f]{3,6})\b/) ||
+             cleanColor.includes('#d6342c') || // vermelho específico do Vozes do Fogo
+             cleanColor.includes('#b91c1c') || // vermelho escuro
+             cleanColor.includes('#dc2626') || // vermelho
+             cleanColor.includes('#ef4444') || // vermelho claro
+             cleanColor.includes('#d97706') || // amber
+             cleanColor.includes('#f59e0b') || // amber claro
+             (!cleanColor.includes('#000') && !cleanColor.includes('#fff'));
+    });
+    
+    // Priorizar cores vermelhas para grimórios luciferianos
+    const redColors = significantColors.filter(color => 
+      color.toLowerCase().includes('#d6342c') ||
+      color.toLowerCase().includes('#b91c1c') ||
+      color.toLowerCase().includes('#dc2626')
+    );
+    
+    if (redColors.length > 0) return redColors[0];
+    if (significantColors.length > 0) return significantColors[0];
+    
+    return '#D97706'; // amber padrão
+  };
 
   // Buscar grimório
   const { data: grimoire, isLoading: grimoireLoading } = useQuery<Grimoire>({
@@ -161,6 +204,10 @@ export default function SmartGrimoireReader() {
     if (grimoire && grimoire.content) {
       const newPages = createPagesFromContent(grimoire.content);
       setPages(newPages);
+      
+      // Extrair cor principal do grimório
+      const extractedColor = extractPrimaryColor(grimoire.content);
+      setPrimaryColor(extractedColor);
       
       // Restaurar página salva
       if (grimoireId) {
@@ -306,7 +353,10 @@ export default function SmartGrimoireReader() {
               </Button>
               
               <div className="flex-1 text-center px-2 min-w-0">
-                <h1 className="text-amber-500 font-medium text-xs sm:text-sm md:text-base truncate">
+                <h1 
+                  className="font-medium text-xs sm:text-xs md:text-sm truncate"
+                  style={{ color: primaryColor }}
+                >
                   {grimoire.title}
                 </h1>
               </div>

@@ -212,6 +212,7 @@ Changelog:
 - June 16, 2025. Sistema de geração de PDF adaptativo implementado - extração automática de estilos personalizados de cada grimório, PDF dinâmico que preserva cores e formatação específicas (não apenas luciferiano padrão), sistema analisa estilos inline e aplica cor primária extraída em títulos/citações/listas, disponível apenas para administradores
 - June 16, 2025. Leitor de grimórios completamente recriado - sistema de scroll contínuo substituindo paginação complexa, suporte total a HTML/CSS/span/div usando dangerouslySetInnerHTML, navegação por teclado e botões, auto-save de posição, interface idêntica em PC e mobile, preservação completa de formatação personalizada
 - June 16, 2025. Sistema de paginação inteligente implementado - divide conteúdo respeitando estrutura HTML sem cortar elementos, navegação por teclado (setas, Page Up/Down, Home/End), cliques laterais invisíveis, header responsivo com nome do grimório (truncado se necessário), contador de páginas dinâmico, scroll automático para topo ao trocar páginas
+- June 16, 2025. Header do leitor personalizado por grimório - título reduzido (text-xs mobile, text-sm desktop), extração automática da cor principal de cada grimório (#D6342C para vermelhos, #D97706 amber padrão), aplicação dinâmica via style inline, priorização de cores luciferianas autênticas
 ```
 
 ## User Preferences
