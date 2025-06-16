@@ -7,11 +7,9 @@ import {
   type RegisterData, 
   type LoginData,
   insertGrimoireSchema,
-  insertChapterSchema,
   insertLibrarySectionSchema,
   insertProgressSchema,
   type InsertGrimoire,
-  type InsertChapter,
   type InsertLibrarySection,
   type InsertProgress
 } from "@shared/schema";
@@ -225,57 +223,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Buscar capítulos de um grimório específico
-  app.get("/api/chapters/:grimoireId", async (req, res) => {
-    try {
-      const grimoireId = parseInt(req.params.grimoireId);
-      if (isNaN(grimoireId)) {
-        return res.status(400).json({ error: "ID do grimório inválido" });
-      }
 
-      const chapters = await supabaseService.getChaptersByGrimoire(grimoireId);
-      res.json(chapters);
-    } catch (error: any) {
-      console.error("Error fetching chapters:", error);
-      res.status(500).json({ error: "Erro ao buscar capítulos: " + error.message });
-    }
-  });
 
-  // Atualizar capítulo específico
-  app.put("/api/admin/chapters/:id", authenticateToken, requireAdmin, async (req, res) => {
-    try {
-      const id = parseInt(req.params.id);
-      if (isNaN(id)) {
-        return res.status(400).json({ error: "ID do capítulo inválido" });
-      }
 
-      const { title, content } = req.body;
-      
-      if (!title || !content) {
-        return res.status(400).json({ error: "Título e conteúdo são obrigatórios" });
-      }
-
-      // Calcular tempo de leitura atualizado
-      const wordCount = content.split(' ').length;
-      const estimatedReadingTime = Math.max(5, Math.ceil(wordCount / 200));
-
-      const updateData = {
-        title: title.trim(),
-        content: content.trim(),
-        estimated_reading_time: estimatedReadingTime
-      };
-
-      console.log(`📝 Admin atualizando capítulo ${id}:`, { title: updateData.title, wordCount });
-      
-      const updatedChapter = await supabaseService.updateChapter(id, updateData);
-      
-      console.log(`✅ Capítulo ${id} atualizado com sucesso`);
-      res.json(updatedChapter);
-    } catch (error: any) {
-      console.error("Error updating chapter:", error);
-      res.status(400).json({ error: error.message || "Erro ao atualizar capítulo" });
-    }
-  });
 
   // ADMIN - Gerenciamento de Grimórios com Conteúdo Único
   app.post("/api/admin/grimoires", authenticateToken, requireAdmin, async (req, res) => {
@@ -547,25 +497,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         throw new Error("IA não gerou capítulos válidos");
       }
 
-      // Calcular estatísticas totais
-      const totalWordCount = aiResult.chapters.reduce((total: number, chapter: any) => {
-        return total + (chapter.content ? chapter.content.split(' ').length : 0);
-      }, 0);
-      
+      // Calcular estatísticas do conteúdo completo
+      const totalWordCount = aiResult.content ? aiResult.content.split(' ').length : 0;
       const estimatedReadingTime = Math.max(5, Math.ceil(totalWordCount / 200));
       
       // Criar grimório automaticamente no banco
       const grimoireData: InsertGrimoire = {
         title: aiResult.title || "Grimório Gerado pela IA",
         description: aiResult.description || "Grimório criado automaticamente pela IA",
-        section_id: settings?.default_section || 1, // Use configuração ou Porta das Sombras por padrão
-        content: `Grimório com ${aiResult.chapters.length} capítulos gerados pela IA`,
+        section_id: settings?.default_section || 1,
+        content: aiResult.content || "Conteúdo gerado pela IA",
         is_paid: settings?.auto_price === true,
         price: settings?.auto_price ? (settings?.price_range_min || "29.99") : null,
-        level: aiResult.level || settings?.complexity || "iniciante",
         unlock_order: 0,
         estimated_reading_time: estimatedReadingTime,
-        is_published: settings?.auto_publish !== false, // Publicar automaticamente por padrão
+        is_published: settings?.auto_publish !== false,
         cover_image_url: `https://via.placeholder.com/300x400/1a1a1a/d4af37?text=${encodeURIComponent(aiResult.title || 'Grimório')}`
       };
 
