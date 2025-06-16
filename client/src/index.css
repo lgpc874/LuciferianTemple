@@ -1759,3 +1759,32 @@ input, textarea {
     transition: none;
   }
 }
+
+/* Estilos personalizados para criação de grimórios */
+.grimorio-descricao {
+  margin-bottom: 3rem;
+  font-family: 'EB Garamond', serif;
+  color: #CCCCCC;
+}
+
+.grimorio-titulo {
+  font-family: 'Cinzel Decorative', serif;
+  color: #D6342C;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.grimorio-subtitulo {
+  font-style: italic;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+  color: #D6342C;
+}
+
+.grimorio-citacao {
+  font-style: italic;
+  font-size: 1.1rem;
+  color: #CCCCCC;
+  border-left: 3px solid #D6342C;
+  padding-left: 1rem;
+}

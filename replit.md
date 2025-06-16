@@ -208,6 +208,7 @@ Changelog:
 - June 16, 2025. Grimório "Vozes do Fogo – O Sussurro Antes da Queda" finalizado - 25.000 palavras em 10 capítulos completos, linguagem luciferiana autêntica, formatação HTML com tamanhos de fonte ajustados (h1: 1.8rem, h2: 1.4rem) para legibilidade consistente no leitor e painel administrativo
 - June 16, 2025. Sistema de leitura inteligente implementado - novo leitor SmartGrimoireReader com fundo preto rubro, paginação automática sem espaços vazios baseada em contagem de palavras, suporte total a códigos HTML preservando formatação inline, interface responsiva otimizada para celular/tablet/PC, configurações ajustáveis (fonte, palavras por página, espaçamento), navegação por cliques laterais e teclado, progresso salvo em localStorage temporariamente
 - June 16, 2025. Sistema de renderização HTML otimizado - CSS simplificado com 'all: revert' para preservação completa de estilos inline, fallbacks aplicados apenas a elementos sem style attribute, renderização perfeita de cores (#D6342C), fontes (EB Garamond/Cinzel), espaçamentos, listas e formatação conforme validado pelo usuário
+- June 16, 2025. Estilos CSS personalizados para grimórios implementados - classes .grimorio-descricao, .grimorio-titulo, .grimorio-subtitulo e .grimorio-citacao adicionadas ao index.css para formatação consistente de conteúdo luciferiano
 ```
 
 ## User Preferences
