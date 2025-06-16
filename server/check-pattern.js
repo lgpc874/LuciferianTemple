@@ -7,32 +7,47 @@ const supabase = createClient(
 
 async function checkPattern() {
   try {
-    // Buscar um capítulo do primeiro grimório para ver o padrão
-    const { data: chapter } = await supabase
-      .from('chapters')
-      .select('content')
-      .eq('grimoire_id', 26)
-      .eq('chapter_number', 1)
-      .single();
-      
-    console.log('PADRÃO DOS GRIMÓRIOS EXISTENTES:');
-    console.log('=====================================');
-    console.log(chapter.content.substring(0, 800));
-    console.log('=====================================');
-    
-    // Buscar também um capítulo do novo grimório
-    const { data: newChapter } = await supabase
-      .from('chapters')
-      .select('content')
-      .eq('grimoire_id', 30)
-      .eq('chapter_number', 1)
-      .single();
-      
-    console.log('\nPADRÃO DO NOVO GRIMÓRIO:');
-    console.log('=====================================');
-    console.log(newChapter.content.substring(0, 800));
-    console.log('=====================================');
-    
+    console.log('📚 Verificando citações de abertura nos grimórios...\n');
+
+    const { data: grimoires, error } = await supabase
+      .from('grimoires')
+      .select('id, title')
+      .order('id');
+
+    if (error) {
+      console.error('Erro:', error);
+      return;
+    }
+
+    for (const grimoire of grimoires) {
+      const { data: chapters } = await supabase
+        .from('chapters')
+        .select('title, chapter_number')
+        .eq('grimoire_id', grimoire.id)
+        .order('chapter_number');
+
+      console.log(`\n📖 ${grimoire.title}`);
+      console.log('Capítulos:');
+      chapters?.forEach((ch, index) => {
+        console.log(`  ${index + 1}. ${ch.title}`);
+      });
+
+      const hasOpeningCitation = chapters?.some(ch => 
+        ch.title.includes('Invocação') || 
+        ch.title.includes('Selo') || 
+        ch.title.includes('Despertar') ||
+        ch.title.includes('Sombras') ||
+        ch.title.includes('Citação')
+      );
+
+      if (!hasOpeningCitation) {
+        console.log('❌ FALTANDO citação de abertura');
+      } else {
+        console.log('✅ Tem citação de abertura');
+      }
+      console.log('─'.repeat(50));
+    }
+
   } catch (error) {
     console.error('Erro:', error);
   }
