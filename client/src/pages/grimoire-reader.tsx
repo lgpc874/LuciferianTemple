@@ -121,8 +121,8 @@ export default function GrimoireReader() {
   const paginateContent = (content: string) => {
     if (!content || !content.trim()) return [];
     
-    const charsPerPage = isMobile ? 1500 : 1800;
-    const minPageSize = isMobile ? 1200 : 1200;
+    const charsPerPage = isMobile ? 2000 : 2500;
+    const minPageSize = isMobile ? 1500 : 1800;
     
     // Primeiro, dividir o conteúdo em parágrafos menores para melhor controle
     const paragraphs = content.split(/(<\/p>|<\/h[1-6]>|<\/blockquote>|<\/div>|<\/li>)/)

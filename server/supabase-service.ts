@@ -329,26 +329,29 @@ export class SupabaseService {
             role: "system",
             content: `Você é um mestre luciferiano e especialista em ocultismo. Sua tarefa é criar um grimório COMPLETO com conteúdo unificado e detalhado.
 
-            REGRA ABSOLUTA: O conteúdo deve ter pelo menos 5000-8000 palavras, totalmente desenvolvido e completo.
+            REGRA ABSOLUTA: O conteúdo deve ter entre 20.000-40.000 palavras, totalmente desenvolvido e completo.
 
             Formato JSON obrigatório:
             {
               "title": "Título do grimório",
               "description": "Descrição detalhada em 2-3 parágrafos explicando o propósito e conteúdo do grimório",
-              "content": "CONTEÚDO COMPLETO DO GRIMÓRIO em HTML formatado com pelo menos 5000 palavras incluindo: introdução conceitual detalhada, desenvolvimento teórico profundo, instruções práticas, rituais específicos, filosofia luciferiana, simbolismo, meditações, invocações e conclusões. Use formatação HTML rica (<h1>, <h2>, <h3>, <strong>, <em>, <blockquote>, <ul>, <li>, <p>), citações em latim, linguagem mística erudita e estrutura bem organizada em seções.",
+              "content": "CONTEÚDO COMPLETO DO GRIMÓRIO em HTML formatado com 20.000-40.000 palavras incluindo: introdução conceitual extensiva, desenvolvimento teórico profundo e completo, instruções práticas detalhadas, múltiplos rituais específicos, filosofia luciferiana abrangente, simbolismo esotérico, meditações guiadas, invocações completas, correspondências mágicas, exercícios práticos, estudos de caso, análises históricas, técnicas avançadas e conclusões elaboradas. Use formatação HTML rica (<h1>, <h2>, <h3>, <h4>, <strong>, <em>, <blockquote>, <ul>, <li>, <p>, <div>), citações em latim frequentes, linguagem mística erudita e estrutura extremamente bem organizada em múltiplas seções e subseções.",
               "suggested_price": "29.99"
             }
 
             DIRETRIZES OBRIGATÓRIAS:
-            ✓ Conteúdo unificado de 5000-8000 palavras
-            ✓ Linguagem mística luciferiana autêntica
-            ✓ Inclua rituais práticos detalhados
-            ✓ Filosofia e teoria fundamentada
-            ✓ Símbolos e correspondências
-            ✓ Citações em latim apropriadas
-            ✓ Formatação HTML rica para estrutura
-            ✓ Seções bem organizadas com títulos
-            ✓ Desenvolvimento completo do tema`
+            ✓ Conteúdo unificado de 20.000-40.000 palavras
+            ✓ Linguagem mística luciferiana autêntica e erudita
+            ✓ Múltiplos rituais práticos detalhados e completos
+            ✓ Filosofia e teoria fundamentada e abrangente
+            ✓ Símbolos, correspondências e sistemas completos
+            ✓ Citações em latim frequentes e apropriadas
+            ✓ Formatação HTML rica e hierárquica
+            ✓ Múltiplas seções e subseções bem organizadas
+            ✓ Desenvolvimento extensivo e exaustivo do tema
+            ✓ Exercícios práticos e técnicas avançadas
+            ✓ Estudos históricos e análises profundas
+            ✓ Meditações guiadas e invocações completas`
           },
           {
             role: "user",
@@ -357,7 +360,7 @@ export class SupabaseService {
         ],
         response_format: { type: "json_object" },
         temperature: 0.8,
-        max_tokens: 16000
+        max_tokens: 128000
       });
 
       const rawContent = response.choices[0].message.content || '{}';
