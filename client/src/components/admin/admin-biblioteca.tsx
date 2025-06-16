@@ -56,7 +56,6 @@ function CreateGrimoireForm({
     section_id: "",
     is_paid: false,
     price: "",
-    level: "iniciante",
     content: "",
     cover_image_url: "",
     is_published: false,
@@ -253,21 +252,7 @@ function CreateGrimoireForm({
           <CardTitle className="text-golden-amber">Configurações de Publicação</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <Label>Nível de Dificuldade</Label>
-              <Select value={formData.level} onValueChange={(value) => setFormData({...formData, level: value})}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="iniciante">Iniciante</SelectItem>
-                  <SelectItem value="intermediario">Intermediário</SelectItem>
-                  <SelectItem value="avancado">Avançado</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex items-center space-x-2">
               <Switch
                 id="is_paid"
@@ -332,7 +317,6 @@ function EditGrimoireForm({
     section_id: grimoire.section_id.toString(),
     is_paid: grimoire.is_paid,
     price: grimoire.price || "",
-    level: grimoire.level,
     content: grimoire.content,
     cover_image_url: grimoire.cover_image_url || "",
     is_published: grimoire.is_published
@@ -446,20 +430,6 @@ function EditGrimoireForm({
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label>Nível de Dificuldade</Label>
-              <Select value={formData.level} onValueChange={(value) => setFormData({...formData, level: value})}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="iniciante">Iniciante</SelectItem>
-                  <SelectItem value="intermediario">Intermediário</SelectItem>
-                  <SelectItem value="avancado">Avançado</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
             <div className="flex items-center space-x-2">
               <Switch
                 id="edit-is_paid"
