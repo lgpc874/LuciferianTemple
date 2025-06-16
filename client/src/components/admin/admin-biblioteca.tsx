@@ -583,6 +583,61 @@ export default function AdminBiblioteca() {
     },
   });
 
+  const updateGrimoireMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: number; data: any }) => {
+      const response = await apiRequest(`/api/admin/grimoires/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      return response;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/grimoires"] });
+      setEditingGrimoire(null);
+      toast({
+        title: "Sucesso",
+        description: "Grimório atualizado com sucesso!",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Erro",
+        description: error.message || "Erro ao atualizar grimório",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const generateAIMutation = useMutation({
+    mutationFn: async (prompt: string) => {
+      const response = await apiRequest("/api/admin/ai/generate", {
+        method: "POST",
+        body: JSON.stringify({ prompt }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      return response;
+    },
+    onSuccess: (data) => {
+      toast({
+        title: "IA Gerada",
+        description: "Conteúdo gerado com sucesso pela IA!",
+      });
+      // Aqui poderia atualizar o conteúdo do formulário com o resultado da IA
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Erro",
+        description: error.message || "Erro ao gerar conteúdo com IA",
+        variant: "destructive",
+      });
+    },
+  });
+
   const togglePublished = async (grimoire: Grimoire) => {
     try {
       await apiRequest(`/api/admin/grimoires/${grimoire.id}`, {
