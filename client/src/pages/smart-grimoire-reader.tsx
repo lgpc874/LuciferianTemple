@@ -98,70 +98,70 @@ export default function SmartGrimoireReader() {
     
     setIsProcessing(true);
     
-    // Preservar HTML completamente, apenas remover comentários HTML se necessário
+    // Preservar HTML completamente sem alterações
     const cleanContent = content.trim();
 
-    // Criar um elemento temporário para parsing seguro do HTML
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = cleanContent;
-    
-    // Função para contar palavras em texto (ignorando tags HTML)
-    const countWords = (htmlString: string): number => {
-      const tempElement = document.createElement('div');
-      tempElement.innerHTML = htmlString;
-      const textContent = tempElement.textContent || tempElement.innerText || '';
-      return textContent.split(/\s+/).filter(word => word.length > 0).length;
+    // Função para contar palavras ignorando tags HTML mas preservando todo o HTML
+    const countWordsInHTML = (htmlString: string): number => {
+      // Remover tags HTML temporariamente apenas para contagem
+      const textOnly = htmlString.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+      return textOnly ? textOnly.split(' ').filter(word => word.length > 0).length : 0;
     };
 
-    // Função para dividir HTML mantendo estrutura
-    const splitHTMLContent = (htmlContent: string, maxWords: number): string[] => {
-      const pages: string[] = [];
+    // Função melhorada para dividir HTML preservando TODA a estrutura
+    const splitHTMLByWords = (htmlContent: string, maxWords: number): string[] => {
+      const totalWords = countWordsInHTML(htmlContent);
       
       // Se o conteúdo é pequeno, retorna como uma página
-      if (countWords(htmlContent) <= maxWords) {
+      if (totalWords <= maxWords) {
         return [htmlContent];
       }
 
-      // Dividir por elementos de bloco principais
-      const blockElements = htmlContent.split(/(<\/?(div|p|h[1-6]|ul|ol|li|blockquote|section|article)[^>]*>)/gi);
+      // Dividir por parágrafos principais mas preservar tudo
+      const paragraphs = htmlContent.split(/(<\/?(p|div|h[1-6]|blockquote)[^>]*>)/gi);
       
+      const pages: string[] = [];
       let currentPage = '';
       let currentWords = 0;
       
-      for (let i = 0; i < blockElements.length; i++) {
-        const element = blockElements[i];
-        const elementWords = countWords(element);
+      for (let i = 0; i < paragraphs.length; i++) {
+        const paragraph = paragraphs[i];
+        const paragraphWords = countWordsInHTML(paragraph);
         
-        // Se adicionar este elemento excede o limite e já temos conteúdo
-        if (currentWords + elementWords > maxWords && currentPage.trim()) {
-          pages.push(currentPage.trim());
-          currentPage = element;
-          currentWords = elementWords;
+        // Se adicionar este parágrafo excede o limite e já temos conteúdo
+        if (currentWords + paragraphWords > maxWords && currentPage.trim()) {
+          pages.push(currentPage);
+          currentPage = paragraph;
+          currentWords = paragraphWords;
         } else {
-          currentPage += element;
-          currentWords += elementWords;
+          currentPage += paragraph;
+          currentWords += paragraphWords;
         }
       }
       
       // Adicionar última página
       if (currentPage.trim()) {
-        pages.push(currentPage.trim());
+        pages.push(currentPage);
       }
       
-      // Se ainda temos páginas muito grandes, dividir por parágrafos
+      // Se ainda há páginas muito grandes, dividir por sentenças
       const finalPages: string[] = [];
+      
       for (const page of pages) {
-        if (countWords(page) > maxWords * 1.5) {
-          // Dividir por sentenças ou quebras de linha
-          const sentences = page.split(/(<[^>]*>|\.(?:\s|$)|<br\s*\/?>|\n)/gi);
+        const pageWords = countWordsInHTML(page);
+        
+        if (pageWords > maxWords * 1.3) {
+          // Dividir por quebras naturais (pontos, <br>, etc.)
+          const sentences = page.split(/(\.|<br\s*\/?>|<\/p>|<\/div>)/gi);
+          
           let currentSentencePage = '';
           let sentenceWords = 0;
           
           for (const sentence of sentences) {
-            const sentenceWordCount = countWords(sentence);
+            const sentenceWordCount = countWordsInHTML(sentence);
             
             if (sentenceWords + sentenceWordCount > maxWords && currentSentencePage.trim()) {
-              finalPages.push(currentSentencePage.trim());
+              finalPages.push(currentSentencePage);
               currentSentencePage = sentence;
               sentenceWords = sentenceWordCount;
             } else {
@@ -171,30 +171,38 @@ export default function SmartGrimoireReader() {
           }
           
           if (currentSentencePage.trim()) {
-            finalPages.push(currentSentencePage.trim());
+            finalPages.push(currentSentencePage);
           }
         } else {
           finalPages.push(page);
         }
       }
       
-      return finalPages;
+      return finalPages.filter(page => page.trim().length > 0);
     };
 
-    // Processar o conteúdo
-    const contentPages = splitHTMLContent(cleanContent, settings.wordsPerPage);
+    // Processar o conteúdo mantendo TODO o HTML
+    const contentPages = splitHTMLByWords(cleanContent, settings.wordsPerPage);
     
     const newPages: Page[] = contentPages.map((pageContent, index) => ({
       content: pageContent,
       pageNumber: index + 1,
-      wordCount: countWords(pageContent),
+      wordCount: countWordsInHTML(pageContent),
       characterCount: pageContent.length
     }));
 
     setIsProcessing(false);
+    
+    // Log detalhado para debug
     console.log(`📖 Páginas criadas: ${newPages.length}`);
-    newPages.forEach(page => {
+    console.log(`📄 Conteúdo original: ${cleanContent.length} caracteres`);
+    console.log(`🔤 Palavras totais: ${countWordsInHTML(cleanContent)}`);
+    
+    newPages.forEach((page, index) => {
       console.log(`Página ${page.pageNumber}: ${page.wordCount} palavras, ${page.characterCount} caracteres`);
+      if (index === 0) {
+        console.log(`📝 Preview da primeira página:`, page.content.substring(0, 200) + '...');
+      }
     });
     
     return newPages;
@@ -467,13 +475,36 @@ export default function SmartGrimoireReader() {
                     </div>
                   ) : currentPageData ? (
                     <div
-                      className="grimoire-content text-gray-200 leading-relaxed"
+                      className="grimoire-content text-gray-200 leading-relaxed w-full"
                       style={{
                         fontSize: `${settings.fontSize}px`,
                         lineHeight: settings.lineHeight,
+                        wordWrap: 'break-word',
+                        overflowWrap: 'break-word',
                       }}
-                      dangerouslySetInnerHTML={{ __html: currentPageData.content }}
-                    />
+                    >
+                      <div 
+                        dangerouslySetInnerHTML={{ __html: currentPageData.content }}
+                        style={{
+                          width: '100%',
+                          maxWidth: '100%',
+                        }}
+                      />
+                      
+                      {/* Debug info */}
+                      {process.env.NODE_ENV === 'development' && (
+                        <div className="mt-4 p-2 bg-gray-800/50 rounded text-xs text-gray-400">
+                          <p>Página {currentPage}: {currentPageData.wordCount} palavras</p>
+                          <p>HTML: {currentPageData.characterCount} caracteres</p>
+                          <details>
+                            <summary>Ver HTML bruto</summary>
+                            <pre className="mt-2 text-xs overflow-auto max-h-32">
+                              {currentPageData.content}
+                            </pre>
+                          </details>
+                        </div>
+                      )}
+                    </div>
                   ) : (
                     <div className="flex items-center justify-center h-full">
                       <p className="text-gray-400">Conteúdo não encontrado</p>

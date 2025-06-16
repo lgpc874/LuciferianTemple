@@ -297,7 +297,17 @@ input, textarea {
   min-height: 100vh;
 }
 
-/* Conteúdo HTML no leitor inteligente */
+/* Conteúdo HTML no leitor inteligente - Reset e base */
+.grimoire-content {
+  /* Reset para garantir renderização limpa */
+  all: unset;
+  display: block;
+  width: 100%;
+  color: #CCCCCC;
+  font-family: 'EB Garamond', serif;
+}
+
+/* Títulos com hierarquia respeitada */
 .grimoire-content h1,
 .grimoire-content h2,
 .grimoire-content h3,
@@ -309,13 +319,17 @@ input, textarea {
   font-weight: bold !important;
   margin: 1.5rem 0 1rem 0 !important;
   line-height: 1.3 !important;
+  display: block !important;
 }
 
 .grimoire-content h1 { font-size: 1.8rem !important; }
 .grimoire-content h2 { font-size: 1.4rem !important; }
 .grimoire-content h3 { font-size: 1.2rem !important; }
 .grimoire-content h4 { font-size: 1.1rem !important; }
+.grimoire-content h5 { font-size: 1.05rem !important; }
+.grimoire-content h6 { font-size: 1rem !important; }
 
+/* Parágrafos e texto */
 .grimoire-content p {
   font-family: 'EB Garamond', serif !important;
   color: #CCCCCC !important;
@@ -323,26 +337,42 @@ input, textarea {
   margin: 1rem 0 !important;
   text-align: justify !important;
   text-indent: 2rem !important;
+  display: block !important;
 }
 
+/* Divs mantêm estrutura */
 .grimoire-content div {
   font-family: 'EB Garamond', serif !important;
   line-height: 1.7 !important;
+  display: block !important;
+  margin: inherit;
+  padding: inherit;
 }
 
+/* Spans preservam estilos inline */
+.grimoire-content span {
+  font-family: inherit !important;
+  line-height: inherit !important;
+  display: inline !important;
+}
+
+/* Listas */
 .grimoire-content ul,
 .grimoire-content ol {
   font-family: 'EB Garamond', serif !important;
   color: #CCCCCC !important;
   margin: 1rem 0 !important;
   padding-left: 2rem !important;
+  display: block !important;
 }
 
 .grimoire-content li {
   margin: 0.5rem 0 !important;
   line-height: 1.6 !important;
+  display: list-item !important;
 }
 
+/* Citações */
 .grimoire-content blockquote {
   font-family: 'EB Garamond', serif !important;
   color: #D6342C !important;
@@ -352,35 +382,91 @@ input, textarea {
   margin: 1.5rem 0 !important;
   background: rgba(214, 52, 44, 0.05) !important;
   border-radius: 0 4px 4px 0 !important;
+  display: block !important;
 }
 
+/* Ênfases */
 .grimoire-content em,
 .grimoire-content i {
   font-style: italic !important;
   color: #D6342C !important;
+  display: inline !important;
 }
 
 .grimoire-content strong,
 .grimoire-content b {
   font-weight: bold !important;
   color: #D6342C !important;
+  display: inline !important;
 }
 
-.grimoire-content span[style*="color: #D6342C"] {
+/* Links */
+.grimoire-content a {
   color: #D6342C !important;
+  text-decoration: underline !important;
+  display: inline !important;
 }
 
-.grimoire-content span[style*="font-weight: bold"] {
-  font-weight: bold !important;
+/* Quebras de linha */
+.grimoire-content br {
+  display: block !important;
+  content: "" !important;
+  margin-top: 0.5rem !important;
 }
 
-.grimoire-content span[style*="font-style: italic"] {
-  font-style: italic !important;
+/* Preservar TODOS os estilos inline - prioridade máxima */
+.grimoire-content [style*="color"] {
+  /* Cores inline têm prioridade */
 }
 
-/* Preservar estilos inline */
-.grimoire-content [style] {
-  /* Permitir que estilos inline sejam preservados */
+.grimoire-content [style*="font-size"] {
+  /* Tamanhos de fonte inline têm prioridade */
+}
+
+.grimoire-content [style*="font-family"] {
+  /* Famílias de fonte inline têm prioridade */
+}
+
+.grimoire-content [style*="font-weight"] {
+  /* Peso da fonte inline tem prioridade */
+}
+
+.grimoire-content [style*="font-style"] {
+  /* Estilo da fonte inline tem prioridade */
+}
+
+.grimoire-content [style*="text-align"] {
+  /* Alinhamento inline tem prioridade */
+}
+
+.grimoire-content [style*="margin"] {
+  /* Margens inline têm prioridade */
+}
+
+.grimoire-content [style*="padding"] {
+  /* Padding inline tem prioridade */
+}
+
+.grimoire-content [style*="line-height"] {
+  /* Altura da linha inline tem prioridade */
+}
+
+/* Garantir que estilos inline sempre funcionem */
+.grimoire-content * {
+  /* Permitir herança de estilos inline */
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  font-style: inherit;
+  text-align: inherit;
+  line-height: inherit;
+}
+
+/* Override específico para elementos com estilo inline */
+.grimoire-content *[style] {
+  /* Elementos com style attribute têm prioridade total */
+  all: revert !important;
 }
 
 /* Responsivo para mobile */
