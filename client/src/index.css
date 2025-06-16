@@ -285,6 +285,117 @@ input, textarea {
   font-family: 'Cinzel Decorative', serif;
 }
 
+/* Smart Grimoire Reader Styles - Fundo Preto Rubro */
+.smart-grimoire-reader {
+  background: linear-gradient(135deg, 
+    hsl(0, 0%, 0%) 0%,           /* Preto puro */
+    hsl(0, 30%, 5%) 25%,         /* Preto com tom rubro sutil */
+    hsl(0, 40%, 8%) 50%,         /* Rubro escuro */
+    hsl(0, 25%, 3%) 75%,         /* Volta ao preto rubro */
+    hsl(0, 0%, 0%) 100%          /* Preto puro */
+  );
+  min-height: 100vh;
+}
+
+/* Conteúdo HTML no leitor inteligente */
+.grimoire-content h1,
+.grimoire-content h2,
+.grimoire-content h3,
+.grimoire-content h4,
+.grimoire-content h5,
+.grimoire-content h6 {
+  font-family: 'Cinzel Decorative', serif !important;
+  color: #D6342C !important;
+  font-weight: bold !important;
+  margin: 1.5rem 0 1rem 0 !important;
+  line-height: 1.3 !important;
+}
+
+.grimoire-content h1 { font-size: 1.8rem !important; }
+.grimoire-content h2 { font-size: 1.4rem !important; }
+.grimoire-content h3 { font-size: 1.2rem !important; }
+.grimoire-content h4 { font-size: 1.1rem !important; }
+
+.grimoire-content p {
+  font-family: 'EB Garamond', serif !important;
+  color: #CCCCCC !important;
+  line-height: 1.7 !important;
+  margin: 1rem 0 !important;
+  text-align: justify !important;
+  text-indent: 2rem !important;
+}
+
+.grimoire-content div {
+  font-family: 'EB Garamond', serif !important;
+  line-height: 1.7 !important;
+}
+
+.grimoire-content ul,
+.grimoire-content ol {
+  font-family: 'EB Garamond', serif !important;
+  color: #CCCCCC !important;
+  margin: 1rem 0 !important;
+  padding-left: 2rem !important;
+}
+
+.grimoire-content li {
+  margin: 0.5rem 0 !important;
+  line-height: 1.6 !important;
+}
+
+.grimoire-content blockquote {
+  font-family: 'EB Garamond', serif !important;
+  color: #D6342C !important;
+  font-style: italic !important;
+  border-left: 3px solid #D6342C !important;
+  padding-left: 1.5rem !important;
+  margin: 1.5rem 0 !important;
+  background: rgba(214, 52, 44, 0.05) !important;
+  border-radius: 0 4px 4px 0 !important;
+}
+
+.grimoire-content em,
+.grimoire-content i {
+  font-style: italic !important;
+  color: #D6342C !important;
+}
+
+.grimoire-content strong,
+.grimoire-content b {
+  font-weight: bold !important;
+  color: #D6342C !important;
+}
+
+.grimoire-content span[style*="color: #D6342C"] {
+  color: #D6342C !important;
+}
+
+.grimoire-content span[style*="font-weight: bold"] {
+  font-weight: bold !important;
+}
+
+.grimoire-content span[style*="font-style: italic"] {
+  font-style: italic !important;
+}
+
+/* Preservar estilos inline */
+.grimoire-content [style] {
+  /* Permitir que estilos inline sejam preservados */
+}
+
+/* Responsivo para mobile */
+@media (max-width: 767px) {
+  .grimoire-content h1 { font-size: 1.4rem !important; }
+  .grimoire-content h2 { font-size: 1.2rem !important; }
+  .grimoire-content h3 { font-size: 1.1rem !important; }
+  .grimoire-content h4 { font-size: 1rem !important; }
+  
+  .grimoire-content p {
+    text-indent: 1rem !important;
+    margin: 0.8rem 0 !important;
+  }
+}
+
 /* Ajustes para desktop - tamanhos normais de website */
 @media (min-width: 768px) {
   /* Títulos principais - tamanhos padrão */

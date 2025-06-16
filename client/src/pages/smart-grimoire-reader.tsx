@@ -300,7 +300,7 @@ export default function SmartGrimoireReader() {
   return (
     <PageTransition>
       <ContentProtection>
-        <div className="min-h-screen bg-gradient-to-br from-black via-red-950/40 to-red-900/20 relative">
+        <div className="smart-grimoire-reader relative">
           
           {/* Header fixo */}
           <div className="fixed top-0 left-0 right-0 bg-black/80 backdrop-blur-sm border-b border-amber-500/20 z-50">
