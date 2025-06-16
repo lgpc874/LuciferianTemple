@@ -482,48 +482,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // ROTAS ADMIN PARA GERENCIAMENTO DE GRIMÓRIOS
-  app.post("/api/admin/grimoires", authenticateToken, requireAdmin, async (req, res) => {
-    try {
-      const grimoireData = req.body;
-      const newGrimoire = await supabaseService.createGrimoire(grimoireData);
-      res.json(newGrimoire);
-    } catch (error: any) {
-      console.error("Error creating grimoire:", error);
-      res.status(400).json({ error: error.message || "Erro ao criar grimório" });
-    }
-  });
 
-  app.put("/api/admin/grimoires/:id", authenticateToken, requireAdmin, async (req, res) => {
-    try {
-      const id = parseInt(req.params.id);
-      if (isNaN(id)) {
-        return res.status(400).json({ error: "ID inválido" });
-      }
-
-      const updates = req.body;
-      const updatedGrimoire = await supabaseService.updateGrimoire(id, updates);
-      res.json(updatedGrimoire);
-    } catch (error: any) {
-      console.error("Error updating grimoire:", error);
-      res.status(400).json({ error: error.message || "Erro ao atualizar grimório" });
-    }
-  });
-
-  app.delete("/api/admin/grimoires/:id", authenticateToken, requireAdmin, async (req, res) => {
-    try {
-      const id = parseInt(req.params.id);
-      if (isNaN(id)) {
-        return res.status(400).json({ error: "ID inválido" });
-      }
-
-      await supabaseService.deleteGrimoire(id);
-      res.json({ message: "Grimório deletado com sucesso" });
-    } catch (error: any) {
-      console.error("Error deleting grimoire:", error);
-      res.status(400).json({ error: error.message || "Erro ao deletar grimório" });
-    }
-  });
 
   // ROTA PARA GERAÇÃO DE GRIMÓRIOS COM IA
   app.post("/api/admin/ai/generate-grimoire", authenticateToken, requireAdmin, async (req, res) => {
