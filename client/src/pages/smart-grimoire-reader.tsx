@@ -374,7 +374,7 @@ export default function SmartGrimoireReader() {
               
               <div className="flex-1 text-center px-2 min-w-0">
                 <h1 
-                  className="font-medium text-xs md:text-base lg:text-lg truncate"
+                  className="font-medium text-[10px] sm:text-xs md:text-base lg:text-lg truncate"
                   style={{ color: primaryColor }}
                 >
                   {grimoire.title}
