@@ -1760,78 +1760,103 @@ input, textarea {
   }
 }
 
-/* Estilos personalizados para criação de grimórios */
+/* Estilos personalizados para criação de grimórios - Com alta prioridade */
 
 /* Corpo geral do grimório */
+.grimoire-content .grimorio-conteudo,
 .grimorio-conteudo {
-  font-family: 'EB Garamond', serif;
-  color: #CCCCCC;
-  font-size: 1.1rem;
-  line-height: 1.8;
-  text-align: justify;
-  padding: 2rem 1rem;
+  font-family: 'EB Garamond', serif !important;
+  color: #CCCCCC !important;
+  font-size: 1.1rem !important;
+  line-height: 1.8 !important;
+  text-align: justify !important;
+  padding: 2rem 1rem !important;
 }
 
 /* Título do grimório */
+.grimoire-content .grimorio-titulo,
 .grimorio-titulo {
-  font-family: 'Cinzel Decorative', serif;
-  font-size: 1.7rem;
-  color: #D6342C;
-  text-align: center;
-  margin-bottom: 0.5rem;
+  font-family: 'Cinzel Decorative', serif !important;
+  font-size: 1.7rem !important;
+  color: #D6342C !important;
+  text-align: center !important;
+  margin-bottom: 0.5rem !important;
 }
 
 /* Subtítulo / Volume */
+.grimoire-content .grimorio-subtitulo,
 .grimorio-subtitulo {
-  font-style: italic;
-  color: #D6342C;
-  text-align: center;
-  margin-bottom: 2rem;
+  font-style: italic !important;
+  color: #D6342C !important;
+  text-align: center !important;
+  margin-bottom: 2rem !important;
 }
 
 /* Citação destacada */
+.grimoire-content .grimorio-citacao,
 .grimorio-citacao {
-  font-style: italic;
-  font-size: 1.1rem;
-  color: #CCCCCC;
-  border-left: 3px solid #D6342C;
-  padding-left: 1rem;
-  margin: 2rem 0;
+  font-style: italic !important;
+  font-size: 1.1rem !important;
+  color: #CCCCCC !important;
+  border-left: 3px solid #D6342C !important;
+  padding-left: 1rem !important;
+  margin: 2rem 0 !important;
 }
 
 /* Fonte da citação */
+.grimoire-content .grimorio-citacao small,
 .grimorio-citacao small {
-  display: block;
-  font-style: normal;
-  font-size: 0.9rem;
-  margin-top: 0.5rem;
-  color: #999999;
+  display: block !important;
+  font-style: normal !important;
+  font-size: 0.9rem !important;
+  margin-top: 0.5rem !important;
+  color: #999999 !important;
 }
 
 /* Título de capítulo */
+.grimoire-content .capitulo-titulo,
 .capitulo-titulo {
-  font-family: 'Cinzel Decorative', serif;
-  font-size: 1.5rem;
-  color: #D6342C;
-  margin-top: 3rem;
-  margin-bottom: 1rem;
-  text-align: center;
+  font-family: 'Cinzel Decorative', serif !important;
+  font-size: 1.5rem !important;
+  color: #D6342C !important;
+  margin-top: 3rem !important;
+  margin-bottom: 1rem !important;
+  text-align: center !important;
 }
 
 /* Parágrafo com indentação ritualística */
+.grimoire-content .grimorio-conteudo p,
 .grimorio-conteudo p {
-  text-indent: 3rem;
-  margin-bottom: 1.5rem;
+  text-indent: 3rem !important;
+  margin-bottom: 1.5rem !important;
+  color: #CCCCCC !important;
 }
 
 /* Destaques importantes */
+.grimoire-content .destaque,
 .destaque {
-  color: #D6342C;
-  font-weight: bold;
+  color: #D6342C !important;
+  font-weight: bold !important;
 }
 
 /* Separadores ritualísticos */
+.grimoire-content .separador,
 .separador {
-  border-top: 1px solid #D6342C;
-  margin: 3rem 0;
+  border-top: 1px solid #D6342C !important;
+  margin: 3rem 0 !important;
+}
+
+/* Lista específica para grimórios */
+.grimoire-content .grimorio-lista,
+.grimorio-lista {
+  color: #D6342C !important;
+  font-weight: bold !important;
+  margin: 1.5rem 0 !important;
+  padding-left: 2rem !important;
+}
+
+.grimoire-content .grimorio-lista li,
+.grimorio-lista li {
+  color: #D6342C !important;
+  margin-bottom: 0.5rem !important;
 }
