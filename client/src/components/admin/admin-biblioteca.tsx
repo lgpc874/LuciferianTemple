@@ -1221,9 +1221,7 @@ function CreateGrimoireForm({
     is_paid: false,
     price: "",
     level: "iniciante",
-    chapters: [
-      { title: "Introdução", content: "" }
-    ],
+    content: "", // Agora apenas um campo de conteúdo
     cover_image_url: "",
     generate_cover_with_ai: false,
     ai_config: {
@@ -1232,50 +1230,11 @@ function CreateGrimoireForm({
       tone: "formal",
       specialization: "luciferian",
       guidelines: "",
-      numChapters: 5,
-      chapterTitles: ["Introdução", "Fundamentos", "Prática", "Desenvolvimento", "Conclusão"],
       coverDescription: ""
     }
   });
 
-  const addChapter = () => {
-    setFormData({
-      ...formData,
-      chapters: [...formData.chapters, { title: "", content: "" }]
-    });
-  };
 
-  const removeChapter = (index: number) => {
-    if (formData.chapters.length > 1) {
-      const newChapters = formData.chapters.filter((_, i) => i !== index);
-      setFormData({ ...formData, chapters: newChapters });
-    }
-  };
-
-  const updateChapter = (index: number, field: 'title' | 'content', value: string) => {
-    const newChapters = [...formData.chapters];
-    newChapters[index] = { ...newChapters[index], [field]: value };
-    setFormData({ ...formData, chapters: newChapters });
-  };
-
-  const generateChapterTitles = () => {
-    const numChapters = formData.ai_config.numChapters;
-    const newTitles = [...formData.ai_config.chapterTitles];
-    
-    // Ajustar array para o número desejado de capítulos
-    while (newTitles.length < numChapters) {
-      newTitles.push(`Capítulo ${newTitles.length + 1}`);
-    }
-    while (newTitles.length > numChapters) {
-      newTitles.pop();
-    }
-    
-    setFormData({
-      ...formData,
-      ai_config: { ...formData.ai_config, chapterTitles: newTitles },
-      chapters: newTitles.map(title => ({ title, content: "" }))
-    });
-  };
 
   const [isGeneratingCover, setIsGeneratingCover] = useState(false);
   const { toast } = useToast();
@@ -1327,7 +1286,6 @@ function CreateGrimoireForm({
     const data = {
       ...formData,
       section_id: parseInt(formData.section_id),
-      chapters: formData.chapters.filter(c => c.title?.trim() && c.content?.trim()),
       price: formData.is_paid ? formData.price : null,
       cover_image_url: formData.cover_image_url || null,
     };
@@ -1464,8 +1422,6 @@ function CreateGrimoireForm({
                 const prompt = `
                   Título: ${formData.title}
                   Descrição: ${formData.description}
-                  Número de Capítulos: ${formData.ai_config.numChapters}
-                  Títulos dos Capítulos: ${formData.ai_config.chapterTitles.join(', ')}
                   
                   Configurações:
                   - Personalidade: ${formData.ai_config.personality}
@@ -1474,7 +1430,7 @@ function CreateGrimoireForm({
                   - Especialização: ${formData.ai_config.specialization}
                   ${formData.ai_config.guidelines ? `- Diretrizes: ${formData.ai_config.guidelines}` : ''}
                   
-                  Gere um grimório completo com os capítulos especificados, incluindo conteúdo detalhado para cada capítulo.
+                  Gere um grimório completo em formato HTML com todo o conteúdo estruturado.
                 `;
                 onAIGenerate(prompt);
               }}
@@ -1497,139 +1453,23 @@ function CreateGrimoireForm({
         </Card>
       )}
 
-      {/* Configuração de Capítulos para IA */}
-      {mode === "ai" && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-golden-amber">Configuração de Capítulos</CardTitle>
-            <CardDescription>
-              Configure quantos capítulos e seus títulos para a IA gerar
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Número de Capítulos</Label>
-                <Select 
-                  value={formData.ai_config.numChapters.toString()} 
-                  onValueChange={(value) => {
-                    const numChapters = parseInt(value);
-                    setFormData({
-                      ...formData, 
-                      ai_config: { ...formData.ai_config, numChapters }
-                    });
-                  }}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="3">3 Capítulos</SelectItem>
-                    <SelectItem value="5">5 Capítulos</SelectItem>
-                    <SelectItem value="7">7 Capítulos</SelectItem>
-                    <SelectItem value="10">10 Capítulos</SelectItem>
-                    <SelectItem value="12">12 Capítulos</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Auto-gerar Títulos</Label>
-                <Button
-                  type="button"
-                  onClick={generateChapterTitles}
-                  className="w-full bg-amber-500 hover:bg-amber-600 text-black font-semibold"
-                  size="sm"
-                >
-                  <Sparkles className="mr-2 h-4 w-4" />
-                  Gerar Títulos
-                </Button>
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <Label>Títulos dos Capítulos</Label>
-              {formData.ai_config.chapterTitles.map((title, index) => (
-                <div key={index} className="flex items-center space-x-2">
-                  <span className="text-sm font-medium w-20">Cap. {index + 1}:</span>
-                  <Input
-                    value={title}
-                    onChange={(e) => {
-                      const newTitles = [...formData.ai_config.chapterTitles];
-                      newTitles[index] = e.target.value;
-                      setFormData({
-                        ...formData,
-                        ai_config: { ...formData.ai_config, chapterTitles: newTitles }
-                      });
-                    }}
-                    placeholder={`Título do Capítulo ${index + 1}`}
-                    className="flex-1"
-                  />
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Criação Manual de Capítulos */}
-      {mode === "manual" && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-golden-amber">Capítulos do Grimório</CardTitle>
-            <CardDescription>
-              Crie cada capítulo individualmente com título e conteúdo
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {formData.chapters.map((chapter, index) => (
-              <div key={index} className="border rounded-lg p-4 space-y-3">
-                <div className="flex items-center justify-between">
-                  <Label className="text-sm font-semibold">Capítulo {index + 1}</Label>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => removeChapter(index)}
-                    disabled={formData.chapters.length === 1}
-                    className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label>Título do Capítulo</Label>
-                  <Input
-                    value={chapter.title}
-                    onChange={(e) => updateChapter(index, 'title', e.target.value)}
-                    placeholder={`Ex: Fundamentos da Magia Luciferiana`}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Conteúdo do Capítulo</Label>
-                  <RichTextEditor
-                    value={chapter.content}
-                    onChange={(value) => updateChapter(index, 'content', value)}
-                    placeholder="Digite o conteúdo do capítulo..."
-                    height="250px"
-                  />
-                </div>
-              </div>
-            ))}
-            
-            <Button
-              type="button"
-              onClick={addChapter}
-              className="w-full bg-amber-500 hover:bg-amber-600 text-black font-semibold"
-            >
-              <Plus className="mr-2 h-4 w-4" />
-              Adicionar Novo Capítulo
-            </Button>
-          </CardContent>
-        </Card>
-      )}
+      {/* Editor de Conteúdo Único */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-golden-amber">Conteúdo do Grimório</CardTitle>
+          <CardDescription>
+            Digite ou cole todo o conteúdo do grimório. O HTML será preservado exatamente como digitado.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <RichTextEditor
+            value={formData.content}
+            onChange={(value) => setFormData({...formData, content: value})}
+            placeholder="Digite todo o conteúdo do grimório aqui..."
+            height="500px"
+          />
+        </CardContent>
+      </Card>
 
       {/* Configuração de Capa */}
       <Card>

@@ -277,27 +277,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // ADMIN - Gerenciamento de Grimórios com Capítulos Individuais
+  // ADMIN - Gerenciamento de Grimórios com Conteúdo Único
   app.post("/api/admin/grimoires", authenticateToken, requireAdmin, async (req, res) => {
     try {
-      const { title, description, section_id, chapters, is_paid, price, level } = req.body;
+      const { title, description, section_id, content, is_paid, price, level, cover_image_url } = req.body;
       
-      if (!title || !description || !section_id || !chapters || chapters.length === 0) {
-        return res.status(400).json({ error: "Dados obrigatórios: título, descrição, seção e pelo menos um capítulo" });
+      if (!title || !description || !section_id || !content) {
+        return res.status(400).json({ error: "Dados obrigatórios: título, descrição, seção e conteúdo" });
       }
 
-      // Calcular tempo de leitura total
-      const totalWords = chapters.reduce((acc: number, chapter: any) => 
-        acc + chapter.content.split(' ').length, 0
-      );
-      const estimatedReadingTime = Math.ceil(totalWords / 200);
+      // Calcular tempo de leitura baseado no conteúdo único
+      const wordCount = content.split(' ').length;
+      const estimatedReadingTime = Math.ceil(wordCount / 200);
       
       // Gerar ordem de desbloqueio automática
       const existingGrimoires = await supabaseService.getGrimoires();
       const unlockOrder = existingGrimoires.length + 1;
 
-      // Gerar URL de capa padrão
-      const coverImageUrl = `https://via.placeholder.com/300x400/1a1a1a/d4af37?text=${encodeURIComponent(title)}`;
+      // Usar capa fornecida ou gerar URL padrão
+      const finalCoverUrl = cover_image_url || `https://via.placeholder.com/300x400/1a1a1a/d4af37?text=${encodeURIComponent(title)}`;
       
       // Criar grimório no banco
       const grimoireData: InsertGrimoire = {
