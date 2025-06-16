@@ -377,6 +377,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // GERAÇÃO COM IA
+  app.post("/api/admin/ai/generate", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const { prompt } = req.body;
+      
+      if (!prompt) {
+        return res.status(400).json({ error: "Prompt é obrigatório" });
+      }
+
+      // Usar OpenAI para gerar conteúdo
+      const generatedContent = await supabaseService.generateGrimoireWithAI(prompt);
+      
+      res.json({
+        content: generatedContent,
+        message: "Conteúdo gerado com sucesso pela IA"
+      });
+    } catch (error: any) {
+      console.error("Error generating AI content:", error);
+      res.status(500).json({ error: error.message || "Erro ao gerar conteúdo com IA" });
+    }
+  });
+
   // CAPÍTULOS
   app.get("/api/grimoires/:id/chapters", async (req, res) => {
     try {

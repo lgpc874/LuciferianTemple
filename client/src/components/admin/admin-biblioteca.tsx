@@ -652,6 +652,8 @@ export default function AdminBiblioteca() {
             sections={sections}
             onSubmit={(data) => createGrimoireMutation.mutate(data)}
             isLoading={createGrimoireMutation.isPending}
+            onAIGenerate={(prompt) => generateAIMutation.mutate(prompt)}
+            isAIGenerating={generateAIMutation.isPending}
           />
         </TabsContent>
 
@@ -667,13 +669,23 @@ export default function AdminBiblioteca() {
                         size="sm"
                         variant="ghost"
                         onClick={() => setSelectedGrimoire(grimoire)}
+                        title="Visualizar"
                       >
                         <Eye className="h-4 w-4" />
                       </Button>
                       <Button
                         size="sm"
                         variant="ghost"
+                        onClick={() => setEditingGrimoire(grimoire)}
+                        title="Editar"
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
                         onClick={() => togglePublished(grimoire)}
+                        title={grimoire.is_published ? "Despublicar" : "Publicar"}
                       >
                         {grimoire.is_published ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </Button>
@@ -686,7 +698,9 @@ export default function AdminBiblioteca() {
                     <Badge variant={grimoire.is_published ? "default" : "secondary"}>
                       {grimoire.is_published ? "Publicado" : "Rascunho"}
                     </Badge>
-                    <Badge variant="outline">{grimoire.level}</Badge>
+                    {grimoire.is_paid && (
+                      <Badge variant="outline">R$ {grimoire.price}</Badge>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -704,6 +718,18 @@ export default function AdminBiblioteca() {
             </Button>
           </div>
           <GrimoireViewer grimoire={selectedGrimoire} />
+        </div>
+      )}
+
+      {editingGrimoire && (
+        <div className="mt-6">
+          <EditGrimoireForm
+            grimoire={editingGrimoire}
+            sections={sections}
+            onSubmit={(data) => updateGrimoireMutation.mutate({ id: editingGrimoire.id, data })}
+            onCancel={() => setEditingGrimoire(null)}
+            isLoading={updateGrimoireMutation.isPending}
+          />
         </div>
       )}
     </div>
