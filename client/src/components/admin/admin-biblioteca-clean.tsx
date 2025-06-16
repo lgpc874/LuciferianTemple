@@ -257,11 +257,11 @@ export default function AdminBiblioteca() {
   const [selectedGrimoire, setSelectedGrimoire] = useState<Grimoire | null>(null);
 
   // Queries
-  const { data: sections = [], isLoading: sectionsLoading } = useQuery<LibrarySection[]>({
+  const { data: sections = [], isLoading: sectionsLoading } = useQuery({
     queryKey: ["/api/library/sections"],
   });
 
-  const { data: grimoires = [], isLoading: grimoiresLoading } = useQuery<Grimoire[]>({
+  const { data: grimoires = [], isLoading: grimoiresLoading } = useQuery({
     queryKey: ["/api/grimoires"],
   });
 

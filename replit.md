@@ -203,6 +203,7 @@ Changelog:
 - June 16, 2025. Série Atrium Ignis completada - 6 volumes preparatórios totalizando mais de 60 capítulos de filosofia luciferiana introdutória, progressão natural de desconstrução religiosa até despertar da chama original, todos publicados e funcionais no sistema, preparação completa para próximo nível de iniciação
 - June 16, 2025. Grimório "CHAMAS SILENCIOSAS" recriado com linguagem autêntica - Volume VI final do Atrium Ignis reescrito com estilo mísico, denso e sutilmente ameaçador "como quem sussurra a verdade há séculos", incluindo convite ritualístico à Porta Umbrae, encerramento com frases: "O que te chama não tem nome, mas te conhece" e "O Abismo não chama — ele se lembra de ti"
 - June 16, 2025. A PORTA UMBRAE destacada no grimório final - adicionados elementos visuais especiais, título marcado "🚪 A PORTA UMBRAE 🚪", definições como passagem/reconhecimento, aviso sobre irreversibilidade do conhecimento, preparando adequadamente a transição para o próximo nível iniciático
+- June 16, 2025. Sistema de criação de grimórios simplificado conforme solicitação - removidos todos os capítulos individuais, implementado editor único de conteúdo HTML, eliminada formatação automática para preservar exatamente o HTML digitado, sistema de abas de capítulos substituído por campo de texto único
 ```
 
 ## User Preferences
