@@ -1761,30 +1761,77 @@ input, textarea {
 }
 
 /* Estilos personalizados para criação de grimórios */
-.grimorio-descricao {
-  margin-bottom: 3rem;
+
+/* Corpo geral do grimório */
+.grimorio-conteudo {
   font-family: 'EB Garamond', serif;
   color: #CCCCCC;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  text-align: justify;
+  padding: 2rem 1rem;
 }
 
+/* Título do grimório */
 .grimorio-titulo {
   font-family: 'Cinzel Decorative', serif;
+  font-size: 1.7rem;
   color: #D6342C;
-  font-size: 1.5rem;
+  text-align: center;
   margin-bottom: 0.5rem;
 }
 
+/* Subtítulo / Volume */
 .grimorio-subtitulo {
   font-style: italic;
-  font-size: 1rem;
-  margin-bottom: 1.5rem;
   color: #D6342C;
+  text-align: center;
+  margin-bottom: 2rem;
 }
 
+/* Citação destacada */
 .grimorio-citacao {
   font-style: italic;
   font-size: 1.1rem;
   color: #CCCCCC;
   border-left: 3px solid #D6342C;
   padding-left: 1rem;
+  margin: 2rem 0;
+}
+
+/* Fonte da citação */
+.grimorio-citacao small {
+  display: block;
+  font-style: normal;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  color: #999999;
+}
+
+/* Título de capítulo */
+.capitulo-titulo {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 1.5rem;
+  color: #D6342C;
+  margin-top: 3rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+/* Parágrafo com indentação ritualística */
+.grimorio-conteudo p {
+  text-indent: 3rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Destaques importantes */
+.destaque {
+  color: #D6342C;
+  font-weight: bold;
+}
+
+/* Separadores ritualísticos */
+.separador {
+  border-top: 1px solid #D6342C;
+  margin: 3rem 0;
 }
