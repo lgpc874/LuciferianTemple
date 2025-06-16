@@ -26,6 +26,7 @@ export default function SmartGrimoireReader() {
   const [saveStatus, setSaveStatus] = useState<'saving' | 'saved' | 'error' | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [primaryColor, setPrimaryColor] = useState('#D97706'); // amber-600 padrão
+  const [showFooter, setShowFooter] = useState(false);
 
   const grimoireId = params?.id ? parseInt(params.id) : null;
   const measureRef = useRef<HTMLDivElement>(null);
@@ -279,6 +280,25 @@ export default function SmartGrimoireReader() {
     }
   }, [grimoireId, currentPage]);
 
+  // Detectar scroll para mostrar footer apenas no final da página
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const scrollHeight = document.documentElement.scrollHeight;
+      const clientHeight = document.documentElement.clientHeight;
+      
+      // Mostrar footer quando estiver próximo do final (últimos 100px)
+      const isNearBottom = scrollTop + clientHeight >= scrollHeight - 100;
+      setShowFooter(isNearBottom);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    // Verificar posição inicial
+    handleScroll();
+    
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   // Funções de navegação
   const goToPreviousPage = () => {
     setCurrentPage(prev => {
@@ -432,36 +452,44 @@ export default function SmartGrimoireReader() {
             </div>
           </div>
 
-          {/* Controles de navegação com informações da página */}
-          <div className="fixed bottom-0 left-0 right-0 bg-black/90 backdrop-blur-sm border-t border-amber-500/20 p-4 z-50">
-            <div className="max-w-md mx-auto flex items-center justify-center gap-4">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={goToPreviousPage}
-                disabled={!canGoBack || isProcessing}
-                className="text-amber-500 border-amber-500/30 hover:bg-amber-500/10 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <ChevronLeft className="w-4 h-4 mr-1" />
-                Anterior
-              </Button>
-              
-              <div className="text-sm text-gray-400 text-center min-w-[100px]">
-                {pages.length > 0 ? `${currentPage} / ${pages.length}` : '...'}
+          {/* Controles de navegação com informações da página - só aparece quando rolar até o final */}
+          {showFooter && (
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.3 }}
+              className="fixed bottom-0 left-0 right-0 bg-black/90 backdrop-blur-sm border-t border-amber-500/20 p-4 z-50"
+            >
+              <div className="max-w-md mx-auto flex items-center justify-center gap-4">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={goToPreviousPage}
+                  disabled={!canGoBack || isProcessing}
+                  className="text-amber-500 border-amber-500/30 hover:bg-amber-500/10 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <ChevronLeft className="w-4 h-4 mr-1" />
+                  Anterior
+                </Button>
+                
+                <div className="text-sm text-gray-400 text-center min-w-[100px]">
+                  {pages.length > 0 ? `${currentPage} / ${pages.length}` : '...'}
+                </div>
+                
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={goToNextPage}
+                  disabled={!canGoForward || isProcessing}
+                  className="text-amber-500 border-amber-500/30 hover:bg-amber-500/10 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Próxima
+                  <ChevronRight className="w-4 h-4 ml-1" />
+                </Button>
               </div>
-              
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={goToNextPage}
-                disabled={!canGoForward || isProcessing}
-                className="text-amber-500 border-amber-500/30 hover:bg-amber-500/10 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Próxima
-                <ChevronRight className="w-4 h-4 ml-1" />
-              </Button>
-            </div>
-          </div>
+            </motion.div>
+          )}
 
           {/* Áreas de clique invisíveis para navegação */}
           {!isProcessing && (
