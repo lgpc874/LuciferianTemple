@@ -489,7 +489,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const puppeteer = require('puppeteer');
       
-      // HTML template com estilos idênticos ao visualizador admin
+      // Função para extrair estilos inline personalizados do conteúdo
+      const extractCustomStyles = (content: string) => {
+        const styleRegex = /style\s*=\s*["']([^"']*?)["']/gi;
+        const colorRegex = /color\s*:\s*([^;]+)/gi;
+        const customColors = new Set<string>();
+        
+        let match;
+        while ((match = styleRegex.exec(content)) !== null) {
+          const styleContent = match[1];
+          let colorMatch;
+          while ((colorMatch = colorRegex.exec(styleContent)) !== null) {
+            customColors.add(colorMatch[1].trim());
+          }
+        }
+        
+        return Array.from(customColors);
+      };
+
+      // Extrai cores personalizadas do grimório
+      const customColors = extractCustomStyles(grimoire.content);
+      const primaryColor = customColors.length > 0 ? customColors[0] : '#D6342C';
+      
+      // HTML template dinâmico que se adapta aos estilos do grimório
       const htmlContent = `
         <!DOCTYPE html>
         <html lang="pt-BR">
@@ -513,6 +535,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
               padding: 20px;
             }
             
+            /* Preserva TODOS os estilos inline do grimório */
+            * {
+              color: inherit !important;
+              font-family: inherit !important;
+              font-size: inherit !important;
+              font-weight: inherit !important;
+              font-style: inherit !important;
+              text-align: inherit !important;
+              background: inherit !important;
+              border: inherit !important;
+              margin: inherit !important;
+              padding: inherit !important;
+            }
+            
+            /* Estilos base que podem ser sobrescritos por inline styles */
             .grimorio-conteudo {
               font-family: 'EB Garamond', serif;
               color: #2a2a2a;
@@ -524,7 +561,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
             .grimorio-titulo {
               font-family: 'Cinzel Decorative', serif;
-              color: #D6342C;
+              color: ${primaryColor};
               text-align: center;
               font-size: 22pt;
               margin-bottom: 0.5rem;
@@ -534,14 +571,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
             .grimorio-subtitulo {
               font-style: italic;
               text-align: center;
-              color: #D6342C;
+              color: ${primaryColor};
               font-size: 14pt;
               margin-bottom: 2rem;
             }
 
             .grimorio-citacao {
               font-style: italic;
-              border-left: 3px solid #D6342C;
+              border-left: 3px solid ${primaryColor};
               padding-left: 1rem;
               margin: 2rem 0;
               color: #2a2a2a;
@@ -560,7 +597,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             .grimorio-lista {
               list-style-type: disc;
               margin-left: 2rem;
-              color: #D6342C;
+              color: ${primaryColor};
               font-weight: bold;
               font-family: 'EB Garamond', serif;
             }
@@ -571,13 +608,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
             }
 
             .destaque {
-              color: #D6342C;
+              color: ${primaryColor};
               font-weight: bold;
             }
             
             h1, h2, h3, h4, h5, h6 {
               page-break-after: avoid;
             }
+            
+            /* Adiciona suporte para cores personalizadas encontradas */
+            ${customColors.map((color, index) => `
+            .custom-color-${index} {
+              color: ${color};
+            }
+            `).join('')}
           </style>
         </head>
         <body>
