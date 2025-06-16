@@ -68,60 +68,68 @@ export default function GrimoireReader() {
     },
   });
 
-  // Função para paginar o conteúdo de forma mais fluida
+  // Função para paginar o conteúdo sem criar páginas vazias
   const paginateContent = (content: string, charsPerPage: number = 2000) => {
-    if (!content) return [];
+    if (!content || !content.trim()) return [];
     
     // Dividir por parágrafos principais primeiro
-    const mainSections = content.split(/(?=<h[1-6])|(?=<div class="[^"]*section)|(?=<blockquote)/);
+    const mainSections = content.split(/(?=<h[1-6])|(?=<div class="[^"]*section)|(?=<blockquote)/)
+      .filter(section => section.trim().length > 0);
+    
     const pages = [];
     let currentPage = '';
     
     for (const section of mainSections) {
-      if (!section.trim()) continue;
+      const trimmedSection = section.trim();
+      if (trimmedSection.length < 20) continue; // Ignorar seções muito pequenas
       
-      const testPage = currentPage + section;
+      const testPage = currentPage + trimmedSection;
       
       // Se a seção é muito grande para uma página sozinha, divida internamente
-      if (section.length > charsPerPage) {
-        // Finalizar página atual se houver conteúdo
-        if (currentPage.trim()) {
-          pages.push(currentPage);
+      if (trimmedSection.length > charsPerPage) {
+        // Finalizar página atual se houver conteúdo substancial
+        if (currentPage.trim().length > 100) {
+          pages.push(currentPage.trim());
           currentPage = '';
         }
         
         // Dividir seção grande em partes menores por parágrafos
-        const paragraphs = section.split(/(?=<p>)|(?=<\/p>)/);
+        const paragraphs = trimmedSection.split(/(?=<p>)|(?=<\/p>)/)
+          .filter(para => para.trim().length > 0);
+        
         let tempPage = '';
         
         for (const para of paragraphs) {
           const testTemp = tempPage + para;
-          if (testTemp.length > charsPerPage && tempPage) {
-            pages.push(tempPage);
+          if (testTemp.length > charsPerPage && tempPage.trim().length > 100) {
+            pages.push(tempPage.trim());
             tempPage = para;
           } else {
             tempPage = testTemp;
           }
         }
         
-        if (tempPage.trim()) {
+        if (tempPage.trim().length > 20) {
           currentPage = tempPage;
         }
-      } else if (testPage.length > charsPerPage && currentPage.trim()) {
+      } else if (testPage.length > charsPerPage && currentPage.trim().length > 100) {
         // Página atual + nova seção excede limite, finalizar página atual
-        pages.push(currentPage);
-        currentPage = section;
+        pages.push(currentPage.trim());
+        currentPage = trimmedSection;
       } else {
         // Adicionar seção à página atual
         currentPage = testPage;
       }
     }
     
-    if (currentPage.trim()) {
-      pages.push(currentPage);
+    // Só adicionar a última página se tiver conteúdo substancial
+    if (currentPage.trim().length > 50) {
+      pages.push(currentPage.trim());
     }
     
-    return pages.length > 0 ? pages : [content];
+    // Garantir que sempre temos pelo menos uma página com conteúdo
+    const validPages = pages.filter(page => page.trim().length > 50);
+    return validPages.length > 0 ? validPages : [content.trim()];
   };
 
   // Preparar conteúdo paginado quando capítulos carregarem
