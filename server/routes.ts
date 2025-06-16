@@ -299,9 +299,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "ID inválido" });
       }
 
-      console.log(`🗑️ Deletando grimório ${id} e todos os capítulos...`);
+      console.log(`🗑️ Deletando grimório ${id}...`);
       await supabaseService.deleteGrimoire(id);
-      console.log(`✅ Grimório ${id} e capítulos deletados com sucesso do Supabase`);
+      console.log(`✅ Grimório ${id} deletado com sucesso do Supabase`);
       res.json({ message: "Grimório deletado com sucesso" });
     } catch (error: any) {
       console.error("❌ Error deleting grimoire:", error);
@@ -492,9 +492,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Gerar conteúdo com IA
       const aiResult = await supabaseService.generateGrimoireWithAI(enhancedPrompt);
       
-      // Validar que a IA retornou capítulos com conteúdo
-      if (!aiResult.chapters || !Array.isArray(aiResult.chapters) || aiResult.chapters.length === 0) {
-        throw new Error("IA não gerou capítulos válidos");
+      // Validar que a IA retornou conteúdo válido
+      if (!aiResult.content || aiResult.content.trim().length === 0) {
+        throw new Error("IA não gerou conteúdo válido");
       }
 
       // Calcular estatísticas do conteúdo completo
@@ -517,36 +517,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const newGrimoire = await supabaseService.createGrimoire(grimoireData);
       
-      // Criar capítulos individuais no banco
-      const createdChapters = [];
-      for (let i = 0; i < aiResult.chapters.length; i++) {
-        const chapter = aiResult.chapters[i];
-        
-        if (chapter.title && chapter.content) {
-          const chapterData = {
-            grimoire_id: newGrimoire.id,
-            title: chapter.title,
-            content: chapter.content,
-            chapter_number: i + 1,
-            estimated_reading_time: Math.max(5, Math.ceil(chapter.content.split(' ').length / 200))
-          };
-          
-          const createdChapter = await supabaseService.createChapter(chapterData);
-          createdChapters.push(createdChapter);
-        }
-      }
-      
       res.json({
         grimoire: newGrimoire,
-        chapters: createdChapters,
         aiGenerated: {
           title: aiResult.title,
           description: aiResult.description,
-          totalChapters: createdChapters.length,
           totalWords: totalWordCount,
           readingTime: estimatedReadingTime
         },
-        message: `Grimório gerado com ${createdChapters.length} capítulos completos!`
+        message: `Grimório gerado com sucesso! ${totalWordCount} palavras, aproximadamente ${estimatedReadingTime} minutos de leitura.`
       });
     } catch (error: any) {
       console.error("Error generating quick grimoire:", error);

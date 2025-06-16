@@ -327,45 +327,28 @@ export class SupabaseService {
         messages: [
           {
             role: "system",
-            content: `Você é um mestre luciferiano e especialista em ocultismo. Sua tarefa é criar um grimório COMPLETO com capítulos TOTALMENTE desenvolvidos.
+            content: `Você é um mestre luciferiano e especialista em ocultismo. Sua tarefa é criar um grimório COMPLETO com conteúdo unificado e detalhado.
 
-            REGRA ABSOLUTA: CADA CAPÍTULO DEVE TER CONTEÚDO COMPLETO DE 800-1200 PALAVRAS. NÃO ACEITO RESUMOS OU CONTEÚDO INCOMPLETO.
+            REGRA ABSOLUTA: O conteúdo deve ter pelo menos 5000-8000 palavras, totalmente desenvolvido e completo.
 
             Formato JSON obrigatório:
             {
               "title": "Título do grimório",
               "description": "Descrição detalhada em 2-3 parágrafos explicando o propósito e conteúdo do grimório",
-              "chapters": [
-                {
-                  "title": "Capítulo 1: [Nome]",
-                  "content": "CONTEÚDO COMPLETO DO CAPÍTULO com pelo menos 800 palavras incluindo: introdução conceitual, desenvolvimento teórico, instruções práticas, rituais específicos, filosofia luciferiana, simbolismo, e conclusões. Use parágrafos bem estruturados, formatação HTML (<strong>, <em>, <ul>, <li>), citações em latim e linguagem mística erudita."
-                },
-                {
-                  "title": "Capítulo 2: [Nome]",
-                  "content": "CONTEÚDO COMPLETO DO CAPÍTULO com pelo menos 800 palavras seguindo a mesma estrutura detalhada do capítulo anterior."
-                },
-                {
-                  "title": "Capítulo 3: [Nome]",
-                  "content": "CONTEÚDO COMPLETO DO CAPÍTULO com pelo menos 800 palavras seguindo a mesma estrutura detalhada."
-                }
-              ],
-              "level": "iniciante",
+              "content": "CONTEÚDO COMPLETO DO GRIMÓRIO em HTML formatado com pelo menos 5000 palavras incluindo: introdução conceitual detalhada, desenvolvimento teórico profundo, instruções práticas, rituais específicos, filosofia luciferiana, simbolismo, meditações, invocações e conclusões. Use formatação HTML rica (<h1>, <h2>, <h3>, <strong>, <em>, <blockquote>, <ul>, <li>, <p>), citações em latim, linguagem mística erudita e estrutura bem organizada em seções.",
               "suggested_price": "29.99"
             }
 
             DIRETRIZES OBRIGATÓRIAS:
-            ✓ Mínimo 3 capítulos, máximo 5
-            ✓ Cada capítulo: 800-1200 palavras
+            ✓ Conteúdo unificado de 5000-8000 palavras
             ✓ Linguagem mística luciferiana autêntica
             ✓ Inclua rituais práticos detalhados
             ✓ Filosofia e teoria fundamentada
             ✓ Símbolos e correspondências
             ✓ Citações em latim apropriadas
-            ✓ Formatação HTML para estrutura
-            ✓ Parágrafos bem organizados
-
-            EXEMPLO DE CONTEÚDO COMPLETO:
-            "Este capítulo explora os fundamentos da gnose luciferiana... [800+ palavras com desenvolvimento completo, rituais específicos, filosofia detalhada, instruções práticas, simbolismo esotérico, e conclusões significativas]"`
+            ✓ Formatação HTML rica para estrutura
+            ✓ Seções bem organizadas com títulos
+            ✓ Desenvolvimento completo do tema`
           },
           {
             role: "user",
@@ -384,15 +367,14 @@ export class SupabaseService {
       console.log('📖 Parsed Content Structure:', {
         title: !!generatedContent.title,
         description: !!generatedContent.description,
-        chapters: generatedContent.chapters?.length || 0,
-        chaptersWithContent: generatedContent.chapters?.filter((ch: any) => ch.content)?.length || 0
+        content: !!generatedContent.content,
+        contentLength: generatedContent.content?.length || 0
       });
       
       return {
         title: generatedContent.title || "Grimório Gerado",
         description: generatedContent.description || "Descrição gerada pela IA",
-        chapters: generatedContent.chapters || [],
-        level: generatedContent.level || "iniciante",
+        content: generatedContent.content || "Conteúdo gerado pela IA",
         suggested_price: generatedContent.suggested_price || "29.99"
       };
     } catch (error: any) {
