@@ -393,10 +393,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const updates = req.body;
+      console.log(`📝 Atualizando capítulo ${id}:`, {
+        title: updates.title,
+        contentLength: updates.content ? updates.content.length : 0,
+        hasContent: !!updates.content
+      });
+      
       const updatedChapter = await supabaseService.updateChapter(id, updates);
+      console.log(`✅ Capítulo ${id} atualizado com sucesso: ${updatedChapter.title}`);
       res.json(updatedChapter);
     } catch (error: any) {
-      console.error("Error updating chapter:", error);
+      console.error("❌ Error updating chapter:", error);
       res.status(400).json({ error: error.message || "Erro ao atualizar capítulo" });
     }
   });
