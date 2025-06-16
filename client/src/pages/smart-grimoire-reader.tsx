@@ -498,20 +498,6 @@ export default function SmartGrimoireReader() {
                           display: 'block'
                         }}
                       />
-                      
-                      {/* Debug info */}
-                      {process.env.NODE_ENV === 'development' && (
-                        <div className="mt-4 p-2 bg-gray-800/50 rounded text-xs text-gray-400">
-                          <p>Página {currentPage}: {currentPageData.wordCount} palavras</p>
-                          <p>HTML: {currentPageData.characterCount} caracteres</p>
-                          <details>
-                            <summary>Ver HTML bruto</summary>
-                            <pre className="mt-2 text-xs overflow-auto max-h-32">
-                              {currentPageData.content}
-                            </pre>
-                          </details>
-                        </div>
-                      )}
                     </div>
                   ) : (
                     <div className="flex items-center justify-center h-full">
