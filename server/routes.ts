@@ -241,6 +241,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Atualizar capítulo específico
+  app.put("/api/admin/chapters/:id", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ error: "ID do capítulo inválido" });
+      }
+
+      const { title, content } = req.body;
+      
+      if (!title || !content) {
+        return res.status(400).json({ error: "Título e conteúdo são obrigatórios" });
+      }
+
+      // Calcular tempo de leitura atualizado
+      const wordCount = content.split(' ').length;
+      const estimatedReadingTime = Math.max(5, Math.ceil(wordCount / 200));
+
+      const updateData = {
+        title: title.trim(),
+        content: content.trim(),
+        estimated_reading_time: estimatedReadingTime
+      };
+
+      console.log(`📝 Admin atualizando capítulo ${id}:`, { title: updateData.title, wordCount });
+      
+      const updatedChapter = await supabaseService.updateChapter(id, updateData);
+      
+      console.log(`✅ Capítulo ${id} atualizado com sucesso`);
+      res.json(updatedChapter);
+    } catch (error: any) {
+      console.error("Error updating chapter:", error);
+      res.status(400).json({ error: error.message || "Erro ao atualizar capítulo" });
+    }
+  });
+
   // ADMIN - Gerenciamento de Grimórios com Capítulos Individuais
   app.post("/api/admin/grimoires", authenticateToken, requireAdmin, async (req, res) => {
     try {

@@ -87,6 +87,72 @@ interface CreateGrimoireRequest {
 }
 
 // Componente de visualização de grimórios
+// Componente para editar capítulos existentes
+function EditChapterForm({ 
+  chapter, 
+  onSave, 
+  onCancel, 
+  isLoading 
+}: { 
+  chapter: any; 
+  onSave: (data: any) => void; 
+  onCancel: () => void; 
+  isLoading: boolean; 
+}) {
+  const [title, setTitle] = useState(chapter.title || '');
+  const [content, setContent] = useState(chapter.content || '');
+
+  const handleSave = () => {
+    onSave({
+      title: title.trim(),
+      content: content.trim(),
+    });
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="space-y-2">
+        <Label>Título do Capítulo</Label>
+        <Input
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Digite o título do capítulo"
+          disabled={isLoading}
+        />
+      </div>
+      
+      <div className="space-y-2">
+        <Label>Conteúdo do Capítulo</Label>
+        <RichTextEditor
+          value={content}
+          onChange={setContent}
+          placeholder="Digite o conteúdo do capítulo..."
+          height="400px"
+          disabled={isLoading}
+        />
+      </div>
+      
+      <div className="flex gap-2">
+        <Button
+          onClick={handleSave}
+          disabled={isLoading || !title.trim() || !content.trim()}
+          className="bg-amber-500 hover:bg-amber-600 text-black"
+        >
+          {isLoading ? "Salvando..." : "Salvar Alterações"}
+        </Button>
+        <Button
+          variant="outline"
+          onClick={onCancel}
+          disabled={isLoading}
+          className="border-gray-400 hover:bg-gray-100"
+        >
+          Cancelar
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 function GrimoireViewer({ grimoire }: { grimoire: Grimoire }) {
   const { data: chapters = [], isLoading: chaptersLoading } = useQuery({
     queryKey: [`/api/grimoires/${grimoire.id}/chapters`],
@@ -157,20 +223,47 @@ function GrimoireViewer({ grimoire }: { grimoire: Grimoire }) {
           chapters.map((chapter: any, index: number) => (
             <Card key={chapter.id || index} className="border border-amber-200">
               <CardHeader className="bg-gradient-to-r from-amber-50 to-yellow-50">
-                <CardTitle className="text-amber-800 text-lg">
-                  Capítulo {chapter.chapter_number || index + 1}: {chapter.title}
-                </CardTitle>
-                <CardDescription className="text-amber-600">
-                  ~{chapter.estimated_reading_time || 10} min de leitura
-                </CardDescription>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="text-amber-800 text-lg">
+                      Capítulo {chapter.chapter_number || index + 1}: {chapter.title}
+                    </CardTitle>
+                    <CardDescription className="text-amber-600">
+                      ~{chapter.estimated_reading_time || 10} min de leitura
+                    </CardDescription>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setEditingChapter(editingChapter === chapter.id ? null : chapter.id)}
+                    className="bg-amber-500 hover:bg-amber-600 text-black border-amber-500"
+                  >
+                    {editingChapter === chapter.id ? "Cancelar" : "Editar"}
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent className="pt-6">
-                <div 
-                  className="prose prose-sm max-w-none text-gray-700 leading-relaxed"
-                  dangerouslySetInnerHTML={{ 
-                    __html: chapter.content || '<p class="text-muted-foreground italic">Conteúdo não disponível</p>' 
-                  }}
-                />
+                {editingChapter === chapter.id ? (
+                  <EditChapterForm 
+                    chapter={chapter} 
+                    onSave={(updatedChapter) => {
+                      updateExistingChapterMutation.mutate({
+                        id: chapter.id,
+                        data: updatedChapter
+                      });
+                      setEditingChapter(null);
+                    }}
+                    onCancel={() => setEditingChapter(null)}
+                    isLoading={updateExistingChapterMutation.isPending}
+                  />
+                ) : (
+                  <div 
+                    className="prose prose-sm max-w-none text-gray-700 leading-relaxed"
+                    dangerouslySetInnerHTML={{ 
+                      __html: chapter.content || '<p class="text-muted-foreground italic">Conteúdo não disponível</p>' 
+                    }}
+                  />
+                )}
               </CardContent>
             </Card>
           ))
@@ -184,6 +277,7 @@ export default function AdminBiblioteca() {
   const [activeTab, setActiveTab] = useState("grimoires");
   const [selectedGrimoire, setSelectedGrimoire] = useState<Grimoire | null>(null);
   const [viewingGrimoire, setViewingGrimoire] = useState<Grimoire | null>(null);
+  const [editingChapter, setEditingChapter] = useState<number | null>(null);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isAIGenerating, setIsAIGenerating] = useState(false);
   const [createMode, setCreateMode] = useState<"manual" | "ai">("manual");
@@ -270,6 +364,36 @@ export default function AdminBiblioteca() {
       toast({
         title: "Erro",
         description: error.message || "Erro ao deletar grimório",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const updateExistingChapterMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: number; data: any }) => {
+      const response = await apiRequest(`/api/admin/chapters/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/grimoires'] });
+      if (viewingGrimoire) {
+        queryClient.invalidateQueries({ 
+          queryKey: [`/api/grimoires/${viewingGrimoire.id}/chapters`] 
+        });
+      }
+      toast({
+        title: "Sucesso",
+        description: "Capítulo atualizado com sucesso",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Erro",
+        description: error.message || "Erro ao atualizar capítulo",
         variant: "destructive",
       });
     },
