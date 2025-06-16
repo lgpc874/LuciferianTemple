@@ -204,6 +204,7 @@ Changelog:
 - June 16, 2025. Grimório "CHAMAS SILENCIOSAS" recriado com linguagem autêntica - Volume VI final do Atrium Ignis reescrito com estilo mísico, denso e sutilmente ameaçador "como quem sussurra a verdade há séculos", incluindo convite ritualístico à Porta Umbrae, encerramento com frases: "O que te chama não tem nome, mas te conhece" e "O Abismo não chama — ele se lembra de ti"
 - June 16, 2025. A PORTA UMBRAE destacada no grimório final - adicionados elementos visuais especiais, título marcado "🚪 A PORTA UMBRAE 🚪", definições como passagem/reconhecimento, aviso sobre irreversibilidade do conhecimento, preparando adequadamente a transição para o próximo nível iniciático
 - June 16, 2025. Sistema de criação de grimórios simplificado conforme solicitação - removidos todos os capítulos individuais, implementado editor único de conteúdo HTML, eliminada formatação automática para preservar exatamente o HTML digitado, sistema de abas de capítulos substituído por campo de texto único
+- June 16, 2025. Sistema administrativo de grimórios completamente implementado - modo de criação manual/IA, geração ilimitada com OpenAI API, funcionalidade completa de edição de grimórios existentes, botão de exclusão com confirmação, controle de publicação durante criação, campo "nível" removido conforme solicitação, interface limpa e funcional
 ```
 
 ## User Preferences

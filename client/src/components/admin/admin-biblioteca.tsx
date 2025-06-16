@@ -515,8 +515,6 @@ export default function AdminBiblioteca() {
   const { toast } = useToast();
   const [selectedGrimoire, setSelectedGrimoire] = useState<Grimoire | null>(null);
   const [editingGrimoire, setEditingGrimoire] = useState<Grimoire | null>(null);
-  
-  console.log('editingGrimoire atual:', editingGrimoire?.title || 'nenhum');
 
   // Queries
   const { data: sections = [], isLoading: sectionsLoading } = useQuery<LibrarySection[]>({
@@ -610,6 +608,29 @@ export default function AdminBiblioteca() {
     },
   });
 
+  const deleteGrimoireMutation = useMutation({
+    mutationFn: async (id: number) => {
+      const response = await apiRequest(`/api/admin/grimoires/${id}`, {
+        method: "DELETE",
+      });
+      return response;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/grimoires"] });
+      toast({
+        title: "Sucesso",
+        description: "Grimório deletado com sucesso!",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Erro",
+        description: error.message || "Erro ao deletar grimório",
+        variant: "destructive",
+      });
+    },
+  });
+
   const togglePublished = async (grimoire: Grimoire) => {
     try {
       await apiRequest(`/api/admin/grimoires/${grimoire.id}`, {
@@ -678,10 +699,7 @@ export default function AdminBiblioteca() {
                       <Button
                         size="sm"
                         variant="ghost"
-                        onClick={() => {
-                          console.log('Clicou em editar grimório:', grimoire.id);
-                          setEditingGrimoire(grimoire);
-                        }}
+                        onClick={() => setEditingGrimoire(grimoire)}
                         title="Editar"
                       >
                         <Edit className="h-4 w-4" />
@@ -693,6 +711,19 @@ export default function AdminBiblioteca() {
                         title={grimoire.is_published ? "Despublicar" : "Publicar"}
                       >
                         {grimoire.is_published ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => {
+                          if (confirm(`Tem certeza que deseja excluir o grimório "${grimoire.title}"?`)) {
+                            deleteGrimoireMutation.mutate(grimoire.id);
+                          }
+                        }}
+                        title="Excluir"
+                        className="text-red-500 hover:text-red-700"
+                      >
+                        <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
                   </div>
@@ -728,9 +759,6 @@ export default function AdminBiblioteca() {
 
       {editingGrimoire && (
         <div className="mt-6">
-          <div className="bg-blue-100 p-4 rounded mb-4">
-            <p className="text-blue-800">Editando: {editingGrimoire.title}</p>
-          </div>
           <EditGrimoireForm
             grimoire={editingGrimoire}
             sections={sections}
