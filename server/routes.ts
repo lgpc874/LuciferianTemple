@@ -313,10 +313,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const updates = req.body;
+      console.log(`🔄 Atualizando grimório ${id}:`, updates);
       const updatedGrimoire = await supabaseService.updateGrimoire(id, updates);
+      console.log(`✅ Grimório ${id} atualizado com sucesso:`, updatedGrimoire.title);
       res.json(updatedGrimoire);
     } catch (error: any) {
-      console.error("Error updating grimoire:", error);
+      console.error("❌ Error updating grimoire:", error);
       res.status(400).json({ error: error.message || "Erro ao atualizar grimório" });
     }
   });
