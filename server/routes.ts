@@ -330,10 +330,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "ID inválido" });
       }
 
+      console.log(`🗑️ Deletando grimório ${id} e todos os capítulos...`);
       await supabaseService.deleteGrimoire(id);
+      console.log(`✅ Grimório ${id} e capítulos deletados com sucesso do Supabase`);
       res.json({ message: "Grimório deletado com sucesso" });
     } catch (error: any) {
-      console.error("Error deleting grimoire:", error);
+      console.error("❌ Error deleting grimoire:", error);
       res.status(400).json({ error: error.message || "Erro ao deletar grimório" });
     }
   });

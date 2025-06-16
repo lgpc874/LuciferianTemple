@@ -148,12 +148,21 @@ export class SupabaseService {
   }
 
   async deleteGrimoire(id: number): Promise<void> {
-    const { error } = await this.supabase
+    // Primeiro deletar todos os capítulos do grimório
+    const { error: chaptersError } = await this.supabase
+      .from('chapters')
+      .delete()
+      .eq('grimoire_id', id);
+
+    if (chaptersError) throw new Error(`Error deleting chapters: ${chaptersError.message}`);
+
+    // Depois deletar o grimório
+    const { error: grimoireError } = await this.supabase
       .from('grimoires')
       .delete()
       .eq('id', id);
 
-    if (error) throw new Error(`Error deleting grimoire: ${error.message}`);
+    if (grimoireError) throw new Error(`Error deleting grimoire: ${grimoireError.message}`);
   }
 
   async moveGrimoireToSection(grimoireId: number, newSectionId: number): Promise<Grimoire> {
