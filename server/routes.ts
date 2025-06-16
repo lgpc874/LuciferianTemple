@@ -297,44 +297,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Usar capa fornecida ou gerar URL padrão
       const finalCoverUrl = cover_image_url || `https://via.placeholder.com/300x400/1a1a1a/d4af37?text=${encodeURIComponent(title)}`;
       
-      // Criar grimório no banco
+      // Criar grimório no banco com conteúdo único
       const grimoireData: InsertGrimoire = {
         title: title,
         description: description,
         section_id: parseInt(section_id),
-        content: `${chapters.length} capítulos criados`,
+        content: content, // Conteúdo HTML preservado exatamente como digitado
         is_paid: is_paid || false,
         price: is_paid ? price : null,
         level: level || "iniciante",
         unlock_order: unlockOrder,
-        cover_image_url: coverImageUrl,
+        cover_image_url: finalCoverUrl,
         estimated_reading_time: estimatedReadingTime,
         is_published: false
       };
 
       const newGrimoire = await supabaseService.createGrimoire(grimoireData);
-      
-      // Criar capítulos individuais sem formatação
-      const createdChapters = [];
-      for (let i = 0; i < chapters.length; i++) {
-        const chapter = chapters[i];
-        const createdChapter = await supabaseService.createChapter({
-          grimoire_id: newGrimoire.id,
-          title: chapter.title,
-          content: chapter.content,
-          chapter_number: i + 1,
-          estimated_reading_time: Math.max(5, Math.ceil(chapter.content.split(' ').length / 200))
-        });
-        createdChapters.push(createdChapter);
-      }
 
       res.status(201).json({
         ...newGrimoire,
-        chapters: createdChapters,
-        message: `Grimório criado com ${createdChapters.length} capítulos`
+        message: `Grimório criado com sucesso - ${wordCount} palavras`
       });
     } catch (error: any) {
-      console.error("Error creating grimoire with chapters:", error);
+      console.error("Error creating grimoire:", error);
       res.status(400).json({ error: error.message || "Erro ao criar grimório" });
     }
   });

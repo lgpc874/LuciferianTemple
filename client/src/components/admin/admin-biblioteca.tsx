@@ -272,6 +272,7 @@ function GrimoireViewer({ grimoire }: { grimoire: Grimoire }) {
   );
 }
 
+// This component has been replaced with a simplified version
 export default function AdminBiblioteca() {
   const [activeTab, setActiveTab] = useState("grimoires");
   const [selectedGrimoire, setSelectedGrimoire] = useState<Grimoire | null>(null);
