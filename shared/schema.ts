@@ -61,10 +61,9 @@ export const user_progress = pgTable("user_progress", {
   id: serial("id").primaryKey(),
   user_id: integer("user_id").references(() => users.id).notNull(),
   grimoire_id: integer("grimoire_id").references(() => grimoires.id).notNull(),
-  chapter_id: integer("chapter_id").references(() => chapters.id),
-  progress_percentage: decimal("progress_percentage", { precision: 5, scale: 2 }).default("0.00"),
   current_page: integer("current_page").default(1),
-  total_reading_time: integer("total_reading_time").default(0),
+  total_pages: integer("total_pages").default(1),
+  reading_time_minutes: integer("reading_time_minutes").default(0),
   is_completed: boolean("is_completed").default(false).notNull(),
   last_read_at: timestamp("last_read_at").defaultNow(),
   created_at: timestamp("created_at").defaultNow(),
@@ -175,11 +174,11 @@ export const insertChapterSchema = createInsertSchema(chapters).pick({
 export const insertProgressSchema = createInsertSchema(user_progress).pick({
   user_id: true,
   grimoire_id: true,
-  chapter_id: true,
-  progress_percentage: true,
   current_page: true,
-  total_reading_time: true,
+  total_pages: true,
+  reading_time_minutes: true,
   is_completed: true,
+  last_read_at: true,
 });
 
 // Types

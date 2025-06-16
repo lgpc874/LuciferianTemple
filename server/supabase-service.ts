@@ -229,18 +229,30 @@ export class SupabaseService {
   }
 
   async saveUserProgress(progress: InsertProgress): Promise<UserProgress> {
+    console.log("💾 Salvando progresso no Supabase:", progress);
+    
     const { data, error } = await this.supabase
       .from('user_progress')
       .upsert({
-        ...progress,
+        user_id: progress.user_id,
+        grimoire_id: progress.grimoire_id,
+        current_page: progress.current_page || 1,
+        total_pages: progress.total_pages || 1,
+        reading_time_minutes: progress.reading_time_minutes || 0,
+        last_read_at: progress.last_read_at || new Date().toISOString(),
         updated_at: new Date().toISOString()
       }, {
-        onConflict: 'user_id,grimoire_id,chapter_id'
+        onConflict: 'user_id,grimoire_id'
       })
       .select()
       .single();
 
-    if (error) throw new Error(`Error saving user progress: ${error.message}`);
+    if (error) {
+      console.error("❌ Erro ao salvar progresso:", error);
+      throw new Error(`Error saving user progress: ${error.message}`);
+    }
+    
+    console.log("✅ Progresso salvo com sucesso:", data);
     return data;
   }
 

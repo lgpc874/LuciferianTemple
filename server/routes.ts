@@ -391,6 +391,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Rota alternativa para progresso (compatibilidade)
+  app.post("/api/progress", authenticateToken, async (req: any, res) => {
+    try {
+      const { grimoireId, currentPage, totalPages, readingTimeMinutes } = req.body;
+      
+      const progressData: InsertProgress = {
+        user_id: req.user.id,
+        grimoire_id: grimoireId,
+        current_page: currentPage,
+        total_pages: totalPages,
+        reading_time_minutes: readingTimeMinutes,
+        last_read_at: new Date()
+      };
+
+      console.log("💾 Salvando progresso:", progressData);
+      const savedProgress = await supabaseService.saveUserProgress(progressData);
+      console.log("✅ Progresso salvo no Supabase:", savedProgress);
+      res.json(savedProgress);
+    } catch (error: any) {
+      console.error("❌ Error saving progress:", error);
+      res.status(400).json({ error: error.message || "Erro ao salvar progresso" });
+    }
+  });
+
+  // Buscar progresso do usuário para grimório específico
+  app.get("/api/progress/user", authenticateToken, async (req: any, res) => {
+    try {
+      const userId = req.user.id;
+      const progress = await supabaseService.getUserProgress(userId);
+      res.json(progress);
+    } catch (error: any) {
+      console.error("Error fetching user progress:", error);
+      res.status(500).json({ error: "Erro ao buscar progresso do usuário" });
+    }
+  });
+
   // ESTATÍSTICAS ADMINISTRATIVAS
   app.get("/api/admin/stats", authenticateToken, requireAdmin, async (req, res) => {
     try {
