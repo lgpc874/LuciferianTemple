@@ -171,14 +171,10 @@ export const insertChapterSchema = createInsertSchema(chapters).pick({
   is_unlocked: true,
 });
 
-export const insertProgressSchema = createInsertSchema(user_progress).pick({
-  user_id: true,
-  grimoire_id: true,
-  current_page: true,
-  total_pages: true,
-  reading_time_minutes: true,
-  is_completed: true,
-  last_read_at: true,
+export const insertProgressSchema = createInsertSchema(user_progress).omit({
+  id: true,
+  created_at: true,
+  updated_at: true,
 });
 
 // Types

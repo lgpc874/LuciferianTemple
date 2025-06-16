@@ -206,12 +206,15 @@ export default function SmartGrimoireReader() {
       const processedPages = processContentIntoPages(grimoire.content);
       setPages(processedPages);
       
-      // Restaurar página do progresso salvo
-      if (Array.isArray(userProgress)) {
-        const savedProgress = userProgress.find((p: any) => p.grimoire_id === grimoireId);
-        if (savedProgress) {
-          setCurrentPage(savedProgress.current_page || 1);
-          setReadingTime(savedProgress.reading_time_minutes || 0);
+      // Restaurar página do progresso salvo (localStorage por enquanto)
+      const savedProgress = localStorage.getItem(`grimoire_${grimoireId}_progress`);
+      if (savedProgress) {
+        try {
+          const progress = JSON.parse(savedProgress);
+          setCurrentPage(progress.currentPage || 1);
+          setReadingTime(progress.readingTime || 0);
+        } catch (e) {
+          console.warn('Erro ao carregar progresso salvo:', e);
         }
       }
     }
@@ -227,19 +230,17 @@ export default function SmartGrimoireReader() {
     }));
   }, [isMobile]);
 
-  // Salvar progresso automaticamente
+  // Salvar progresso automaticamente (temporariamente desabilitado)
   useEffect(() => {
     if (grimoireId && pages.length > 0) {
-      const timer = setTimeout(() => {
-        saveProgressMutation.mutate({
-          grimoireId,
-          currentPage,
-          totalPages: pages.length,
-          readingTimeMinutes: Math.floor(readingTime)
-        });
-      }, 2000);
-
-      return () => clearTimeout(timer);
+      // Progresso salvo localmente por enquanto
+      localStorage.setItem(`grimoire_${grimoireId}_progress`, JSON.stringify({
+        currentPage,
+        totalPages: pages.length,
+        readingTime: Math.floor(readingTime)
+      }));
+      setSaveStatus('saved');
+      setTimeout(() => setSaveStatus(null), 1000);
     }
   }, [currentPage, pages.length, grimoireId, readingTime]);
 
