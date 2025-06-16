@@ -231,29 +231,65 @@ export class SupabaseService {
   async saveUserProgress(progress: InsertProgress): Promise<UserProgress> {
     console.log("💾 Salvando progresso no Supabase:", progress);
     
-    const { data, error } = await this.supabase
-      .from('user_progress')
-      .upsert({
-        user_id: progress.user_id,
-        grimoire_id: progress.grimoire_id,
-        current_page: progress.current_page || 1,
-        total_pages: progress.total_pages || 1,
-        reading_time_minutes: progress.reading_time_minutes || 0,
-        last_read_at: progress.last_read_at || new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      }, {
-        onConflict: 'user_id,grimoire_id'
-      })
-      .select()
-      .single();
+    try {
+      // Primeiro, tentar com o schema novo
+      const { data, error } = await this.supabase
+        .from('user_progress')
+        .upsert({
+          user_id: progress.user_id,
+          grimoire_id: progress.grimoire_id,
+          current_page: progress.current_page || 1,
+          total_pages: progress.total_pages || 1,
+          reading_time_minutes: progress.reading_time_minutes || 0,
+          last_read_at: progress.last_read_at || new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }, {
+          onConflict: 'user_id,grimoire_id'
+        })
+        .select()
+        .single();
 
-    if (error) {
-      console.error("❌ Erro ao salvar progresso:", error);
-      throw new Error(`Error saving user progress: ${error.message}`);
+      if (error && error.message.includes('reading_time_minutes')) {
+        console.log("🔄 Schema antigo detectado, adaptando...");
+        
+        // Tentar com schema antigo
+        const { data: legacyData, error: legacyError } = await this.supabase
+          .from('user_progress')
+          .upsert({
+            user_id: progress.user_id,
+            grimoire_id: progress.grimoire_id,
+            current_page: progress.current_page || 1,
+            total_reading_time: progress.reading_time_minutes || 0,
+            progress_percentage: Math.round((progress.current_page || 1) / (progress.total_pages || 1) * 100).toString(),
+            last_read_at: progress.last_read_at || new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          }, {
+            onConflict: 'user_id,grimoire_id'
+          })
+          .select()
+          .single();
+
+        if (legacyError) {
+          console.error("❌ Erro com schema antigo também:", legacyError);
+          throw new Error(`Error saving user progress: ${legacyError.message}`);
+        }
+        
+        console.log("✅ Progresso salvo com schema antigo:", legacyData);
+        return legacyData;
+      }
+
+      if (error) {
+        console.error("❌ Erro ao salvar progresso:", error);
+        throw new Error(`Error saving user progress: ${error.message}`);
+      }
+      
+      console.log("✅ Progresso salvo com sucesso:", data);
+      return data;
+      
+    } catch (err: any) {
+      console.error("❌ Erro geral ao salvar progresso:", err);
+      throw new Error(`Error saving user progress: ${err.message}`);
     }
-    
-    console.log("✅ Progresso salvo com sucesso:", data);
-    return data;
   }
 
   // ESTATÍSTICAS ADMINISTRATIVAS
