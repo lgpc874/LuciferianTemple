@@ -209,6 +209,7 @@ Changelog:
 - June 16, 2025. Sistema de leitura inteligente implementado - novo leitor SmartGrimoireReader com fundo preto rubro, paginação automática sem espaços vazios baseada em contagem de palavras, suporte total a códigos HTML preservando formatação inline, interface responsiva otimizada para celular/tablet/PC, configurações ajustáveis (fonte, palavras por página, espaçamento), navegação por cliques laterais e teclado, progresso salvo em localStorage temporariamente
 - June 16, 2025. Sistema de renderização HTML otimizado - CSS simplificado com 'all: revert' para preservação completa de estilos inline, fallbacks aplicados apenas a elementos sem style attribute, renderização perfeita de cores (#D6342C), fontes (EB Garamond/Cinzel), espaçamentos, listas e formatação conforme validado pelo usuário
 - June 16, 2025. Leitor de grimórios unificado com painel admin - SmartGrimoireReader agora usa sistema prose idêntico ao admin, garantindo formatação CSS perfeitamente consistente em desktop e mobile, eliminando diferenças entre ambientes de visualização
+- June 16, 2025. Sistema de geração de PDF implementado - funcionalidade completa de download PDF no painel administrativo usando Puppeteer, preservando formatação luciferiana idêntica ao visualizador (fontes Cinzel/EB Garamond, cores vermelhas, classes grimório), disponível apenas para administradores
 ```
 
 ## User Preferences

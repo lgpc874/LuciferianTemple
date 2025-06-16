@@ -478,6 +478,46 @@ export default function AdminBiblioteca() {
   const [mode, setMode] = useState<"manual" | "ai">("manual");
   const [selectedGrimoire, setSelectedGrimoire] = useState<Grimoire | null>(null);
 
+  // Função para download de PDF
+  const handleDownloadPDF = async (grimoireId: number) => {
+    try {
+      const response = await fetch(`/api/admin/grimoires/${grimoireId}/pdf`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Erro ao gerar PDF');
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = `grimorio_${grimoireId}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      
+      toast({
+        title: "PDF gerado com sucesso",
+        description: "O download foi iniciado automaticamente.",
+      });
+    } catch (error) {
+      console.error('Erro ao baixar PDF:', error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível gerar o PDF.",
+        variant: "destructive",
+      });
+    }
+  };
+
   // Queries
   const { data: sections = [], isLoading: sectionsLoading } = useQuery({
     queryKey: ["/api/library/sections"],
