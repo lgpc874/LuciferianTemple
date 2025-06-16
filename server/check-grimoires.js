@@ -7,22 +7,23 @@ const supabase = createClient(
 
 async function checkGrimoires() {
   try {
-    // Verificar primeiro capítulo de cada grimório
-    const { data: chapters } = await supabase
-      .from('chapters')
-      .select('grimoire_id, title, content')
-      .eq('chapter_number', 1)
-      .order('grimoire_id');
-      
-    for (const chapter of chapters) {
-      console.log('===========================================');
-      console.log(`Grimório ${chapter.grimoire_id} - ${chapter.title}`);
-      console.log('===========================================');
-      console.log(chapter.content.substring(0, 400));
-      console.log('');
+    const { data: grimoires, error } = await supabase
+      .from('grimoires')
+      .select('id, title')
+      .order('id');
+
+    if (error) {
+      console.error('Erro:', error);
+      return;
     }
+
+    console.log('📚 Grimórios existentes:');
+    grimoires?.forEach(g => {
+      console.log(`ID ${g.id}: ${g.title}`);
+    });
+
   } catch (error) {
-    console.error('Erro:', error);
+    console.error('❌ Erro geral:', error);
   }
 }
 

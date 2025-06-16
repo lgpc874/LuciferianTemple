@@ -200,6 +200,7 @@ Changelog:
 - June 16, 2025. Grimório "ASAS QUEBRADAS – O MEDO DE SER LIVRE" criado - Volume V do Atrium Ignis com 12 capítulos sobre libertação do medo da liberdade espiritual, linguagem poética e simbólica sobre asas, céu negro, prisão dourada, vento silenciado, 8.500 palavras, preço R$ 29.99, preparando leitor para último volume da série
 - June 16, 2025. Grimório "CHAMAS SILENCIOSAS – O CHAMADO QUE NÃO CALA" criado - Volume VI final do Atrium Ignis, 12 capítulos sobre o chamado ancestral que ecoa além de libertações superficiais, memória pré-encarnada, territórios não mapeados, rede das chamas despertas, transcendência de sistemas, retorno à origem, preço R$ 39.99, convite completo para Porta Umbrae
 - June 16, 2025. Série Atrium Ignis completada - 6 volumes preparatórios totalizando mais de 60 capítulos de filosofia luciferiana introdutória, progressão natural de desconstrução religiosa até despertar da chama original, todos publicados e funcionais no sistema, preparação completa para próximo nível de iniciação
+- June 16, 2025. Grimório "CHAMAS SILENCIOSAS" recriado com linguagem autêntica - Volume VI final do Atrium Ignis reescrito com estilo mísico, denso e sutilmente ameaçador "como quem sussurra a verdade há séculos", incluindo convite ritualístico à Porta Umbrae, encerramento com frases: "O que te chama não tem nome, mas te conhece" e "O Abismo não chama — ele se lembra de ti"
 ```
 
 ## User Preferences
