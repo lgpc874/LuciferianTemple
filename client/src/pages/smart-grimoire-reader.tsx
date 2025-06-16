@@ -1,60 +1,22 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useLocation, useRoute } from "wouter";
 import { PageTransition } from "@/components/page-transition";
 import ContentProtection from "@/components/content-protection";
 import { Button } from "@/components/ui/button";
-import { motion, AnimatePresence } from "framer-motion";
-import { 
-  ArrowLeft, 
-  ChevronLeft, 
-  ChevronRight, 
-  BookOpen,
-  Settings,
-  RotateCcw
-} from "lucide-react";
+import { motion } from "framer-motion";
+import { ArrowLeft, ChevronLeft, ChevronRight, BookOpen } from "lucide-react";
 import type { Grimoire } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
-import { useIsMobile } from "@/hooks/use-mobile";
-
-interface ReaderSettings {
-  fontSize: number;
-  lineHeight: number;
-  wordsPerPage: number;
-  margin: number;
-}
-
-interface Page {
-  content: string;
-  pageNumber: number;
-  wordCount: number;
-  characterCount: number;
-}
 
 export default function SmartGrimoireReader() {
   const [, params] = useRoute("/grimoire/:id");
   const [, setLocation] = useLocation();
-  const isMobile = useIsMobile();
   
   // Estados do leitor
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pages, setPages] = useState<Page[]>([]);
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [scrollPosition, setScrollPosition] = useState(0);
   const [readingTime, setReadingTime] = useState(0);
   const [saveStatus, setSaveStatus] = useState<'saving' | 'saved' | 'error' | null>(null);
-  const [showSettings, setShowSettings] = useState(false);
-  
-  // Configurações do leitor
-  const [settings, setSettings] = useState<ReaderSettings>({
-    fontSize: isMobile ? 14 : 16,
-    lineHeight: 1.6,
-    wordsPerPage: isMobile ? 200 : 350,
-    margin: isMobile ? 16 : 24,
-  });
-
-  // Refs para medição
-  const measureRef = useRef<HTMLDivElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
 
   const grimoireId = params?.id ? parseInt(params.id) : null;
 
@@ -72,10 +34,17 @@ export default function SmartGrimoireReader() {
 
   // Mutação para salvar progresso
   const saveProgressMutation = useMutation({
-    mutationFn: async (data: { grimoireId: number; currentPage: number; totalPages: number; readingTimeMinutes: number }) => {
+    mutationFn: async (data: { grimoireId: number; scrollPosition: number; readingTimeMinutes: number }) => {
       return apiRequest("/api/progress", {
         method: "POST",
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          user_id: 1, // será obtido do contexto de auth
+          grimoire_id: data.grimoireId,
+          current_page: 1, // sempre 1 para scroll contínuo
+          total_pages: 1,
+          reading_time_minutes: data.readingTimeMinutes,
+          last_read_at: new Date()
+        }),
         headers: {
           "Content-Type": "application/json",
         },
@@ -92,210 +61,106 @@ export default function SmartGrimoireReader() {
     },
   });
 
-  // Função para processar conteúdo em páginas inteligentes
-  const processContentIntoPages = useCallback((content: string): Page[] => {
-    if (!content) return [];
-    
-    setIsProcessing(true);
-    
-    // Preservar HTML completamente sem alterações
-    const cleanContent = content.trim();
-
-    // Função para contar palavras ignorando tags HTML mas preservando todo o HTML
-    const countWordsInHTML = (htmlString: string): number => {
-      // Remover tags HTML temporariamente apenas para contagem
-      const textOnly = htmlString.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
-      return textOnly ? textOnly.split(' ').filter(word => word.length > 0).length : 0;
-    };
-
-    // Função simplificada para dividir HTML preservando estrutura
-    const splitHTMLByWords = (htmlContent: string, maxWords: number): string[] => {
-      const totalWords = countWordsInHTML(htmlContent);
-      
-      // Se o conteúdo é pequeno, retorna como uma página
-      if (totalWords <= maxWords) {
-        return [htmlContent];
-      }
-
-      // Dividir por blocos grandes completos (divs, h1-h6, etc.)
-      const blockPattern = /(<\/?(div|h[1-6]|p|ul|ol|li|blockquote|section|article)[^>]*>)/gi;
-      const blocks = htmlContent.split(blockPattern);
-      
-      const pages: string[] = [];
-      let currentPage = '';
-      let currentWords = 0;
-      
-      for (let i = 0; i < blocks.length; i++) {
-        const block = blocks[i];
-        const blockWords = countWordsInHTML(block);
-        
-        // Se este bloco por si só excede o limite, dividir em partes menores
-        if (blockWords > maxWords) {
-          // Adicionar página atual se tem conteúdo
-          if (currentPage.trim()) {
-            pages.push(currentPage);
-            currentPage = '';
-            currentWords = 0;
-          }
-          
-          // Dividir o bloco grande em pedaços menores por sentenças
-          const sentences = block.split(/(\. |<br\s*\/?>|\n)/gi);
-          let tempPage = '';
-          let tempWords = 0;
-          
-          for (const sentence of sentences) {
-            const sentenceWords = countWordsInHTML(sentence);
-            
-            if (tempWords + sentenceWords > maxWords && tempPage.trim()) {
-              pages.push(tempPage);
-              tempPage = sentence;
-              tempWords = sentenceWords;
-            } else {
-              tempPage += sentence;
-              tempWords += sentenceWords;
-            }
-          }
-          
-          if (tempPage.trim()) {
-            currentPage = tempPage;
-            currentWords = tempWords;
-          }
-        } else {
-          // Se adicionar este bloco excede o limite
-          if (currentWords + blockWords > maxWords && currentPage.trim()) {
-            pages.push(currentPage);
-            currentPage = block;
-            currentWords = blockWords;
-          } else {
-            currentPage += block;
-            currentWords += blockWords;
-          }
-        }
-      }
-      
-      // Adicionar última página
-      if (currentPage.trim()) {
-        pages.push(currentPage);
-      }
-      
-      return pages.filter(page => page.trim().length > 0);
-    };
-
-    // Processar o conteúdo mantendo TODO o HTML
-    const contentPages = splitHTMLByWords(cleanContent, settings.wordsPerPage);
-    
-    const newPages: Page[] = contentPages.map((pageContent, index) => ({
-      content: pageContent,
-      pageNumber: index + 1,
-      wordCount: countWordsInHTML(pageContent),
-      characterCount: pageContent.length
-    }));
-
-    setIsProcessing(false);
-    
-    // Log detalhado para debug
-    console.log(`📖 Páginas criadas: ${newPages.length}`);
-    console.log(`📄 Conteúdo original: ${cleanContent.length} caracteres`);
-    console.log(`🔤 Palavras totais: ${countWordsInHTML(cleanContent)}`);
-    
-    newPages.forEach((page, index) => {
-      console.log(`Página ${page.pageNumber}: ${page.wordCount} palavras, ${page.characterCount} caracteres`);
-      if (index === 0) {
-        console.log(`📝 Preview da primeira página:`, page.content.substring(0, 200) + '...');
-      }
-    });
-    
-    return newPages;
-  }, [settings.wordsPerPage]);
-
-  // Processar conteúdo quando grimório carrega ou configurações mudam
+  // Timer de leitura
   useEffect(() => {
-    if (grimoire?.content) {
-      const processedPages = processContentIntoPages(grimoire.content);
-      setPages(processedPages);
-      
-      // Restaurar página do progresso salvo (localStorage por enquanto)
-      const savedProgress = localStorage.getItem(`grimoire_${grimoireId}_progress`);
-      if (savedProgress) {
-        try {
-          const progress = JSON.parse(savedProgress);
-          setCurrentPage(progress.currentPage || 1);
-          setReadingTime(progress.readingTime || 0);
-        } catch (e) {
-          console.warn('Erro ao carregar progresso salvo:', e);
-        }
-      }
-    }
-  }, [grimoire?.content, processContentIntoPages, userProgress, grimoireId]);
+    if (!grimoire) return;
 
-  // Ajustar configurações baseado no dispositivo
-  useEffect(() => {
-    setSettings(prev => ({
-      ...prev,
-      fontSize: isMobile ? 14 : 16,
-      wordsPerPage: isMobile ? 200 : 350,
-      margin: isMobile ? 16 : 24,
-    }));
-  }, [isMobile]);
-
-  // Salvar progresso automaticamente (temporariamente desabilitado)
-  useEffect(() => {
-    if (grimoireId && pages.length > 0) {
-      // Progresso salvo localmente por enquanto
-      localStorage.setItem(`grimoire_${grimoireId}_progress`, JSON.stringify({
-        currentPage,
-        totalPages: pages.length,
-        readingTime: Math.floor(readingTime)
-      }));
-      setSaveStatus('saved');
-      setTimeout(() => setSaveStatus(null), 1000);
-    }
-  }, [currentPage, pages.length, grimoireId, readingTime]);
-
-  // Controle de tempo de leitura
-  useEffect(() => {
     const timer = setInterval(() => {
-      setReadingTime(prev => prev + 1/60); // Incrementa em minutos
+      setReadingTime(prev => {
+        const newTime = prev + 1;
+        
+        // Auto-save a cada 30 segundos
+        if (newTime % 30 === 0) {
+          saveProgressMutation.mutate({
+            grimoireId: grimoire.id,
+            scrollPosition,
+            readingTimeMinutes: Math.floor(newTime / 60)
+          });
+        }
+        
+        return newTime;
+      });
     }, 1000);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [grimoire, scrollPosition]);
 
-  // Navegação por teclado
+  // Detectar scroll para salvar posição
   useEffect(() => {
-    const handleKeyPress = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowLeft' && currentPage > 1) {
-        setCurrentPage(prev => prev - 1);
-      } else if (e.key === 'ArrowRight' && currentPage < pages.length) {
-        setCurrentPage(prev => prev + 1);
-      } else if (e.key === 'Escape') {
-        setLocation('/biblioteca');
+    const handleScroll = () => {
+      const position = window.scrollY;
+      setScrollPosition(position);
+      
+      // Salvar posição no localStorage
+      if (grimoireId) {
+        localStorage.setItem(`grimoire_${grimoireId}_scroll`, position.toString());
       }
     };
 
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [currentPage, pages.length, setLocation]);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [grimoireId]);
 
-  // Navegação por clique nas laterais
-  const handlePageClick = (e: React.MouseEvent) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-    const centerX = rect.width / 2;
-    
-    if (clickX < centerX / 2 && currentPage > 1) {
-      setCurrentPage(prev => prev - 1);
-    } else if (clickX > centerX * 1.5 && currentPage < pages.length) {
-      setCurrentPage(prev => prev + 1);
+  // Restaurar posição de scroll
+  useEffect(() => {
+    if (grimoireId && grimoire) {
+      const savedPosition = localStorage.getItem(`grimoire_${grimoireId}_scroll`);
+      if (savedPosition) {
+        setTimeout(() => {
+          window.scrollTo(0, parseInt(savedPosition));
+        }, 100);
+      }
     }
+  }, [grimoireId, grimoire]);
+
+  // Navegação por teclado
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+        e.preventDefault();
+        window.scrollBy(0, -window.innerHeight * 0.8);
+      } else if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+        e.preventDefault();
+        window.scrollBy(0, window.innerHeight * 0.8);
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        window.scrollTo(0, 0);
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        window.scrollTo(0, document.body.scrollHeight);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // Funções de navegação
+  const scrollUp = () => {
+    window.scrollBy({
+      top: -window.innerHeight * 0.8,
+      behavior: 'smooth'
+    });
   };
 
-  const currentPageData = pages[currentPage - 1];
+  const scrollDown = () => {
+    window.scrollBy({
+      top: window.innerHeight * 0.8,
+      behavior: 'smooth'
+    });
+  };
 
-  if (grimoireLoading || !grimoire) {
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
+
+  if (grimoireLoading) {
     return (
       <PageTransition>
-        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-red-900/20 to-black flex items-center justify-center">
+        <div className="min-h-screen bg-gradient-to-br from-black via-red-950/20 to-black flex items-center justify-center">
           <div className="text-center">
             <BookOpen className="w-12 h-12 text-amber-500 animate-pulse mx-auto mb-4" />
             <p className="text-gray-300">Carregando grimório...</p>
@@ -305,14 +170,29 @@ export default function SmartGrimoireReader() {
     );
   }
 
+  if (!grimoire) {
+    return (
+      <PageTransition>
+        <div className="min-h-screen bg-gradient-to-br from-black via-red-950/20 to-black flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-gray-300 mb-4">Grimório não encontrado</p>
+            <Button onClick={() => setLocation('/biblioteca')} variant="outline">
+              Voltar à Biblioteca
+            </Button>
+          </div>
+        </div>
+      </PageTransition>
+    );
+  }
+
   return (
     <PageTransition>
       <ContentProtection>
-        <div className="smart-grimoire-reader relative">
+        <div className="min-h-screen bg-gradient-to-br from-black via-red-950/20 to-black">
           
           {/* Header fixo */}
-          <div className="fixed top-0 left-0 right-0 bg-black/80 backdrop-blur-sm border-b border-amber-500/20 z-50">
-            <div className="flex items-center justify-between p-4">
+          <div className="fixed top-0 left-0 right-0 bg-black/90 backdrop-blur-sm border-b border-amber-500/20 z-50">
+            <div className="max-w-6xl mx-auto flex items-center justify-between p-4">
               <Button
                 variant="ghost"
                 size="sm"
@@ -324,226 +204,93 @@ export default function SmartGrimoireReader() {
               </Button>
               
               <div className="text-center flex-1 mx-4">
-                <h1 className="grimoire-header-title text-amber-500 font-bold truncate">
+                <h1 className="text-amber-500 font-bold text-lg md:text-xl truncate">
                   {grimoire.title}
                 </h1>
-                <div className="text-xs text-gray-400 flex items-center justify-center gap-4">
-                  <span>Página {currentPage} de {pages.length}</span>
-                  {saveStatus && (
-                    <span className={`
-                      ${saveStatus === 'saving' ? 'text-blue-400' : ''}
-                      ${saveStatus === 'saved' ? 'text-green-400' : ''}
-                      ${saveStatus === 'error' ? 'text-red-400' : ''}
-                    `}>
-                      {saveStatus === 'saving' && 'Salvando...'}
-                      {saveStatus === 'saved' && '✓ Salvo'}
-                      {saveStatus === 'error' && '⚠ Erro'}
-                    </span>
-                  )}
-                </div>
+                {saveStatus && (
+                  <div className={`text-xs ${
+                    saveStatus === 'saving' ? 'text-blue-400' : 
+                    saveStatus === 'saved' ? 'text-green-400' : 'text-red-400'
+                  }`}>
+                    {saveStatus === 'saving' && 'Salvando...'}
+                    {saveStatus === 'saved' && '✓ Salvo'}
+                    {saveStatus === 'error' && '⚠ Erro ao salvar'}
+                  </div>
+                )}
               </div>
 
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => setShowSettings(!showSettings)}
+                onClick={scrollToTop}
                 className="text-amber-500 hover:text-amber-400 hover:bg-amber-500/10"
               >
-                <Settings className="w-4 h-4" />
+                <BookOpen className="w-4 h-4" />
               </Button>
             </div>
           </div>
 
-          {/* Painel de configurações */}
-          <AnimatePresence>
-            {showSettings && (
+          {/* Conteúdo principal */}
+          <div className="pt-20 pb-20">
+            <div className="max-w-4xl mx-auto px-4 md:px-8">
               <motion.div
-                initial={{ opacity: 0, y: -100 }}
+                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -100 }}
-                className="fixed top-16 right-4 bg-black/90 backdrop-blur-sm border border-amber-500/30 rounded-lg p-4 z-40 w-72"
+                transition={{ duration: 0.5 }}
+                className="bg-black/40 backdrop-blur-sm border border-amber-500/20 rounded-lg p-6 md:p-8 shadow-2xl"
               >
-                <h3 className="text-amber-500 font-semibold mb-3">Configurações de Leitura</h3>
-                
-                <div className="space-y-3">
-                  <div>
-                    <label className="text-sm text-gray-300 block mb-1">
-                      Tamanho da Fonte: {settings.fontSize}px
-                    </label>
-                    <input
-                      type="range"
-                      min="12"
-                      max="24"
-                      value={settings.fontSize}
-                      onChange={(e) => setSettings(prev => ({ ...prev, fontSize: parseInt(e.target.value) }))}
-                      className="w-full"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="text-sm text-gray-300 block mb-1">
-                      Palavras por Página: {settings.wordsPerPage}
-                    </label>
-                    <input
-                      type="range"
-                      min="150"
-                      max="500"
-                      step="25"
-                      value={settings.wordsPerPage}
-                      onChange={(e) => setSettings(prev => ({ ...prev, wordsPerPage: parseInt(e.target.value) }))}
-                      className="w-full"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="text-sm text-gray-300 block mb-1">
-                      Altura da Linha: {settings.lineHeight}
-                    </label>
-                    <input
-                      type="range"
-                      min="1.2"
-                      max="2.0"
-                      step="0.1"
-                      value={settings.lineHeight}
-                      onChange={(e) => setSettings(prev => ({ ...prev, lineHeight: parseFloat(e.target.value) }))}
-                      className="w-full"
-                    />
-                  </div>
-                  
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => {
-                      setSettings({
-                        fontSize: isMobile ? 14 : 16,
-                        lineHeight: 1.6,
-                        wordsPerPage: isMobile ? 200 : 350,
-                        margin: isMobile ? 16 : 24,
-                      });
-                    }}
-                    className="w-full text-amber-500 border-amber-500/30 hover:bg-amber-500/10"
-                  >
-                    <RotateCcw className="w-4 h-4 mr-2" />
-                    Restaurar Padrão
-                  </Button>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* Área de leitura */}
-          <div className="pt-20 pb-20 px-4 flex items-center justify-center min-h-screen">
-            <div 
-              ref={containerRef}
-              className="relative max-w-4xl w-full mx-auto"
-              onClick={handlePageClick}
-            >
-              
-              {/* Indicadores de navegação */}
-              <div className="absolute left-0 top-0 bottom-0 w-1/4 flex items-center justify-start opacity-0 hover:opacity-100 transition-opacity cursor-pointer z-10">
-                {currentPage > 1 && (
-                  <ChevronLeft className="w-8 h-8 text-amber-500/70" />
-                )}
-              </div>
-              
-              <div className="absolute right-0 top-0 bottom-0 w-1/4 flex items-center justify-end opacity-0 hover:opacity-100 transition-opacity cursor-pointer z-10">
-                {currentPage < pages.length && (
-                  <ChevronRight className="w-8 h-8 text-amber-500/70" />
-                )}
-              </div>
-
-              {/* Conteúdo da página */}
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentPage}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.3 }}
-                  className="bg-black/40 backdrop-blur-sm border border-amber-500/20 rounded-lg shadow-2xl"
+                {/* Renderização completa do HTML sem modificações */}
+                <div
+                  className="prose prose-invert prose-lg max-w-none
+                    prose-headings:text-amber-500 
+                    prose-p:text-gray-200 prose-p:leading-relaxed
+                    prose-a:text-amber-400 prose-a:no-underline hover:prose-a:underline
+                    prose-strong:text-amber-300
+                    prose-em:text-gray-300
+                    prose-blockquote:border-l-amber-500 prose-blockquote:text-gray-300
+                    prose-ul:text-gray-200 prose-ol:text-gray-200
+                    prose-li:text-gray-200
+                    prose-code:text-amber-300 prose-code:bg-black/40
+                    prose-pre:bg-black/60 prose-pre:border prose-pre:border-amber-500/20"
+                  dangerouslySetInnerHTML={{ __html: grimoire.content || '' }}
                   style={{
-                    padding: `${settings.margin}px`,
-                    minHeight: isMobile ? '70vh' : '80vh',
+                    fontSize: 'inherit',
+                    lineHeight: 'inherit',
+                    fontFamily: 'inherit'
                   }}
-                >
-                  {isProcessing ? (
-                    <div className="flex items-center justify-center h-full">
-                      <div className="text-center">
-                        <BookOpen className="w-8 h-8 text-amber-500 animate-pulse mx-auto mb-2" />
-                        <p className="text-gray-300">Processando páginas...</p>
-                      </div>
-                    </div>
-                  ) : currentPageData ? (
-                    <div
-                      className="prose prose-sm max-w-none text-gray-200"
-                      style={{
-                        fontSize: `${settings.fontSize}px`,
-                        lineHeight: settings.lineHeight,
-                        wordWrap: 'break-word',
-                        overflowWrap: 'break-word',
-                      }}
-                    >
-                      <div 
-                        dangerouslySetInnerHTML={{ __html: currentPageData.content }}
-                        style={{
-                          width: '100%',
-                          maxWidth: '100%',
-                        }}
-                      />
-                    </div>
-                  ) : (
-                    <div className="flex items-center justify-center h-full">
-                      <p className="text-gray-400">Conteúdo não encontrado</p>
-                    </div>
-                  )}
-                </motion.div>
-              </AnimatePresence>
+                />
+              </motion.div>
             </div>
           </div>
 
           {/* Controles de navegação fixos */}
-          <div className="fixed bottom-0 left-0 right-0 bg-black/80 backdrop-blur-sm border-t border-amber-500/20 p-4">
-            <div className="flex items-center justify-center gap-4 max-w-md mx-auto">
+          <div className="fixed bottom-0 left-0 right-0 bg-black/90 backdrop-blur-sm border-t border-amber-500/20 p-4 z-50">
+            <div className="max-w-md mx-auto flex items-center justify-center gap-4">
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                disabled={currentPage <= 1}
-                className="text-amber-500 border-amber-500/30 hover:bg-amber-500/10 disabled:text-gray-600 disabled:border-gray-600"
+                onClick={scrollUp}
+                className="text-amber-500 border-amber-500/30 hover:bg-amber-500/10"
               >
                 <ChevronLeft className="w-4 h-4 mr-1" />
                 Anterior
               </Button>
               
-              <div className="text-sm text-gray-400 min-w-[100px] text-center">
-                {currentPage} / {pages.length}
+              <div className="text-sm text-gray-400 text-center min-w-[100px]">
+                Leitura contínua
               </div>
               
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setCurrentPage(prev => Math.min(pages.length, prev + 1))}
-                disabled={currentPage >= pages.length}
-                className="text-amber-500 border-amber-500/30 hover:bg-amber-500/10 disabled:text-gray-600 disabled:border-gray-600"
+                onClick={scrollDown}
+                className="text-amber-500 border-amber-500/30 hover:bg-amber-500/10"
               >
                 Próxima
                 <ChevronRight className="w-4 h-4 ml-1" />
               </Button>
             </div>
           </div>
-
-          {/* Elemento para medição (oculto) */}
-          <div
-            ref={measureRef}
-            className="absolute top-0 left-0 opacity-0 pointer-events-none overflow-hidden"
-            style={{
-              width: isMobile ? '85vw' : '800px',
-              height: isMobile ? '70vh' : '600px',
-              fontSize: `${settings.fontSize}px`,
-              lineHeight: settings.lineHeight,
-              padding: `${settings.margin}px`,
-            }}
-          />
         </div>
       </ContentProtection>
     </PageTransition>
