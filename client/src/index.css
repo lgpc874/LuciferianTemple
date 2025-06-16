@@ -2033,10 +2033,10 @@ input, textarea {
 }
 
 /* Overrides críticos para garantir que estilos grimório funcionem no Smart Reader */
-.smart-grimoire-reader .grimoire-content * {
-  all: unset !important;
-  display: revert !important;
-  box-sizing: border-box !important;
+.smart-grimoire-reader .grimoire-content {
+  font-size: inherit !important;
+  color: inherit !important;
+  line-height: inherit !important;
 }
 
 /* Reaplica estilos específicos após reset */
@@ -2160,4 +2160,228 @@ input, textarea {
   font-style: italic !important;
   color: #D6342C !important;
   display: inline !important;
+}
+
+/* CSS ULTRA ESPECÍFICO - FORÇA MÁXIMA PARA SMART READER */
+div.smart-grimoire-reader div.grimoire-content div[dangerouslySetInnerHTML] .grimorio-conteudo {
+  font-family: 'EB Garamond', serif !important;
+  color: #CCCCCC !important;
+  font-size: 1.1rem !important;
+  line-height: 1.8 !important;
+  text-align: justify !important;
+  padding: 2rem 1rem !important;
+}
+
+div.smart-grimoire-reader div.grimoire-content div[dangerouslySetInnerHTML] h2.grimorio-titulo {
+  font-family: 'Cinzel Decorative', serif !important;
+  font-size: 1.7rem !important;
+  color: #D6342C !important;
+  text-align: center !important;
+  margin-bottom: 0.5rem !important;
+  font-weight: normal !important;
+}
+
+div.smart-grimoire-reader div.grimoire-content div[dangerouslySetInnerHTML] p.grimorio-subtitulo {
+  font-style: italic !important;
+  color: #D6342C !important;
+  text-align: center !important;
+  margin-bottom: 2rem !important;
+}
+
+div.smart-grimoire-reader div.grimoire-content div[dangerouslySetInnerHTML] blockquote.grimorio-citacao {
+  font-style: italic !important;
+  font-size: 1.1rem !important;
+  color: #CCCCCC !important;
+  border-left: 3px solid #D6342C !important;
+  padding-left: 1rem !important;
+  margin: 2rem 0 !important;
+  background: none !important;
+  border-radius: 0 !important;
+}
+
+div.smart-grimoire-reader div.grimoire-content div[dangerouslySetInnerHTML] .grimorio-citacao small {
+  display: block !important;
+  font-style: normal !important;
+  font-size: 0.9rem !important;
+  margin-top: 0.5rem !important;
+  color: #999999 !important;
+}
+
+div.smart-grimoire-reader div.grimoire-content div[dangerouslySetInnerHTML] .grimorio-conteudo p {
+  text-indent: 3rem !important;
+  margin-bottom: 1.5rem !important;
+  color: #CCCCCC !important;
+  font-family: 'EB Garamond', serif !important;
+}
+
+div.smart-grimoire-reader div.grimoire-content div[dangerouslySetInnerHTML] .destaque {
+  color: #D6342C !important;
+  font-weight: bold !important;
+}
+
+div.smart-grimoire-reader div.grimoire-content div[dangerouslySetInnerHTML] span.destaque {
+  color: #D6342C !important;
+  font-weight: bold !important;
+}
+
+div.smart-grimoire-reader div.grimoire-content div[dangerouslySetInnerHTML] ul.grimorio-lista {
+  color: #D6342C !important;
+  font-weight: bold !important;
+  margin: 1.5rem 0 !important;
+  padding-left: 2rem !important;
+  list-style: disc !important;
+}
+
+div.smart-grimoire-reader div.grimoire-content div[dangerouslySetInnerHTML] ul.grimorio-lista li {
+  color: #D6342C !important;
+  margin-bottom: 0.5rem !important;
+}
+
+/* FORÇA ABSOLUTA - ATRIBUTO STYLE */
+div.smart-grimoire-reader [style*="dangerouslySetInnerHTML"] * {
+  color: inherit !important;
+  font-family: inherit !important;
+}
+
+/* FORÇA ABSOLUTA - TODOS OS ELEMENTOS NO GRIMOIRE-CONTENT */
+.smart-grimoire-reader .grimoire-content [class*="grimorio"] {
+  all: revert !important;
+}
+
+.smart-grimoire-reader .grimoire-content .grimorio-titulo {
+  font-family: 'Cinzel Decorative', serif !important;
+  font-size: 1.7rem !important;
+  color: #D6342C !important;
+  text-align: center !important;
+  margin-bottom: 0.5rem !important;
+  display: block !important;
+}
+
+.smart-grimoire-reader .grimoire-content .grimorio-subtitulo {
+  font-style: italic !important;
+  color: #D6342C !important;
+  text-align: center !important;
+  margin-bottom: 2rem !important;
+  display: block !important;
+}
+
+.smart-grimoire-reader .grimoire-content .grimorio-citacao {
+  font-style: italic !important;
+  font-size: 1.1rem !important;
+  color: #CCCCCC !important;
+  border-left: 3px solid #D6342C !important;
+  padding-left: 1rem !important;
+  margin: 2rem 0 !important;
+  background: none !important;
+  border-radius: 0 !important;
+  display: block !important;
+}
+
+.smart-grimoire-reader .grimoire-content .destaque {
+  color: #D6342C !important;
+  font-weight: bold !important;
+  display: inline !important;
+}
+
+.smart-grimoire-reader .grimoire-content .grimorio-conteudo p {
+  text-indent: 3rem !important;
+  margin-bottom: 1.5rem !important;
+  color: #CCCCCC !important;
+  font-family: 'EB Garamond', serif !important;
+  display: block !important;
+}
+
+/* ÚLTIMA TENTATIVA - WILDCARD ABSOLUTO */
+body .smart-grimoire-reader .grimoire-content .grimorio-titulo {
+  font-family: 'Cinzel Decorative', serif !important;
+  color: #D6342C !important;
+  font-size: 1.7rem !important;
+  text-align: center !important;
+}
+
+body .smart-grimoire-reader .grimoire-content .destaque {
+  color: #D6342C !important;
+  font-weight: bold !important;
+}
+
+/* CSS DEFINITIVO - ESTRUTURA EXATA DO SMART READER */
+.smart-grimoire-reader .grimoire-content div[dangerouslysetinnerhtml] .grimorio-titulo,
+.smart-grimoire-reader .grimoire-content div .grimorio-titulo,
+.smart-grimoire-reader .grimoire-content .grimorio-titulo {
+  font-family: 'Cinzel Decorative', serif !important;
+  font-size: 1.7rem !important;
+  color: #D6342C !important;
+  text-align: center !important;
+  margin-bottom: 0.5rem !important;
+  font-weight: normal !important;
+  display: block !important;
+}
+
+.smart-grimoire-reader .grimoire-content div[dangerouslysetinnerhtml] .grimorio-subtitulo,
+.smart-grimoire-reader .grimoire-content div .grimorio-subtitulo,
+.smart-grimoire-reader .grimoire-content .grimorio-subtitulo {
+  font-style: italic !important;
+  color: #D6342C !important;
+  text-align: center !important;
+  margin-bottom: 2rem !important;
+  display: block !important;
+}
+
+.smart-grimoire-reader .grimoire-content div[dangerouslysetinnerhtml] .grimorio-citacao,
+.smart-grimoire-reader .grimoire-content div .grimorio-citacao,
+.smart-grimoire-reader .grimoire-content .grimorio-citacao {
+  font-style: italic !important;
+  font-size: 1.1rem !important;
+  color: #CCCCCC !important;
+  border-left: 3px solid #D6342C !important;
+  padding-left: 1rem !important;
+  margin: 2rem 0 !important;
+  background: none !important;
+  border-radius: 0 !important;
+  display: block !important;
+}
+
+.smart-grimoire-reader .grimoire-content div[dangerouslysetinnerhtml] .destaque,
+.smart-grimoire-reader .grimoire-content div .destaque,
+.smart-grimoire-reader .grimoire-content .destaque {
+  color: #D6342C !important;
+  font-weight: bold !important;
+  display: inline !important;
+}
+
+.smart-grimoire-reader .grimoire-content div[dangerouslysetinnerhtml] span.destaque,
+.smart-grimoire-reader .grimoire-content div span.destaque,
+.smart-grimoire-reader .grimoire-content span.destaque {
+  color: #D6342C !important;
+  font-weight: bold !important;
+  display: inline !important;
+}
+
+.smart-grimoire-reader .grimoire-content div[dangerouslysetinnerhtml] .grimorio-conteudo p,
+.smart-grimoire-reader .grimoire-content div .grimorio-conteudo p,
+.smart-grimoire-reader .grimoire-content .grimorio-conteudo p {
+  text-indent: 3rem !important;
+  margin-bottom: 1.5rem !important;
+  color: #CCCCCC !important;
+  font-family: 'EB Garamond', serif !important;
+  display: block !important;
+}
+
+.smart-grimoire-reader .grimoire-content div[dangerouslysetinnerhtml] ul.grimorio-lista,
+.smart-grimoire-reader .grimoire-content div ul.grimorio-lista,
+.smart-grimoire-reader .grimoire-content ul.grimorio-lista {
+  color: #D6342C !important;
+  font-weight: bold !important;
+  margin: 1.5rem 0 !important;
+  padding-left: 2rem !important;
+  list-style: disc !important;
+  display: block !important;
+}
+
+.smart-grimoire-reader .grimoire-content div[dangerouslysetinnerhtml] ul.grimorio-lista li,
+.smart-grimoire-reader .grimoire-content div ul.grimorio-lista li,
+.smart-grimoire-reader .grimoire-content ul.grimorio-lista li {
+  color: #D6342C !important;
+  margin-bottom: 0.5rem !important;
+  display: list-item !important;
 }
