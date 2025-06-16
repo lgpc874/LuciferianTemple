@@ -292,43 +292,34 @@ export class SupabaseService {
     }
   }
 
-  private async ensureAdminUserExists(userId: number): Promise<void> {
+  private async createAdminUserDirectly(userId: number): Promise<void> {
     try {
-      const { data: existingUser } = await this.supabase
+      console.log("🆕 Criando usuário admin diretamente...");
+      
+      const { error: userError } = await this.supabase
         .from('users')
-        .select('id')
-        .eq('id', userId)
-        .single();
+        .upsert({
+          id: userId,
+          username: 'admin',
+          email: 'admin@templodoabismo.com.br',
+          password_hash: '$2b$10$dummy.hash.for.admin.user',
+          role: 'admin',
+          is_active: true,
+          created_at: new Date(),
+          updated_at: new Date()
+        }, {
+          onConflict: 'id'
+        });
 
-      if (!existingUser) {
-        console.log("🆕 Criando usuário admin no Supabase...");
-        
-        // Usar upsert para garantir que o usuário seja criado
-        const { error: userError } = await this.supabase
-          .from('users')
-          .upsert({
-            id: userId,
-            username: 'admin',
-            email: 'admin@templodoabismo.com.br',
-            password_hash: '$2b$10$dummy.hash.for.admin.user',
-            role: 'admin',
-            is_active: true,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          }, {
-            onConflict: 'id'
-          });
-
-        if (userError) {
-          console.error("❌ Erro ao criar usuário:", userError);
-          throw new Error(`Failed to create admin user: ${userError.message}`);
-        }
-        
-        console.log("✅ Usuário admin criado com sucesso");
+      if (userError) {
+        console.error("❌ Erro ao criar usuário admin:", userError);
+        throw new Error(`Failed to create admin user: ${userError.message}`);
       }
+      
+      console.log("✅ Usuário admin criado com sucesso");
     } catch (err: any) {
-      console.error("❌ Erro ao assegurar usuário admin:", err);
-      throw new Error(`Failed to ensure admin user exists: ${err.message}`);
+      console.error("❌ Erro ao criar usuário admin diretamente:", err);
+      throw new Error(`Failed to create admin user directly: ${err.message}`);
     }
   }
 

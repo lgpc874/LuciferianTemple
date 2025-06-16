@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useLocation, useRoute } from "wouter";
 import { PageTransition } from "@/components/page-transition";
 import ContentProtection from "@/components/content-protection";
@@ -12,7 +12,6 @@ import {
   BookOpen
 } from "lucide-react";
 import type { Grimoire } from "@shared/schema";
-import { apiRequest } from "@/lib/queryClient";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 export default function GrimoireReader() {
@@ -22,8 +21,6 @@ export default function GrimoireReader() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [paginatedContent, setPaginatedContent] = useState<string[]>([]);
-  const [readingTime, setReadingTime] = useState(0);
-  const [saveStatus, setSaveStatus] = useState<'saving' | 'saved' | 'error' | null>(null);
   const [currentBackgroundColor, setCurrentBackgroundColor] = useState<string | null>(null);
 
   const grimoireId = params?.id ? parseInt(params.id) : null;
@@ -34,35 +31,7 @@ export default function GrimoireReader() {
     enabled: !!grimoireId,
   });
 
-  // Buscar progresso do usuário
-  const { data: userProgress } = useQuery({
-    queryKey: [`/api/progress/user`],
-    enabled: !!grimoireId,
-  });
 
-  // Mutação para salvar progresso
-  const saveProgressMutation = useMutation({
-    mutationFn: async (data: { grimoireId: number; currentPage: number; totalPages: number; readingTimeMinutes: number }) => {
-      return apiRequest("/api/progress", {
-        method: "POST",
-        body: JSON.stringify(data),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-    },
-    onMutate: () => {
-      setSaveStatus('saving');
-    },
-    onSuccess: () => {
-      setSaveStatus('saved');
-      setTimeout(() => setSaveStatus(null), 2000);
-    },
-    onError: () => {
-      setSaveStatus('error');
-      setTimeout(() => setSaveStatus(null), 3000);
-    },
-  });
 
   // Função para extrair cor de fundo de uma seção HTML
   const extractBackgroundColor = (content: string): string | null => {
