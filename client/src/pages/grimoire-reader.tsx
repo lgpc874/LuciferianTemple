@@ -339,7 +339,7 @@ export default function GrimoireReader() {
 
               {/* Conteúdo do grimório */}
               <div className="bg-black/30 backdrop-blur-sm border border-golden-amber/30 rounded-lg shadow-2xl">
-                <div className="p-8 md:p-12">
+                <div className="p-6 md:p-12">
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={currentPage}

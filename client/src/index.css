@@ -1496,12 +1496,46 @@ input, textarea {
   
   .grimoire-content .chapter-title,
   .grimoire-content .chapter-start .chapter-title {
-    font-size: 1.4rem !important;
+    font-size: 1.8rem !important;
   }
   
   .grimoire-content .section-header {
-    font-size: 1.2rem !important;
+    font-size: 1.5rem !important;
   }
+  
+  /* Texto principal do grimório no mobile - muito maior */
+  .grimoire-content,
+  .grimoire-content p,
+  .grimoire-content div,
+  .grimoire-content span {
+    font-size: 18px !important;
+    line-height: 1.8 !important;
+  }
+  
+  /* Aumentar título do grimório no header mobile */
+  .grimoire-header-title {
+    font-size: 16px !important;
+  }
+  
+  /* Citações e elementos especiais maiores no mobile */
+  .grimoire-content .mystical-quote,
+  .grimoire-content blockquote {
+    font-size: 17px !important;
+    line-height: 1.7 !important;
+    padding: 1.2rem !important;
+  }
+  
+  /* Listas maiores no mobile */
+  .grimoire-content li {
+    font-size: 18px !important;
+    line-height: 1.8 !important;
+  }
+  
+  /* Headers maiores no mobile */
+  .grimoire-content h1 { font-size: 2rem !important; }
+  .grimoire-content h2 { font-size: 1.8rem !important; }
+  .grimoire-content h3 { font-size: 1.6rem !important; }
+  .grimoire-content h4 { font-size: 1.4rem !important; }
 }
 
 /* Formatação limpa e profissional para grimórios */
