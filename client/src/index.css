@@ -2372,6 +2372,76 @@ body .smart-grimoire-reader .grimoire-content .destaque {
   font-weight: bold !important;
 }
 
+/* CSS MOBILE - FORÇA IDÊNTICA AO DESKTOP */
+@media (max-width: 768px) {
+  * .grimorio-conteudo,
+  *[class*="grimorio-conteudo"] {
+    font-family: 'EB Garamond', serif !important;
+    color: #CCCCCC !important;
+    font-size: 1.1rem !important;
+    line-height: 1.8 !important;
+    text-align: justify !important;
+    padding: 2rem 1rem !important;
+  }
+
+  * .grimorio-titulo,
+  *[class*="grimorio-titulo"] {
+    font-family: 'Cinzel Decorative', serif !important;
+    color: #D6342C !important;
+    text-align: center !important;
+    font-size: 1.7rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  * .grimorio-subtitulo,
+  *[class*="grimorio-subtitulo"] {
+    font-style: italic !important;
+    text-align: center !important;
+    color: #D6342C !important;
+    font-size: 1rem !important;
+    margin-bottom: 2rem !important;
+  }
+
+  * .grimorio-citacao,
+  *[class*="grimorio-citacao"] {
+    font-style: italic !important;
+    border-left: 3px solid #D6342C !important;
+    padding-left: 1rem !important;
+    margin: 2rem 0 !important;
+    color: #CCCCCC !important;
+  }
+
+  * .grimorio-citacao small,
+  *[class*="grimorio-citacao"] small {
+    display: block !important;
+    font-style: normal !important;
+    font-size: 0.9rem !important;
+    margin-top: 0.5rem !important;
+    color: #999999 !important;
+  }
+
+  * .grimorio-lista,
+  *[class*="grimorio-lista"] {
+    list-style-type: disc !important;
+    margin-left: 2rem !important;
+    color: #D6342C !important;
+    font-weight: bold !important;
+    font-family: 'EB Garamond', serif !important;
+  }
+
+  * .indentado,
+  *[class*="indentado"] {
+    text-indent: 3rem !important;
+    margin-bottom: 1.5rem !important;
+  }
+
+  * .destaque,
+  *[class*="destaque"] {
+    color: #D6342C !important;
+    font-weight: bold !important;
+  }
+}
+
 /* CSS DEFINITIVO - ESTRUTURA EXATA DO SMART READER */
 .smart-grimoire-reader .grimoire-content div[dangerouslysetinnerhtml] .grimorio-titulo,
 .smart-grimoire-reader .grimoire-content div .grimorio-titulo,

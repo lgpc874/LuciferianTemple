@@ -475,7 +475,7 @@ export default function SmartGrimoireReader() {
                     </div>
                   ) : currentPageData ? (
                     <div
-                      className="grimoire-content text-gray-200 leading-relaxed w-full"
+                      className="prose prose-sm max-w-none text-gray-200"
                       style={{
                         fontSize: `${settings.fontSize}px`,
                         lineHeight: settings.lineHeight,
