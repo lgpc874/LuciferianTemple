@@ -13,7 +13,7 @@ import NotFound from "@/pages/not-found";
 import AuthPage from "@/pages/auth";
 
 import Biblioteca from "@/pages/biblioteca";
-import GrimoireReader from "@/pages/grimoire-reader";
+import SmartGrimoireReader from "@/pages/smart-grimoire-reader";
 import AdminDashboard from "@/pages/admin-dashboard";
 import Perfil from "@/pages/perfil";
 
@@ -35,7 +35,7 @@ function Router() {
           <Route path="/auth" component={AuthPage} />
           <Route path="/perfil" component={Perfil} />
           <Route path="/biblioteca" component={Biblioteca} />
-          <Route path="/grimoire/:id" component={GrimoireReader} />
+          <Route path="/grimoire/:id" component={SmartGrimoireReader} />
           <Route path="/admin-dashboard/:tab?" component={AdminDashboard} />
           <Route component={NotFound} />
         </Switch>
