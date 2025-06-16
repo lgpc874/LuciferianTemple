@@ -297,176 +297,47 @@ input, textarea {
   min-height: 100vh;
 }
 
-/* Conteúdo HTML no leitor inteligente - Reset e base */
+/* Conteúdo HTML no leitor inteligente - Renderização pura */
 .grimoire-content {
-  /* Reset para garantir renderização limpa */
-  all: unset;
-  display: block;
+  /* Mínimo necessário para layout */
   width: 100%;
-  color: #CCCCCC;
-  font-family: 'EB Garamond', serif;
+  max-width: 100%;
 }
 
-/* Títulos com hierarquia respeitada */
-.grimoire-content h1,
-.grimoire-content h2,
-.grimoire-content h3,
-.grimoire-content h4,
-.grimoire-content h5,
-.grimoire-content h6 {
-  font-family: 'Cinzel Decorative', serif !important;
-  color: #D6342C !important;
-  font-weight: bold !important;
-  margin: 1.5rem 0 1rem 0 !important;
-  line-height: 1.3 !important;
-  display: block !important;
-}
-
-.grimoire-content h1 { font-size: 1.8rem !important; }
-.grimoire-content h2 { font-size: 1.4rem !important; }
-.grimoire-content h3 { font-size: 1.2rem !important; }
-.grimoire-content h4 { font-size: 1.1rem !important; }
-.grimoire-content h5 { font-size: 1.05rem !important; }
-.grimoire-content h6 { font-size: 1rem !important; }
-
-/* Parágrafos e texto */
-.grimoire-content p {
-  font-family: 'EB Garamond', serif !important;
-  color: #CCCCCC !important;
-  line-height: 1.7 !important;
-  margin: 1rem 0 !important;
-  text-align: justify !important;
-  text-indent: 2rem !important;
-  display: block !important;
-}
-
-/* Divs mantêm estrutura */
-.grimoire-content div {
-  font-family: 'EB Garamond', serif !important;
-  line-height: 1.7 !important;
-  display: block !important;
-  margin: inherit;
-  padding: inherit;
-}
-
-/* Spans preservam estilos inline */
-.grimoire-content span {
-  font-family: inherit !important;
-  line-height: inherit !important;
-  display: inline !important;
-}
-
-/* Listas */
-.grimoire-content ul,
-.grimoire-content ol {
-  font-family: 'EB Garamond', serif !important;
-  color: #CCCCCC !important;
-  margin: 1rem 0 !important;
-  padding-left: 2rem !important;
-  display: block !important;
-}
-
-.grimoire-content li {
-  margin: 0.5rem 0 !important;
-  line-height: 1.6 !important;
-  display: list-item !important;
-}
-
-/* Citações */
-.grimoire-content blockquote {
-  font-family: 'EB Garamond', serif !important;
-  color: #D6342C !important;
-  font-style: italic !important;
-  border-left: 3px solid #D6342C !important;
-  padding-left: 1.5rem !important;
-  margin: 1.5rem 0 !important;
-  background: rgba(214, 52, 44, 0.05) !important;
-  border-radius: 0 4px 4px 0 !important;
-  display: block !important;
-}
-
-/* Ênfases */
-.grimoire-content em,
-.grimoire-content i {
-  font-style: italic !important;
-  color: #D6342C !important;
-  display: inline !important;
-}
-
-.grimoire-content strong,
-.grimoire-content b {
-  font-weight: bold !important;
-  color: #D6342C !important;
-  display: inline !important;
-}
-
-/* Links */
-.grimoire-content a {
-  color: #D6342C !important;
-  text-decoration: underline !important;
-  display: inline !important;
-}
-
-/* Quebras de linha */
-.grimoire-content br {
-  display: block !important;
-  content: "" !important;
-  margin-top: 0.5rem !important;
-}
-
-/* Preservar TODOS os estilos inline - prioridade máxima */
-.grimoire-content [style*="color"] {
-  /* Cores inline têm prioridade */
-}
-
-.grimoire-content [style*="font-size"] {
-  /* Tamanhos de fonte inline têm prioridade */
-}
-
-.grimoire-content [style*="font-family"] {
-  /* Famílias de fonte inline têm prioridade */
-}
-
-.grimoire-content [style*="font-weight"] {
-  /* Peso da fonte inline tem prioridade */
-}
-
-.grimoire-content [style*="font-style"] {
-  /* Estilo da fonte inline tem prioridade */
-}
-
-.grimoire-content [style*="text-align"] {
-  /* Alinhamento inline tem prioridade */
-}
-
-.grimoire-content [style*="margin"] {
-  /* Margens inline têm prioridade */
-}
-
-.grimoire-content [style*="padding"] {
-  /* Padding inline tem prioridade */
-}
-
-.grimoire-content [style*="line-height"] {
-  /* Altura da linha inline tem prioridade */
-}
-
-/* Garantir que estilos inline sempre funcionem */
+/* Reset apenas Tailwind e outros CSS externos - preservar HTML inline */
 .grimoire-content * {
-  /* Permitir herança de estilos inline */
-  color: inherit;
-  font-family: inherit;
-  font-size: inherit;
-  font-weight: inherit;
-  font-style: inherit;
-  text-align: inherit;
-  line-height: inherit;
+  all: revert;
 }
 
-/* Override específico para elementos com estilo inline */
-.grimoire-content *[style] {
-  /* Elementos com style attribute têm prioridade total */
-  all: revert !important;
+/* Aplicar apenas estilos de fallback quando NÃO há style inline */
+.grimoire-content h1:not([style]) { 
+  font-family: 'Cinzel Decorative', serif; 
+  color: #D6342C; 
+  font-size: 1.8rem; 
+  font-weight: bold; 
+  margin: 1.5rem 0 1rem 0; 
+}
+.grimoire-content h2:not([style]) { 
+  font-family: 'Cinzel Decorative', serif; 
+  color: #D6342C; 
+  font-size: 1.4rem; 
+  font-weight: bold; 
+  margin: 1.2rem 0 0.8rem 0; 
+}
+.grimoire-content div:not([style]) { 
+  font-family: 'EB Garamond', serif; 
+  color: #CCCCCC; 
+  line-height: 1.7; 
+}
+.grimoire-content p:not([style]) { 
+  font-family: 'EB Garamond', serif; 
+  color: #CCCCCC; 
+  line-height: 1.7; 
+  margin: 1rem 0; 
+}
+.grimoire-content span:not([style]) { 
+  font-family: inherit; 
+  color: inherit; 
 }
 
 /* Responsivo para mobile */

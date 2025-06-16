@@ -488,6 +488,14 @@ export default function SmartGrimoireReader() {
                         style={{
                           width: '100%',
                           maxWidth: '100%',
+                          // Garantir que estilos inline funcionem
+                          colorScheme: 'initial',
+                          all: 'initial',
+                          fontFamily: 'initial',
+                          fontSize: 'initial',
+                          color: 'initial',
+                          lineHeight: 'initial',
+                          display: 'block'
                         }}
                       />
                       
