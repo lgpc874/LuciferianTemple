@@ -67,28 +67,42 @@ export default function GrimoireReader() {
   const paginateContent = (content: string) => {
     if (!content || !content.trim()) return [];
     
-    const charsPerPage = isMobile ? 800 : 1200;
+    const charsPerPage = isMobile ? 1000 : 1500;
+    const minPageSize = isMobile ? 600 : 900;
     
-    // Dividir por parágrafos principais
-    const sections = content.split(/(?=<h[1-6])|(?=<div)|(?=<blockquote)/)
-      .filter(section => section.trim().length > 0);
+    // Primeiro, dividir o conteúdo em parágrafos menores para melhor controle
+    const paragraphs = content.split(/(<\/p>|<\/h[1-6]>|<\/blockquote>|<\/div>|<\/li>)/)
+      .filter(part => part.trim().length > 0)
+      .reduce((acc, part, index, array) => {
+        if (index % 2 === 0 && array[index + 1]) {
+          acc.push(part + array[index + 1]);
+        } else if (index % 2 === 0) {
+          acc.push(part);
+        }
+        return acc;
+      }, [] as string[]);
     
     const pages = [];
     let currentPage = '';
     
-    for (const section of sections) {
-      if ((currentPage + section).length > charsPerPage && currentPage.trim()) {
+    for (const paragraph of paragraphs) {
+      const proposedPage = currentPage + paragraph;
+      
+      // Se a página proposta excede o limite e já temos conteúdo mínimo
+      if (proposedPage.length > charsPerPage && currentPage.length >= minPageSize) {
         pages.push(currentPage.trim());
-        currentPage = section;
+        currentPage = paragraph;
       } else {
-        currentPage += section;
+        currentPage = proposedPage;
       }
     }
     
+    // Adicionar a última página se houver conteúdo
     if (currentPage.trim()) {
       pages.push(currentPage.trim());
     }
     
+    // Se não conseguiu paginar, retornar conteúdo original
     return pages.length > 0 ? pages : [content];
   };
 
