@@ -288,8 +288,8 @@ export default function Biblioteca() {
                                         <Clock size={12} />
                                         <span>{grimoire.estimated_reading_time || 0} min</span>
                                       </div>
-                                      <Badge className={`text-xs ${getDifficultyColor(parseInt(grimoire.level))}`}>
-                                        {getDifficultyText(parseInt(grimoire.level))}
+                                      <Badge className={`text-xs ${getDifficultyColor(1)}`}>
+                                        {grimoire.level || "iniciante"}
                                       </Badge>
                                     </div>
                                   </div>
