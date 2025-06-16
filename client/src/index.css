@@ -1532,10 +1532,10 @@ input, textarea {
   }
   
   /* Headers maiores no mobile */
-  .grimoire-content h1 { font-size: 2rem !important; }
-  .grimoire-content h2 { font-size: 1.8rem !important; }
-  .grimoire-content h3 { font-size: 1.6rem !important; }
-  .grimoire-content h4 { font-size: 1.4rem !important; }
+  .grimoire-content h1 { font-size: 1.5rem !important; }
+  .grimoire-content h2 { font-size: 1.3rem !important; }
+  .grimoire-content h3 { font-size: 1.2rem !important; }
+  .grimoire-content h4 { font-size: 1.1rem !important; }
 }
 
 /* Formatação limpa e profissional para grimórios */
