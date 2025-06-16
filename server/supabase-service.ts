@@ -232,63 +232,103 @@ export class SupabaseService {
     console.log("💾 Salvando progresso no Supabase:", progress);
     
     try {
-      // Primeiro, verificar se já existe um registro para este usuário/grimório
-      const { data: existingProgress } = await this.supabase
-        .from('user_progress')
-        .select('*')
-        .eq('user_id', progress.user_id)
-        .eq('grimoire_id', progress.grimoire_id)
-        .single();
-
+      // Estratégia simplificada: usar upsert direto no user_progress sem depender da FK
+      // Se o usuario não existir, o PostgreSQL vai retornar erro e podemos capturar
+      
       const progressData = {
         user_id: progress.user_id,
         grimoire_id: progress.grimoire_id,
         current_page: progress.current_page || 1,
         total_reading_time: progress.reading_time_minutes || 0,
         progress_percentage: Math.round((progress.current_page || 1) / (progress.total_pages || 1) * 100).toString(),
-        last_read_at: progress.last_read_at || new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        last_read_at: new Date(progress.last_read_at || new Date()),
+        updated_at: new Date()
       };
 
-      if (existingProgress) {
-        // Atualizar registro existente
-        console.log("🔄 Atualizando progresso existente...");
-        const { data, error } = await this.supabase
-          .from('user_progress')
-          .update(progressData)
-          .eq('user_id', progress.user_id)
-          .eq('grimoire_id', progress.grimoire_id)
-          .select()
-          .single();
+      // Tentar fazer upsert direto no progresso
+      console.log("🔄 Fazendo upsert do progresso...");
+      const { data, error } = await this.supabase
+        .from('user_progress')
+        .upsert(progressData, {
+          onConflict: 'user_id,grimoire_id'
+        })
+        .select()
+        .single();
 
-        if (error) {
-          console.error("❌ Erro ao atualizar progresso:", error);
-          throw new Error(`Error updating user progress: ${error.message}`);
-        }
-        
-        console.log("✅ Progresso atualizado:", data);
-        return data;
-      } else {
-        // Criar novo registro
-        console.log("🆕 Criando novo registro de progresso...");
-        const { data, error } = await this.supabase
-          .from('user_progress')
-          .insert(progressData)
-          .select()
-          .single();
+      if (error) {
+        // Se der erro de FK, tentar criar o usuário e tentar novamente
+        if (error.code === '23503') {
+          console.log("🆕 Erro de FK - criando usuário admin...");
+          await this.createAdminUserDirectly(progress.user_id);
+          
+          // Tentar novamente após criar o usuário
+          const { data: retryData, error: retryError } = await this.supabase
+            .from('user_progress')
+            .upsert(progressData, {
+              onConflict: 'user_id,grimoire_id'
+            })
+            .select()
+            .single();
 
-        if (error) {
-          console.error("❌ Erro ao criar progresso:", error);
-          throw new Error(`Error creating user progress: ${error.message}`);
+          if (retryError) {
+            console.error("❌ Erro na segunda tentativa:", retryError);
+            throw new Error(`Error on retry: ${retryError.message}`);
+          }
+          
+          console.log("✅ Progresso salvo após criar usuário:", retryData);
+          return retryData;
+        } else {
+          console.error("❌ Erro ao fazer upsert:", error);
+          throw new Error(`Error upserting progress: ${error.message}`);
         }
-        
-        console.log("✅ Progresso criado:", data);
-        return data;
       }
+      
+      console.log("✅ Progresso salvo com sucesso:", data);
+      return data;
       
     } catch (err: any) {
       console.error("❌ Erro geral ao salvar progresso:", err);
       throw new Error(`Error saving user progress: ${err.message}`);
+    }
+  }
+
+  private async ensureAdminUserExists(userId: number): Promise<void> {
+    try {
+      const { data: existingUser } = await this.supabase
+        .from('users')
+        .select('id')
+        .eq('id', userId)
+        .single();
+
+      if (!existingUser) {
+        console.log("🆕 Criando usuário admin no Supabase...");
+        
+        // Usar upsert para garantir que o usuário seja criado
+        const { error: userError } = await this.supabase
+          .from('users')
+          .upsert({
+            id: userId,
+            username: 'admin',
+            email: 'admin@templodoabismo.com.br',
+            password_hash: '$2b$10$dummy.hash.for.admin.user',
+            role: 'admin',
+            is_active: true,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          }, {
+            onConflict: 'id'
+          });
+
+        if (userError) {
+          console.error("❌ Erro ao criar usuário:", userError);
+          throw new Error(`Failed to create admin user: ${userError.message}`);
+        }
+        
+        console.log("✅ Usuário admin criado com sucesso");
+      }
+    } catch (err: any) {
+      console.error("❌ Erro ao assegurar usuário admin:", err);
+      throw new Error(`Failed to ensure admin user exists: ${err.message}`);
     }
   }
 
