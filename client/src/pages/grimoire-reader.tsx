@@ -1,21 +1,17 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useLocation, useRoute } from "wouter";
 import { PageTransition } from "@/components/page-transition";
 import ContentProtection from "@/components/content-protection";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   ArrowLeft, 
   ChevronLeft, 
   ChevronRight, 
-  BookOpen, 
-  Eye,
-  Clock,
-  User
+  BookOpen
 } from "lucide-react";
-import type { Grimoire, Chapter } from "@shared/schema";
+import type { Grimoire } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -28,19 +24,12 @@ export default function GrimoireReader() {
   const [paginatedContent, setPaginatedContent] = useState<string[]>([]);
   const [readingTime, setReadingTime] = useState(0);
   const [saveStatus, setSaveStatus] = useState<'saving' | 'saved' | 'error' | null>(null);
-  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  
+
   const grimoireId = params?.id ? parseInt(params.id) : null;
 
-  // Buscar dados do grimório
-  const { data: grimoire, isLoading: grimoireLoading } = useQuery({
+  // Buscar grimório
+  const { data: grimoire, isLoading: grimoireLoading } = useQuery<Grimoire>({
     queryKey: [`/api/grimoires/${grimoireId}`],
-    enabled: !!grimoireId,
-  });
-
-  // Buscar capítulos do grimório
-  const { data: chapters = [], isLoading: chaptersLoading } = useQuery({
-    queryKey: [`/api/chapters/${grimoireId}`],
     enabled: !!grimoireId,
   });
 
@@ -53,7 +42,13 @@ export default function GrimoireReader() {
   // Mutação para salvar progresso
   const saveProgressMutation = useMutation({
     mutationFn: async (data: { grimoireId: number; currentPage: number; totalPages: number; readingTimeMinutes: number }) => {
-      return apiRequest("POST", "/api/progress", data);
+      return apiRequest("/api/progress", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
     },
     onMutate: () => {
       setSaveStatus('saving');
@@ -68,193 +63,113 @@ export default function GrimoireReader() {
     },
   });
 
-  // Função para paginar o conteúdo sem criar páginas vazias
-  const paginateContent = (content: string, charsPerPage: number = 2000) => {
+  // Função para paginar o conteúdo do grimório
+  const paginateContent = (content: string) => {
     if (!content || !content.trim()) return [];
     
-    // Dividir por parágrafos principais primeiro
-    const mainSections = content.split(/(?=<h[1-6])|(?=<div class="[^"]*section)|(?=<blockquote)/)
+    const charsPerPage = isMobile ? 800 : 1200;
+    
+    // Dividir por parágrafos principais
+    const sections = content.split(/(?=<h[1-6])|(?=<div)|(?=<blockquote)/)
       .filter(section => section.trim().length > 0);
     
     const pages = [];
     let currentPage = '';
     
-    for (const section of mainSections) {
-      const trimmedSection = section.trim();
-      if (trimmedSection.length < 20) continue; // Ignorar seções muito pequenas
-      
-      const testPage = currentPage + trimmedSection;
-      
-      // Se a seção é muito grande para uma página sozinha, divida internamente
-      if (trimmedSection.length > charsPerPage) {
-        // Finalizar página atual se houver conteúdo substancial
-        if (currentPage.trim().length > 100) {
-          pages.push(currentPage.trim());
-          currentPage = '';
-        }
-        
-        // Dividir seção grande em partes menores por parágrafos
-        const paragraphs = trimmedSection.split(/(?=<p>)|(?=<\/p>)/)
-          .filter(para => para.trim().length > 0);
-        
-        let tempPage = '';
-        
-        for (const para of paragraphs) {
-          const testTemp = tempPage + para;
-          if (testTemp.length > charsPerPage && tempPage.trim().length > 100) {
-            pages.push(tempPage.trim());
-            tempPage = para;
-          } else {
-            tempPage = testTemp;
-          }
-        }
-        
-        if (tempPage.trim().length > 20) {
-          currentPage = tempPage;
-        }
-      } else if (testPage.length > charsPerPage && currentPage.trim().length > 100) {
-        // Página atual + nova seção excede limite, finalizar página atual
+    for (const section of sections) {
+      if ((currentPage + section).length > charsPerPage && currentPage.trim()) {
         pages.push(currentPage.trim());
-        currentPage = trimmedSection;
+        currentPage = section;
       } else {
-        // Adicionar seção à página atual
-        currentPage = testPage;
+        currentPage += section;
       }
     }
     
-    // Só adicionar a última página se tiver conteúdo substancial
-    if (currentPage.trim().length > 50) {
+    if (currentPage.trim()) {
       pages.push(currentPage.trim());
     }
     
-    // Garantir que sempre temos pelo menos uma página com conteúdo
-    const validPages = pages.filter(page => page.trim().length > 50);
-    return validPages.length > 0 ? validPages : [content.trim()];
+    return pages.length > 0 ? pages : [content];
   };
 
-  // Preparar conteúdo paginado quando capítulos carregarem
+  // Paginar conteúdo quando grimório carrega
   useEffect(() => {
-    if (Array.isArray(chapters) && chapters.length > 0) {
-      const sortedChapters = chapters.sort((a: any, b: any) => a.chapter_number - b.chapter_number);
-      const allPages: string[] = [];
+    if (grimoire?.content) {
+      const pages = paginateContent(grimoire.content);
+      setPaginatedContent(pages);
+      setTotalPages(pages.length);
       
-      // Cada capítulo começa em uma nova página
-      for (const chapter of sortedChapters) {
-        const chapterContent = `<div class="chapter-start">
-          <h2 class="chapter-title">${chapter.title}</h2>
-          ${chapter.content}
-        </div>`;
-        
-        // Paginar o conteúdo do capítulo individualmente com mais conteúdo por página
-        const chapterPages = paginateContent(chapterContent, isMobile ? 1400 : 2000);
-        allPages.push(...chapterPages);
-      }
-      
-      setPaginatedContent(allPages);
-      setTotalPages(allPages.length);
-      
-      // Restaurar progresso salvo
-      if (userProgress && grimoireId) {
+      // Restaurar progresso do usuário se existir
+      if (Array.isArray(userProgress) && userProgress.length > 0) {
         const progress = userProgress.find((p: any) => p.grimoire_id === grimoireId);
-        if (progress) {
-          setCurrentPage(progress.current_page || 1);
-          setReadingTime(progress.reading_time_minutes || 0);
+        if (progress?.current_page) {
+          setCurrentPage(Math.min(progress.current_page, pages.length));
         }
       }
     }
-  }, [chapters, userProgress, grimoireId, isMobile]);
+  }, [grimoire?.content, userProgress, grimoireId]);
 
-  // Timer para contar tempo de leitura
+  // Timer de leitura
   useEffect(() => {
-    const timer = setInterval(() => {
+    const interval = setInterval(() => {
       setReadingTime(prev => prev + 1);
     }, 60000); // Incrementa a cada minuto
 
-    return () => clearInterval(timer);
+    return () => clearInterval(interval);
   }, []);
 
-  // Função para salvar progresso com debounce
-  const saveProgress = () => {
-    if (!grimoireId) return;
-    
-    if (saveTimeoutRef.current) {
-      clearTimeout(saveTimeoutRef.current);
-    }
-
-    saveTimeoutRef.current = setTimeout(() => {
-      saveProgressMutation.mutate({
-        grimoireId,
-        currentPage,
-        totalPages,
-        readingTimeMinutes: readingTime
-      });
-    }, 2000); // Salva após 2 segundos de inatividade
-  };
-
-  // Salvar progresso quando mudar de página
+  // Auto-save do progresso
   useEffect(() => {
-    if (currentPage > 1) { // Só salva se não for a primeira página
-      saveProgress();
-    }
-  }, [currentPage]);
+    if (grimoireId && totalPages > 0) {
+      const timer = setTimeout(() => {
+        saveProgressMutation.mutate({
+          grimoireId,
+          currentPage,
+          totalPages,
+          readingTimeMinutes: readingTime
+        });
+      }, 2000);
 
-  // Salvar progresso a cada 5 minutos de leitura
-  useEffect(() => {
-    if (readingTime > 0 && readingTime % 5 === 0) {
-      saveProgress();
+      return () => clearTimeout(timer);
     }
-  }, [readingTime]);
+  }, [currentPage, readingTime, grimoireId, totalPages]);
 
   // Navegação por teclado
   useEffect(() => {
-    const handleKeyPress = (event: KeyboardEvent) => {
-      if (event.key === 'ArrowLeft') {
-        event.preventDefault();
-        goToPrevPage();
-      } else if (event.key === 'ArrowRight') {
-        event.preventDefault();
-        goToNextPage();
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft' && currentPage > 1) {
+        setCurrentPage(prev => prev - 1);
+      } else if (e.key === 'ArrowRight' && currentPage < totalPages) {
+        setCurrentPage(prev => prev + 1);
       }
     };
 
-    document.addEventListener('keydown', handleKeyPress);
-    return () => {
-      document.removeEventListener('keydown', handleKeyPress);
-    };
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
   }, [currentPage, totalPages]);
 
-  // Limpar timeout ao desmontar
+  // Scroll para o topo ao trocar páginas
   useEffect(() => {
-    return () => {
-      if (saveTimeoutRef.current) {
-        clearTimeout(saveTimeoutRef.current);
-      }
-    };
-  }, []);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [currentPage]);
 
-  // Navegação entre páginas
-  const goToPage = (page: number) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-      // Auto-scroll para o topo ao trocar de página
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+  const nextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(prev => prev + 1);
     }
   };
 
-  const goToPrevPage = () => goToPage(currentPage - 1);
-  const goToNextPage = () => goToPage(currentPage + 1);
-
-  // Voltar para biblioteca
-  const handleBack = () => {
-    setLocation('/biblioteca');
+  const prevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(prev => prev - 1);
+    }
   };
 
-  if (grimoireLoading || chaptersLoading) {
+  if (grimoireLoading) {
     return (
-      <PageTransition className="min-h-screen bg-gradient-to-br from-black via-red-950/20 to-black flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-golden-amber mx-auto mb-4"></div>
-          <p className="text-ritualistic-beige/70">Preparando o grimório...</p>
+      <PageTransition>
+        <div className="min-h-screen bg-gradient-to-br from-red-950 via-black to-red-900 flex items-center justify-center">
+          <div className="text-golden-amber text-xl animate-pulse">Carregando grimório...</div>
         </div>
       </PageTransition>
     );
@@ -262,186 +177,135 @@ export default function GrimoireReader() {
 
   if (!grimoire) {
     return (
-      <PageTransition className="min-h-screen bg-gradient-to-br from-black via-red-950/20 to-black flex items-center justify-center">
-        <div className="text-center">
-          <BookOpen className="h-16 w-16 text-golden-amber/50 mx-auto mb-4" />
-          <h2 className="text-2xl font-cinzel text-golden-amber mb-2">Grimório Não Encontrado</h2>
-          <p className="text-ritualistic-beige/70 mb-6">O grimório solicitado não existe ou foi removido.</p>
-          <Button onClick={handleBack} className="bg-red-900/50 hover:bg-red-900/70 text-golden-amber">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Voltar à Biblioteca
-          </Button>
+      <PageTransition>
+        <div className="min-h-screen bg-gradient-to-br from-red-950 via-black to-red-900 flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="text-2xl text-golden-amber mb-4">Grimório não encontrado</h1>
+            <Button onClick={() => setLocation("/biblioteca")} variant="outline">
+              Voltar à Biblioteca
+            </Button>
+          </div>
         </div>
       </PageTransition>
     );
   }
 
+  const currentContent = paginatedContent[currentPage - 1] || '';
+
   return (
-    <ContentProtection enableScreenshotProtection={true}>
-      <PageTransition className="min-h-screen bg-gradient-to-br from-black via-red-950/20 to-black">
-        
-        {/* Header */}
-        <div className="bg-black/40 backdrop-blur-sm border-b border-golden-amber/20 sticky top-0 z-10">
-          <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-            <Button 
-              variant="ghost" 
-              onClick={handleBack}
-              className="text-golden-amber hover:bg-red-900/30 hover:text-golden-amber"
+    <PageTransition>
+      <ContentProtection>
+        <div className="min-h-screen bg-gradient-to-br from-red-950 via-black to-red-900 relative overflow-hidden">
+          {/* Header discreto */}
+          <div className="absolute top-4 left-4 z-10">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setLocation("/biblioteca")}
+              className="text-golden-amber/70 hover:text-golden-amber hover:bg-red-900/30"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Biblioteca
             </Button>
-            
-            <div className="text-center flex-1 mx-4">
-              <h1 className="font-cinzel text-golden-amber truncate grimoire-header-title">
-                {grimoireLoading ? 'Carregando...' : grimoire?.title || 'Grimório'}
-              </h1>
-              <div className="flex items-center justify-center space-x-4 text-xs text-ritualistic-beige/60 mt-1">
-                <span className="flex items-center">
-                  <Eye className="h-3 w-3 mr-1" />
-                  Página {currentPage} de {totalPages}
-                </span>
-                {(grimoire as any)?.estimated_reading_time && (
-                  <span className="flex items-center">
-                    <Clock className="h-3 w-3 mr-1" />
-                    {(grimoire as any).estimated_reading_time} min
-                  </span>
-                )}
+          </div>
+
+          {/* Status de salvamento */}
+          {saveStatus && (
+            <div className="absolute top-4 right-4 z-10">
+              <div className={`px-3 py-1 rounded-full text-xs ${
+                saveStatus === 'saving' ? 'bg-amber-900/50 text-amber-200' :
+                saveStatus === 'saved' ? 'bg-green-900/50 text-green-200' :
+                'bg-red-900/50 text-red-200'
+              }`}>
+                {saveStatus === 'saving' ? 'Salvando...' :
+                 saveStatus === 'saved' ? '✓ Salvo' : '⚠ Erro'}
               </div>
             </div>
+          )}
 
-            <div className="flex items-center space-x-2">
-              <Button 
-                variant="ghost" 
-                size="sm"
-                onClick={goToPrevPage}
-                disabled={currentPage === 1}
-                className="text-golden-amber hover:bg-red-900/30 disabled:opacity-30"
+          {/* Título do grimório */}
+          <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10">
+            <h1 className="grimoire-header-title text-golden-amber text-center font-cinzel">
+              {grimoire.title}
+            </h1>
+          </div>
+
+          {/* Container principal */}
+          <div className="flex items-center justify-center min-h-screen px-4 py-20">
+            <div className="relative max-w-4xl w-full">
+              {/* Áreas de clique invisíveis */}
+              <div 
+                className="absolute left-0 top-0 w-1/3 h-full z-20 cursor-pointer group"
+                onClick={prevPage}
               >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <Button 
-                variant="ghost" 
-                size="sm"
-                onClick={goToNextPage}
-                disabled={currentPage === totalPages}
-                className="text-golden-amber hover:bg-red-900/30 disabled:opacity-30"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-              
-              {/* Indicador de status de salvamento */}
-              {saveStatus && (
-                <div className="flex items-center gap-2 text-xs ml-4">
-                  {saveStatus === 'saving' && (
-                    <>
-                      <div className="w-3 h-3 border border-golden-amber/60 border-t-transparent rounded-full animate-spin" />
-                      <span className="text-golden-amber/80">Salvando...</span>
-                    </>
-                  )}
-                  {saveStatus === 'saved' && (
-                    <>
-                      <div className="w-3 h-3 bg-green-500 rounded-full" />
-                      <span className="text-green-400">✓ Salvo</span>
-                    </>
-                  )}
-                  {saveStatus === 'error' && (
-                    <>
-                      <div className="w-3 h-3 bg-red-500 rounded-full" />
-                      <span className="text-red-400">⚠ Erro</span>
-                    </>
-                  )}
+                <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center h-full">
+                  <ChevronLeft className="h-8 w-8 text-golden-amber/50" />
                 </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Leitor principal */}
-        <div className="container mx-auto px-4 py-8 max-w-4xl">
-          <div className="bg-black/40 backdrop-blur-sm border border-golden-amber/20 rounded-lg p-8 min-h-[600px] relative">
-            
-            {/* Área de clique invisível para navegação */}
-            <div className="absolute inset-0 flex">
+              </div>
+              
               <div 
-                className="w-1/3 h-full cursor-pointer z-10" 
-                onClick={goToPrevPage}
-                title="Página anterior"
-              />
-              <div className="w-1/3 h-full" />
-              <div 
-                className="w-1/3 h-full cursor-pointer z-10" 
-                onClick={goToNextPage}
-                title="Próxima página"
-              />
-            </div>
-
-            {/* Conteúdo da página */}
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentPage}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.3 }}
-                className="relative z-5 h-full"
+                className="absolute right-0 top-0 w-1/3 h-full z-20 cursor-pointer group"
+                onClick={nextPage}
               >
-                {paginatedContent[currentPage - 1] ? (
-                  <div 
-                    className="grimoire-content prose-grimoire max-w-none text-ritualistic-beige leading-relaxed font-garamond"
-                    style={{
-                      fontFamily: 'Garamond, Georgia, serif',
-                      lineHeight: '1.8',
-                      textAlign: 'justify'
-                    }}
-                    dangerouslySetInnerHTML={{ 
-                      __html: paginatedContent[currentPage - 1]
-                    }}
-                  />
-                ) : (
-                  <div className="flex items-center justify-center h-full">
-                    <p className="text-ritualistic-beige/50">Conteúdo não encontrado</p>
+                <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center h-full">
+                  <ChevronRight className="h-8 w-8 text-golden-amber/50" />
+                </div>
+              </div>
+
+              {/* Conteúdo do grimório */}
+              <div className="bg-black/30 backdrop-blur-sm border border-golden-amber/30 rounded-lg shadow-2xl">
+                <div className="p-8 md:p-12">
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={currentPage}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      transition={{ duration: 0.3 }}
+                      className="grimoire-content text-amber-100 leading-relaxed"
+                      dangerouslySetInnerHTML={{ __html: currentContent }}
+                    />
+                  </AnimatePresence>
+                </div>
+
+                {/* Navegação inferior */}
+                <div className="border-t border-golden-amber/20 p-4">
+                  <div className="flex items-center justify-between">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={prevPage}
+                      disabled={currentPage === 1}
+                      className="text-golden-amber/70 hover:text-golden-amber disabled:opacity-30"
+                    >
+                      <ChevronLeft className="h-4 w-4 mr-1" />
+                      Anterior
+                    </Button>
+
+                    <div className="flex items-center gap-4 text-golden-amber/70 text-sm">
+                      <span className="flex items-center gap-1">
+                        <BookOpen className="h-4 w-4" />
+                        {currentPage} de {totalPages}
+                      </span>
+                    </div>
+
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={nextPage}
+                      disabled={currentPage === totalPages}
+                      className="text-golden-amber/70 hover:text-golden-amber disabled:opacity-30"
+                    >
+                      Próxima
+                      <ChevronRight className="h-4 w-4 ml-1" />
+                    </Button>
                   </div>
-                )}
-              </motion.div>
-            </AnimatePresence>
-
-            {/* Indicador de página no canto */}
-            <div className="absolute bottom-4 right-4 text-xs text-ritualistic-beige/40">
-              {currentPage} / {totalPages}
+                </div>
+              </div>
             </div>
-          </div>
-
-          {/* Controles inferiores */}
-          <div className="mt-6 flex items-center justify-between">
-            <Button 
-              variant="outline"
-              onClick={goToPrevPage}
-              disabled={currentPage === 1}
-              className="bg-black/40 border-golden-amber/20 text-golden-amber hover:bg-red-900/30 disabled:opacity-30"
-            >
-              <ChevronLeft className="h-4 w-4 mr-2" />
-              Anterior
-            </Button>
-
-            <div className="flex items-center space-x-2">
-              <Badge className="bg-golden-amber/90 text-black">
-                {Math.round((currentPage / totalPages) * 100)}% lido
-              </Badge>
-            </div>
-
-            <Button 
-              variant="outline"
-              onClick={goToNextPage}
-              disabled={currentPage === totalPages}
-              className="bg-black/40 border-golden-amber/20 text-golden-amber hover:bg-red-900/30 disabled:opacity-30"
-            >
-              Próxima
-              <ChevronRight className="h-4 w-4 ml-2" />
-            </Button>
           </div>
         </div>
-      </PageTransition>
-    </ContentProtection>
+      </ContentProtection>
+    </PageTransition>
   );
 }

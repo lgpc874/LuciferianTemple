@@ -399,70 +399,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // CAPÍTULOS
-  app.get("/api/grimoires/:id/chapters", async (req, res) => {
-    try {
-      const grimoireId = parseInt(req.params.id);
-      if (isNaN(grimoireId)) {
-        return res.status(400).json({ error: "ID do grimório inválido" });
-      }
 
-      const chapters = await supabaseService.getChaptersByGrimoire(grimoireId);
-      res.json(chapters);
-    } catch (error: any) {
-      console.error("Error fetching chapters:", error);
-      res.status(500).json({ error: "Erro ao buscar capítulos" });
-    }
-  });
-
-  app.post("/api/admin/chapters", authenticateToken, requireAdmin, async (req, res) => {
-    try {
-      const chapterData: InsertChapter = insertChapterSchema.parse(req.body);
-      const newChapter = await supabaseService.createChapter(chapterData);
-      res.status(201).json(newChapter);
-    } catch (error: any) {
-      console.error("Error creating chapter:", error);
-      res.status(400).json({ error: error.message || "Erro ao criar capítulo" });
-    }
-  });
-
-  app.put("/api/admin/chapters/:id", authenticateToken, requireAdmin, async (req, res) => {
-    try {
-      const id = parseInt(req.params.id);
-      if (isNaN(id)) {
-        return res.status(400).json({ error: "ID inválido" });
-      }
-
-      const updates = req.body;
-      console.log(`📝 Atualizando capítulo ${id}:`, {
-        title: updates.title,
-        contentLength: updates.content ? updates.content.length : 0,
-        hasContent: !!updates.content
-      });
-      
-      const updatedChapter = await supabaseService.updateChapter(id, updates);
-      console.log(`✅ Capítulo ${id} atualizado com sucesso: ${updatedChapter.title}`);
-      res.json(updatedChapter);
-    } catch (error: any) {
-      console.error("❌ Error updating chapter:", error);
-      res.status(400).json({ error: error.message || "Erro ao atualizar capítulo" });
-    }
-  });
-
-  app.delete("/api/admin/chapters/:id", authenticateToken, requireAdmin, async (req, res) => {
-    try {
-      const id = parseInt(req.params.id);
-      if (isNaN(id)) {
-        return res.status(400).json({ error: "ID inválido" });
-      }
-
-      await supabaseService.deleteChapter(id);
-      res.json({ message: "Capítulo deletado com sucesso" });
-    } catch (error: any) {
-      console.error("Error deleting chapter:", error);
-      res.status(400).json({ error: error.message || "Erro ao deletar capítulo" });
-    }
-  });
 
   // PROGRESSO DO USUÁRIO
   app.get("/api/user/progress", authenticateToken, async (req: any, res) => {
