@@ -297,32 +297,69 @@ input, textarea {
   min-height: 100vh;
 }
 
-/* Conteúdo HTML no leitor inteligente - Renderização pura e limpa */
+/* Conteúdo HTML no leitor inteligente - Força estilos inline */
 .grimoire-content {
-  /* Apenas o essencial para layout */
+  /* Layout mínimo */
   width: 100%;
   max-width: 100%;
-  display: block;
 }
 
-/* NÃO aplicar reset - deixar HTML inline funcionar naturalmente */
-.grimoire-content * {
-  /* Apenas garantir que elementos inline tenham display correto */
+/* Forçar cor vermelha para elementos com style="color: #D6342C" */
+.grimoire-content div[style*="#D6342C"],
+.grimoire-content span[style*="#D6342C"],
+.grimoire-content p[style*="#D6342C"],
+.grimoire-content h1[style*="#D6342C"],
+.grimoire-content h2[style*="#D6342C"],
+.grimoire-content li[style*="#D6342C"] {
+  color: #D6342C !important;
 }
 
-/* Estilos muito específicos apenas para elementos SEM atributo style */
-.grimoire-content > h1:not([style]):not([class]) { 
-  font-family: 'Cinzel Decorative', serif; 
-  color: #D6342C; 
-  font-size: 1.8rem; 
+/* Forçar itálico para elementos com font-style: italic */
+.grimoire-content div[style*="italic"],
+.grimoire-content span[style*="italic"],
+.grimoire-content p[style*="italic"] {
+  font-style: italic !important;
 }
-.grimoire-content > p:not([style]):not([class]) { 
-  font-family: 'EB Garamond', serif; 
-  color: #CCCCCC; 
+
+/* Forçar centralização para elementos com text-align: center */
+.grimoire-content div[style*="center"],
+.grimoire-content span[style*="center"],
+.grimoire-content p[style*="center"] {
+  text-align: center !important;
 }
-.grimoire-content > div:not([style]):not([class]) { 
-  font-family: 'EB Garamond', serif; 
-  color: #CCCCCC; 
+
+/* Forçar fonte EB Garamond */
+.grimoire-content div[style*="EB Garamond"],
+.grimoire-content span[style*="EB Garamond"],
+.grimoire-content p[style*="EB Garamond"] {
+  font-family: 'EB Garamond', serif !important;
+}
+
+/* Forçar fonte Cinzel */
+.grimoire-content div[style*="Cinzel"],
+.grimoire-content span[style*="Cinzel"],
+.grimoire-content h1[style*="Cinzel"],
+.grimoire-content h2[style*="Cinzel"] {
+  font-family: 'Cinzel Decorative', serif !important;
+}
+
+/* Forçar tamanho 1.1rem */
+.grimoire-content div[style*="1.1rem"],
+.grimoire-content span[style*="1.1rem"],
+.grimoire-content p[style*="1.1rem"] {
+  font-size: 1.1rem !important;
+}
+
+/* Forçar margens específicas */
+.grimoire-content div[style*="3rem 0 2rem 0"],
+.grimoire-content div[style*="margin: 3rem 0 2rem 0"] {
+  margin: 3rem 0 2rem 0 !important;
+}
+
+/* Forçar peso da fonte */
+.grimoire-content span[style*="bold"],
+.grimoire-content div[style*="bold"] {
+  font-weight: bold !important;
 }
 
 /* Responsivo para mobile */
