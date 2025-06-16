@@ -279,29 +279,38 @@ export default function SmartGrimoireReader() {
       <ContentProtection>
         <div className="min-h-screen bg-gradient-to-br from-black via-red-950/20 to-black">
           
-          {/* Header simplificado - apenas botão voltar */}
+          {/* Header com botão voltar e nome do grimório */}
           <div className="fixed top-0 left-0 right-0 bg-black/90 backdrop-blur-sm border-b border-amber-500/20 z-50">
-            <div className="max-w-6xl mx-auto flex items-center justify-between p-4">
+            <div className="max-w-6xl mx-auto flex items-center justify-between p-3 md:p-4 gap-2">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setLocation('/biblioteca')}
-                className="text-amber-500 hover:text-amber-400 hover:bg-amber-500/10"
+                className="text-amber-500 hover:text-amber-400 hover:bg-amber-500/10 flex-shrink-0"
               >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Biblioteca
+                <ArrowLeft className="w-4 h-4 mr-1 md:mr-2" />
+                <span className="hidden sm:inline">Biblioteca</span>
+                <span className="sm:hidden">Voltar</span>
               </Button>
               
-              {saveStatus && (
-                <div className={`text-xs ${
-                  saveStatus === 'saving' ? 'text-blue-400' : 
-                  saveStatus === 'saved' ? 'text-green-400' : 'text-red-400'
-                }`}>
-                  {saveStatus === 'saving' && 'Salvando...'}
-                  {saveStatus === 'saved' && '✓ Salvo'}
-                  {saveStatus === 'error' && '⚠ Erro ao salvar'}
-                </div>
-              )}
+              <div className="flex-1 text-center px-2 min-w-0">
+                <h1 className="text-amber-500 font-medium text-xs sm:text-sm md:text-base truncate">
+                  {grimoire.title}
+                </h1>
+              </div>
+              
+              <div className="flex-shrink-0">
+                {saveStatus && (
+                  <div className={`text-xs ${
+                    saveStatus === 'saving' ? 'text-blue-400' : 
+                    saveStatus === 'saved' ? 'text-green-400' : 'text-red-400'
+                  }`}>
+                    {saveStatus === 'saving' && 'Salvando...'}
+                    {saveStatus === 'saved' && '✓ Salvo'}
+                    {saveStatus === 'error' && '⚠ Erro'}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
