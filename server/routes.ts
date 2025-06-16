@@ -477,6 +477,148 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ROTA PARA GERAR PDF DE GRIMÓRIO
+  app.post("/api/admin/grimoires/:id/pdf", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const grimoire = await supabaseService.getGrimoireById(parseInt(id));
+      
+      if (!grimoire) {
+        return res.status(404).json({ error: "Grimório não encontrado" });
+      }
+
+      const puppeteer = require('puppeteer');
+      
+      // HTML template com estilos idênticos ao visualizador admin
+      const htmlContent = `
+        <!DOCTYPE html>
+        <html lang="pt-BR">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>${grimoire.title}</title>
+          <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+          <style>
+            @page {
+              margin: 2cm;
+              size: A4;
+            }
+            
+            body {
+              font-family: 'EB Garamond', serif;
+              line-height: 1.6;
+              color: #2a2a2a;
+              background: white;
+              margin: 0;
+              padding: 20px;
+            }
+            
+            .grimorio-conteudo {
+              font-family: 'EB Garamond', serif;
+              color: #2a2a2a;
+              font-size: 14pt;
+              line-height: 1.8;
+              text-align: justify;
+              padding: 2rem 1rem;
+            }
+
+            .grimorio-titulo {
+              font-family: 'Cinzel Decorative', serif;
+              color: #D6342C;
+              text-align: center;
+              font-size: 22pt;
+              margin-bottom: 0.5rem;
+              page-break-after: avoid;
+            }
+
+            .grimorio-subtitulo {
+              font-style: italic;
+              text-align: center;
+              color: #D6342C;
+              font-size: 14pt;
+              margin-bottom: 2rem;
+            }
+
+            .grimorio-citacao {
+              font-style: italic;
+              border-left: 3px solid #D6342C;
+              padding-left: 1rem;
+              margin: 2rem 0;
+              color: #2a2a2a;
+              background: #f9f9f9;
+              padding: 1rem;
+            }
+
+            .grimorio-citacao small {
+              display: block;
+              font-style: normal;
+              font-size: 10pt;
+              margin-top: 0.5rem;
+              color: #666;
+            }
+
+            .grimorio-lista {
+              list-style-type: disc;
+              margin-left: 2rem;
+              color: #D6342C;
+              font-weight: bold;
+              font-family: 'EB Garamond', serif;
+            }
+
+            .indentado {
+              text-indent: 3rem;
+              margin-bottom: 1.5rem;
+            }
+
+            .destaque {
+              color: #D6342C;
+              font-weight: bold;
+            }
+            
+            h1, h2, h3, h4, h5, h6 {
+              page-break-after: avoid;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="prose">
+            ${grimoire.content}
+          </div>
+        </body>
+        </html>
+      `;
+
+      const browser = await puppeteer.launch({
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+      });
+      
+      const page = await browser.newPage();
+      await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
+      
+      const pdf = await page.pdf({
+        format: 'A4',
+        printBackground: true,
+        margin: {
+          top: '2cm',
+          right: '2cm',
+          bottom: '2cm',
+          left: '2cm'
+        }
+      });
+      
+      await browser.close();
+      
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="${grimoire.title.replace(/[^a-zA-Z0-9\s]/g, '_')}.pdf"`);
+      res.send(pdf);
+      
+    } catch (error: any) {
+      console.error("Erro ao gerar PDF:", error);
+      res.status(500).json({ error: "Erro ao gerar PDF: " + error.message });
+    }
+  });
+
   // Salvar configurações da IA
   app.post("/api/admin/ai/settings", authenticateToken, async (req, res) => {
     try {

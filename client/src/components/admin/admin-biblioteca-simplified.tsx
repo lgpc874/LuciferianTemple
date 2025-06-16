@@ -10,7 +10,7 @@ import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
-import { Plus, Edit, Trash2, Eye, EyeOff, Book, Sparkles, Bot, ImageIcon } from "lucide-react";
+import { Plus, Edit, Trash2, Eye, EyeOff, Book, Sparkles, Bot, ImageIcon, Download } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import RichTextEditor from "@/components/ui/rich-text-editor";
@@ -611,9 +611,19 @@ export default function AdminBiblioteca() {
         <div className="mt-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-xl font-semibold">Visualizar Grimório</h3>
-            <Button variant="outline" onClick={() => setSelectedGrimoire(null)}>
-              Fechar
-            </Button>
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                onClick={() => handleDownloadPDF(selectedGrimoire.id)}
+                className="text-amber-500 border-amber-500 hover:bg-amber-500/10"
+              >
+                <Download className="mr-2 h-4 w-4" />
+                Download PDF
+              </Button>
+              <Button variant="outline" onClick={() => setSelectedGrimoire(null)}>
+                Fechar
+              </Button>
+            </div>
           </div>
           <GrimoireViewer grimoire={selectedGrimoire} />
         </div>
