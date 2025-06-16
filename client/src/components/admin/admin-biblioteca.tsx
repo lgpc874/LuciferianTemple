@@ -128,7 +128,6 @@ function EditChapterForm({
           onChange={setContent}
           placeholder="Digite o conteúdo do capítulo..."
           height="400px"
-          disabled={isLoading}
         />
       </div>
       
