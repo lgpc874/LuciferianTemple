@@ -39,12 +39,17 @@ interface LibrarySection {
 function CreateGrimoireForm({ 
   sections, 
   onSubmit, 
-  isLoading 
+  isLoading,
+  onAIGenerate,
+  isAIGenerating 
 }: {
   sections: LibrarySection[];
   onSubmit: (data: any) => void;
   isLoading: boolean;
+  onAIGenerate?: (prompt: string) => void;
+  isAIGenerating?: boolean;
 }) {
+  const [mode, setMode] = useState<"manual" | "ai">("manual");
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -53,7 +58,9 @@ function CreateGrimoireForm({
     price: "",
     level: "iniciante",
     content: "",
-    cover_image_url: ""
+    cover_image_url: "",
+    is_published: false,
+    ai_prompt: ""
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -69,6 +76,35 @@ function CreateGrimoireForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Seletor de Modo */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-golden-amber">Modo de Criação</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex gap-4">
+            <Button
+              type="button"
+              variant={mode === "manual" ? "default" : "outline"}
+              onClick={() => setMode("manual")}
+              className={mode === "manual" ? "bg-amber-500 hover:bg-amber-600 text-black" : ""}
+            >
+              <Edit className="mr-2 h-4 w-4" />
+              Manual
+            </Button>
+            <Button
+              type="button"
+              variant={mode === "ai" ? "default" : "outline"}
+              onClick={() => setMode("ai")}
+              className={mode === "ai" ? "bg-amber-500 hover:bg-amber-600 text-black" : ""}
+            >
+              <Bot className="mr-2 h-4 w-4" />
+              Com IA
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Informações Básicas */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
@@ -109,6 +145,58 @@ function CreateGrimoireForm({
           rows={3}
         />
       </div>
+
+      {/* Configuração IA (se modo IA) */}
+      {mode === "ai" && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-golden-amber flex items-center">
+              <Bot className="mr-2 h-5 w-5" />
+              Configuração da IA
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <Label>Prompt para IA</Label>
+              <Textarea
+                placeholder="Digite instruções específicas para a IA gerar o conteúdo do grimório..."
+                rows={4}
+                value={formData.ai_prompt}
+                onChange={(e) => setFormData({...formData, ai_prompt: e.target.value})}
+              />
+            </div>
+
+            <Button
+              type="button"
+              onClick={() => {
+                if (onAIGenerate && formData.title && formData.description) {
+                  const prompt = `
+                    Título: ${formData.title}
+                    Descrição: ${formData.description}
+                    
+                    ${formData.ai_prompt || 'Gere um grimório completo em formato HTML com todo o conteúdo estruturado seguindo o estilo luciferiano do Templo do Abismo.'}
+                  `;
+                  onAIGenerate(prompt);
+                }
+              }}
+              disabled={isAIGenerating || !formData.title}
+              className="w-full bg-amber-500 hover:bg-amber-600 text-black font-semibold"
+            >
+              {isAIGenerating ? (
+                <>
+                  <Sparkles className="mr-2 h-4 w-4 animate-spin" />
+                  IA Gerando Conteúdo...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="mr-2 h-4 w-4" />
+                  Gerar com IA
+                </>
+              )}
+            </Button>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Editor de Conteúdo Único */}
       <Card>
@@ -201,6 +289,15 @@ function CreateGrimoireForm({
                 />
               </div>
             )}
+            
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="is_published"
+                checked={formData.is_published}
+                onCheckedChange={(checked) => setFormData({...formData, is_published: checked})}
+              />
+              <Label htmlFor="is_published">Publicar Imediatamente</Label>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -211,6 +308,198 @@ function CreateGrimoireForm({
         className="w-full bg-amber-500 hover:bg-amber-600 text-black font-semibold py-3"
       >
         {isLoading ? "Criando..." : "Criar Grimório"}
+      </Button>
+    </form>
+  );
+}
+
+function EditGrimoireForm({ 
+  grimoire, 
+  sections, 
+  onSubmit, 
+  onCancel,
+  isLoading 
+}: {
+  grimoire: Grimoire;
+  sections: LibrarySection[];
+  onSubmit: (data: any) => void;
+  onCancel: () => void;
+  isLoading: boolean;
+}) {
+  const [formData, setFormData] = useState({
+    title: grimoire.title,
+    description: grimoire.description,
+    section_id: grimoire.section_id.toString(),
+    is_paid: grimoire.is_paid,
+    price: grimoire.price || "",
+    level: grimoire.level,
+    content: grimoire.content,
+    cover_image_url: grimoire.cover_image_url || "",
+    is_published: grimoire.is_published
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const data = {
+      ...formData,
+      section_id: parseInt(formData.section_id),
+      price: formData.is_paid ? formData.price : null,
+      cover_image_url: formData.cover_image_url || null,
+    };
+    onSubmit(data);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h3 className="text-xl font-semibold text-golden-amber">Editar Grimório</h3>
+        <Button type="button" variant="outline" onClick={onCancel}>
+          Cancelar
+        </Button>
+      </div>
+
+      {/* Informações Básicas */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <Label htmlFor="edit-title">Título do Grimório</Label>
+          <Input
+            id="edit-title"
+            value={formData.title}
+            onChange={(e) => setFormData({...formData, title: e.target.value})}
+            required
+          />
+        </div>
+        
+        <div>
+          <Label htmlFor="edit-section">Seção da Biblioteca</Label>
+          <Select value={formData.section_id} onValueChange={(value) => setFormData({...formData, section_id: value})}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {sections.map((section) => (
+                <SelectItem key={section.id} value={section.id.toString()}>
+                  {section.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      <div>
+        <Label htmlFor="edit-description">Descrição</Label>
+        <Textarea
+          id="edit-description"
+          value={formData.description}
+          onChange={(e) => setFormData({...formData, description: e.target.value})}
+          rows={3}
+        />
+      </div>
+
+      {/* Editor de Conteúdo */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-golden-amber">Conteúdo do Grimório</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Textarea
+            value={formData.content}
+            onChange={(e) => setFormData({...formData, content: e.target.value})}
+            rows={20}
+            className="font-mono"
+          />
+        </CardContent>
+      </Card>
+
+      {/* Configuração de Capa */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-golden-amber">Capa do Grimório</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div>
+            <Label>URL da Capa</Label>
+            <Input
+              value={formData.cover_image_url}
+              onChange={(e) => setFormData({...formData, cover_image_url: e.target.value})}
+              placeholder="https://exemplo.com/capa.jpg"
+            />
+          </div>
+          
+          {formData.cover_image_url && (
+            <div className="w-32 h-40 mx-auto mt-4">
+              <img 
+                src={formData.cover_image_url} 
+                alt="Preview da capa"
+                className="w-full h-full object-cover rounded-lg border"
+              />
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Configurações de Publicação */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-golden-amber">Configurações</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label>Nível de Dificuldade</Label>
+              <Select value={formData.level} onValueChange={(value) => setFormData({...formData, level: value})}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="iniciante">Iniciante</SelectItem>
+                  <SelectItem value="intermediario">Intermediário</SelectItem>
+                  <SelectItem value="avancado">Avançado</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="edit-is_paid"
+                checked={formData.is_paid}
+                onCheckedChange={(checked) => setFormData({...formData, is_paid: checked})}
+              />
+              <Label htmlFor="edit-is_paid">Conteúdo Pago</Label>
+            </div>
+            
+            {formData.is_paid && (
+              <div>
+                <Label>Preço (R$)</Label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={formData.price}
+                  onChange={(e) => setFormData({...formData, price: e.target.value})}
+                  placeholder="29.99"
+                />
+              </div>
+            )}
+            
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="edit-is_published"
+                checked={formData.is_published}
+                onCheckedChange={(checked) => setFormData({...formData, is_published: checked})}
+              />
+              <Label htmlFor="edit-is_published">Publicado</Label>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Button
+        type="submit"
+        disabled={isLoading || !formData.title || !formData.content}
+        className="w-full bg-amber-500 hover:bg-amber-600 text-black font-semibold py-3"
+      >
+        {isLoading ? "Salvando..." : "Salvar Alterações"}
       </Button>
     </form>
   );
@@ -255,6 +544,7 @@ export default function AdminBiblioteca() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const [selectedGrimoire, setSelectedGrimoire] = useState<Grimoire | null>(null);
+  const [editingGrimoire, setEditingGrimoire] = useState<Grimoire | null>(null);
 
   // Queries
   const { data: sections = [], isLoading: sectionsLoading } = useQuery<LibrarySection[]>({
