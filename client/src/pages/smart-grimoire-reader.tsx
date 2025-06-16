@@ -108,7 +108,7 @@ export default function SmartGrimoireReader() {
       return textOnly ? textOnly.split(' ').filter(word => word.length > 0).length : 0;
     };
 
-    // Função melhorada para dividir HTML preservando TODA a estrutura
+    // Função simplificada para dividir HTML preservando estrutura
     const splitHTMLByWords = (htmlContent: string, maxWords: number): string[] => {
       const totalWords = countWordsInHTML(htmlContent);
       
@@ -117,25 +117,59 @@ export default function SmartGrimoireReader() {
         return [htmlContent];
       }
 
-      // Dividir por parágrafos principais mas preservar tudo
-      const paragraphs = htmlContent.split(/(<\/?(p|div|h[1-6]|blockquote)[^>]*>)/gi);
+      // Dividir por blocos grandes completos (divs, h1-h6, etc.)
+      const blockPattern = /(<\/?(div|h[1-6]|p|ul|ol|li|blockquote|section|article)[^>]*>)/gi;
+      const blocks = htmlContent.split(blockPattern);
       
       const pages: string[] = [];
       let currentPage = '';
       let currentWords = 0;
       
-      for (let i = 0; i < paragraphs.length; i++) {
-        const paragraph = paragraphs[i];
-        const paragraphWords = countWordsInHTML(paragraph);
+      for (let i = 0; i < blocks.length; i++) {
+        const block = blocks[i];
+        const blockWords = countWordsInHTML(block);
         
-        // Se adicionar este parágrafo excede o limite e já temos conteúdo
-        if (currentWords + paragraphWords > maxWords && currentPage.trim()) {
-          pages.push(currentPage);
-          currentPage = paragraph;
-          currentWords = paragraphWords;
+        // Se este bloco por si só excede o limite, dividir em partes menores
+        if (blockWords > maxWords) {
+          // Adicionar página atual se tem conteúdo
+          if (currentPage.trim()) {
+            pages.push(currentPage);
+            currentPage = '';
+            currentWords = 0;
+          }
+          
+          // Dividir o bloco grande em pedaços menores por sentenças
+          const sentences = block.split(/(\. |<br\s*\/?>|\n)/gi);
+          let tempPage = '';
+          let tempWords = 0;
+          
+          for (const sentence of sentences) {
+            const sentenceWords = countWordsInHTML(sentence);
+            
+            if (tempWords + sentenceWords > maxWords && tempPage.trim()) {
+              pages.push(tempPage);
+              tempPage = sentence;
+              tempWords = sentenceWords;
+            } else {
+              tempPage += sentence;
+              tempWords += sentenceWords;
+            }
+          }
+          
+          if (tempPage.trim()) {
+            currentPage = tempPage;
+            currentWords = tempWords;
+          }
         } else {
-          currentPage += paragraph;
-          currentWords += paragraphWords;
+          // Se adicionar este bloco excede o limite
+          if (currentWords + blockWords > maxWords && currentPage.trim()) {
+            pages.push(currentPage);
+            currentPage = block;
+            currentWords = blockWords;
+          } else {
+            currentPage += block;
+            currentWords += blockWords;
+          }
         }
       }
       
@@ -144,41 +178,7 @@ export default function SmartGrimoireReader() {
         pages.push(currentPage);
       }
       
-      // Se ainda há páginas muito grandes, dividir por sentenças
-      const finalPages: string[] = [];
-      
-      for (const page of pages) {
-        const pageWords = countWordsInHTML(page);
-        
-        if (pageWords > maxWords * 1.3) {
-          // Dividir por quebras naturais (pontos, <br>, etc.)
-          const sentences = page.split(/(\.|<br\s*\/?>|<\/p>|<\/div>)/gi);
-          
-          let currentSentencePage = '';
-          let sentenceWords = 0;
-          
-          for (const sentence of sentences) {
-            const sentenceWordCount = countWordsInHTML(sentence);
-            
-            if (sentenceWords + sentenceWordCount > maxWords && currentSentencePage.trim()) {
-              finalPages.push(currentSentencePage);
-              currentSentencePage = sentence;
-              sentenceWords = sentenceWordCount;
-            } else {
-              currentSentencePage += sentence;
-              sentenceWords += sentenceWordCount;
-            }
-          }
-          
-          if (currentSentencePage.trim()) {
-            finalPages.push(currentSentencePage);
-          }
-        } else {
-          finalPages.push(page);
-        }
-      }
-      
-      return finalPages.filter(page => page.trim().length > 0);
+      return pages.filter(page => page.trim().length > 0);
     };
 
     // Processar o conteúdo mantendo TODO o HTML
@@ -488,14 +488,6 @@ export default function SmartGrimoireReader() {
                         style={{
                           width: '100%',
                           maxWidth: '100%',
-                          // Garantir que estilos inline funcionem
-                          colorScheme: 'initial',
-                          all: 'initial',
-                          fontFamily: 'initial',
-                          fontSize: 'initial',
-                          color: 'initial',
-                          lineHeight: 'initial',
-                          display: 'block'
                         }}
                       />
                     </div>

@@ -297,47 +297,32 @@ input, textarea {
   min-height: 100vh;
 }
 
-/* Conteúdo HTML no leitor inteligente - Renderização pura */
+/* Conteúdo HTML no leitor inteligente - Renderização pura e limpa */
 .grimoire-content {
-  /* Mínimo necessário para layout */
+  /* Apenas o essencial para layout */
   width: 100%;
   max-width: 100%;
+  display: block;
 }
 
-/* Reset apenas Tailwind e outros CSS externos - preservar HTML inline */
+/* NÃO aplicar reset - deixar HTML inline funcionar naturalmente */
 .grimoire-content * {
-  all: revert;
+  /* Apenas garantir que elementos inline tenham display correto */
 }
 
-/* Aplicar apenas estilos de fallback quando NÃO há style inline */
-.grimoire-content h1:not([style]) { 
+/* Estilos muito específicos apenas para elementos SEM atributo style */
+.grimoire-content > h1:not([style]):not([class]) { 
   font-family: 'Cinzel Decorative', serif; 
   color: #D6342C; 
   font-size: 1.8rem; 
-  font-weight: bold; 
-  margin: 1.5rem 0 1rem 0; 
 }
-.grimoire-content h2:not([style]) { 
-  font-family: 'Cinzel Decorative', serif; 
-  color: #D6342C; 
-  font-size: 1.4rem; 
-  font-weight: bold; 
-  margin: 1.2rem 0 0.8rem 0; 
-}
-.grimoire-content div:not([style]) { 
+.grimoire-content > p:not([style]):not([class]) { 
   font-family: 'EB Garamond', serif; 
   color: #CCCCCC; 
-  line-height: 1.7; 
 }
-.grimoire-content p:not([style]) { 
+.grimoire-content > div:not([style]):not([class]) { 
   font-family: 'EB Garamond', serif; 
   color: #CCCCCC; 
-  line-height: 1.7; 
-  margin: 1rem 0; 
-}
-.grimoire-content span:not([style]) { 
-  font-family: inherit; 
-  color: inherit; 
 }
 
 /* Responsivo para mobile */
