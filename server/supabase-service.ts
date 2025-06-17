@@ -238,7 +238,6 @@ export class SupabaseService {
         grimoire_id: progress.grimoire_id,
         current_page: progress.current_page || 1,
         total_pages: progress.total_pages || 1,
-        reading_time_minutes: progress.reading_time_minutes || 0,
         last_read_at: progress.last_read_at || new Date().toISOString(),
         updated_at: new Date().toISOString()
       }, {

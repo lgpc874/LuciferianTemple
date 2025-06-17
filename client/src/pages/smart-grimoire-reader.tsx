@@ -22,7 +22,7 @@ export default function SmartGrimoireReader() {
   // Estados do leitor
   const [currentPage, setCurrentPage] = useState(1);
   const [pages, setPages] = useState<Page[]>([]);
-  const [readingTime, setReadingTime] = useState(0);
+
   const [saveStatus, setSaveStatus] = useState<'saving' | 'saved' | 'error' | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [primaryColor, setPrimaryColor] = useState('#D97706'); // amber-600 padrão

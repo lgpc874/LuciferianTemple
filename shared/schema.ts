@@ -63,7 +63,6 @@ export const user_progress = pgTable("user_progress", {
   grimoire_id: integer("grimoire_id").references(() => grimoires.id).notNull(),
   current_page: integer("current_page").default(1),
   total_pages: integer("total_pages").default(1),
-  reading_time_minutes: integer("reading_time_minutes").default(0),
   is_completed: boolean("is_completed").default(false).notNull(),
   last_read_at: timestamp("last_read_at").defaultNow(),
   created_at: timestamp("created_at").defaultNow(),
@@ -161,14 +160,9 @@ export const insertGrimoireSchema = createInsertSchema(grimoires).omit({
   updated_at: true,
 });
 
-export const insertChapterSchema = createInsertSchema(chapters).pick({
-  grimoire_id: true,
-  title: true,
-  content: true,
-  chapter_number: true,
-  word_count: true,
-  estimated_reading_time: true,
-  is_unlocked: true,
+export const insertChapterSchema = createInsertSchema(chapters).omit({
+  id: true,
+  created_at: true,
 });
 
 export const insertProgressSchema = createInsertSchema(user_progress).omit({

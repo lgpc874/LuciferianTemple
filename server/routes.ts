@@ -395,14 +395,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Rota alternativa para progresso (compatibilidade)
   app.post("/api/progress", authenticateToken, async (req: any, res) => {
     try {
-      const { grimoireId, currentPage, totalPages, readingTimeMinutes } = req.body;
+      const { grimoireId, currentPage, totalPages } = req.body;
       
       const progressData: InsertProgress = {
         user_id: req.user.id,
         grimoire_id: grimoireId,
         current_page: currentPage,
         total_pages: totalPages,
-        reading_time_minutes: readingTimeMinutes,
         last_read_at: new Date()
       };
 
