@@ -65,7 +65,7 @@ Templo do Abismo é uma aplicação web dedicada aos ensinamentos luciferianos c
 
 ### Reading Progress Flow
 1. User opens grimoire reader
-2. Reading time and page position tracked automatically
+2. Page position tracked automatically
 3. Progress saved to database with debounced API calls
 4. Progress restored when user returns to grimoire
 

@@ -42,7 +42,7 @@ export default function GrimoireReader() {
 
   // Mutação para salvar progresso
   const saveProgressMutation = useMutation({
-    mutationFn: async (data: { grimoireId: number; currentPage: number; totalPages: number; readingTimeMinutes: number }) => {
+    mutationFn: async (data: { grimoireId: number; currentPage: number; totalPages: number }) => {
       return apiRequest("/api/progress", {
         method: "POST",
         body: JSON.stringify(data),
@@ -193,7 +193,7 @@ export default function GrimoireReader() {
 
       return () => clearTimeout(timer);
     }
-  }, [currentPage, readingTime, grimoireId, totalPages]);
+  }, [currentPage, grimoireId, totalPages]);
 
   // Navegação por teclado
   useEffect(() => {
