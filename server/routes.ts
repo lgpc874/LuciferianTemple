@@ -520,6 +520,111 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Verificar se usuário tem acesso ao curso
+  app.get("/api/cursos/:id/access", authenticateToken, async (req: any, res) => {
+    try {
+      const cursoId = parseInt(req.params.id);
+      const usuario_id = req.user.id;
+      
+      const hasAccess = await supabaseService.userHasAccessToCourse(usuario_id, cursoId);
+      res.json(hasAccess);
+    } catch (error: any) {
+      console.error("Error checking course access:", error);
+      res.status(500).json({ error: "Erro ao verificar acesso ao curso" });
+    }
+  });
+
+  // ===== ROTAS ADMINISTRATIVAS PARA CURSOS =====
+
+  // Criar novo curso (admin)
+  app.post("/api/admin/cursos", authenticateToken, requireAdmin, async (req: any, res) => {
+    try {
+      const cursoData = req.body;
+      const novoCurso = await supabaseService.createCurso(cursoData);
+      res.json(novoCurso);
+    } catch (error: any) {
+      console.error("Error creating course:", error);
+      res.status(500).json({ error: "Erro ao criar curso" });
+    }
+  });
+
+  // Atualizar curso (admin)
+  app.put("/api/admin/cursos/:id", authenticateToken, requireAdmin, async (req: any, res) => {
+    try {
+      const cursoId = parseInt(req.params.id);
+      const updateData = req.body;
+      const cursoAtualizado = await supabaseService.updateCurso(cursoId, updateData);
+      res.json(cursoAtualizado);
+    } catch (error: any) {
+      console.error("Error updating course:", error);
+      res.status(500).json({ error: "Erro ao atualizar curso" });
+    }
+  });
+
+  // Deletar curso (admin)
+  app.delete("/api/admin/cursos/:id", authenticateToken, requireAdmin, async (req: any, res) => {
+    try {
+      const cursoId = parseInt(req.params.id);
+      await supabaseService.deleteCurso(cursoId);
+      res.json({ success: true });
+    } catch (error: any) {
+      console.error("Error deleting course:", error);
+      res.status(500).json({ error: "Erro ao deletar curso" });
+    }
+  });
+
+  // Criar novo módulo para curso (admin)
+  app.post("/api/admin/cursos/:id/modulos", authenticateToken, requireAdmin, async (req: any, res) => {
+    try {
+      const cursoId = parseInt(req.params.id);
+      const moduloData = { ...req.body, curso_id: cursoId };
+      const novoModulo = await supabaseService.createModulo(moduloData);
+      res.json(novoModulo);
+    } catch (error: any) {
+      console.error("Error creating module:", error);
+      res.status(500).json({ error: "Erro ao criar módulo" });
+    }
+  });
+
+  // Atualizar módulo (admin)
+  app.put("/api/admin/modulos/:id", authenticateToken, requireAdmin, async (req: any, res) => {
+    try {
+      const moduloId = parseInt(req.params.id);
+      const updateData = req.body;
+      const moduloAtualizado = await supabaseService.updateModulo(moduloId, updateData);
+      res.json(moduloAtualizado);
+    } catch (error: any) {
+      console.error("Error updating module:", error);
+      res.status(500).json({ error: "Erro ao atualizar módulo" });
+    }
+  });
+
+  // Deletar módulo (admin)
+  app.delete("/api/admin/modulos/:id", authenticateToken, requireAdmin, async (req: any, res) => {
+    try {
+      const moduloId = parseInt(req.params.id);
+      await supabaseService.deleteModulo(moduloId);
+      res.json({ success: true });
+    } catch (error: any) {
+      console.error("Error deleting module:", error);
+      res.status(500).json({ error: "Erro ao deletar módulo" });
+    }
+  });
+
+  // Processar compra de curso com Stripe
+  app.post("/api/cursos/purchase", authenticateToken, async (req: any, res) => {
+    try {
+      const { cursoId } = req.body;
+      const userId = req.user.id;
+      
+      const paymentIntent = await supabaseService.createCoursePaymentIntent(cursoId, userId);
+      res.json(paymentIntent);
+    } catch (error: any) {
+      console.error("Error processing course purchase:", error);
+      res.status(500).json({ error: "Erro ao processar compra do curso" });
+    }
+  });
+
   // ESTATÍSTICAS ADMINISTRATIVAS
   app.get("/api/admin/stats", authenticateToken, requireAdmin, async (req, res) => {
     try {

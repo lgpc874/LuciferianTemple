@@ -1006,6 +1006,206 @@ export class SupabaseService {
       throw error;
     }
   }
+
+  // Verificar se usuário tem acesso ao curso
+  async userHasAccessToCourse(userId: number, cursoId: number): Promise<boolean> {
+    try {
+      // Verificar se curso é gratuito
+      const { data: curso } = await this.supabase
+        .from('cursos')
+        .select('is_paid')
+        .eq('id', cursoId)
+        .single();
+
+      if (!curso?.is_paid) {
+        return true; // Cursos gratuitos sempre têm acesso
+      }
+
+      // Verificar se há compra confirmada
+      const { data: purchase } = await this.supabase
+        .from('course_purchases')
+        .select('id')
+        .eq('user_id', userId)
+        .eq('course_id', cursoId)
+        .eq('status', 'completed')
+        .single();
+
+      return !!purchase;
+    } catch (error: any) {
+      console.error('Error checking course access:', error);
+      return false;
+    }
+  }
+
+  // ===== MÉTODOS ADMINISTRATIVOS PARA CURSOS =====
+
+  // Criar novo curso
+  async createCurso(cursoData: InsertCurso): Promise<Curso> {
+    try {
+      const { data, error } = await this.supabase
+        .from('cursos')
+        .insert(cursoData)
+        .select()
+        .single();
+
+      if (error) throw new Error(`Error creating course: ${error.message}`);
+      return data;
+    } catch (error: any) {
+      console.error('Error in createCurso:', error);
+      throw error;
+    }
+  }
+
+  // Atualizar curso
+  async updateCurso(cursoId: number, updateData: Partial<InsertCurso>): Promise<Curso> {
+    try {
+      const { data, error } = await this.supabase
+        .from('cursos')
+        .update({ ...updateData, updated_at: new Date().toISOString() })
+        .eq('id', cursoId)
+        .select()
+        .single();
+
+      if (error) throw new Error(`Error updating course: ${error.message}`);
+      return data;
+    } catch (error: any) {
+      console.error('Error in updateCurso:', error);
+      throw error;
+    }
+  }
+
+  // Deletar curso
+  async deleteCurso(cursoId: number): Promise<void> {
+    try {
+      const { error } = await this.supabase
+        .from('cursos')
+        .delete()
+        .eq('id', cursoId);
+
+      if (error) throw new Error(`Error deleting course: ${error.message}`);
+    } catch (error: any) {
+      console.error('Error in deleteCurso:', error);
+      throw error;
+    }
+  }
+
+  // Criar novo módulo
+  async createModulo(moduloData: InsertModulo): Promise<Modulo> {
+    try {
+      const { data, error } = await this.supabase
+        .from('modulos')
+        .insert(moduloData)
+        .select()
+        .single();
+
+      if (error) throw new Error(`Error creating module: ${error.message}`);
+      return data;
+    } catch (error: any) {
+      console.error('Error in createModulo:', error);
+      throw error;
+    }
+  }
+
+  // Atualizar módulo
+  async updateModulo(moduloId: number, updateData: Partial<InsertModulo>): Promise<Modulo> {
+    try {
+      const { data, error } = await this.supabase
+        .from('modulos')
+        .update(updateData)
+        .eq('id', moduloId)
+        .select()
+        .single();
+
+      if (error) throw new Error(`Error updating module: ${error.message}`);
+      return data;
+    } catch (error: any) {
+      console.error('Error in updateModulo:', error);
+      throw error;
+    }
+  }
+
+  // Deletar módulo
+  async deleteModulo(moduloId: number): Promise<void> {
+    try {
+      const { error } = await this.supabase
+        .from('modulos')
+        .delete()
+        .eq('id', moduloId);
+
+      if (error) throw new Error(`Error deleting module: ${error.message}`);
+    } catch (error: any) {
+      console.error('Error in deleteModulo:', error);
+      throw error;
+    }
+  }
+
+  // Criar Payment Intent para curso
+  async createCoursePaymentIntent(cursoId: number, userId: number) {
+    try {
+      // Buscar informações do curso
+      const { data: curso, error } = await this.supabase
+        .from('cursos')
+        .select('*')
+        .eq('id', cursoId)
+        .single();
+
+      if (error || !curso) {
+        throw new Error('Curso não encontrado');
+      }
+
+      if (!curso.is_paid) {
+        // Para cursos gratuitos, apenas registrar "compra"
+        await this.supabase
+          .from('course_purchases')
+          .insert({
+            user_id: userId,
+            course_id: cursoId,
+            amount: 0,
+            status: 'completed',
+            payment_method: 'free'
+          });
+
+        return { success: true, message: 'Inscrição realizada com sucesso' };
+      }
+
+      // Para cursos pagos, criar Payment Intent no Stripe
+      const amount = Math.round(parseFloat(curso.preco || '0') * 100); // Converter para centavos
+
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount,
+        currency: 'brl',
+        automatic_payment_methods: {
+          enabled: true,
+        },
+        metadata: {
+          courseId: cursoId.toString(),
+          userId: userId.toString(),
+          courseTitle: curso.nome,
+          type: 'course_purchase'
+        },
+        description: `Compra do curso: ${curso.nome}`
+      });
+
+      // Registrar tentativa de compra
+      await this.supabase
+        .from('course_purchases')
+        .insert({
+          user_id: userId,
+          course_id: cursoId,
+          payment_intent_id: paymentIntent.id,
+          amount: parseFloat(curso.preco || '0'),
+          status: 'pending'
+        });
+
+      return {
+        client_secret: paymentIntent.client_secret,
+        payment_intent_id: paymentIntent.id
+      };
+    } catch (error: any) {
+      console.error('Error creating course payment intent:', error);
+      throw new Error(`Error creating course payment intent: ${error?.message || 'Unknown error'}`);
+    }
+  }
 }
 
 export const supabaseService = new SupabaseService();
