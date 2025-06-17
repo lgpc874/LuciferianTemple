@@ -259,7 +259,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // PROGRESSO DO USUÁRIO
   // ======================
   
-  app.get("/api/user-progress", authenticateToken, async (req, res) => {
+  app.get("/api/user-progress", authenticateToken, async (req: any, res) => {
     try {
       const progress = await supabaseService.getUserProgress(req.user.id);
       res.json(progress);
@@ -269,7 +269,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/user-progress", authenticateToken, async (req, res) => {
+  app.post("/api/user-progress", authenticateToken, async (req: any, res) => {
     try {
       const progressData: InsertProgress = insertProgressSchema.parse({
         ...req.body,
@@ -368,7 +368,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // PAGAMENTOS
   // ======================
   
-  app.post("/api/create-payment-intent", authenticateToken, async (req, res) => {
+  app.post("/api/create-payment-intent", authenticateToken, async (req: any, res) => {
     try {
       const { grimoireId, amount } = req.body;
       const paymentIntent = await supabaseService.createPaymentIntent(grimoireId, amount);
@@ -379,7 +379,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/confirm-payment", authenticateToken, async (req, res) => {
+  app.post("/api/confirm-payment", authenticateToken, async (req: any, res) => {
     try {
       const { paymentIntentId } = req.body;
       await supabaseService.processPaymentConfirmed(paymentIntentId, req.user.id);
@@ -412,26 +412,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const connectionTest = await supabaseService.testConnection();
       
-      const diagnostics = {
-        timestamp: new Date().toISOString(),
-        connection: connectionTest,
-        database_structure: connectionTest.status === 'SUCCESS' ? 'OK' : 'NEEDS_SETUP',
-        recommendations: []
-      };
+      const recommendations: Array<{priority: string, message: string, action: string}> = [];
       
       if (connectionTest.status !== 'SUCCESS') {
-        diagnostics.recommendations.push({
+        recommendations.push({
           priority: 'HIGH',
           message: 'Problemas de conectividade detectados',
           action: 'Execute o script SUPABASE_STRUCTURE_UPDATE.sql no dashboard do Supabase'
         });
       } else {
-        diagnostics.recommendations.push({
+        recommendations.push({
           priority: 'INFO',
           message: 'Sistema funcionando perfeitamente',
           action: 'Nenhuma ação necessária'
         });
       }
+
+      const diagnostics = {
+        timestamp: new Date().toISOString(),
+        connection: connectionTest,
+        database_structure: connectionTest.status === 'SUCCESS' ? 'OK' : 'NEEDS_SETUP',
+        recommendations
+      };
       
       res.json(diagnostics);
     } catch (error: any) {
