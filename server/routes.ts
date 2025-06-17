@@ -515,7 +515,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const primaryColor = sectionColors[cssClass];
       
-      // HTML template dinâmico que se adapta aos estilos do grimório
+      // HTML template dinâmico que preserva cores originais - v2.0
       const htmlContent = `
         <!DOCTYPE html>
         <html lang="pt-BR">
@@ -539,31 +539,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
               padding: 20px;
             }
             
-            /* === PRESERVAÇÃO COMPLETA DAS FORMATAÇÕES ORIGINAIS === */
+            /* === SISTEMA DE CORES ESPECÍFICAS POR SEÇÃO === */
             
-            /* Preserva TODOS os estilos inline dos grimórios */
-            .prose * {
-              all: revert !important;
+            /* Configurações básicas sem sobrescrever formatações existentes */
+            .prose {
+              max-width: none;
+              padding: 1rem;
             }
             
-            /* Aplica apenas as cores específicas da seção como fallback */
-            .prose {
+            /* Elementos SEM atributo style herdam cor da seção */
+            .prose :not([style*="color"]) {
               ${cssClass === 'atrium-ignis' ? 'color: #8b0000;' : ''}
               ${cssClass === 'porta-umbrae' ? 'color: #6a0dad;' : ''}
               ${cssClass === 'arcana-noctis' ? 'color: #003366;' : ''}
               ${cssClass === 'via-tenebris' ? 'color: #111111;' : ''}
             }
             
-            /* Configurações básicas para impressão */
-            .prose {
-              max-width: none;
-              font-family: 'EB Garamond', serif;
-              line-height: 1.6;
-              padding: 1rem;
+            /* Elementos COM style="color:" preservam suas cores originais */
+            .prose [style*="color"] {
+              /* Cores inline são preservadas automaticamente */
             }
             
             h1, h2, h3, h4, h5, h6 {
               page-break-after: avoid;
+            }
+            
+            /* Garante que fontes Google sejam aplicadas */
+            h1, h2, h3, h4, h5, h6 {
+              font-family: 'Cinzel Decorative', serif !important;
+            }
+            
+            p, div, span {
+              font-family: 'EB Garamond', serif !important;
             }
           </style>
         </head>
