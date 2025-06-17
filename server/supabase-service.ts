@@ -928,8 +928,7 @@ export class SupabaseService {
           )
         `)
         .eq('usuario_id', usuarioId)
-        .eq('modulos.curso_id', cursoId)
-        .order('modulos.ordem');
+        .eq('modulos.curso_id', cursoId);
 
       if (error) throw new Error(`Error fetching responses: ${error.message}`);
       return data || [];
