@@ -539,38 +539,97 @@ export async function registerRoutes(app: Express): Promise<Server> {
               padding: 20px;
             }
             
-            /* === SISTEMA DE CORES ESPECÍFICAS POR SEÇÃO === */
+            /* === FORMATAÇÃO COMPLETA ESPECÍFICA DA SEÇÃO ${cssClass.toUpperCase()} === */
             
-            /* Configurações básicas sem sobrescrever formatações existentes */
+            /* Configurações básicas para impressão */
             .prose {
               max-width: none;
               padding: 1rem;
+              font-family: 'EB Garamond', serif;
+              line-height: 1.6;
             }
             
-            /* Elementos SEM atributo style herdam cor da seção */
-            .prose :not([style*="color"]) {
-              ${cssClass === 'atrium-ignis' ? 'color: #8b0000;' : ''}
-              ${cssClass === 'porta-umbrae' ? 'color: #6a0dad;' : ''}
-              ${cssClass === 'arcana-noctis' ? 'color: #003366;' : ''}
-              ${cssClass === 'via-tenebris' ? 'color: #111111;' : ''}
+            /* Títulos principais com fonte Cinzel e cor da seção */
+            .grimorio-titulo, .grimorio-subtitulo, h1, h2, h3, h4, h5, h6 {
+              font-family: 'Cinzel Decorative', serif !important;
+              ${cssClass === 'atrium-ignis' ? 'color: #D6342C !important;' : ''}
+              ${cssClass === 'porta-umbrae' ? 'color: #6a0dad !important;' : ''}
+              ${cssClass === 'arcana-noctis' ? 'color: #003366 !important;' : ''}
+              ${cssClass === 'via-tenebris' ? 'color: #111111 !important;' : ''}
+              text-align: center;
+              font-weight: 700;
+              margin: 2rem 0 1rem 0;
+              page-break-after: avoid;
             }
             
-            /* Elementos COM style="color:" preservam suas cores originais */
-            .prose [style*="color"] {
-              /* Cores inline são preservadas automaticamente */
+            /* Citações específicas da seção */
+            .grimorio-citacao, blockquote {
+              ${cssClass === 'atrium-ignis' ? 'color: #D6342C; border-left: 3px solid #D6342C;' : ''}
+              ${cssClass === 'porta-umbrae' ? 'color: #6a0dad; border-left: 3px solid #6a0dad;' : ''}
+              ${cssClass === 'arcana-noctis' ? 'color: #003366; border-left: 3px solid #003366;' : ''}
+              ${cssClass === 'via-tenebris' ? 'color: #111111; border-left: 3px solid #111111;' : ''}
+              font-style: italic;
+              padding: 1.5rem;
+              margin: 2rem auto;
+              text-align: center;
+              background: #fafafa;
+              max-width: 80%;
+            }
+            
+            /* Destaques específicos da seção */
+            .destaque, strong, b {
+              ${cssClass === 'atrium-ignis' ? 'color: #D6342C !important;' : ''}
+              ${cssClass === 'porta-umbrae' ? 'color: #6a0dad !important;' : ''}
+              ${cssClass === 'arcana-noctis' ? 'color: #003366 !important;' : ''}
+              ${cssClass === 'via-tenebris' ? 'color: #111111 !important;' : ''}
+              font-weight: bold;
+            }
+            
+            /* Listas da seção */
+            .grimorio-lista, ul, ol {
+              margin-left: 2rem;
+              margin-bottom: 1rem;
+            }
+            
+            .grimorio-lista li, ul li, ol li {
+              ${cssClass === 'atrium-ignis' ? 'color: #D6342C !important;' : ''}
+              ${cssClass === 'porta-umbrae' ? 'color: #6a0dad !important;' : ''}
+              ${cssClass === 'arcana-noctis' ? 'color: #003366 !important;' : ''}
+              ${cssClass === 'via-tenebris' ? 'color: #111111 !important;' : ''}
+              margin-bottom: 0.5rem;
+              font-weight: 600;
+            }
+            
+            /* Parágrafos e conteúdo geral */
+            .grimorio-conteudo p, .indentado {
+              font-family: 'EB Garamond', serif !important;
+              line-height: 1.7;
+              margin-bottom: 1rem;
+              text-align: justify;
+            }
+            
+            .indentado {
+              text-indent: 2rem;
+            }
+            
+            /* Separadores */
+            .separador, hr {
+              border: none;
+              ${cssClass === 'atrium-ignis' ? 'border-top: 2px solid #D6342C;' : ''}
+              ${cssClass === 'porta-umbrae' ? 'border-top: 2px solid #6a0dad;' : ''}
+              ${cssClass === 'arcana-noctis' ? 'border-top: 2px solid #003366;' : ''}
+              ${cssClass === 'via-tenebris' ? 'border-top: 2px solid #111111;' : ''}
+              margin: 2rem auto;
+              width: 60%;
+            }
+            
+            /* Preserva estilos inline quando existem */
+            [style] {
+              /* Estilos inline têm prioridade automática */
             }
             
             h1, h2, h3, h4, h5, h6 {
               page-break-after: avoid;
-            }
-            
-            /* Garante que fontes Google sejam aplicadas */
-            h1, h2, h3, h4, h5, h6 {
-              font-family: 'Cinzel Decorative', serif !important;
-            }
-            
-            p, div, span {
-              font-family: 'EB Garamond', serif !important;
             }
           </style>
         </head>
