@@ -1220,10 +1220,10 @@ export class SupabaseService {
 
   // Função para criar módulo (usando service role para bypass RLS)
   async createModule(moduleData: any) {
-    const { createClient } = require('@supabase/supabase-js');
+    // Usar client admin com service role key
     const adminSupabase = createClient(
-      process.env.SUPABASE_URL || 'https://mncmixsdmxvgcshzwzyb.supabase.co',
-      process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1uY21peHNkbXh2Z2NzaHp3enlIIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0OTkwMTU4NSwiZXhwIjoyMDY1NDc3NTg1fQ.YX8a4AZGnzuKnOPKQ1WEKhBK8XtyTCwEAHq-_3Kxsm0'
+      'https://mncmixsdmxvgcshzwzyb.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1uY21peHNkbXh2Z2NzaHp3enlIIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0OTkwMTU4NSwiZXhwIjoyMDY1NDc3NTg1fQ.YX8a4AZGnzuKnOPKQ1WEKhBK8XtyTCwEAHq-_3Kxsm0'
     );
 
     const { data, error } = await adminSupabase
