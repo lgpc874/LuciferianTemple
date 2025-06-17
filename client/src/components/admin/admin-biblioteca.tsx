@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Edit, Trash2, Eye, EyeOff, Book, Sparkles, Bot, ImageIcon } from "lucide-react";
+import { Plus, Edit, Trash2, Eye, EyeOff, Book, Sparkles, Bot, ImageIcon, Download } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 
@@ -516,6 +516,46 @@ export default function AdminBiblioteca() {
   const [selectedGrimoire, setSelectedGrimoire] = useState<Grimoire | null>(null);
   const [editingGrimoire, setEditingGrimoire] = useState<Grimoire | null>(null);
 
+  // Função para download de PDF com CSS automático da seção
+  const handleDownloadPDF = async (grimoireId: number) => {
+    try {
+      const response = await fetch(`/api/admin/grimoires/${grimoireId}/pdf`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Erro ao gerar PDF');
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = `grimorio_${grimoireId}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      
+      toast({
+        title: "PDF gerado com sucesso",
+        description: "Download iniciado com formatação da seção correspondente",
+      });
+    } catch (error) {
+      console.error('Erro ao baixar PDF:', error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível gerar o PDF.",
+        variant: "destructive",
+      });
+    }
+  };
+
   // Queries
   const { data: sections = [], isLoading: sectionsLoading } = useQuery<LibrarySection[]>({
     queryKey: ["/api/library/sections"],
@@ -699,6 +739,15 @@ export default function AdminBiblioteca() {
                       <Button
                         size="sm"
                         variant="ghost"
+                        onClick={() => handleDownloadPDF(grimoire.id)}
+                        className="text-amber-500 hover:text-amber-600"
+                        title="Download PDF"
+                      >
+                        <Download className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
                         onClick={() => setEditingGrimoire(grimoire)}
                         title="Editar"
                       >
@@ -749,9 +798,19 @@ export default function AdminBiblioteca() {
         <div className="mt-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-xl font-semibold">Visualizar Grimório</h3>
-            <Button variant="outline" onClick={() => setSelectedGrimoire(null)}>
-              Fechar
-            </Button>
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                onClick={() => handleDownloadPDF(selectedGrimoire.id)}
+                className="text-amber-500 border-amber-500 hover:bg-amber-500/10"
+              >
+                <Download className="mr-2 h-4 w-4" />
+                Download PDF
+              </Button>
+              <Button variant="outline" onClick={() => setSelectedGrimoire(null)}>
+                Fechar
+              </Button>
+            </div>
           </div>
           <GrimoireViewer grimoire={selectedGrimoire} />
         </div>
