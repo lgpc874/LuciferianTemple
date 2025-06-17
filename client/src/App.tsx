@@ -16,6 +16,8 @@ import Biblioteca from "@/pages/biblioteca";
 import SmartGrimoireReader from "@/pages/smart-grimoire-reader";
 import AdminDashboard from "@/pages/admin-dashboard";
 import Perfil from "@/pages/perfil";
+import CursosPage from "@/pages/cursos";
+import CursoIndividualPage from "@/pages/curso-individual";
 
 function Router() {
   const [location] = useLocation();
@@ -35,6 +37,8 @@ function Router() {
           <Route path="/auth" component={AuthPage} />
           <Route path="/perfil" component={Perfil} />
           <Route path="/biblioteca" component={Biblioteca} />
+          <Route path="/cursos" component={CursosPage} />
+          <Route path="/curso/:slug" component={CursoIndividualPage} />
           <Route path="/grimoire/:id" component={SmartGrimoireReader} />
           <Route path="/admin-dashboard/:tab?" component={AdminDashboard} />
           <Route component={NotFound} />

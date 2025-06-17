@@ -104,7 +104,7 @@ const ModuleResponse = ({ modulo, respostaExistente, onRespostaSalva }: {
       
       <div className="flex justify-between items-center mt-4">
         <span className="text-sm text-amber-200/70">
-          {respostaExistente ? "Última atualização: " + new Date(respostaExistente.updated_at).toLocaleDateString() : "Nova resposta"}
+          {respostaExistente ? "Resposta salva anteriormente" : "Nova resposta"}
         </span>
         
         <Button

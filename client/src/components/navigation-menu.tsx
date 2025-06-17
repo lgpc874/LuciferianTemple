@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { useState, useEffect, useRef } from "react";
-import { Menu, X, Home, BookOpen, Key, Scroll, LogOut, User } from "lucide-react";
+import { Menu, X, Home, BookOpen, Key, Scroll, LogOut, User, Flame } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 
 export default function NavigationMenu() {
@@ -11,7 +11,8 @@ export default function NavigationMenu() {
 
   const baseMenuItems = [
     { href: "/", label: "Sanctum", icon: Home, subtitle: "Portão Principal" },
-    { href: "/biblioteca", label: "Bibliotheca", icon: BookOpen, subtitle: "Grimórios Arcanos" }
+    { href: "/biblioteca", label: "Bibliotheca", icon: BookOpen, subtitle: "Grimórios Arcanos" },
+    { href: "/cursos", label: "Academia", icon: Flame, subtitle: "Cursos Iniciáticos" }
   ];
 
   // Adiciona item dinâmico baseado no status de autenticação
