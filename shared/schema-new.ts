@@ -104,6 +104,19 @@ export const grimoire_purchases = pgTable("grimoire_purchases", {
   created_at: timestamp("created_at").defaultNow(),
 });
 
+// Reviews de grimórios
+export const grimoire_reviews = pgTable("grimoire_reviews", {
+  id: bigserial("id", { mode: "number" }).primaryKey(),
+  user_id: bigint("user_id", { mode: "number" }).references(() => users.id),
+  grimoire_id: bigint("grimoire_id", { mode: "number" }).references(() => grimoires.id),
+  rating: integer("rating").notNull(),
+  review_text: text("review_text"),
+  is_public: boolean("is_public").default(true),
+  helpful_votes: integer("helpful_votes").default(0),
+  created_at: timestamp("created_at").defaultNow(),
+  updated_at: timestamp("updated_at").defaultNow(),
+});
+
 // Configurações da IA
 export const ai_settings = pgTable("ai_settings", {
   id: bigserial("id", { mode: "number" }).primaryKey(),
@@ -209,6 +222,7 @@ export type UserProgress = typeof user_progress.$inferSelect;
 export type InsertProgress = z.infer<typeof insertProgressSchema>;
 
 export type GrimoirePurchase = typeof grimoire_purchases.$inferSelect;
+export type GrimoireReview = typeof grimoire_reviews.$inferSelect;
 export type AISettings = typeof ai_settings.$inferSelect;
 export type SystemSettings = typeof system_settings.$inferSelect;
 export type ContentAnalytics = typeof content_analytics.$inferSelect;
