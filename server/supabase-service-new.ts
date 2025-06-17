@@ -101,11 +101,10 @@ export class SupabaseServiceNew {
   }
 
   async createLibrarySection(sectionData: InsertLibrarySection): Promise<LibrarySection> {
-    // Usar apenas campos básicos que existem na tabela atual
+    // Usar apenas campos que existem na estrutura atual da tabela
     const basicData = {
       name: sectionData.name,
       description: sectionData.description || '',
-      icon_name: sectionData.icon_name || '',
       sort_order: sectionData.sort_order || 0,
       is_active: sectionData.is_active !== false
     };
@@ -556,11 +555,11 @@ O conteúdo deve ser um grimório completo e substancial em HTML formatado.`;
   // ======================
   async initializeDefaultSections(): Promise<void> {
     const defaultSections = [
-      { name: 'Atrium Ignis', description: 'Textos preparatórios para iniciantes no caminho luciferiano', sort_order: 1, icon_name: 'inverted_cross' },
-      { name: 'Porta Umbrae', description: 'Conhecimentos intermediários sobre magia e filosofia das sombras', sort_order: 2, icon_name: 'pentagram' },
-      { name: 'Arcana Noctis', description: 'Segredos avançados de magia cerimonial e gnose luciferiana', sort_order: 3, icon_name: 'flame' },
-      { name: 'Via Tenebris', description: 'Caminhos superiores de maestria e transcendência', sort_order: 4, icon_name: 'crown' },
-      { name: 'Templo do Abismo', description: 'Santuário dos mistérios mais profundos canalizados das divindades primordiais', sort_order: 5, icon_name: 'temple_logo' }
+      { name: 'Atrium Ignis', description: 'Textos preparatórios para iniciantes no caminho luciferiano', sort_order: 1 },
+      { name: 'Porta Umbrae', description: 'Conhecimentos intermediários sobre magia e filosofia das sombras', sort_order: 2 },
+      { name: 'Arcana Noctis', description: 'Segredos avançados de magia cerimonial e gnose luciferiana', sort_order: 3 },
+      { name: 'Via Tenebris', description: 'Caminhos superiores de maestria e transcendência', sort_order: 4 },
+      { name: 'Templo do Abismo', description: 'Santuário dos mistérios mais profundos canalizados das divindades primordiais', sort_order: 5 }
     ];
 
     for (const section of defaultSections) {
