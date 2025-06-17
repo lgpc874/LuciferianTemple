@@ -15,7 +15,7 @@ import {
 } from "@shared/schema";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import htmlPdf from "html-pdf-node";
+// PDF generation without external dependencies
 import { supabaseService } from "./supabase-service";
 
 
@@ -478,7 +478,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // ROTA PARA GERAR PDF DE GRIMÓRIO COM CSS AUTOMÁTICO DA SEÇÃO
+  // ROTA PARA GERAR HTML FORMATADO DE GRIMÓRIO COM CSS AUTOMÁTICO DA SEÇÃO
   app.post("/api/admin/grimoires/:id/pdf", authenticateToken, requireAdmin, async (req, res) => {
     try {
       const { id } = req.params;
@@ -488,7 +488,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ error: "Grimório não encontrado" });
       }
 
-      // Geração de PDF usando html-pdf-node
+      // Geração de HTML formatado para impressão
 
       // Detectar seção do grimório para aplicar CSS correto
       const sections = await supabaseService.getLibrarySections();
@@ -652,29 +652,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         </html>
       `;
 
-      const options = {
-        format: 'A4',
-        printBackground: true,
-        margin: {
-          top: '2cm',
-          right: '2cm',
-          bottom: '2cm',
-          left: '2cm'
-        }
-      };
+      // Enviar como HTML otimizado para impressão
+      const filename = `${grimoire.title.replace(/[^a-zA-Z0-9\s]/g, '_')}_${cssClass}.html`;
       
-      const file = { content: htmlContent };
-      const pdf = await htmlPdf.generatePdf(file, options);
-      
-      const filename = `${grimoire.title.replace(/[^a-zA-Z0-9\s]/g, '_')}_${cssClass}.pdf`;
-      
-      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
       res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
-      res.send(pdf);
+      res.send(htmlContent);
       
     } catch (error: any) {
-      console.error("Erro ao gerar PDF:", error);
-      res.status(500).json({ error: "Erro ao gerar PDF: " + error.message });
+      console.error("Erro ao gerar HTML:", error);
+      res.status(500).json({ error: "Erro ao gerar HTML: " + error.message });
     }
   });
 
