@@ -497,6 +497,28 @@ export default function AdminCursos() {
     },
   });
 
+  // Mutação para expandir LUXFERAT
+  const expandLuxferatMutation = useMutation({
+    mutationFn: async () => {
+      return apiRequest('/api/admin/expand-luxferat', { method: 'POST' });
+    },
+    onSuccess: (data: any) => {
+      toast({
+        title: "LUXFERAT Expandido",
+        description: `Curso expandido com ${data.modulosCount || 8} módulos completos!`,
+      });
+      queryClient.invalidateQueries({ queryKey: [`/api/cursos/${selectedCurso?.id}/modulos`] });
+      queryClient.invalidateQueries({ queryKey: ['/api/cursos'] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Erro",
+        description: error.message || "Erro ao expandir LUXFERAT",
+        variant: "destructive",
+      });
+    },
+  });
+
   if (cursosLoading) {
     return (
       <div className="flex items-center justify-center py-8">
@@ -569,6 +591,27 @@ export default function AdminCursos() {
                         >
                           <Edit size={12} />
                         </Button>
+                        {curso.id === 1 && (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (confirm('Expandir LUXFERAT para 8 módulos completos?')) {
+                                expandLuxferatMutation.mutate();
+                              }
+                            }}
+                            disabled={expandLuxferatMutation.isPending}
+                            className="h-6 w-6 p-0 text-purple-500 hover:text-purple-400"
+                            title="Expandir LUXFERAT"
+                          >
+                            {expandLuxferatMutation.isPending ? (
+                              <div className="animate-spin w-3 h-3 border border-purple-500 border-t-transparent rounded-full" />
+                            ) : (
+                              <Plus size={12} />
+                            )}
+                          </Button>
+                        )}
                         <Button
                           size="sm"
                           variant="ghost"

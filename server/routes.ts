@@ -17,6 +17,12 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 // PDF generation without external dependencies
 import { supabaseService } from "./supabase-service";
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  'https://mncmixsdmxvgcshzwzyb.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1uY21peHNkbXh2Z2NzaHp3enlIIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk5MDE1ODUsImV4cCI6MjA2NTQ3NzU4NX0.e-8PYRMOdGWDQqzI-JgqEqKWIVF3FJJ2LKzJ7E5L0_4'
+);
 
 
 const JWT_SECRET = process.env.JWT_SECRET || "templo_abismo_secret_key";
