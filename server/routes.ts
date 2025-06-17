@@ -1081,17 +1081,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       console.log('🔥 Iniciando expansão do LUXFERAT...');
       
-      // Primeiro, deletar módulos existentes
-      const { error: deleteError } = await supabase
-        .from('modulos')
-        .delete()
-        .eq('curso_id', 1);
-
-      if (deleteError) {
-        console.error('Erro ao deletar módulos:', deleteError);
-        throw deleteError;
-      }
-
+      // Primeiro, deletar módulos existentes usando o supabaseService
+      await supabaseService.deleteModulesByCourse(1);
       console.log('✓ Módulos antigos deletados');
 
       // Módulos expandidos
@@ -1294,31 +1285,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Inserir novos módulos
       for (const modulo of modulosExpandidos) {
-        const { error } = await supabase
-          .from('modulos')
-          .insert(modulo);
-
-        if (error) {
-          console.error(`Erro ao inserir módulo ${modulo.titulo}:`, error);
-          throw error;
-        }
+        await supabaseService.createModule(modulo);
         console.log(`✓ Módulo "${modulo.titulo}" criado`);
       }
 
       // Atualizar informações do curso
-      const { error: updateError } = await supabase
-        .from('cursos')
-        .update({
-          descricao: 'Curso completo de iniciação luciferiana com 8 módulos abrangentes. Uma jornada transformadora desde o despertar da consciência crítica até a maestria completa da filosofia e práticas luciferianas. Inclui rituais práticos, técnicas de poder pessoal, trabalho com sombras, magia aplicada e integração total dos princípios na vida cotidiana.',
-          preco: 333.33,
-          nivel: 'Iniciante a Avançado'
-        })
-        .eq('id', 1);
-
-      if (updateError) {
-        console.error('Erro ao atualizar curso:', updateError);
-        throw updateError;
-      }
+      await supabaseService.updateCurso(1, {
+        descricao: 'Curso completo de iniciação luciferiana com 8 módulos abrangentes. Uma jornada transformadora desde o despertar da consciência crítica até a maestria completa da filosofia e práticas luciferianas. Inclui rituais práticos, técnicas de poder pessoal, trabalho com sombras, magia aplicada e integração total dos princípios na vida cotidiana.',
+        preco: '333.33',
+        nivel: 'Iniciante a Avançado'
+      });
 
       console.log('✓ Curso atualizado com sucesso');
       console.log('🔥 LUXFERAT expandido com 8 módulos completos!');

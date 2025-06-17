@@ -1206,6 +1206,48 @@ export class SupabaseService {
       throw new Error(`Error creating course payment intent: ${error?.message || 'Unknown error'}`);
     }
   }
+  // Função para deletar módulos por curso
+  async deleteModulesByCourse(cursoId: number) {
+    const { error } = await this.supabase
+      .from('modulos')
+      .delete()
+      .eq('curso_id', cursoId);
+
+    if (error) {
+      throw new Error(`Erro ao deletar módulos: ${error.message}`);
+    }
+  }
+
+  // Função para criar módulo
+  async createModule(moduleData: any) {
+    const { data, error } = await this.supabase
+      .from('modulos')
+      .insert(moduleData)
+      .select()
+      .single();
+
+    if (error) {
+      throw new Error(`Erro ao criar módulo: ${error.message}`);
+    }
+
+    return data;
+  }
+
+  // Atualizar curso
+  async updateCurso(cursoId: number, updateData: any) {
+    const { data, error } = await this.supabase
+      .from('cursos')
+      .update(updateData)
+      .eq('id', cursoId)
+      .select()
+      .single();
+
+    if (error) {
+      throw new Error(`Erro ao atualizar curso: ${error.message}`);
+    }
+
+    return data;
+  }
 }
 
 export const supabaseService = new SupabaseService();
