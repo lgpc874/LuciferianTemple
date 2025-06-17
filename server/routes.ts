@@ -15,7 +15,7 @@ import {
 } from "@shared/schema";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-// PDF generation using html-pdf-node
+import htmlPdf from "html-pdf-node";
 import { supabaseService } from "./supabase-service";
 
 
@@ -488,7 +488,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ error: "Grimório não encontrado" });
       }
 
-      // Puppeteer já importado no topo do arquivo
+      // Geração de PDF usando html-pdf-node
 
       // Detectar seção do grimório para aplicar CSS correto
       const sections = await supabaseService.getLibrarySections();
@@ -652,15 +652,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         </html>
       `;
 
-      const browser = await puppeteer.launch({
-        headless: true,
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
-      });
-      
-      const page = await browser.newPage();
-      await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
-      
-      const pdf = await page.pdf({
+      const options = {
         format: 'A4',
         printBackground: true,
         margin: {
@@ -669,9 +661,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           bottom: '2cm',
           left: '2cm'
         }
-      });
+      };
       
-      await browser.close();
+      const file = { content: htmlContent };
+      const pdf = await htmlPdf.generatePdf(file, options);
       
       const filename = `${grimoire.title.replace(/[^a-zA-Z0-9\s]/g, '_')}_${cssClass}.pdf`;
       
