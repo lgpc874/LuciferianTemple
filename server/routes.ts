@@ -1070,6 +1070,265 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Expandir curso LUXFERAT
+  app.post("/api/admin/expand-luxferat", authenticateToken, async (req, res) => {
+    try {
+      console.log('🔥 Iniciando expansão do LUXFERAT...');
+      
+      // Primeiro, deletar módulos existentes
+      const { error: deleteError } = await supabase
+        .from('modulos')
+        .delete()
+        .eq('curso_id', 1);
+
+      if (deleteError) {
+        console.error('Erro ao deletar módulos:', deleteError);
+        throw deleteError;
+      }
+
+      console.log('✓ Módulos antigos deletados');
+
+      // Módulos expandidos
+      const modulosExpandidos = [
+        {
+          curso_id: 1,
+          titulo: "A Semente da Rebelião – Despertar da Consciência",
+          conteudo: `<div style="font-family: 'EB Garamond', serif; line-height: 1.8; color: #D4AF37;">
+<h1 style="font-family: 'Cinzel', serif; color: #8B0000; text-align: center; font-size: 2.2rem; margin-bottom: 2rem;">⚡ A SEMENTE DA REBELIÃO ⚡</h1>
+<div style="text-align: center; margin: 2rem 0; padding: 1.5rem; background: rgba(139, 0, 0, 0.1); border: 2px solid #8B0000;">
+<em style="font-size: 1.2rem; color: #D4AF37;">"A verdadeira iniciação começa quando você questiona tudo que te ensinaram a aceitar como sagrado."</em>
+</div>
+<h2 style="color: #8B0000; font-family: 'Cinzel', serif; font-size: 1.6rem; margin-top: 2rem;">O Despertar da Consciência Crítica</h2>
+<p>Bem-vindo ao primeiro estágio da jornada luciferiana. Aqui você aprenderá a reconhecer e dissolver as amarras mentais que foram impostas desde o nascimento.</p>
+<h3 style="color: #D4AF37; font-family: 'Cinzel', serif; margin-top: 1.5rem;">🔍 Identificando Sistemas de Controle</h3>
+<ul style="margin-left: 2rem; line-height: 2;">
+<li><strong>Condicionamento Religioso:</strong> Conceitos de pecado, culpa e submissão</li>
+<li><strong>Conformidade Social:</strong> Pressão para seguir normas não questionadas</li>
+<li><strong>Autoridade Inquestionável:</strong> Figuras que demandam obediência cega</li>
+<li><strong>Medo do Desconhecido:</strong> Terror implantado sobre exploração espiritual</li>
+</ul>
+<h3 style="color: #D4AF37; font-family: 'Cinzel', serif; margin-top: 1.5rem;">🧠 Exercício Prático: O Mapeamento Mental</h3>
+<div style="background: rgba(0, 0, 0, 0.3); padding: 1.5rem; border-left: 4px solid #8B0000; margin: 1rem 0;">
+<p><strong>Duração:</strong> 30-45 minutos</p>
+<p><strong>Material:</strong> Papel, caneta vermelha</p>
+<p><strong>Instruções:</strong></p>
+<ol style="line-height: 1.8;">
+<li>Em silêncio total, escreva 10 crenças que você nunca questionou</li>
+<li>Para cada crença, identifique QUEM ou O QUE a implantou em você</li>
+<li>Questione: "Esta crença me liberta ou me limita?"</li>
+<li>Marque com tinta vermelha aquelas que limitam seu poder pessoal</li>
+<li>Queime o papel em chama de vela preta ao final</li>
+</ol>
+</div>
+</div>`,
+          ordem: 1
+        },
+        {
+          curso_id: 1,
+          titulo: "O Fogo Interior – Reconhecendo Seu Poder Pessoal",
+          conteudo: `<div style="font-family: 'EB Garamond', serif; line-height: 1.8; color: #D4AF37;">
+<h1 style="font-family: 'Cinzel', serif; color: #8B0000; text-align: center; font-size: 2.2rem; margin-bottom: 2rem;">🔥 O FOGO INTERIOR 🔥</h1>
+<div style="text-align: center; margin: 2rem 0; padding: 1.5rem; background: rgba(139, 0, 0, 0.1); border: 2px solid #8B0000;">
+<em style="font-size: 1.2rem; color: #D4AF37;">"O poder não é algo que você busca fora – é algo que você desperta dentro."</em>
+</div>
+<h2 style="color: #8B0000; font-family: 'Cinzel', serif; font-size: 1.6rem; margin-top: 2rem;">A Natureza do Poder Pessoal</h2>
+<p>O segundo módulo da jornada LUXFERAT foca no reconhecimento e cultivo do poder inerente que reside em cada ser consciente.</p>
+<h3 style="color: #D4AF37; font-family: 'Cinzel', serif; margin-top: 1.5rem;">🌟 Os Três Pilares do Poder Interior</h3>
+<div style="background: rgba(0, 0, 0, 0.3); padding: 1.5rem; border-left: 4px solid #8B0000; margin: 1rem 0;">
+<p><strong>1. SOBERANIA MENTAL:</strong> Controle total sobre seus pensamentos e emoções</p>
+<p><strong>2. VONTADE DIRECIONADA:</strong> Capacidade de focar energia em objetivos específicos</p>
+<p><strong>3. PRESENÇA MAGNÉTICA:</strong> Irradiação natural de poder pessoal</p>
+</div>
+<h3 style="color: #D4AF37; font-family: 'Cinzel', serif; margin-top: 1.5rem;">⚡ Técnica: Respiração do Fogo Luciferiano</h3>
+<div style="background: rgba(139, 0, 0, 0.2); padding: 2rem; border: 1px solid #8B0000; margin: 1.5rem 0;">
+<p><strong>Posição:</strong> Sentado com coluna ereta, mãos sobre os joelhos</p>
+<p><strong>Duração:</strong> 15-20 minutos diários</p>
+<p><strong>Técnica:</strong></p>
+<ol style="line-height: 2;">
+<li>Inspire lentamente visualizando fogo dourado entrando pelo topo da cabeça</li>
+<li>Retenha por 4 segundos, sentindo o fogo se concentrar no peito</li>
+<li>Expire visualizando o fogo se espalhando por todo o corpo</li>
+<li>Sinta cada célula sendo energizada com poder luciferiano</li>
+<li>Na última expiração, projete o fogo como aura ao seu redor</li>
+</ol>
+</div>
+</div>`,
+          ordem: 2
+        },
+        {
+          curso_id: 1,
+          titulo: "As Correntes Invisíveis – Libertação Psicológica",
+          conteudo: `<div style="font-family: 'EB Garamond', serif; line-height: 1.8; color: #D4AF37;">
+<h1 style="font-family: 'Cinzel', serif; color: #8B0000; text-align: center; font-size: 2.2rem; margin-bottom: 2rem;">⛓️ AS CORRENTES INVISÍVEIS ⛓️</h1>
+<div style="text-align: center; margin: 2rem 0; padding: 1.5rem; background: rgba(139, 0, 0, 0.1); border: 2px solid #8B0000;">
+<em style="font-size: 1.2rem; color: #D4AF37;">"As correntes mais fortes são aquelas que não conseguimos ver – até o momento em que decidimos quebrá-las."</em>
+</div>
+<h2 style="color: #8B0000; font-family: 'Cinzel', serif; font-size: 1.6rem; margin-top: 2rem;">Identificando Prisões Mentais Ocultas</h2>
+<p>Este módulo foca na identificação e dissolução de padrões psicológicos limitantes que operam abaixo do limiar da consciência.</p>
+<h3 style="color: #D4AF37; font-family: 'Cinzel', serif; margin-top: 1.5rem;">🔗 Os Cinco Tipos de Correntes Psicológicas</h3>
+<div style="background: rgba(0, 0, 0, 0.3); padding: 1.5rem; border-left: 4px solid #8B0000; margin: 1rem 0;">
+<p><strong>1. CORRENTES DO MEDO:</strong> Paralisia diante do desconhecido ou mudança</p>
+<p><strong>2. CORRENTES DA CULPA:</strong> Autossabotagem baseada em "pecados" imaginários</p>
+<p><strong>3. CORRENTES DA APROVAÇÃO:</strong> Dependência da validação externa</p>
+<p><strong>4. CORRENTES DA TRADIÇÃO:</strong> Seguir caminhos só porque "sempre foi assim"</p>
+<p><strong>5. CORRENTES DO CONFORMISMO:</strong> Medo de ser diferente ou destacar-se</p>
+</div>
+</div>`,
+          ordem: 3
+        },
+        {
+          curso_id: 1,
+          titulo: "O Conhecimento Proibido – Gnose Luciferiana",
+          conteudo: `<div style="font-family: 'EB Garamond', serif; line-height: 1.8; color: #D4AF37;">
+<h1 style="font-family: 'Cinzel', serif; color: #8B0000; text-align: center; font-size: 2.2rem; margin-bottom: 2rem;">📚 O CONHECIMENTO PROIBIDO 📚</h1>
+<div style="text-align: center; margin: 2rem 0; padding: 1.5rem; background: rgba(139, 0, 0, 0.1); border: 2px solid #8B0000;">
+<em style="font-size: 1.2rem; color: #D4AF37;">"O conhecimento mais poderoso é aquele que o mundo tenta esconder de você."</em>
+</div>
+<h2 style="color: #8B0000; font-family: 'Cinzel', serif; font-size: 1.6rem; margin-top: 2rem;">A Natureza da Gnose Luciferiana</h2>
+<p>A Gnose Luciferiana não é simplesmente conhecimento intelectual, mas uma forma de percepção direta da realidade que transcende as limitações impostas por sistemas de crenças convencionais.</p>
+<h3 style="color: #D4AF37; font-family: 'Cinzel', serif; margin-top: 1.5rem;">🌟 Os Pilares da Gnose Luciferiana</h3>
+<div style="background: rgba(0, 0, 0, 0.3); padding: 1.5rem; border-left: 4px solid #8B0000; margin: 1rem 0;">
+<p><strong>1. CONHECIMENTO EXPERIENCIAL:</strong> Verdades descobertas através da prática, não da fé</p>
+<p><strong>2. QUESTIONAMENTO RADICAL:</strong> Nada é aceito sem investigação pessoal</p>
+<p><strong>3. INTEGRAÇÃO SOMBRIA:</strong> Abraço consciente dos aspectos "proibidos" da psique</p>
+<p><strong>4. SOBERANIA ESPIRITUAL:</strong> Rejeição de autoridades espirituais externas</p>
+<p><strong>5. TRANSCENDÊNCIA PELO DESCENSO:</strong> Evolução através da exploração das profundezas</p>
+</div>
+</div>`,
+          ordem: 4
+        },
+        {
+          curso_id: 1,
+          titulo: "O Trabalho com Sombras – Integração dos Aspectos Ocultos",
+          conteudo: `<div style="font-family: 'EB Garamond', serif; line-height: 1.8; color: #D4AF37;">
+<h1 style="font-family: 'Cinzel', serif; color: #8B0000; text-align: center; font-size: 2.2rem; margin-bottom: 2rem;">🌑 O TRABALHO COM SOMBRAS 🌑</h1>
+<div style="text-align: center; margin: 2rem 0; padding: 1.5rem; background: rgba(139, 0, 0, 0.1); border: 2px solid #8B0000;">
+<em style="font-size: 1.2rem; color: #D4AF37;">"Sua sombra contém não apenas seus defeitos, mas também seus poderes não desenvolvidos."</em>
+</div>
+<h2 style="color: #8B0000; font-family: 'Cinzel', serif; font-size: 1.6rem; margin-top: 2rem;">Compreendendo a Natureza da Sombra</h2>
+<p>O trabalho com sombras é um dos aspectos mais transformadores da jornada luciferiana. A "sombra" não é simplesmente o mal ou aspectos negativos, mas todo o conteúdo psíquico que foi reprimido, negado ou considerado inaceitável pela persona consciente.</p>
+<h3 style="color: #D4AF37; font-family: 'Cinzel', serif; margin-top: 1.5rem;">🔍 Anatomia da Sombra Pessoal</h3>
+<div style="background: rgba(0, 0, 0, 0.3); padding: 1.5rem; border-left: 4px solid #8B0000; margin: 1rem 0;">
+<p><strong>SOMBRA INDIVIDUAL:</strong> Aspectos rejeitados da personalidade</p>
+<p><strong>SOMBRA FAMILIAR:</strong> Padrões herdados através de gerações</p>
+<p><strong>SOMBRA CULTURAL:</strong> Aspectos negados pela sociedade</p>
+<p><strong>SOMBRA ARQUETÍPICA:</strong> Forças primordiais coletivas</p>
+<p><strong>SOMBRA DOURADA:</strong> Potenciais positivos não reconhecidos</p>
+</div>
+</div>`,
+          ordem: 5
+        },
+        {
+          curso_id: 1,
+          titulo: "Magia Prática – Manifestação da Vontade",
+          conteudo: `<div style="font-family: 'EB Garamond', serif; line-height: 1.8; color: #D4AF37;">
+<h1 style="font-family: 'Cinzel', serif; color: #8B0000; text-align: center; font-size: 2.2rem; margin-bottom: 2rem;">🔮 MAGIA PRÁTICA 🔮</h1>
+<div style="text-align: center; margin: 2rem 0; padding: 1.5rem; background: rgba(139, 0, 0, 0.1); border: 2px solid #8B0000;">
+<em style="font-size: 1.2rem; color: #D4AF37;">"Magia é a arte e ciência de causar mudanças de acordo com a Vontade."</em>
+<br><small style="color: #8B0000;">- Aleister Crowley</small>
+</div>
+<h2 style="color: #8B0000; font-family: 'Cinzel', serif; font-size: 1.6rem; margin-top: 2rem;">Os Fundamentos da Magia Luciferiana</h2>
+<p>A magia luciferiana difere fundamentalmente de outras tradições por seu foco na soberania individual e desenvolvimento do poder pessoal. Não é súplica a entidades externas, mas o despertar e direcionamento das forças inerentes à consciência humana em sua forma mais elevada.</p>
+<h3 style="color: #D4AF37; font-family: 'Cinzel', serif; margin-top: 1.5rem;">⚡ Os Cinco Pilares da Prática Mágica</h3>
+<div style="background: rgba(0, 0, 0, 0.3); padding: 1.5rem; border-left: 4px solid #8B0000; margin: 1rem 0;">
+<p><strong>1. VONTADE (Thelema):</strong> Direcionamento consciente da energia psíquica</p>
+<p><strong>2. IMAGINAÇÃO (Visualização):</strong> Capacidade de criar realidades mentais vívidas</p>
+<p><strong>3. FOCO (Concentração):</strong> Manutenção da atenção em um objetivo específico</p>
+<p><strong>4. TIMING (Sincronização):</strong> Escolha do momento apropriado para ação</p>
+<p><strong>5. CORRESPONDÊNCIA:</strong> Uso de símbolos e elementos que ressoam com o objetivo</p>
+</div>
+</div>`,
+          ordem: 6
+        },
+        {
+          curso_id: 1,
+          titulo: "Rituais de Transformação – Cerimônias de Poder",
+          conteudo: `<div style="font-family: 'EB Garamond', serif; line-height: 1.8; color: #D4AF37;">
+<h1 style="font-family: 'Cinzel', serif; color: #8B0000; text-align: center; font-size: 2.2rem; margin-bottom: 2rem;">🎭 RITUAIS DE TRANSFORMAÇÃO 🎭</h1>
+<div style="text-align: center; margin: 2rem 0; padding: 1.5rem; background: rgba(139, 0, 0, 0.1); border: 2px solid #8B0000;">
+<em style="font-size: 1.2rem; color: #D4AF37;">"O ritual é a ponte entre o mundo profano e o sagrado, entre o que é e o que pode ser."</em>
+</div>
+<h2 style="color: #8B0000; font-family: 'Cinzel', serif; font-size: 1.6rem; margin-top: 2rem;">A Arquitetura do Ritual Luciferiano</h2>
+<p>Os rituais luciferianos não são meras cerimônias decorativas, mas tecnologias precisas de transformação consciencial. Cada elemento serve para alterar estados de consciência e canalizar energia para objetivos específicos de crescimento e manifestação.</p>
+<h3 style="color: #D4AF37; font-family: 'Cinzel', serif; margin-top: 1.5rem;">🏛️ Estrutura Fundamental do Ritual</h3>
+<div style="background: rgba(0, 0, 0, 0.3); padding: 1.5rem; border-left: 4px solid #8B0000; margin: 1rem 0;">
+<p><strong>1. PURIFICAÇÃO:</strong> Limpeza física, mental e espiritual</p>
+<p><strong>2. CONSAGRAÇÃO:</strong> Santificação do espaço e ferramentas</p>
+<p><strong>3. INVOCAÇÃO:</strong> Chamado das forças a serem trabalhadas</p>
+<p><strong>4. TRABALHO CENTRAL:</strong> A operação mágica principal</p>
+<p><strong>5. AGRADECIMENTO:</strong> Reconhecimento às forças invocadas</p>
+<p><strong>6. BANIMENTO:</strong> Fechamento e retorno ao estado normal</p>
+</div>
+</div>`,
+          ordem: 7
+        },
+        {
+          curso_id: 1,
+          titulo: "Integração e Maestria – Vivendo como Luciferiano",
+          conteudo: `<div style="font-family: 'EB Garamond', serif; line-height: 1.8; color: #D4AF37;">
+<h1 style="font-family: 'Cinzel', serif; color: #8B0000; text-align: center; font-size: 2.2rem; margin-bottom: 2rem;">👑 INTEGRAÇÃO E MAESTRIA 👑</h1>
+<div style="text-align: center; margin: 2rem 0; padding: 1.5rem; background: rgba(139, 0, 0, 0.1); border: 2px solid #8B0000;">
+<em style="font-size: 1.2rem; color: #D4AF37;">"A verdadeira iniciação não termina com um ritual - ela se completa com uma vida vivida em total autenticidade."</em>
+</div>
+<h2 style="color: #8B0000; font-family: 'Cinzel', serif; font-size: 1.6rem; margin-top: 2rem;">A Vida Como Prática Espiritual</h2>
+<p>Este módulo final do LUXFERAT foca na integração completa dos princípios luciferianos na vida cotidiana. Ser luciferiano não é algo que você pratica em momentos específicos - é uma forma de existir no mundo com total soberania, autenticidade e poder pessoal.</p>
+<h3 style="color: #D4AF37; font-family: 'Cinzel', serif; margin-top: 1.5rem;">🌟 Os Pilares da Vida Luciferiana</h3>
+<div style="background: rgba(0, 0, 0, 0.3); padding: 1.5rem; border-left: 4px solid #8B0000; margin: 1rem 0;">
+<p><strong>AUTENTICIDADE:</strong> Viver de acordo com sua verdadeira natureza</p>
+<p><strong>RESPONSABILIDADE:</strong> Aceitar totalmente as consequências de suas escolhas</p>
+<p><strong>CRESCIMENTO CONTÍNUO:</strong> Estar sempre expandindo limites pessoais</p>
+<p><strong>PODER EQUILIBRADO:</strong> Usar força pessoal de forma sábia</p>
+<p><strong>QUESTIONAMENTO PERPÉTUO:</strong> Nunca parar de investigar e aprender</p>
+<p><strong>COMPAIXÃO INTELIGENTE:</strong> Ajudar outros sem prejudicar a si mesmo</p>
+</div>
+</div>`,
+          ordem: 8
+        }
+      ];
+
+      // Inserir novos módulos
+      for (const modulo of modulosExpandidos) {
+        const { error } = await supabase
+          .from('modulos')
+          .insert(modulo);
+
+        if (error) {
+          console.error(`Erro ao inserir módulo ${modulo.titulo}:`, error);
+          throw error;
+        }
+        console.log(`✓ Módulo "${modulo.titulo}" criado`);
+      }
+
+      // Atualizar informações do curso
+      const { error: updateError } = await supabase
+        .from('cursos')
+        .update({
+          descricao: 'Curso completo de iniciação luciferiana com 8 módulos abrangentes. Uma jornada transformadora desde o despertar da consciência crítica até a maestria completa da filosofia e práticas luciferianas. Inclui rituais práticos, técnicas de poder pessoal, trabalho com sombras, magia aplicada e integração total dos princípios na vida cotidiana.',
+          preco: 333.33,
+          nivel: 'Iniciante a Avançado'
+        })
+        .eq('id', 1);
+
+      if (updateError) {
+        console.error('Erro ao atualizar curso:', updateError);
+        throw updateError;
+      }
+
+      console.log('✓ Curso atualizado com sucesso');
+      console.log('🔥 LUXFERAT expandido com 8 módulos completos!');
+
+      res.json({ 
+        success: true, 
+        message: 'LUXFERAT expandido com sucesso!',
+        modulosCount: modulosExpandidos.length
+      });
+      
+    } catch (error: any) {
+      console.error('Erro durante expansão:', error);
+      res.status(500).json({ error: 'Erro ao expandir LUXFERAT: ' + error.message });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
