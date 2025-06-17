@@ -16,13 +16,8 @@ import {
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 // PDF generation without external dependencies
-import { supabaseService } from "./supabase-service";
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(
-  'https://mncmixsdmxvgcshzwzyb.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1uY21peHNkbXh2Z2NzaHp3enlIIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk5MDE1ODUsImV4cCI6MjA2NTQ3NzU4NX0.e-8PYRMOdGWDQqzI-JgqEqKWIVF3FJJ2LKzJ7E5L0_4'
-);
+import { supabaseServiceNew as supabaseService } from "./supabase-service-new";
+// Sistema atualizado para usar o novo serviço Supabase otimizado
 
 
 const JWT_SECRET = process.env.JWT_SECRET || "templo_abismo_secret_key";
@@ -34,35 +29,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const data: RegisterData = registerSchema.parse(req.body);
       
       // Check if user already exists
-      const existingUser = await storage.getUserByEmail(data.email);
+      const existingUser = await supabaseService.getUserByEmail(data.email);
       if (existingUser) {
         return res.status(400).json({ error: "Email já está em uso" });
-      }
-
-      const existingUsername = await storage.getUserByUsername(data.username);
-      if (existingUsername) {
-        return res.status(400).json({ error: "Nome de usuário já está em uso" });
       }
 
       // Hash password
       const hashedPassword = await bcrypt.hash(data.password, 10);
 
       // Create user
-      const newUser = await storage.createUser({
+      const newUser = await supabaseService.createUser({
         username: data.username,
         email: data.email,
         password: hashedPassword,
-        role: data.role || "user",
-        isAdmin: data.isAdmin || false,
+        is_admin: false,
       });
 
       // Generate JWT token
       const token = jwt.sign(
         { 
-          userId: newUser.id, 
+          id: newUser.id, 
           username: newUser.username, 
           email: newUser.email,
-          isAdmin: newUser.isAdmin 
+          isAdmin: newUser.is_admin 
         },
         JWT_SECRET,
         { expiresIn: "7d" }
