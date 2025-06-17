@@ -87,7 +87,7 @@ export default function SmartGrimoireReader() {
 
   // Mutação para salvar progresso
   const saveProgressMutation = useMutation({
-    mutationFn: async (data: { grimoireId: number; currentPage: number; totalPages: number; readingTimeMinutes: number }) => {
+    mutationFn: async (data: { grimoireId: number; currentPage: number; totalPages: number }) => {
       return apiRequest("/api/progress", {
         method: "POST",
         body: JSON.stringify({
@@ -95,7 +95,6 @@ export default function SmartGrimoireReader() {
           grimoire_id: data.grimoireId,
           current_page: data.currentPage,
           total_pages: data.totalPages,
-          reading_time_minutes: data.readingTimeMinutes,
           last_read_at: new Date()
         }),
         headers: {
@@ -220,31 +219,22 @@ export default function SmartGrimoireReader() {
         }
       }
       
-      setReadingTime(0);
+
     }
   }, [grimoire, grimoireId]);
 
-  // Timer de leitura e auto-save
+  // Auto-save do progresso
   useEffect(() => {
     if (!grimoire || pages.length === 0) return;
 
     const timer = setInterval(() => {
-      setReadingTime(prev => {
-        const newTime = prev + 1;
-        
-        // Auto-save a cada 30 segundos
-        if (newTime % 30 === 0) {
-          saveProgressMutation.mutate({
-            grimoireId: grimoire.id,
-            currentPage,
-            totalPages: pages.length,
-            readingTimeMinutes: Math.floor(newTime / 60)
-          });
-        }
-        
-        return newTime;
+      // Auto-save a cada 30 segundos
+      saveProgressMutation.mutate({
+        grimoireId: grimoire.id,
+        currentPage,
+        totalPages: pages.length
       });
-    }, 1000);
+    }, 30000);
 
     return () => clearInterval(timer);
   }, [grimoire, currentPage, pages.length]);

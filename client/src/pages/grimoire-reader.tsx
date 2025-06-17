@@ -22,7 +22,7 @@ export default function GrimoireReader() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [paginatedContent, setPaginatedContent] = useState<string[]>([]);
-  const [readingTime, setReadingTime] = useState(0);
+
   const [saveStatus, setSaveStatus] = useState<'saving' | 'saved' | 'error' | null>(null);
   const [currentBackgroundColor, setCurrentBackgroundColor] = useState<string | null>(null);
 
@@ -177,14 +177,7 @@ export default function GrimoireReader() {
     }
   }, [grimoire?.content, userProgress, grimoireId]);
 
-  // Timer de leitura
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setReadingTime(prev => prev + 1);
-    }, 60000); // Incrementa a cada minuto
 
-    return () => clearInterval(interval);
-  }, []);
 
   // Auto-save do progresso
   useEffect(() => {
@@ -194,7 +187,7 @@ export default function GrimoireReader() {
           grimoireId,
           currentPage,
           totalPages,
-          readingTimeMinutes: readingTime
+
         });
       }, 2000);
 
