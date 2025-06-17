@@ -500,7 +500,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         'Porta Umbrae': 'porta-umbrae', 
         'Arcana Noctis': 'arcana-noctis',
         'Via Tenebris': 'via-tenebris',
-        'Templo do Abismo': 'atrium-ignis' // Fallback para vermelho
+        'Templo do Abismo': 'templo-abismo'
       };
       
       const cssClass = grimoireSection ? sectionCSSMap[grimoireSection.name] || 'atrium-ignis' : 'atrium-ignis';
@@ -510,7 +510,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         'atrium-ignis': '#8b0000',    // Vermelho místico
         'porta-umbrae': '#6a0dad',    // Roxo abissal  
         'arcana-noctis': '#003366',   // Azul profundo
-        'via-tenebris': '#111111'     // Preto absoluto
+        'via-tenebris': '#111111',    // Preto absoluto
+        'templo-abismo': '#1a0a0a'    // Preto abissal profundo
       };
       
       const primaryColor = sectionColors[cssClass];
@@ -556,6 +557,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
               ${cssClass === 'porta-umbrae' ? 'color: #6a0dad !important;' : ''}
               ${cssClass === 'arcana-noctis' ? 'color: #003366 !important;' : ''}
               ${cssClass === 'via-tenebris' ? 'color: #111111 !important;' : ''}
+              ${cssClass === 'templo-abismo' ? 'color: #1a0a0a !important;' : ''}
               text-align: center;
               font-weight: 700;
               margin: 2rem 0 1rem 0;
@@ -568,6 +570,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
               ${cssClass === 'porta-umbrae' ? 'color: #6a0dad; border-left: 3px solid #6a0dad;' : ''}
               ${cssClass === 'arcana-noctis' ? 'color: #003366; border-left: 3px solid #003366;' : ''}
               ${cssClass === 'via-tenebris' ? 'color: #111111; border-left: 3px solid #111111;' : ''}
+              ${cssClass === 'templo-abismo' ? 'color: #1a0a0a; border-left: 3px solid #1a0a0a;' : ''}
               font-style: italic;
               padding: 1.5rem;
               margin: 2rem auto;
@@ -582,6 +585,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
               ${cssClass === 'porta-umbrae' ? 'color: #6a0dad !important;' : ''}
               ${cssClass === 'arcana-noctis' ? 'color: #003366 !important;' : ''}
               ${cssClass === 'via-tenebris' ? 'color: #111111 !important;' : ''}
+              ${cssClass === 'templo-abismo' ? 'color: #1a0a0a !important;' : ''}
               font-weight: bold;
             }
             
@@ -596,6 +600,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
               ${cssClass === 'porta-umbrae' ? 'color: #6a0dad !important;' : ''}
               ${cssClass === 'arcana-noctis' ? 'color: #003366 !important;' : ''}
               ${cssClass === 'via-tenebris' ? 'color: #111111 !important;' : ''}
+              ${cssClass === 'templo-abismo' ? 'color: #1a0a0a !important;' : ''}
               margin-bottom: 0.5rem;
               font-weight: 600;
             }
