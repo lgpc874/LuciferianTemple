@@ -516,8 +516,8 @@ export default function AdminBiblioteca() {
   const [selectedGrimoire, setSelectedGrimoire] = useState<Grimoire | null>(null);
   const [editingGrimoire, setEditingGrimoire] = useState<Grimoire | null>(null);
 
-  // Função para download de PDF com CSS automático da seção
-  const handleDownloadPDF = async (grimoireId: number) => {
+  // Função para download de HTML formatado com CSS automático da seção
+  const handleDownloadHTML = async (grimoireId: number) => {
     try {
       const response = await fetch(`/api/admin/grimoires/${grimoireId}/pdf`, {
         method: 'POST',
@@ -528,7 +528,7 @@ export default function AdminBiblioteca() {
       });
 
       if (!response.ok) {
-        throw new Error('Erro ao gerar PDF');
+        throw new Error('Erro ao gerar HTML');
       }
 
       const blob = await response.blob();
@@ -536,21 +536,21 @@ export default function AdminBiblioteca() {
       const a = document.createElement('a');
       a.style.display = 'none';
       a.href = url;
-      a.download = `grimorio_${grimoireId}.pdf`;
+      a.download = `grimorio_${grimoireId}.html`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
       
       toast({
-        title: "PDF gerado com sucesso",
-        description: "Download iniciado com formatação da seção correspondente",
+        title: "HTML gerado com sucesso",
+        description: "Download iniciado com formatação da seção correspondente - abra no navegador para imprimir como PDF",
       });
     } catch (error) {
-      console.error('Erro ao baixar PDF:', error);
+      console.error('Erro ao baixar HTML:', error);
       toast({
         title: "Erro",
-        description: "Não foi possível gerar o PDF.",
+        description: "Não foi possível gerar o HTML.",
         variant: "destructive",
       });
     }
@@ -739,9 +739,9 @@ export default function AdminBiblioteca() {
                       <Button
                         size="sm"
                         variant="ghost"
-                        onClick={() => handleDownloadPDF(grimoire.id)}
+                        onClick={() => handleDownloadHTML(grimoire.id)}
                         className="text-amber-500 hover:text-amber-600"
-                        title="Download PDF"
+                        title="Download HTML"
                       >
                         <Download className="h-4 w-4" />
                       </Button>
@@ -801,11 +801,11 @@ export default function AdminBiblioteca() {
             <div className="flex gap-2">
               <Button 
                 variant="outline" 
-                onClick={() => handleDownloadPDF(selectedGrimoire.id)}
+                onClick={() => handleDownloadHTML(selectedGrimoire.id)}
                 className="text-amber-500 border-amber-500 hover:bg-amber-500/10"
               >
                 <Download className="mr-2 h-4 w-4" />
-                Download PDF
+                Download HTML
               </Button>
               <Button variant="outline" onClick={() => setSelectedGrimoire(null)}>
                 Fechar
