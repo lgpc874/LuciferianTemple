@@ -217,6 +217,7 @@ Changelog:
 - June 16, 2025. Tipografia do header otimizada por dispositivo - título muito compacto no mobile (text-[10px]), progressão suave através de breakpoints (text-xs → text-base → text-lg), máxima economia de espaço em dispositivos móveis mantendo legibilidade
 - June 17, 2025. Sistema de CSS específico por seção implementado - cada seção da biblioteca (Atrium Ignis, Porta Umbrae, Arcana Noctis, Via Tenebris) possui suas próprias cores e formatação únicas conforme definido pelo usuário
 - June 17, 2025. Sistema de PDF inteligente implementado - detecção automática da seção do grimório para aplicar CSS correspondente, eliminando seleção manual de cores, botão PDF adicionado diretamente nos cards dos grimórios
+- June 17, 2025. Sistema de exportação HTML com CSS específico por seção implementado - substituído PDF por HTML formatado devido a limitações do sistema Replit, geração automática de arquivos HTML com CSS das seções (Atrium Ignis vermelho #8b0000, Porta Umbrae roxo #6a0dad, Arcana Noctis azul #003366, Via Tenebris preto #111111), botões atualizados no painel admin para "Download HTML" com instruções para impressão PDF via navegador
 ```
 
 ## User Preferences
