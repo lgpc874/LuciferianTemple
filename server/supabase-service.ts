@@ -9,7 +9,15 @@ import type {
   LibrarySection, 
   InsertLibrarySection,
   UserProgress,
-  InsertProgress 
+  InsertProgress,
+  Curso,
+  InsertCurso,
+  Modulo,
+  InsertModulo,
+  RespostaCurso,
+  InsertRespostaCurso,
+  ProgressoCurso,
+  InsertProgressoCurso
 } from '@shared/schema';
 
 // Inicializar OpenAI
@@ -798,6 +806,205 @@ export class SupabaseService {
     } catch (error) {
       console.error('Erro ao verificar grimórios desbloqueados:', error);
       return [];
+    }
+  }
+
+  // ===== MÉTODOS PARA SISTEMA DE CURSOS OCULTISTAS =====
+
+  // Buscar todos os cursos ativos
+  async getCursos(): Promise<Curso[]> {
+    try {
+      const { data, error } = await this.supabase
+        .from('cursos')
+        .select('*')
+        .eq('is_active', true)
+        .order('ordem_exibicao');
+
+      if (error) throw new Error(`Error fetching courses: ${error.message}`);
+      return data || [];
+    } catch (error: any) {
+      console.error('Error in getCursos:', error);
+      throw error;
+    }
+  }
+
+  // Buscar curso por slug
+  async getCursoBySlug(slug: string): Promise<Curso | null> {
+    try {
+      const { data, error } = await this.supabase
+        .from('cursos')
+        .select('*')
+        .eq('slug', slug)
+        .eq('is_active', true)
+        .single();
+
+      if (error && error.code !== 'PGRST116') {
+        throw new Error(`Error fetching course by slug: ${error.message}`);
+      }
+
+      return data;
+    } catch (error: any) {
+      console.error('Error in getCursoBySlug:', error);
+      throw error;
+    }
+  }
+
+  // Buscar módulos de um curso
+  async getModulosByCurso(cursoId: number): Promise<Modulo[]> {
+    try {
+      const { data, error } = await this.supabase
+        .from('modulos')
+        .select('*')
+        .eq('curso_id', cursoId)
+        .eq('is_active', true)
+        .order('ordem');
+
+      if (error) throw new Error(`Error fetching modules: ${error.message}`);
+      return data || [];
+    } catch (error: any) {
+      console.error('Error in getModulosByCurso:', error);
+      throw error;
+    }
+  }
+
+  // Salvar resposta de usuário para módulo
+  async salvarRespostaCurso(resposta: InsertRespostaCurso): Promise<RespostaCurso> {
+    try {
+      // Verificar se já existe resposta para este usuário e módulo
+      const { data: existingResponse, error: fetchError } = await this.supabase
+        .from('respostas_cursos')
+        .select('*')
+        .eq('usuario_id', resposta.usuario_id)
+        .eq('modulo_id', resposta.modulo_id)
+        .single();
+
+      if (fetchError && fetchError.code !== 'PGRST116') {
+        throw new Error(`Error checking existing response: ${fetchError.message}`);
+      }
+
+      if (existingResponse) {
+        // Atualizar resposta existente
+        const { data, error } = await this.supabase
+          .from('respostas_cursos')
+          .update({
+            resposta: resposta.resposta,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', existingResponse.id)
+          .select()
+          .single();
+
+        if (error) throw new Error(`Error updating response: ${error.message}`);
+        return data;
+      } else {
+        // Criar nova resposta
+        const { data, error } = await this.supabase
+          .from('respostas_cursos')
+          .insert(resposta)
+          .select()
+          .single();
+
+        if (error) throw new Error(`Error creating response: ${error.message}`);
+        return data;
+      }
+    } catch (error: any) {
+      console.error('Error in salvarRespostaCurso:', error);
+      throw error;
+    }
+  }
+
+  // Buscar respostas do usuário para um curso específico
+  async getRespostasByCurso(usuarioId: number, cursoId: number): Promise<RespostaCurso[]> {
+    try {
+      const { data, error } = await this.supabase
+        .from('respostas_cursos')
+        .select(`
+          *,
+          modulos!inner(
+            id,
+            curso_id,
+            titulo,
+            ordem
+          )
+        `)
+        .eq('usuario_id', usuarioId)
+        .eq('modulos.curso_id', cursoId)
+        .order('modulos.ordem');
+
+      if (error) throw new Error(`Error fetching responses: ${error.message}`);
+      return data || [];
+    } catch (error: any) {
+      console.error('Error in getRespostasByCurso:', error);
+      throw error;
+    }
+  }
+
+  // Buscar progresso do usuário em um curso
+  async getProgressoCurso(usuarioId: number, cursoId: number): Promise<ProgressoCurso | null> {
+    try {
+      const { data, error } = await this.supabase
+        .from('progresso_cursos')
+        .select('*')
+        .eq('usuario_id', usuarioId)
+        .eq('curso_id', cursoId)
+        .single();
+
+      if (error && error.code !== 'PGRST116') {
+        throw new Error(`Error fetching course progress: ${error.message}`);
+      }
+
+      return data;
+    } catch (error: any) {
+      console.error('Error in getProgressoCurso:', error);
+      throw error;
+    }
+  }
+
+  // Atualizar progresso do usuário em um curso
+  async atualizarProgressoCurso(progresso: InsertProgressoCurso): Promise<ProgressoCurso> {
+    try {
+      // Verificar se já existe progresso para este usuário e curso
+      const { data: existingProgress, error: fetchError } = await this.supabase
+        .from('progresso_cursos')
+        .select('*')
+        .eq('usuario_id', progresso.usuario_id)
+        .eq('curso_id', progresso.curso_id)
+        .single();
+
+      if (fetchError && fetchError.code !== 'PGRST116') {
+        throw new Error(`Error checking existing progress: ${fetchError.message}`);
+      }
+
+      if (existingProgress) {
+        // Atualizar progresso existente
+        const { data, error } = await this.supabase
+          .from('progresso_cursos')
+          .update({
+            modulo_atual: progresso.modulo_atual,
+            modulos_concluidos: progresso.modulos_concluidos,
+            concluido: progresso.concluido,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', existingProgress.id)
+          .select()
+          .single();
+
+        if (error) throw new Error(`Error updating progress: ${error.message}`);
+        return data;
+      } else {
+        // Criar novo progresso
+        const { data, error } = await this.supabase
+          .from('progresso_cursos')
+          .insert(progresso)
+          .select()
+          .single();
+
+        if (error) throw new Error(`Error creating progress: ${error.message}`);
+        return data;
+      }
+    } catch (error: any) {
+      console.error('Error in atualizarProgressoCurso:', error);
+      throw error;
     }
   }
 }

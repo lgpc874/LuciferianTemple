@@ -427,6 +427,99 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ===== SISTEMA DE CURSOS OCULTISTAS =====
+  
+  // Listar todos os cursos ativos
+  app.get("/api/cursos", async (req, res) => {
+    try {
+      const cursos = await supabaseService.getCursos();
+      res.json(cursos);
+    } catch (error: any) {
+      console.error("Error fetching courses:", error);
+      res.status(500).json({ error: "Erro ao buscar cursos" });
+    }
+  });
+
+  // Buscar curso específico por slug
+  app.get("/api/cursos/:slug", async (req, res) => {
+    try {
+      const { slug } = req.params;
+      const curso = await supabaseService.getCursoBySlug(slug);
+      
+      if (!curso) {
+        return res.status(404).json({ error: "Curso não encontrado" });
+      }
+      
+      res.json(curso);
+    } catch (error: any) {
+      console.error("Error fetching course:", error);
+      res.status(500).json({ error: "Erro ao buscar curso" });
+    }
+  });
+
+  // Buscar módulos de um curso
+  app.get("/api/cursos/:id/modulos", async (req, res) => {
+    try {
+      const cursoId = parseInt(req.params.id);
+      const modulos = await supabaseService.getModulosByCurso(cursoId);
+      res.json(modulos);
+    } catch (error: any) {
+      console.error("Error fetching modules:", error);
+      res.status(500).json({ error: "Erro ao buscar módulos" });
+    }
+  });
+
+  // Salvar resposta de usuário para módulo
+  app.post("/api/cursos/resposta", authenticateToken, async (req: any, res) => {
+    try {
+      const { modulo_id, resposta } = req.body;
+      const usuario_id = req.user.id;
+
+      if (!modulo_id || !resposta) {
+        return res.status(400).json({ error: "Módulo ID e resposta são obrigatórios" });
+      }
+
+      const respostaSalva = await supabaseService.salvarRespostaCurso({
+        usuario_id,
+        modulo_id,
+        resposta
+      });
+
+      res.json(respostaSalva);
+    } catch (error: any) {
+      console.error("Error saving response:", error);
+      res.status(500).json({ error: "Erro ao salvar resposta" });
+    }
+  });
+
+  // Buscar respostas do usuário para um curso
+  app.get("/api/cursos/respostas/:cursoId", authenticateToken, async (req: any, res) => {
+    try {
+      const cursoId = parseInt(req.params.cursoId);
+      const usuario_id = req.user.id;
+      
+      const respostas = await supabaseService.getRespostasByCurso(usuario_id, cursoId);
+      res.json(respostas);
+    } catch (error: any) {
+      console.error("Error fetching responses:", error);
+      res.status(500).json({ error: "Erro ao buscar respostas" });
+    }
+  });
+
+  // Buscar progresso do usuário em um curso
+  app.get("/api/cursos/progresso/:cursoId", authenticateToken, async (req: any, res) => {
+    try {
+      const cursoId = parseInt(req.params.cursoId);
+      const usuario_id = req.user.id;
+      
+      const progresso = await supabaseService.getProgressoCurso(usuario_id, cursoId);
+      res.json(progresso);
+    } catch (error: any) {
+      console.error("Error fetching course progress:", error);
+      res.status(500).json({ error: "Erro ao buscar progresso do curso" });
+    }
+  });
+
   // ESTATÍSTICAS ADMINISTRATIVAS
   app.get("/api/admin/stats", authenticateToken, requireAdmin, async (req, res) => {
     try {

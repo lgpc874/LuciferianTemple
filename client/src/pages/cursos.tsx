@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { BookOpen, Flame, Crown, Eye } from "lucide-react";
-import type { Curso } from "../../shared/schema";
+import type { Curso } from "../../../shared/schema";
 
 // Componente para ícone do curso baseado no nível
 const CourseIcon = ({ nivel }: { nivel: string }) => {
