@@ -477,7 +477,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // ROTA PARA GERAR PDF DE GRIMÓRIO
+  // ROTA PARA GERAR PDF DE GRIMÓRIO COM CSS AUTOMÁTICO DA SEÇÃO
   app.post("/api/admin/grimoires/:id/pdf", authenticateToken, requireAdmin, async (req, res) => {
     try {
       const { id } = req.params;
@@ -488,24 +488,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const puppeteer = require('puppeteer');
-      
-      // Função para extrair estilos inline personalizados do conteúdo
-      const extractCustomStyles = (content: string) => {
-        const styleRegex = /style\s*=\s*["']([^"']*?)["']/gi;
-        const colorRegex = /color\s*:\s*([^;]+)/gi;
-        const customColors = new Set<string>();
-        
-        let match;
-        while ((match = styleRegex.exec(content)) !== null) {
-          const styleContent = match[1];
-          let colorMatch;
-          while ((colorMatch = colorRegex.exec(styleContent)) !== null) {
-            customColors.add(colorMatch[1].trim());
-          }
-        }
-        
-        return Array.from(customColors);
-      };
 
       // Detectar seção do grimório para aplicar CSS correto
       const sections = await supabaseService.getLibrarySections();
@@ -570,61 +552,59 @@ export async function registerRoutes(app: Express): Promise<Server> {
               padding: inherit !important;
             }
             
-            /* Estilos base que podem ser sobrescritos por inline styles */
-            .grimorio-conteudo {
+            /* === CSS ESPECÍFICO DA SEÇÃO ${cssClass.toUpperCase()} === */
+            
+            /* Conteúdo base da seção */
+            .grimorio-conteudo.${cssClass} {
               font-family: 'EB Garamond', serif;
-              color: #2a2a2a;
+              ${cssClass === 'atrium-ignis' ? 'color: #e0d7d0;' : ''}
+              ${cssClass === 'porta-umbrae' ? 'color: #d8d3eb;' : ''}
+              ${cssClass === 'arcana-noctis' ? 'color: #ccd9f0;' : ''}
+              ${cssClass === 'via-tenebris' ? 'color: #d2d2d2;' : ''}
               font-size: 14pt;
               line-height: 1.8;
               text-align: justify;
               padding: 2rem 1rem;
             }
 
-            /* Títulos principais */
-            .grimorio-titulo, h1 {
+            /* Títulos principais da seção */
+            .grimorio-titulo.${cssClass}, .grimorio-subtitulo.${cssClass}, 
+            h1, h2, h3, h4, h5, h6 {
               font-family: 'Cinzel Decorative', serif;
-              color: ${selectedColor} !important;
+              color: ${primaryColor} !important;
               text-align: center;
-              font-size: 20pt;
               margin: 2rem 0 1rem 0;
               page-break-after: avoid;
               font-weight: 700;
             }
 
-            .grimorio-subtitulo, h2 {
-              font-family: 'Cinzel Decorative', serif;
-              color: ${selectedColor} !important;
-              text-align: center;
-              font-size: 16pt;
-              margin: 1.5rem 0;
-              font-weight: 600;
-            }
+            h1 { font-size: 20pt; }
+            h2 { font-size: 16pt; margin: 1.5rem 0; }
+            h3, h4, h5, h6 { font-size: 14pt; margin: 1rem 0; }
 
-            h3, h4, h5, h6 {
-              font-family: 'Cinzel Decorative', serif;
-              color: ${selectedColor} !important;
-              font-size: 14pt;
-              margin: 1rem 0;
-              font-weight: 600;
-            }
-
-            /* Citações e elementos especiais */
-            .grimorio-citacao, .citacao {
+            /* Citações específicas da seção */
+            .grimorio-citacao.${cssClass} {
+              ${cssClass === 'atrium-ignis' ? 'color: #b22222; border-left: 3px solid #8b0000;' : ''}
+              ${cssClass === 'porta-umbrae' ? 'color: #a36be2; border-left: 3px solid #6a0dad;' : ''}
+              ${cssClass === 'arcana-noctis' ? 'color: #4169e1; border-left: 3px solid #003366;' : ''}
+              ${cssClass === 'via-tenebris' ? 'color: #666666; border-left: 3px solid #222222;' : ''}
               font-style: italic;
-              color: ${selectedColor} !important;
-              text-align: center;
-              margin: 2rem auto;
+              padding-left: 15px;
+              margin: 20px 0;
               padding: 1.5rem;
-              border: 2px solid ${selectedColor};
+              text-align: center;
               background: #fafafa;
               max-width: 80%;
-              font-size: 14pt;
+              margin: 2rem auto;
             }
 
-            /* Elementos com destaque */
-            .destaque, strong, b {
-              color: ${selectedColor} !important;
-              font-weight: 700;
+            /* Destaques específicos da seção */
+            .destaque.${cssClass}, strong, b {
+              ${cssClass === 'atrium-ignis' ? 'color: #b22222;' : ''}
+              ${cssClass === 'porta-umbrae' ? 'color: #9b30ff;' : ''}
+              ${cssClass === 'arcana-noctis' ? 'color: #1e90ff;' : ''}
+              ${cssClass === 'via-tenebris' ? 'color: #888888;' : ''}
+              font-weight: bold;
             }
 
             /* Listas */
@@ -635,7 +615,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
             li {
               margin-bottom: 0.5rem;
-              color: ${selectedColor} !important;
+              color: ${primaryColor} !important;
               font-weight: 600;
             }
 
@@ -648,18 +628,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
             /* Separadores */
             .separador, hr {
               border: none;
-              border-top: 2px solid ${selectedColor};
+              border-top: 2px solid ${primaryColor};
               margin: 2rem auto;
               width: 60%;
             }
 
-            /* Preservar cores inline específicas */
-            [style*="color: #D6342C"], [style*="color:#D6342C"] {
-              color: ${selectedColor} !important;
-            }
-            
-            [style*="color: #d6342c"], [style*="color:#d6342c"] {
-              color: ${selectedColor} !important;
+            /* Preservar formatação inline existente */
+            [style*="color"] {
+              /* Mantém cores inline específicas quando definidas */
             }
             
             h1, h2, h3, h4, h5, h6 {
@@ -667,7 +643,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             }
           </style>
         </head>
-        <body>
+        <body class="grimorio-conteudo ${cssClass}">
           <div class="prose">
             ${grimoire.content}
           </div>
@@ -696,8 +672,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       await browser.close();
       
-      const colorName = Object.keys(colorPalettes).find(key => colorPalettes[key as keyof typeof colorPalettes] === selectedColor) || 'purple';
-      const filename = `${grimoire.title.replace(/[^a-zA-Z0-9\s]/g, '_')}_${colorName}.pdf`;
+      const filename = `${grimoire.title.replace(/[^a-zA-Z0-9\s]/g, '_')}_${cssClass}.pdf`;
       
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);

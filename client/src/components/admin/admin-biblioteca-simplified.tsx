@@ -478,26 +478,16 @@ export default function AdminBiblioteca() {
   const { toast } = useToast();
   const [mode, setMode] = useState<"manual" | "ai">("manual");
   const [selectedGrimoire, setSelectedGrimoire] = useState<Grimoire | null>(null);
-  const [pdfColorDialogOpen, setPdfColorDialogOpen] = useState(false);
-  const [selectedGrimoireForPDF, setSelectedGrimoireForPDF] = useState<number | null>(null);
 
-  const colorOptions = [
-    { key: 'purple', name: 'Roxo Místico', color: '#6a0dad', description: 'Porta Umbrae - Abissal' },
-    { key: 'navy', name: 'Azul Marinho', color: '#003366', description: 'Arcana Noctis - Profundo' },
-    { key: 'black', name: 'Preto Elegante', color: '#111111', description: 'Via Tenebris - Absoluto' },
-    { key: 'crimson', name: 'Vermelho Escuro', color: '#8b0000', description: 'Atrium Ignis - Ritualístico' }
-  ];
-
-  // Função para download de PDF com cor selecionada
-  const handleDownloadPDF = async (grimoireId: number, colorKey: string) => {
+  // Função para download de PDF com CSS automático da seção
+  const handleDownloadPDF = async (grimoireId: number) => {
     try {
       const response = await fetch(`/api/admin/grimoires/${grimoireId}/pdf`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ color: colorKey })
+        }
       });
 
       if (!response.ok) {
@@ -509,9 +499,7 @@ export default function AdminBiblioteca() {
       const a = document.createElement('a');
       a.style.display = 'none';
       a.href = url;
-      
-      const colorOption = colorOptions.find(c => c.key === colorKey);
-      a.download = `grimorio_${grimoireId}_${colorKey}.pdf`;
+      a.download = `grimorio_${grimoireId}.pdf`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
@@ -519,11 +507,8 @@ export default function AdminBiblioteca() {
       
       toast({
         title: "PDF gerado com sucesso",
-        description: `Download iniciado com tema ${colorOption?.name}`,
+        description: "Download iniciado com formatação da seção correspondente",
       });
-      
-      setPdfColorDialogOpen(false);
-      setSelectedGrimoireForPDF(null);
     } catch (error) {
       console.error('Erro ao baixar PDF:', error);
       toast({
@@ -532,11 +517,6 @@ export default function AdminBiblioteca() {
         variant: "destructive",
       });
     }
-  };
-
-  const openPDFColorDialog = (grimoireId: number) => {
-    setSelectedGrimoireForPDF(grimoireId);
-    setPdfColorDialogOpen(true);
   };
 
   // Queries
