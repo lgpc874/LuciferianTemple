@@ -15,6 +15,7 @@ import {
 } from "@shared/schema";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+// PDF generation using html-pdf-node
 import { supabaseService } from "./supabase-service";
 
 
@@ -487,7 +488,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ error: "Grimório não encontrado" });
       }
 
-      const puppeteer = require('puppeteer');
+      // Puppeteer já importado no topo do arquivo
 
       // Detectar seção do grimório para aplicar CSS correto
       const sections = await supabaseService.getLibrarySections();
