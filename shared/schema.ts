@@ -123,6 +123,54 @@ export const system_settings = pgTable("system_settings", {
   created_at: timestamp("created_at").defaultNow(),
 });
 
+// Tabelas do sistema de cursos ocultistas
+export const cursos = pgTable("cursos", {
+  id: serial("id").primaryKey(),
+  nome: text("nome").notNull(),
+  slug: text("slug").notNull().unique(),
+  descricao: text("descricao").notNull(),
+  imagem_url: text("imagem_url"),
+  nivel: text("nivel").default("iniciante").notNull(),
+  preco: decimal("preco", { precision: 10, scale: 2 }),
+  is_paid: boolean("is_paid").default(false).notNull(),
+  is_active: boolean("is_active").default(true).notNull(),
+  ordem_exibicao: integer("ordem_exibicao").default(0).notNull(),
+  created_at: timestamp("created_at").defaultNow(),
+  updated_at: timestamp("updated_at").defaultNow(),
+});
+
+export const modulos = pgTable("modulos", {
+  id: serial("id").primaryKey(),
+  curso_id: integer("curso_id").references(() => cursos.id).notNull(),
+  titulo: text("titulo").notNull(),
+  conteudo: text("conteudo").notNull(),
+  pratica: text("pratica"),
+  desafio: text("desafio").notNull(),
+  ordem: integer("ordem").default(1).notNull(),
+  is_active: boolean("is_active").default(true).notNull(),
+  created_at: timestamp("created_at").defaultNow(),
+});
+
+export const respostas_cursos = pgTable("respostas_cursos", {
+  id: serial("id").primaryKey(),
+  usuario_id: integer("usuario_id").references(() => users.id).notNull(),
+  modulo_id: integer("modulo_id").references(() => modulos.id).notNull(),
+  resposta: text("resposta").notNull(),
+  created_at: timestamp("created_at").defaultNow(),
+  updated_at: timestamp("updated_at").defaultNow(),
+});
+
+export const progresso_cursos = pgTable("progresso_cursos", {
+  id: serial("id").primaryKey(),
+  usuario_id: integer("usuario_id").references(() => users.id).notNull(),
+  curso_id: integer("curso_id").references(() => cursos.id).notNull(),
+  modulo_atual: integer("modulo_atual").default(1).notNull(),
+  modulos_concluidos: integer("modulos_concluidos").array(),
+  concluido: boolean("concluido").default(false).notNull(),
+  created_at: timestamp("created_at").defaultNow(),
+  updated_at: timestamp("updated_at").defaultNow(),
+});
+
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   email: true,
@@ -189,3 +237,16 @@ export type InsertChapter = z.infer<typeof insertChapterSchema>;
 
 export type UserProgress = typeof user_progress.$inferSelect;
 export type InsertProgress = z.infer<typeof insertProgressSchema>;
+
+// Tipos dos cursos
+export type Curso = typeof cursos.$inferSelect;
+export type InsertCurso = typeof cursos.$inferInsert;
+
+export type Modulo = typeof modulos.$inferSelect;
+export type InsertModulo = typeof modulos.$inferInsert;
+
+export type RespostaCurso = typeof respostas_cursos.$inferSelect;
+export type InsertRespostaCurso = typeof respostas_cursos.$inferInsert;
+
+export type ProgressoCurso = typeof progresso_cursos.$inferSelect;
+export type InsertProgressoCurso = typeof progresso_cursos.$inferInsert;
