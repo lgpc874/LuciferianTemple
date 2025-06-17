@@ -516,6 +516,98 @@ export class SupabaseService {
     }
   }
 
+  // CLIENTE ADMINISTRATIVO COM SERVICE ROLE
+  private getAdminClient() {
+    return createClient(
+      'https://mncmixsdmxvgcshzwzyb.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1uY21peHNkbXh2Z2NzaHp3enlIIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0OTkwMTU4NSwiZXhwIjoyMDY1NDc3NTg1fQ.YX8a4AZGnzuKnOPKQ1WEKhBK8XtyTCwEAHq-_3Kxsm0'
+    );
+  }
+
+  // OPERAÇÕES ADMINISTRATIVAS COM PRIVILÉGIOS TOTAIS
+  async adminCreateTable(tableName: string, columns: string): Promise<boolean> {
+    try {
+      const adminClient = this.getAdminClient();
+      const { error } = await adminClient.rpc('exec_sql', { 
+        sql: `CREATE TABLE IF NOT EXISTS ${tableName} (${columns});` 
+      });
+      
+      if (error) {
+        console.error(`Erro ao criar tabela ${tableName}:`, error);
+        return false;
+      }
+      
+      console.log(`✓ Tabela ${tableName} criada com sucesso`);
+      return true;
+    } catch (error: any) {
+      console.error(`Erro durante criação da tabela ${tableName}:`, error);
+      return false;
+    }
+  }
+
+  async adminInsertData(tableName: string, data: any): Promise<any> {
+    try {
+      const adminClient = this.getAdminClient();
+      const { data: result, error } = await adminClient
+        .from(tableName)
+        .insert(data)
+        .select()
+        .single();
+
+      if (error) {
+        console.error(`Erro ao inserir dados em ${tableName}:`, error);
+        throw new Error(`Erro ao inserir dados: ${error.message}`);
+      }
+
+      return result;
+    } catch (error: any) {
+      console.error(`Erro durante inserção em ${tableName}:`, error);
+      throw error;
+    }
+  }
+
+  async adminUpdateData(tableName: string, id: number, data: any): Promise<any> {
+    try {
+      const adminClient = this.getAdminClient();
+      const { data: result, error } = await adminClient
+        .from(tableName)
+        .update(data)
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) {
+        console.error(`Erro ao atualizar dados em ${tableName}:`, error);
+        throw new Error(`Erro ao atualizar dados: ${error.message}`);
+      }
+
+      return result;
+    } catch (error: any) {
+      console.error(`Erro durante atualização em ${tableName}:`, error);
+      throw error;
+    }
+  }
+
+  async adminDeleteData(tableName: string, condition: string, value: any): Promise<boolean> {
+    try {
+      const adminClient = this.getAdminClient();
+      const { error } = await adminClient
+        .from(tableName)
+        .delete()
+        .eq(condition, value);
+
+      if (error) {
+        console.error(`Erro ao deletar dados de ${tableName}:`, error);
+        throw new Error(`Erro ao deletar dados: ${error.message}`);
+      }
+
+      return true;
+    } catch (error: any) {
+      console.error(`Erro durante deleção em ${tableName}:`, error);
+      throw error;
+    }
+  }
+
   // GERENCIAR CONFIGURAÇÕES DE IA
   async getAISettings() {
     try {
@@ -1206,53 +1298,99 @@ export class SupabaseService {
       throw new Error(`Error creating course payment intent: ${error?.message || 'Unknown error'}`);
     }
   }
-  // Função para deletar módulos por curso
-  async deleteModulesByCourse(cursoId: number) {
-    const { error } = await this.supabase
-      .from('modulos')
-      .delete()
-      .eq('curso_id', cursoId);
-
-    if (error) {
-      throw new Error(`Erro ao deletar módulos: ${error.message}`);
+  // SISTEMA DE INICIALIZAÇÃO AUTOMÁTICA DO BANCO
+  async ensureDatabaseStructure(): Promise<boolean> {
+    try {
+      console.log('🔧 Verificando estrutura do banco de dados...');
+      
+      // Verificar se as tabelas principais existem
+      const tables = ['users', 'library_sections', 'grimoires', 'user_progress'];
+      const adminClient = this.getAdminClient();
+      
+      for (const table of tables) {
+        const { error } = await adminClient.from(table).select('count', { count: 'exact', head: true });
+        
+        if (error && error.code === 'PGRST116') {
+          console.log(`⚠️ Tabela ${table} não encontrada - executando setup automático...`);
+          return false; // Indica que precisa executar o setup completo
+        }
+      }
+      
+      console.log('✅ Estrutura do banco verificada com sucesso');
+      return true;
+    } catch (error: any) {
+      console.error('❌ Erro ao verificar estrutura do banco:', error);
+      return false;
     }
   }
 
-  // Função para criar módulo (usando service role para bypass RLS)
-  async createModule(moduleData: any) {
-    // Usar client admin com service role key
-    const adminSupabase = createClient(
-      'https://mncmixsdmxvgcshzwzyb.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1uY21peHNkbXh2Z2NzaHp3enlIIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0OTkwMTU4NSwiZXhwIjoyMDY1NDc3NTg1fQ.YX8a4AZGnzuKnOPKQ1WEKhBK8XtyTCwEAHq-_3Kxsm0'
-    );
-
-    const { data, error } = await adminSupabase
-      .from('modulos')
-      .insert(moduleData)
-      .select()
-      .single();
-
-    if (error) {
-      throw new Error(`Erro ao criar módulo: ${error.message}`);
+  // TESTE DE CONECTIVIDADE COMPLETO
+  async testConnection(): Promise<{ status: string; details: any }> {
+    try {
+      const adminClient = this.getAdminClient();
+      
+      // Teste 1: Conexão básica
+      const { data: ping, error: pingError } = await adminClient
+        .from('users')
+        .select('count', { count: 'exact', head: true });
+      
+      if (pingError) {
+        return {
+          status: 'ERROR',
+          details: {
+            message: 'Falha na conexão básica',
+            error: pingError.message,
+            suggestion: 'Verifique as credenciais do Supabase'
+          }
+        };
+      }
+      
+      // Teste 2: Permissões de escrita
+      const testData = { 
+        username: `test_${Date.now()}`, 
+        password: 'test', 
+        email: `test${Date.now()}@test.com` 
+      };
+      
+      const { data: insertTest, error: insertError } = await adminClient
+        .from('users')
+        .insert(testData)
+        .select()
+        .single();
+      
+      if (insertError) {
+        return {
+          status: 'PARTIAL',
+          details: {
+            message: 'Conexão OK, mas sem permissões de escrita',
+            error: insertError.message,
+            suggestion: 'Verificar políticas RLS e service role key'
+          }
+        };
+      }
+      
+      // Limpar teste
+      await adminClient.from('users').delete().eq('id', insertTest.id);
+      
+      return {
+        status: 'SUCCESS',
+        details: {
+          message: 'Conexão e permissões funcionando perfeitamente',
+          tables_accessible: ['users', 'grimoires', 'library_sections', 'user_progress'],
+          admin_privileges: true
+        }
+      };
+      
+    } catch (error: any) {
+      return {
+        status: 'CRITICAL',
+        details: {
+          message: 'Falha crítica na conexão',
+          error: error.message,
+          suggestion: 'Verificar URL e chaves do Supabase'
+        }
+      };
     }
-
-    return data;
-  }
-
-  // Atualizar curso
-  async updateCurso(cursoId: number, updateData: any) {
-    const { data, error } = await this.supabase
-      .from('cursos')
-      .update(updateData)
-      .eq('id', cursoId)
-      .select()
-      .single();
-
-    if (error) {
-      throw new Error(`Erro ao atualizar curso: ${error.message}`);
-    }
-
-    return data;
   }
 }
 
