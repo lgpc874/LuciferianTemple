@@ -459,9 +459,28 @@ O conteúdo deve ser um grimório completo e substancial em HTML formatado.`;
         .order('created_at', { ascending: false })
         .limit(5);
 
-      // Estatísticas por seção
-      const { data: sectionStats } = await this.supabase
-        .rpc('get_section_stats');
+      // Estatísticas por seção - abordagem alternativa
+      const { data: sections } = await this.supabase
+        .from('library_sections')
+        .select('id, name')
+        .order('sort_order');
+
+      const sectionStats = [];
+      if (sections) {
+        for (const section of sections) {
+          const { count } = await this.supabase
+            .from('grimoires')
+            .select('*', { count: 'exact', head: true })
+            .eq('section_id', section.id)
+            .eq('is_published', true);
+          
+          sectionStats.push({
+            id: section.id,
+            name: section.name,
+            grimoire_count: count || 0
+          });
+        }
+      }
 
       return {
         totalUsers: totalUsers || 0,
