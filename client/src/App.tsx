@@ -18,6 +18,7 @@ import AdminDashboard from "@/pages/admin-dashboard";
 import Perfil from "@/pages/perfil";
 import CursosPage from "@/pages/cursos";
 import CursoIndividualPage from "@/pages/curso-individual";
+import CursoDetalhesPage from "@/pages/curso-detalhes";
 
 function Router() {
   const [location] = useLocation();
@@ -38,6 +39,7 @@ function Router() {
           <Route path="/perfil" component={Perfil} />
           <Route path="/biblioteca" component={Biblioteca} />
           <Route path="/cursos" component={CursosPage} />
+          <Route path="/curso-detalhes/:slug" component={CursoDetalhesPage} />
           <Route path="/curso/:slug" component={CursoIndividualPage} />
           <Route path="/grimoire/:id" component={SmartGrimoireReader} />
           <Route path="/admin-dashboard/:tab?" component={AdminDashboard} />

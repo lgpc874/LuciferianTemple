@@ -221,12 +221,12 @@ export default function CursosPage() {
                     {curso.descricao}
                   </CardDescription>
                   
-                  <Link href={`/curso/${curso.slug}`}>
+                  <Link href={`/curso-detalhes/${curso.slug}`}>
                     <Button 
                       className="w-full bg-gradient-to-r from-amber-600 to-red-600 hover:from-amber-700 hover:to-red-700 text-black font-semibold py-3 transition-all duration-300"
                       style={{ fontFamily: 'Cinzel' }}
                     >
-                      Acessar Curso
+                      Ver Detalhes
                     </Button>
                   </Link>
                 </CardContent>
