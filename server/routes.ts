@@ -507,9 +507,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return Array.from(customColors);
       };
 
-      // Extrai cores personalizadas do grimório
-      const customColors = extractCustomStyles(grimoire.content);
-      const primaryColor = customColors.length > 0 ? customColors[0] : '#D6342C';
+      // Sistema de cores selecionáveis
+      const { color } = req.body;
+      const colorPalettes = {
+        purple: '#6a0dad',    // Roxo místico
+        navy: '#003366',      // Azul marinho  
+        black: '#111111',     // Preto elegante
+        crimson: '#8b0000'    // Vermelho escuro
+      };
+      
+      const selectedColor = color && colorPalettes[color as keyof typeof colorPalettes] 
+        ? colorPalettes[color as keyof typeof colorPalettes]
+        : '#6a0dad';
       
       // HTML template dinâmico que se adapta aos estilos do grimório
       const htmlContent = `
@@ -559,69 +568,91 @@ export async function registerRoutes(app: Express): Promise<Server> {
               padding: 2rem 1rem;
             }
 
-            .grimorio-titulo {
+            /* Títulos principais */
+            .grimorio-titulo, h1 {
               font-family: 'Cinzel Decorative', serif;
-              color: ${primaryColor};
+              color: ${selectedColor} !important;
               text-align: center;
-              font-size: 22pt;
-              margin-bottom: 0.5rem;
+              font-size: 20pt;
+              margin: 2rem 0 1rem 0;
               page-break-after: avoid;
+              font-weight: 700;
             }
 
-            .grimorio-subtitulo {
-              font-style: italic;
+            .grimorio-subtitulo, h2 {
+              font-family: 'Cinzel Decorative', serif;
+              color: ${selectedColor} !important;
               text-align: center;
-              color: ${primaryColor};
+              font-size: 16pt;
+              margin: 1.5rem 0;
+              font-weight: 600;
+            }
+
+            h3, h4, h5, h6 {
+              font-family: 'Cinzel Decorative', serif;
+              color: ${selectedColor} !important;
               font-size: 14pt;
-              margin-bottom: 2rem;
+              margin: 1rem 0;
+              font-weight: 600;
             }
 
-            .grimorio-citacao {
+            /* Citações e elementos especiais */
+            .grimorio-citacao, .citacao {
               font-style: italic;
-              border-left: 3px solid ${primaryColor};
-              padding-left: 1rem;
-              margin: 2rem 0;
-              color: #2a2a2a;
-              background: #f9f9f9;
-              padding: 1rem;
+              color: ${selectedColor} !important;
+              text-align: center;
+              margin: 2rem auto;
+              padding: 1.5rem;
+              border: 2px solid ${selectedColor};
+              background: #fafafa;
+              max-width: 80%;
+              font-size: 14pt;
             }
 
-            .grimorio-citacao small {
-              display: block;
-              font-style: normal;
-              font-size: 10pt;
-              margin-top: 0.5rem;
-              color: #666;
+            /* Elementos com destaque */
+            .destaque, strong, b {
+              color: ${selectedColor} !important;
+              font-weight: 700;
             }
 
-            .grimorio-lista {
-              list-style-type: disc;
+            /* Listas */
+            .grimorio-lista, ul, ol {
               margin-left: 2rem;
-              color: ${primaryColor};
-              font-weight: bold;
-              font-family: 'EB Garamond', serif;
+              margin-bottom: 1rem;
             }
 
+            li {
+              margin-bottom: 0.5rem;
+              color: ${selectedColor} !important;
+              font-weight: 600;
+            }
+
+            /* Parágrafos especiais */
             .indentado {
-              text-indent: 3rem;
-              margin-bottom: 1.5rem;
+              text-indent: 2rem;
+              margin-bottom: 1rem;
             }
 
-            .destaque {
-              color: ${primaryColor};
-              font-weight: bold;
+            /* Separadores */
+            .separador, hr {
+              border: none;
+              border-top: 2px solid ${selectedColor};
+              margin: 2rem auto;
+              width: 60%;
+            }
+
+            /* Preservar cores inline específicas */
+            [style*="color: #D6342C"], [style*="color:#D6342C"] {
+              color: ${selectedColor} !important;
+            }
+            
+            [style*="color: #d6342c"], [style*="color:#d6342c"] {
+              color: ${selectedColor} !important;
             }
             
             h1, h2, h3, h4, h5, h6 {
               page-break-after: avoid;
             }
-            
-            /* Adiciona suporte para cores personalizadas encontradas */
-            ${customColors.map((color, index) => `
-            .custom-color-${index} {
-              color: ${color};
-            }
-            `).join('')}
           </style>
         </head>
         <body>
@@ -653,8 +684,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       await browser.close();
       
+      const colorName = Object.keys(colorPalettes).find(key => colorPalettes[key as keyof typeof colorPalettes] === selectedColor) || 'purple';
+      const filename = `${grimoire.title.replace(/[^a-zA-Z0-9\s]/g, '_')}_${colorName}.pdf`;
+      
       res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', `attachment; filename="${grimoire.title.replace(/[^a-zA-Z0-9\s]/g, '_')}.pdf"`);
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
       res.send(pdf);
       
     } catch (error: any) {
