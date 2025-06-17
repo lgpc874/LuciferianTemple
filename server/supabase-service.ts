@@ -372,7 +372,7 @@ export class SupabaseService {
         ],
         response_format: { type: "json_object" },
         temperature: 0.8,
-        max_tokens: 128000
+        max_tokens: 16000
       });
 
       const rawContent = response.choices[0].message.content || '{}';
