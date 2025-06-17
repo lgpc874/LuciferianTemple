@@ -218,6 +218,7 @@ Changelog:
 - June 17, 2025. Sistema de CSS específico por seção implementado - cada seção da biblioteca (Atrium Ignis, Porta Umbrae, Arcana Noctis, Via Tenebris) possui suas próprias cores e formatação únicas conforme definido pelo usuário
 - June 17, 2025. Sistema de PDF inteligente implementado - detecção automática da seção do grimório para aplicar CSS correspondente, eliminando seleção manual de cores, botão PDF adicionado diretamente nos cards dos grimórios
 - June 17, 2025. Sistema de exportação HTML com CSS específico por seção implementado - substituído PDF por HTML formatado devido a limitações do sistema Replit, geração automática de arquivos HTML com CSS das seções (Atrium Ignis vermelho #8b0000, Porta Umbrae roxo #6a0dad, Arcana Noctis azul #003366, Via Tenebris preto #111111), botões atualizados no painel admin para "Download HTML" com instruções para impressão PDF via navegador
+- June 17, 2025. Grimório secreto "Códice Secreto do Templo do Abismo – Os Trinta Selos Sangrentos" criado - 30 rituais completos de alta magia (proteção, cura, necromancia, prosperidade, fama infernal), todos requerem sangue do magista, instruções detalhadas com fases lunares e horários específicos, preço R$ 333,33, cor abissal específica #1a0a0a (preto abissal profundo) implementada no sistema de HTML para seção "Templo do Abismo"
 ```
 
 ## User Preferences
