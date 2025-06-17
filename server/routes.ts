@@ -539,104 +539,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
               padding: 20px;
             }
             
-            /* Preserva TODOS os estilos inline do grimório */
-            * {
-              color: inherit !important;
-              font-family: inherit !important;
-              font-size: inherit !important;
-              font-weight: inherit !important;
-              font-style: inherit !important;
-              text-align: inherit !important;
-              background: inherit !important;
-              border: inherit !important;
-              margin: inherit !important;
-              padding: inherit !important;
+            /* === PRESERVAÇÃO COMPLETA DAS FORMATAÇÕES ORIGINAIS === */
+            
+            /* Preserva TODOS os estilos inline dos grimórios */
+            .prose * {
+              all: revert !important;
             }
             
-            /* === CSS ESPECÍFICO DA SEÇÃO ${cssClass.toUpperCase()} === */
+            /* Aplica apenas as cores específicas da seção como fallback */
+            .prose {
+              ${cssClass === 'atrium-ignis' ? 'color: #8b0000;' : ''}
+              ${cssClass === 'porta-umbrae' ? 'color: #6a0dad;' : ''}
+              ${cssClass === 'arcana-noctis' ? 'color: #003366;' : ''}
+              ${cssClass === 'via-tenebris' ? 'color: #111111;' : ''}
+            }
             
-            /* Conteúdo base da seção */
-            .grimorio-conteudo.${cssClass} {
+            /* Configurações básicas para impressão */
+            .prose {
+              max-width: none;
               font-family: 'EB Garamond', serif;
-              ${cssClass === 'atrium-ignis' ? 'color: #e0d7d0;' : ''}
-              ${cssClass === 'porta-umbrae' ? 'color: #d8d3eb;' : ''}
-              ${cssClass === 'arcana-noctis' ? 'color: #ccd9f0;' : ''}
-              ${cssClass === 'via-tenebris' ? 'color: #d2d2d2;' : ''}
-              font-size: 14pt;
-              line-height: 1.8;
-              text-align: justify;
-              padding: 2rem 1rem;
-            }
-
-            /* Títulos principais da seção */
-            .grimorio-titulo.${cssClass}, .grimorio-subtitulo.${cssClass}, 
-            h1, h2, h3, h4, h5, h6 {
-              font-family: 'Cinzel Decorative', serif;
-              color: ${primaryColor} !important;
-              text-align: center;
-              margin: 2rem 0 1rem 0;
-              page-break-after: avoid;
-              font-weight: 700;
-            }
-
-            h1 { font-size: 20pt; }
-            h2 { font-size: 16pt; margin: 1.5rem 0; }
-            h3, h4, h5, h6 { font-size: 14pt; margin: 1rem 0; }
-
-            /* Citações específicas da seção */
-            .grimorio-citacao.${cssClass} {
-              ${cssClass === 'atrium-ignis' ? 'color: #b22222; border-left: 3px solid #8b0000;' : ''}
-              ${cssClass === 'porta-umbrae' ? 'color: #a36be2; border-left: 3px solid #6a0dad;' : ''}
-              ${cssClass === 'arcana-noctis' ? 'color: #4169e1; border-left: 3px solid #003366;' : ''}
-              ${cssClass === 'via-tenebris' ? 'color: #666666; border-left: 3px solid #222222;' : ''}
-              font-style: italic;
-              padding-left: 15px;
-              margin: 20px 0;
-              padding: 1.5rem;
-              text-align: center;
-              background: #fafafa;
-              max-width: 80%;
-              margin: 2rem auto;
-            }
-
-            /* Destaques específicos da seção */
-            .destaque.${cssClass}, strong, b {
-              ${cssClass === 'atrium-ignis' ? 'color: #b22222;' : ''}
-              ${cssClass === 'porta-umbrae' ? 'color: #9b30ff;' : ''}
-              ${cssClass === 'arcana-noctis' ? 'color: #1e90ff;' : ''}
-              ${cssClass === 'via-tenebris' ? 'color: #888888;' : ''}
-              font-weight: bold;
-            }
-
-            /* Listas */
-            .grimorio-lista, ul, ol {
-              margin-left: 2rem;
-              margin-bottom: 1rem;
-            }
-
-            li {
-              margin-bottom: 0.5rem;
-              color: ${primaryColor} !important;
-              font-weight: 600;
-            }
-
-            /* Parágrafos especiais */
-            .indentado {
-              text-indent: 2rem;
-              margin-bottom: 1rem;
-            }
-
-            /* Separadores */
-            .separador, hr {
-              border: none;
-              border-top: 2px solid ${primaryColor};
-              margin: 2rem auto;
-              width: 60%;
-            }
-
-            /* Preservar formatação inline existente */
-            [style*="color"] {
-              /* Mantém cores inline específicas quando definidas */
+              line-height: 1.6;
+              padding: 1rem;
             }
             
             h1, h2, h3, h4, h5, h6 {
