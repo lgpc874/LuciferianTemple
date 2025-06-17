@@ -507,18 +507,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return Array.from(customColors);
       };
 
-      // Sistema de cores selecionáveis
-      const { color } = req.body;
-      const colorPalettes = {
-        purple: '#6a0dad',    // Roxo místico
-        navy: '#003366',      // Azul marinho  
-        black: '#111111',     // Preto elegante
-        crimson: '#8b0000'    // Vermelho escuro
+      // Detectar seção do grimório para aplicar CSS correto
+      const sections = await supabaseService.getLibrarySections();
+      const grimoireSection = sections.find(s => s.id === grimoire.section_id);
+      
+      // Mapear seções para classes CSS específicas
+      const sectionCSSMap: { [key: string]: string } = {
+        'Atrium Ignis': 'atrium-ignis',
+        'Porta Umbrae': 'porta-umbrae', 
+        'Arcana Noctis': 'arcana-noctis',
+        'Via Tenebris': 'via-tenebris',
+        'Templo do Abismo': 'atrium-ignis' // Fallback para vermelho
       };
       
-      const selectedColor = color && colorPalettes[color as keyof typeof colorPalettes] 
-        ? colorPalettes[color as keyof typeof colorPalettes]
-        : '#6a0dad';
+      const cssClass = grimoireSection ? sectionCSSMap[grimoireSection.name] || 'atrium-ignis' : 'atrium-ignis';
+      
+      // Cores correspondentes às seções
+      const sectionColors: { [key: string]: string } = {
+        'atrium-ignis': '#8b0000',    // Vermelho místico
+        'porta-umbrae': '#6a0dad',    // Roxo abissal  
+        'arcana-noctis': '#003366',   // Azul profundo
+        'via-tenebris': '#111111'     // Preto absoluto
+      };
+      
+      const primaryColor = sectionColors[cssClass];
       
       // HTML template dinâmico que se adapta aos estilos do grimório
       const htmlContent = `

@@ -10,7 +10,8 @@ import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
-import { Plus, Edit, Trash2, Eye, EyeOff, Book, Sparkles, Bot, ImageIcon, Download } from "lucide-react";
+import { Plus, Edit, Trash2, Eye, EyeOff, Book, Sparkles, Bot, ImageIcon, Download, Palette } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import RichTextEditor from "@/components/ui/rich-text-editor";
@@ -477,16 +478,26 @@ export default function AdminBiblioteca() {
   const { toast } = useToast();
   const [mode, setMode] = useState<"manual" | "ai">("manual");
   const [selectedGrimoire, setSelectedGrimoire] = useState<Grimoire | null>(null);
+  const [pdfColorDialogOpen, setPdfColorDialogOpen] = useState(false);
+  const [selectedGrimoireForPDF, setSelectedGrimoireForPDF] = useState<number | null>(null);
 
-  // Função para download de PDF
-  const handleDownloadPDF = async (grimoireId: number) => {
+  const colorOptions = [
+    { key: 'purple', name: 'Roxo Místico', color: '#6a0dad', description: 'Porta Umbrae - Abissal' },
+    { key: 'navy', name: 'Azul Marinho', color: '#003366', description: 'Arcana Noctis - Profundo' },
+    { key: 'black', name: 'Preto Elegante', color: '#111111', description: 'Via Tenebris - Absoluto' },
+    { key: 'crimson', name: 'Vermelho Escuro', color: '#8b0000', description: 'Atrium Ignis - Ritualístico' }
+  ];
+
+  // Função para download de PDF com cor selecionada
+  const handleDownloadPDF = async (grimoireId: number, colorKey: string) => {
     try {
       const response = await fetch(`/api/admin/grimoires/${grimoireId}/pdf`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json'
-        }
+        },
+        body: JSON.stringify({ color: colorKey })
       });
 
       if (!response.ok) {
@@ -498,7 +509,9 @@ export default function AdminBiblioteca() {
       const a = document.createElement('a');
       a.style.display = 'none';
       a.href = url;
-      a.download = `grimorio_${grimoireId}.pdf`;
+      
+      const colorOption = colorOptions.find(c => c.key === colorKey);
+      a.download = `grimorio_${grimoireId}_${colorKey}.pdf`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
@@ -506,8 +519,11 @@ export default function AdminBiblioteca() {
       
       toast({
         title: "PDF gerado com sucesso",
-        description: "O download foi iniciado automaticamente.",
+        description: `Download iniciado com tema ${colorOption?.name}`,
       });
+      
+      setPdfColorDialogOpen(false);
+      setSelectedGrimoireForPDF(null);
     } catch (error) {
       console.error('Erro ao baixar PDF:', error);
       toast({
@@ -516,6 +532,11 @@ export default function AdminBiblioteca() {
         variant: "destructive",
       });
     }
+  };
+
+  const openPDFColorDialog = (grimoireId: number) => {
+    setSelectedGrimoireForPDF(grimoireId);
+    setPdfColorDialogOpen(true);
   };
 
   // Queries

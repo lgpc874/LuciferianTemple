@@ -2582,3 +2582,101 @@ body .smart-grimoire-reader .grimoire-content .destaque {
   color: #D6342C;
   font-weight: bold;
 }
+
+/* === CORES ESPECÍFICAS POR SEÇÃO DA BIBLIOTECA === */
+
+/* === ATRIUM IGNIS === */
+.grimorio-conteudo.atrium-ignis {
+  font-family: 'EB Garamond', serif;
+  color: #e0d7d0;
+}
+
+.grimorio-titulo.atrium-ignis, .grimorio-subtitulo.atrium-ignis {
+  font-family: 'Cinzel Decorative', serif;
+  color: #8b0000; /* Vermelho místico ritualístico verdadeiro */
+}
+
+.grimorio-citacao.atrium-ignis {
+  color: #b22222;
+  font-style: italic;
+  border-left: 3px solid #8b0000;
+  padding-left: 15px;
+  margin: 20px 0;
+}
+
+.destaque.atrium-ignis {
+  color: #b22222;
+  font-weight: bold;
+}
+
+/* === PORTA UMBRAE === */
+.grimorio-conteudo.porta-umbrae {
+  font-family: 'EB Garamond', serif;
+  color: #d8d3eb;
+}
+
+.grimorio-titulo.porta-umbrae, .grimorio-subtitulo.porta-umbrae {
+  font-family: 'Cinzel Decorative', serif;
+  color: #6a0dad; /* Roxo abissal místico */
+}
+
+.grimorio-citacao.porta-umbrae {
+  color: #a36be2;
+  font-style: italic;
+  border-left: 3px solid #6a0dad;
+  padding-left: 15px;
+  margin: 20px 0;
+}
+
+.destaque.porta-umbrae {
+  color: #9b30ff;
+  font-weight: bold;
+}
+
+/* === ARCANA NOCTIS === */
+.grimorio-conteudo.arcana-noctis {
+  font-family: 'EB Garamond', serif;
+  color: #ccd9f0;
+}
+
+.grimorio-titulo.arcana-noctis, .grimorio-subtitulo.arcana-noctis {
+  font-family: 'Cinzel Decorative', serif;
+  color: #003366; /* Azul profundo velado */
+}
+
+.grimorio-citacao.arcana-noctis {
+  color: #4169e1;
+  font-style: italic;
+  border-left: 3px solid #003366;
+  padding-left: 15px;
+  margin: 20px 0;
+}
+
+.destaque.arcana-noctis {
+  color: #1e90ff;
+  font-weight: bold;
+}
+
+/* === VIA TENEBRIS === */
+.grimorio-conteudo.via-tenebris {
+  font-family: 'EB Garamond', serif;
+  color: #d2d2d2;
+}
+
+.grimorio-titulo.via-tenebris, .grimorio-subtitulo.via-tenebris {
+  font-family: 'Cinzel Decorative', serif;
+  color: #111111; /* Preto abissal absoluto */
+}
+
+.grimorio-citacao.via-tenebris {
+  color: #666666;
+  font-style: italic;
+  border-left: 3px solid #222222;
+  padding-left: 15px;
+  margin: 20px 0;
+}
+
+.destaque.via-tenebris {
+  color: #888888;
+  font-weight: bold;
+}
