@@ -215,6 +215,8 @@ Changelog:
 - June 16, 2025. Header do leitor personalizado por grimório - título reduzido (text-xs mobile, text-sm desktop), extração automática da cor principal de cada grimório (#D6342C para vermelhos, #D97706 amber padrão), aplicação dinâmica via style inline, priorização de cores luciferianas autênticas
 - June 16, 2025. Footer do leitor implementado com detecção de scroll - aparece apenas quando usuário rola até os últimos 100px da página, animação suave de entrada/saída com Framer Motion, experiência de leitura limpa sem controles sempre visíveis
 - June 16, 2025. Tipografia do header otimizada por dispositivo - título muito compacto no mobile (text-[10px]), progressão suave através de breakpoints (text-xs → text-base → text-lg), máxima economia de espaço em dispositivos móveis mantendo legibilidade
+- June 17, 2025. Sistema de CSS específico por seção implementado - cada seção da biblioteca (Atrium Ignis, Porta Umbrae, Arcana Noctis, Via Tenebris) possui suas próprias cores e formatação únicas conforme definido pelo usuário
+- June 17, 2025. Sistema de PDF inteligente implementado - detecção automática da seção do grimório para aplicar CSS correspondente, eliminando seleção manual de cores, botão PDF adicionado diretamente nos cards dos grimórios
 ```
 
 ## User Preferences

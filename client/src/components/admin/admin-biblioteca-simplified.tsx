@@ -620,13 +620,24 @@ export default function AdminBiblioteca() {
                         size="sm"
                         variant="ghost"
                         onClick={() => setSelectedGrimoire(grimoire)}
+                        title="Visualizar"
                       >
                         <Eye className="h-4 w-4" />
                       </Button>
                       <Button
                         size="sm"
                         variant="ghost"
+                        onClick={() => handleDownloadPDF(grimoire.id)}
+                        className="text-amber-500 hover:text-amber-600"
+                        title="Download PDF"
+                      >
+                        <Download className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
                         onClick={() => togglePublished(grimoire)}
+                        title={grimoire.is_published ? "Despublicar" : "Publicar"}
                       >
                         {grimoire.is_published ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </Button>
